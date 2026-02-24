@@ -11,13 +11,17 @@ const operationsCancel: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "The parent bucket of the operation resource.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         operationId: {
           name: "Operation ID",
           description: "The ID of the operation resource.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },

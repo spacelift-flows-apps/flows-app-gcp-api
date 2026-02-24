@@ -11,7 +11,9 @@ const keyRingsGet: AppBlock = {
         name: {
           name: "Name",
           description: "Required. The name of the KeyRing to get.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -85,11 +87,16 @@ const keyRingsGet: AppBlock = {
         properties: {
           createTime: {
             type: "string",
+            description:
+              "Output only. The time at which this KeyRing was created. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Output only. The resource name for the KeyRing in the format `projects/*/locations/*/keyRings/*`.",
           },
         },
+        description: "A KeyRing is a toplevel logical grouping of CryptoKeys.",
         additionalProperties: true,
       },
     },

@@ -12,7 +12,9 @@ const organizationsGet: AppBlock = {
           name: "Name",
           description:
             'Required. The resource name of the Organization to fetch. This is the organization\'s relative path in the API, formatted as "organizations/[organizationId]". For example, "organizations/1234".',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,30 +88,48 @@ const organizationsGet: AppBlock = {
         properties: {
           displayName: {
             type: "string",
+            description:
+              'Output only. A human-readable string that refers to the organization in the Google Cloud Console. This string is set by the server and cannot be changed. The string will be set to the primary domain (for example, "google.com") of the Google Workspace customer that owns the organization.',
           },
           createTime: {
             type: "string",
+            description:
+              "Output only. Timestamp when the Organization was created. (Format: google-datetime)",
           },
           deleteTime: {
             type: "string",
+            description:
+              "Output only. Timestamp when the Organization was requested for deletion. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              'Output only. The resource name of the organization. This is the organization\'s relative path in the API. Its format is "organizations/[organization_id]". For example, "organizations/1234".',
           },
           updateTime: {
             type: "string",
+            description:
+              "Output only. Timestamp when the Organization was last modified. (Format: google-datetime)",
           },
           directoryCustomerId: {
             type: "string",
+            description:
+              "Immutable. The G Suite / Workspace customer id used in the Directory API.",
           },
           etag: {
             type: "string",
+            description:
+              "Output only. A checksum computed by the server based on the current value of the Organization resource. This may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
           },
           state: {
             type: "string",
             enum: ["STATE_UNSPECIFIED", "ACTIVE", "DELETE_REQUESTED"],
+            description:
+              "Output only. The organization's current lifecycle state.",
           },
         },
+        description:
+          "The root node in the resource hierarchy to which a particular entity's (a company, for example) resources belong.",
         additionalProperties: true,
       },
     },

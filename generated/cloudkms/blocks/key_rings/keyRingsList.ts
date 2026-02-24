@@ -12,35 +12,45 @@ const keyRingsList: AppBlock = {
           name: "Parent",
           description:
             "Required. The resource name of the location associated with the KeyRings, in the format `projects/*/locations/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Optional. Optional pagination token, returned earlier via ListKeyRingsResponse.next_page_token.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         orderBy: {
           name: "Order By",
           description:
             "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Optional. Optional limit on the number of KeyRings to include in the response. Further KeyRings can subsequently be obtained by including the ListKeyRingsResponse.next_page_token in a subsequent request. If unspecified, the server will pick an appropriate default.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         filter: {
           name: "Filter",
           description:
             "Optional. Only include resources that match the filter in the response. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -118,24 +128,34 @@ const keyRingsList: AppBlock = {
               type: "object",
               properties: {
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. The time at which this KeyRing was created. (Format: google-datetime)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. The resource name for the KeyRing in the format `projects/*/locations/*/keyRings/*`.",
                 },
               },
+              description:
+                "A KeyRing is a toplevel logical grouping of CryptoKeys.",
               additionalProperties: true,
             },
+            description: "The list of KeyRings.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A token to retrieve next page of results. Pass this value in ListKeyRingsRequest.page_token to retrieve the next page of results.",
           },
           totalSize: {
-            type: "number",
+            type: "integer",
+            description:
+              "The total number of KeyRings that matched the query. This field is not populated if ListKeyRingsRequest.filter is applied. (Format: int32)",
           },
         },
+        description: "Response message for KeyManagementService.ListKeyRings.",
         additionalProperties: true,
       },
     },

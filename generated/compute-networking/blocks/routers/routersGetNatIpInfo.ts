@@ -12,20 +12,26 @@ const routersGetNatIpInfo: AppBlock = {
           name: "Router",
           description:
             "Name of the Router resource to query for Nat IP information. The name\nshould conform to RFC1035.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         natName: {
           name: "NAT Name",
           description:
             "Name of the nat service to filter the NAT IP information.\nIf it is omitted, all nats for this router will be returned.\nName should conform to RFC1035.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -104,16 +110,45 @@ const routersGetNatIpInfo: AppBlock = {
               type: "object",
               properties: {
                 natName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Name of the NAT config which the NAT IP belongs to.",
                 },
                 natIpInfoMappings: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      natIp: {
+                        type: "string",
+                        description:
+                          "NAT IP address. For example: 203.0.113.11.",
+                      },
+                      usage: {
+                        type: "string",
+                        enum: ["IN_USE", "UNUSED"],
+                        description:
+                          "Specifies whether NAT IP is currently serving at least one endpoint or\nnot.",
+                      },
+                      mode: {
+                        type: "string",
+                        enum: ["AUTO", "MANUAL"],
+                        description:
+                          "Specifies whether NAT IP is auto or manual.",
+                      },
+                    },
+                    description: "Contains information of a NAT IP.",
+                    additionalProperties: true,
+                  },
+                  description:
+                    "A list of all NAT IPs assigned to this NAT config.",
                 },
               },
+              description:
+                "Contains NAT IP information of a NAT config (i.e. usage status, mode).",
               additionalProperties: true,
             },
+            description: "[Output Only] A list of NAT IP information.",
           },
         },
         additionalProperties: true,

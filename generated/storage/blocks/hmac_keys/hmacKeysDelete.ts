@@ -11,13 +11,17 @@ const hmacKeysDelete: AppBlock = {
         accessId: {
           name: "Access ID",
           description: "Name of the HMAC key to be deleted.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description: "The project to be billed for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

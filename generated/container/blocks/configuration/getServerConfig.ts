@@ -12,7 +12,9 @@ const getServerConfig: AppBlock = {
           name: "Name",
           description:
             "The name (project and location) of the server config to get, specified in the format `projects/*/locations/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,15 +88,19 @@ const getServerConfig: AppBlock = {
             items: {
               type: "string",
             },
+            description: "List of valid master versions, in descending order.",
           },
           validImageTypes: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "List of valid image types.",
           },
           defaultClusterVersion: {
             type: "string",
+            description:
+              "Version of Kubernetes the service deploys by default.",
           },
           channels: {
             type: "array",
@@ -102,35 +108,55 @@ const getServerConfig: AppBlock = {
               type: "object",
               properties: {
                 channel: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "UNSPECIFIED",
+                    "RAPID",
+                    "REGULAR",
+                    "STABLE",
+                    "EXTENDED",
+                  ],
+                  description:
+                    "The release channel this configuration applies to.",
                 },
                 validVersions: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description: "List of valid versions for the channel.",
                 },
                 defaultVersion: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The default version for newly created clusters on the channel.",
                 },
                 upgradeTargetVersion: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The auto upgrade target version for clusters on the channel.",
                 },
               },
+              description:
+                "ReleaseChannelConfig exposes configuration for a release channel.",
               additionalProperties: true,
             },
+            description: "List of release channel configurations.",
           },
           defaultImageType: {
             type: "string",
+            description: "Default image type.",
           },
           validNodeVersions: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "List of valid node upgrade target versions, in descending order.",
           },
         },
+        description: "Kubernetes Engine service configuration.",
         additionalProperties: true,
       },
     },

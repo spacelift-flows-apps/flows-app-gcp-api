@@ -12,35 +12,45 @@ const list: AppBlock = {
           name: "Name",
           description:
             "The resource that owns the locations collection, if applicable.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         extraLocationTypes: {
           name: "Extra Location Types",
           description:
             "Optional. Unless explicitly documented otherwise, don't use this unsupported field which is primarily intended for internal usage.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "The maximum number of results to return. If not set, the service selects a default.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         filter: {
           name: "Filter",
           description:
             'A filter to narrow down results to a preferred subset. The filtering language accepts strings like `"displayName=tokyo"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -115,33 +125,48 @@ const list: AppBlock = {
               type: "object",
               properties: {
                 displayName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    'The friendly name for this location, typically a nearby city name. For example, "Tokyo".',
                 },
                 metadata: {
                   type: "object",
                   additionalProperties: true,
+                  description:
+                    "Service-specific metadata. For example the available capacity at the given location.",
                 },
                 locationId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    'The canonical id for this location. For example: `"us-east1"`.',
                 },
                 labels: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    'Cross-service attributes for the location. For example {"cloud.googleapis.com/region": "us-east1"}',
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    'Resource name for the location, which may vary between implementations. For example: `"projects/example-project/locations/us-east1"`',
                 },
               },
+              description:
+                "A resource that represents a Google Cloud location.",
               additionalProperties: true,
             },
+            description:
+              "A list of locations that matches the specified filter in the request.",
           },
           nextPageToken: {
             type: "string",
+            description: "The standard List next-page token.",
           },
         },
+        description: "The response message for Locations.ListLocations.",
         additionalProperties: true,
       },
     },

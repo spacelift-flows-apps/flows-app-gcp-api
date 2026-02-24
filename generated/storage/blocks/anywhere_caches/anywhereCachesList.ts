@@ -11,21 +11,27 @@ const anywhereCachesList: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the parent bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Maximum number of items to return in a single page of responses. Maximum 1000.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "A previously-returned page token representing part of the larger set of results to view.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -102,9 +108,13 @@ const anywhereCachesList: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For lists of Anywhere Caches, this is always storage#anywhereCaches.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results.",
           },
           items: {
             type: "array",
@@ -112,58 +122,69 @@ const anywhereCachesList: AppBlock = {
               type: "object",
               properties: {
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The kind of item this is. For Anywhere Cache, this is always storage#anywhereCache.",
                 },
                 id: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The ID of the resource, including the project number, bucket name and anywhere cache ID.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The link to this cache instance.",
                 },
                 bucket: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the bucket containing this cache instance.",
                 },
                 anywhereCacheId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The ID of the Anywhere cache instance.",
                 },
                 zone: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The zone in which the cache instance is running. For example, us-central1-a.",
                 },
                 state: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The current state of the cache instance.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The creation time of the cache instance in RFC 3339 format. (Format: date-time)",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The modification time of the cache instance metadata in RFC 3339 format. (Format: date-time)",
                 },
                 ttl: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    'The TTL of all cache entries in whole seconds. e.g., "7200s". (Format: google-duration)',
                 },
                 admissionPolicy: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The cache-level entry admission policy.",
                 },
                 pendingUpdate: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "boolean",
+                  description:
+                    "True if the cache instance has an active Update long-running operation.",
                 },
               },
+              description: "An Anywhere Cache instance.",
               additionalProperties: true,
             },
+            description: "The list of items.",
           },
         },
+        description: "A list of Anywhere Caches.",
         additionalProperties: true,
       },
     },

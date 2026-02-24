@@ -12,27 +12,36 @@ const schemasListRevisions: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the schema to list revisions for.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         view: {
           name: "View",
           description:
-            "The set of Schema fields to return in the response. If not set, returns Schemas with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all fields. Valid values: SCHEMA_VIEW_UNSPECIFIED, BASIC, FULL",
-          type: "string",
+            "The set of Schema fields to return in the response. If not set, returns Schemas with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all fields.",
+          type: {
+            type: "string",
+            enum: ["SCHEMA_VIEW_UNSPECIFIED", "BASIC", "FULL"],
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "The page token, received from a previous ListSchemaRevisions call. Provide this to retrieve the subsequent page.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description: "The maximum number of revisions to return per page.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -106,6 +115,8 @@ const schemasListRevisions: AppBlock = {
         properties: {
           nextPageToken: {
             type: "string",
+            description:
+              "A token that can be sent as `page_token` to retrieve the next page. If this field is empty, there are no subsequent pages.",
           },
           schemas: {
             type: "array",
@@ -113,30 +124,38 @@ const schemasListRevisions: AppBlock = {
               type: "object",
               properties: {
                 definition: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
                 },
                 revisionCreateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. The timestamp that the revision was created. (Format: google-datetime)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
                 },
                 revisionId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Immutable. The revision ID of the schema.",
                 },
                 type: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+                  description: "The type of the schema definition.",
                 },
               },
+              description: "A schema resource.",
               additionalProperties: true,
             },
+            description: "The revisions of the schema.",
           },
         },
+        description: "Response for the `ListSchemaRevisions` method.",
         additionalProperties: true,
       },
     },

@@ -12,21 +12,27 @@ const tagValuesList: AppBlock = {
           name: "Parent",
           description:
             "Required. Resource name for the parent of the TagValues to be listed, in the format `tagKeys/123` or `tagValues/123`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Optional. A pagination token returned from a previous call to `ListTagValues` that indicates where this listing should continue from.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of TagValues to return in the response. The server allows a maximum of 300 TagValues to return. If unspecified, the server will use 100 as the default.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -104,45 +110,60 @@ const tagValuesList: AppBlock = {
               type: "object",
               properties: {
                 shortName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. Immutable. User-assigned short name for TagValue. The short name should be unique for TagValues within the same parent TagKey. The short name must be 256 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Update time. (Format: google-datetime)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Immutable. Resource name for TagValue in the format `tagValues/456`.",
                 },
                 parent: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Immutable. The resource name of the new TagValue's parent TagKey. Must be of the form `tagKeys/{tag_key_id}`.",
                 },
                 namespacedName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`.",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Optional. Entity tag which users can pass to prevent race conditions. This field is always set in server responses. See UpdateTagValueRequest for details.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Creation time. (Format: google-datetime)",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Optional. User-assigned description of the TagValue. Must not exceed 256 characters. Read-write.",
                 },
               },
+              description:
+                "A TagValue is a child of a particular TagKey. This is used to group cloud resources for the purpose of controlling them using policies.",
               additionalProperties: true,
             },
+            description:
+              "A possibly paginated list of TagValues that are direct descendants of the specified parent TagKey.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A pagination token returned from a previous call to `ListTagValues` that indicates from where listing should continue.",
           },
         },
+        description: "The ListTagValues response.",
         additionalProperties: true,
       },
     },

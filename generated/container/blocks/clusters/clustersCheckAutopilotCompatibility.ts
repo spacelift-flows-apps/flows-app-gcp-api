@@ -12,7 +12,9 @@ const clustersCheckAutopilotCompatibility: AppBlock = {
           name: "Name",
           description:
             "The name (project, location, cluster) of the cluster to retrieve. Specified in the format `projects/*/locations/*/clusters/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,6 +85,7 @@ const clustersCheckAutopilotCompatibility: AppBlock = {
         properties: {
           summary: {
             type: "string",
+            description: "The summary of the autopilot compatibility response.",
           },
           issues: {
             type: "array",
@@ -90,34 +93,51 @@ const clustersCheckAutopilotCompatibility: AppBlock = {
               type: "object",
               properties: {
                 lastObservation: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The last time when this issue was observed. (Format: google-datetime)",
                 },
                 incompatibilityType: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "UNSPECIFIED",
+                    "INCOMPATIBILITY",
+                    "ADDITIONAL_CONFIG_REQUIRED",
+                    "PASSED_WITH_OPTIONAL_CONFIG",
+                  ],
+                  description: "The incompatibility type of this issue.",
                 },
                 subjects: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "The name of the resources which are subject to this issue.",
                 },
                 documentationUrl: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "A URL to a public documentation, which addresses resolving this issue.",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The description of the issue.",
                 },
                 constraintType: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The constraint type of the issue.",
                 },
               },
+              description:
+                "AutopilotCompatibilityIssue contains information about a specific compatibility issue with Autopilot mode.",
               additionalProperties: true,
             },
+            description: "The list of issues for the given operation.",
           },
         },
+        description:
+          "CheckAutopilotCompatibilityResponse has a list of compatibility issues.",
         additionalProperties: true,
       },
     },

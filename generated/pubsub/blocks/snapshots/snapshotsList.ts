@@ -12,20 +12,26 @@ const snapshotsList: AppBlock = {
           name: "Topic",
           description:
             "Required. The name of the topic that snapshots are attached to. Format is `projects/{project}/topics/{topic}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Optional. The value returned by the last `ListTopicSnapshotsResponse`; indicates that this is a continuation of a prior `ListTopicSnapshots` call, and that the system should return the next page of data.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description: "Optional. Maximum number of snapshot names to return.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -99,14 +105,19 @@ const snapshotsList: AppBlock = {
         properties: {
           nextPageToken: {
             type: "string",
+            description:
+              "Optional. If not empty, indicates that there may be more snapshots that match the request; this value should be passed in a new `ListTopicSnapshotsRequest` to get more snapshots.",
           },
           snapshots: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "Optional. The names of the snapshots that match the request.",
           },
         },
+        description: "Response for the `ListTopicSnapshots` method.",
         additionalProperties: true,
       },
     },

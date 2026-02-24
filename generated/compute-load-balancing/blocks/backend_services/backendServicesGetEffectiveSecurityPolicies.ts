@@ -11,7 +11,9 @@ const backendServicesGetEffectiveSecurityPolicies: AppBlock = {
         backendService: {
           name: "Backend Service",
           description: "Name of the Backend Service for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },

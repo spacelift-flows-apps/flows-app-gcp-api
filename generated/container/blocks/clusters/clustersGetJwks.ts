@@ -12,7 +12,9 @@ const clustersGetJwks: AppBlock = {
           name: "Parent",
           description:
             "The cluster (project, location, cluster name) to get keys for. Specified in the format `projects/*/locations/*/clusters/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,14 +88,20 @@ const clustersGetJwks: AppBlock = {
             properties: {
               expires: {
                 type: "string",
+                description:
+                  "14.21 response cache expires, in RFC 1123 date format",
               },
               directive: {
                 type: "string",
+                description: "14.9 request and response directives",
               },
               age: {
                 type: "string",
+                description:
+                  "14.6 response cache age, in seconds since the response is generated (Format: int64)",
               },
             },
+            description: "RFC-2616: cache control support",
             additionalProperties: true,
           },
           keys: {
@@ -102,46 +110,51 @@ const clustersGetJwks: AppBlock = {
               type: "object",
               properties: {
                 crv: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Used for ECDSA keys.",
                 },
                 y: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Used for ECDSA keys.",
                 },
                 e: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Used for RSA keys.",
                 },
                 kty: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Key Type.",
                 },
                 alg: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Algorithm.",
                 },
                 n: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Used for RSA keys.",
                 },
                 kid: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Key ID.",
                 },
                 use: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Permitted uses for the public keys.",
                 },
                 x: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Used for ECDSA keys.",
                 },
               },
+              description: "Jwk is a JSON Web Key as specified in RFC 7517",
               additionalProperties: true,
             },
+            description:
+              "The public component of the keys used by the cluster to sign token requests.",
           },
         },
+        description:
+          "GetJSONWebKeysResponse is a valid JSON Web Key Set as specified in rfc 7517",
         additionalProperties: true,
       },
     },

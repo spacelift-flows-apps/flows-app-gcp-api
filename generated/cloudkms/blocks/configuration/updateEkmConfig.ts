@@ -10,21 +10,30 @@ const updateEkmConfig: AppBlock = {
       config: {
         name: {
           name: "Name",
-          description: "Output only.",
-          type: "string",
-          required: false,
+          description:
+            "Output only. The resource name for the EkmConfig in the format `projects/*/locations/*/ekmConfig`.",
+          type: {
+            type: "string",
+          },
+          required: true,
         },
         updateMask: {
           name: "Update Mask",
           description:
             "Required. List of fields to be updated in this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         defaultEkmConnection: {
           name: "Default EKM Connection",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. Resource name of the default EkmConnection. Setting this field to the empty string removes the default.",
+          },
           required: false,
         },
       },
@@ -80,8 +89,6 @@ const updateEkmConfig: AppBlock = {
         // Assemble request body from individual inputs
         const requestBody: Record<string, any> = {};
 
-        if (input.event.inputConfig.name !== undefined)
-          requestBody.name = input.event.inputConfig.name;
         if (input.event.inputConfig.defaultEkmConnection !== undefined)
           requestBody.defaultEkmConnection =
             input.event.inputConfig.defaultEkmConnection;
@@ -111,11 +118,17 @@ const updateEkmConfig: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Output only. The resource name for the EkmConfig in the format `projects/*/locations/*/ekmConfig`.",
           },
           defaultEkmConnection: {
             type: "string",
+            description:
+              "Optional. Resource name of the default EkmConnection. Setting this field to the empty string removes the default.",
           },
         },
+        description:
+          "An EkmConfig is a singleton resource that represents configuration parameters that apply to all CryptoKeys and CryptoKeyVersions with a ProtectionLevel of EXTERNAL_VPC in a given project and location.",
         additionalProperties: true,
       },
     },

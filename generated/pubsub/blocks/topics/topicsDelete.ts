@@ -12,7 +12,9 @@ const topicsDelete: AppBlock = {
           name: "Topic",
           description:
             "Required. Name of the topic to delete. Format is `projects/{project}/topics/{topic}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -84,6 +86,8 @@ const topicsDelete: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

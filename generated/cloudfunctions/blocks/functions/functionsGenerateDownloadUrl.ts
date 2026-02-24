@@ -12,7 +12,9 @@ const functionsGenerateDownloadUrl: AppBlock = {
           name: "Name",
           description:
             "Required. The name of function for which source code Google Cloud Storage signed URL should be generated.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,8 +85,11 @@ const functionsGenerateDownloadUrl: AppBlock = {
         properties: {
           downloadUrl: {
             type: "string",
+            description:
+              "The generated Google Cloud Storage signed URL that should be used for function source code download.",
           },
         },
+        description: "Response of `GenerateDownloadUrl` method.",
         additionalProperties: true,
       },
     },

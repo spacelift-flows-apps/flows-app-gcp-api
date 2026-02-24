@@ -11,70 +11,106 @@ const defaultObjectAccessControlsInsert: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "The name of the bucket.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The name of the bucket.",
+          },
           required: false,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         domain: {
           name: "Domain",
           description: "The domain associated with the entity, if any.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The domain associated with the entity, if any.",
+          },
           required: false,
         },
         email: {
           name: "Email",
           description: "The email address associated with the entity, if any.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The email address associated with the entity, if any.",
+          },
           required: false,
         },
         entity: {
           name: "Entity",
           description:
             "The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The entity holding the permission, in one of the following forms: \n- user-userId \n- user-email \n- group-groupId \n- group-email \n- domain-domain \n- project-team-projectId \n- allUsers \n- allAuthenticatedUsers Examples: \n- The user liz@example.com would be user-liz@example.com. \n- The group example@googlegroups.com would be group-example@googlegroups.com. \n- To refer to all members of the Google Apps for Business domain example.com, the entity would be domain-example.com.",
+          },
           required: false,
         },
         entityId: {
           name: "Entity ID",
           description: "The ID for the entity, if any.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The ID for the entity, if any.",
+          },
           required: false,
         },
         etag: {
           name: "Etag",
           description: "HTTP 1.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "HTTP 1.1 Entity tag for the access-control entry.",
+          },
           required: false,
         },
         generation: {
           name: "Generation",
           description:
             "The content generation of the object, if applied to an object.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The content generation of the object, if applied to an object. (Format: int64)",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description: "The ID of the access-control entry.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The ID of the access-control entry.",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description: "The kind of item this is.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The kind of item this is. For object access control entries, this is always storage#objectAccessControl.",
+          },
           required: false,
         },
         object: {
           name: "Object",
           description: "The name of the object, if applied to an object.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The name of the object, if applied to an object.",
+          },
           required: false,
         },
         projectTeam: {
@@ -85,11 +121,14 @@ const defaultObjectAccessControlsInsert: AppBlock = {
             properties: {
               projectNumber: {
                 type: "string",
+                description: "The project number.",
               },
               team: {
                 type: "string",
+                description: "The team.",
               },
             },
+            description: "The project team associated with the entity, if any.",
             additionalProperties: true,
           },
           required: false,
@@ -97,13 +136,19 @@ const defaultObjectAccessControlsInsert: AppBlock = {
         role: {
           name: "Role",
           description: "The access permission for the entity.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The access permission for the entity.",
+          },
           required: false,
         },
         selfLink: {
           name: "Self Link",
           description: "The link to this access-control entry.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The link to this access-control entry.",
+          },
           required: false,
         },
       },
@@ -211,53 +256,73 @@ const defaultObjectAccessControlsInsert: AppBlock = {
         properties: {
           bucket: {
             type: "string",
+            description: "The name of the bucket.",
           },
           domain: {
             type: "string",
+            description: "The domain associated with the entity, if any.",
           },
           email: {
             type: "string",
+            description:
+              "The email address associated with the entity, if any.",
           },
           entity: {
             type: "string",
+            description:
+              "The entity holding the permission, in one of the following forms: \n- user-userId \n- user-email \n- group-groupId \n- group-email \n- domain-domain \n- project-team-projectId \n- allUsers \n- allAuthenticatedUsers Examples: \n- The user liz@example.com would be user-liz@example.com. \n- The group example@googlegroups.com would be group-example@googlegroups.com. \n- To refer to all members of the Google Apps for Business domain example.com, the entity would be domain-example.com.",
           },
           entityId: {
             type: "string",
+            description: "The ID for the entity, if any.",
           },
           etag: {
             type: "string",
+            description: "HTTP 1.1 Entity tag for the access-control entry.",
           },
           generation: {
             type: "string",
+            description:
+              "The content generation of the object, if applied to an object. (Format: int64)",
           },
           id: {
             type: "string",
+            description: "The ID of the access-control entry.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For object access control entries, this is always storage#objectAccessControl.",
           },
           object: {
             type: "string",
+            description: "The name of the object, if applied to an object.",
           },
           projectTeam: {
             type: "object",
             properties: {
               projectNumber: {
                 type: "string",
+                description: "The project number.",
               },
               team: {
                 type: "string",
+                description: "The team.",
               },
             },
+            description: "The project team associated with the entity, if any.",
             additionalProperties: true,
           },
           role: {
             type: "string",
+            description: "The access permission for the entity.",
           },
           selfLink: {
             type: "string",
+            description: "The link to this access-control entry.",
           },
         },
+        description: "An access-control entry.",
         additionalProperties: true,
       },
     },

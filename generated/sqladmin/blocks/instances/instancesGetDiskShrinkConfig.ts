@@ -12,7 +12,9 @@ const instancesGetDiskShrinkConfig: AppBlock = {
           name: "Instance",
           description:
             "Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,14 +88,19 @@ const instancesGetDiskShrinkConfig: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#getDiskShrinkConfig`.",
           },
           minimalTargetSizeGb: {
             type: "string",
+            description:
+              "The minimum size to which a disk can be shrunk in GigaBytes. (Format: int64)",
           },
           message: {
             type: "string",
+            description: "Additional message to customers.",
           },
         },
+        description: "Instance get disk shrink config response.",
         additionalProperties: true,
       },
     },

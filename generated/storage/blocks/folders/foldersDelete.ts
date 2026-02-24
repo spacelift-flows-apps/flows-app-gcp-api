@@ -11,27 +11,35 @@ const foldersDelete: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket in which the folder resides.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         folder: {
           name: "Folder",
           description: "Name of a folder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "If set, only deletes the folder if its metageneration matches this value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "If set, only deletes the folder if its metageneration does not match this value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

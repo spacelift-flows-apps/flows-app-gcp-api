@@ -11,14 +11,18 @@ const regionSslPoliciesGet: AppBlock = {
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         sslPolicy: {
           name: "SSL Policy",
           description:
             "Name of the SSL policy to update. The name must be 1-63 characters long,\nand comply with RFC1035.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -96,15 +100,23 @@ const regionSslPoliciesGet: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "A list of features enabled when the selected profile is CUSTOM. The\n method returns the set of features that can be\nspecified in this list. This field must be empty if the profile is notCUSTOM.",
           },
           creationTimestamp: {
             type: "string",
+            description:
+              "[Output Only] Creation timestamp inRFC3339\ntext format.",
           },
           name: {
             type: "string",
+            description:
+              "Name of the resource. The name must be 1-63 characters long, and comply\nwith RFC1035. Specifically, the name must be 1-63 characters\nlong and match the regular expression\n`[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character\nmust be a lowercase letter, and all following characters must be a dash,\nlowercase letter, or digit, except the last character, which cannot be a\ndash.",
           },
           description: {
             type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you\ncreate the resource.",
           },
           warnings: {
             type: "array",
@@ -113,6 +125,8 @@ const regionSslPoliciesGet: AppBlock = {
               properties: {
                 message: {
                   type: "string",
+                  description:
+                    "[Output Only] A human-readable description of the warning code.",
                 },
                 code: {
                   type: "string",
@@ -147,39 +161,68 @@ const regionSslPoliciesGet: AppBlock = {
                     "UNDECLARED_PROPERTIES",
                     "UNREACHABLE",
                   ],
+                  description:
+                    "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
                 },
                 data: {
                   type: "array",
                   items: {
                     type: "object",
+                    properties: {
+                      value: {
+                        type: "string",
+                        description:
+                          "[Output Only] A warning data value corresponding to the key.",
+                      },
+                      key: {
+                        type: "string",
+                        description:
+                          "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
+                      },
+                    },
                     additionalProperties: true,
                   },
+                  description:
+                    '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
                 },
               },
               additionalProperties: true,
             },
+            description:
+              "[Output Only] If potential misconfigurations are detected for this\nSSL policy, this field will be populated with warning messages.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output only] Type of the resource. Alwayscompute#sslPolicyfor SSL policies.",
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
           },
           region: {
             type: "string",
+            description:
+              "[Output Only] URL of the region where the regional SSL policy\nresides. This field is not applicable to global SSL policies.",
           },
           minTlsVersion: {
             type: "string",
             enum: ["TLS_1_0", "TLS_1_1", "TLS_1_2", "TLS_1_3"],
+            description:
+              "The minimum version of SSL protocol that can be used by the clients to\nestablish a connection with the load balancer. This can be one ofTLS_1_0, TLS_1_1, TLS_1_2,TLS_1_3. When set to TLS_1_3, the profile field\nmust be set to RESTRICTED.",
           },
           fingerprint: {
             type: "string",
+            description:
+              "Fingerprint of this resource. A hash of the contents stored in this object.\nThis field is used in optimistic locking. This field will be ignored when\ninserting a SslPolicy. An up-to-date fingerprint must be\nprovided in order to update the SslPolicy, otherwise the\nrequest will fail with error 412 conditionNotMet.\n\nTo see the latest fingerprint, make a get() request to\nretrieve an SslPolicy. (Format: byte)",
           },
           enabledFeatures: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "[Output Only] The list of features enabled in the SSL policy.",
           },
           profile: {
             type: "string",
@@ -190,11 +233,17 @@ const regionSslPoliciesGet: AppBlock = {
               "MODERN",
               "RESTRICTED",
             ],
+            description:
+              "Profile specifies the set of SSL features that can be used by the load\nbalancer when negotiating SSL with clients. This can be one ofCOMPATIBLE, MODERN, RESTRICTED, orCUSTOM. If using CUSTOM, the set of SSL features\nto enable must be specified in the customFeatures field.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
           },
         },
+        description:
+          "Represents an SSL Policy resource.\n\nUse SSL policies to control SSL features, such as versions and cipher\nsuites, that are offered by Application Load Balancers and proxy Network Load\nBalancers. For more information, read \nSSL policies overview.",
         additionalProperties: true,
       },
     },

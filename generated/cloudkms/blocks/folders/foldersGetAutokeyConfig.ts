@@ -12,7 +12,9 @@ const foldersGetAutokeyConfig: AppBlock = {
           name: "Name",
           description:
             "Required. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,9 +88,13 @@ const foldersGetAutokeyConfig: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` `projects/{PROJECT_NUMBER}/autokeyConfig`.",
           },
           keyProject: {
             type: "string",
+            description:
+              "Optional. Name of the key project, e.g. `projects/{PROJECT_ID}` or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new CryptoKey when a KeyHandle is created. On UpdateAutokeyConfig, the caller will require `cloudkms.cryptoKeys.setIamPolicy` permission on this key project. Once configured, for Cloud KMS Autokey to function properly, this key project must have the Cloud KMS API activated and the Cloud KMS Service Agent for this key project must be granted the `cloudkms.admin` role (or pertinent permissions). A request with an empty key project field will clear the configuration.",
           },
           state: {
             type: "string",
@@ -98,11 +104,15 @@ const foldersGetAutokeyConfig: AppBlock = {
               "KEY_PROJECT_DELETED",
               "UNINITIALIZED",
             ],
+            description: "Output only. The state for the AutokeyConfig.",
           },
           etag: {
             type: "string",
+            description:
+              "Optional. A checksum computed by the server based on the value of other fields. This may be sent on update requests to ensure that the client has an up-to-date value before proceeding. The request will be rejected with an ABORTED error on a mismatched etag.",
           },
         },
+        description: "Cloud KMS Autokey configuration for a folder or project.",
         additionalProperties: true,
       },
     },

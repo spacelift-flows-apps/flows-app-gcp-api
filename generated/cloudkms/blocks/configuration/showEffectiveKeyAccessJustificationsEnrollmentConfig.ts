@@ -81,11 +81,16 @@ const showEffectiveKeyAccessJustificationsEnrollmentConfig: AppBlock = {
             properties: {
               policyEnforcement: {
                 type: "boolean",
+                description:
+                  "Whether the project is enrolled in KAJ policy enforcement.",
               },
               auditLogging: {
                 type: "boolean",
+                description: "Whether the project has KAJ logging enabled.",
               },
             },
+            description:
+              "The configuration of a protection level for a project's Key Access Justifications enrollment.",
             additionalProperties: true,
           },
           hardwareConfig: {
@@ -93,11 +98,16 @@ const showEffectiveKeyAccessJustificationsEnrollmentConfig: AppBlock = {
             properties: {
               policyEnforcement: {
                 type: "boolean",
+                description:
+                  "Whether the project is enrolled in KAJ policy enforcement.",
               },
               auditLogging: {
                 type: "boolean",
+                description: "Whether the project has KAJ logging enabled.",
               },
             },
+            description:
+              "The configuration of a protection level for a project's Key Access Justifications enrollment.",
             additionalProperties: true,
           },
           softwareConfig: {
@@ -105,14 +115,21 @@ const showEffectiveKeyAccessJustificationsEnrollmentConfig: AppBlock = {
             properties: {
               policyEnforcement: {
                 type: "boolean",
+                description:
+                  "Whether the project is enrolled in KAJ policy enforcement.",
               },
               auditLogging: {
                 type: "boolean",
+                description: "Whether the project has KAJ logging enabled.",
               },
             },
+            description:
+              "The configuration of a protection level for a project's Key Access Justifications enrollment.",
             additionalProperties: true,
           },
         },
+        description:
+          "Response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsEnrollmentConfig",
         additionalProperties: true,
       },
     },

@@ -12,21 +12,27 @@ const tagKeysList: AppBlock = {
           name: "Page Token",
           description:
             "Optional. A pagination token returned from a previous call to `ListTagKey` that indicates where this listing should continue from.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         parent: {
           name: "Parent",
           description:
             "Required. The resource name of the TagKey's parent. Must be of the form `organizations/{org_id}` or `projects/{project_id}` or `projects/{project_number}`",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of TagKeys to return in the response. The server allows a maximum of 300 TagKeys to return. If unspecified, the server will use 100 as the default.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -104,57 +110,82 @@ const tagKeysList: AppBlock = {
               type: "object",
               properties: {
                 parent: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Immutable. The resource name of the TagKey's parent. A TagKey can be parented by an Organization or a Project. For a TagKey parented by an Organization, its parent must be in the form `organizations/{org_id}`. For a TagKey parented by a Project, its parent can be in the form `projects/{project_id}` or `projects/{project_number}`.",
                 },
                 allowedValuesRegex: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Optional. Regular expression constraint for freeform tag values. If present, it implicitly allows freeform values (constrained by the regex).",
                 },
                 namespacedName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Immutable. Namespaced name of the TagKey.",
                 },
                 purpose: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "PURPOSE_UNSPECIFIED",
+                    "GCE_FIREWALL",
+                    "DATA_GOVERNANCE",
+                  ],
+                  description:
+                    "Optional. A purpose denotes that this Tag is intended for use in policies of a specific policy engine, and will involve that policy engine in management operations involving this Tag. A purpose does not grant a policy engine exclusive rights to the Tag, and it may be referenced by other policy engines. A purpose cannot be changed once set.",
                 },
                 shortName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. Immutable. The user friendly name for a TagKey. The short name should be unique for TagKeys within the same tag namespace. The short name must be 1-256 characters, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.",
                 },
                 purposeData: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "Optional. Purpose data corresponds to the policy system that the tag is intended for. See documentation for `Purpose` for formatting of this field. Purpose data cannot be changed once set.",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Optional. User-assigned description of the TagKey. Must not exceed 256 characters. Read-write.",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Update time. (Format: google-datetime)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Immutable. The resource name for a TagKey. Must be in the format `tagKeys/{tag_key_id}`, where `tag_key_id` is the generated numeric id for the TagKey.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Creation time. (Format: google-datetime)",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Optional. Entity tag which users can pass to prevent race conditions. This field is always set in server responses. See UpdateTagKeyRequest for details.",
                 },
               },
+              description: "A TagKey, used to group a set of TagValues.",
               additionalProperties: true,
             },
+            description:
+              "List of TagKeys that live under the specified parent in the request.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A pagination token returned from a previous call to `ListTagKeys` that indicates from where listing should continue.",
           },
         },
+        description: "The ListTagKeys response message.",
         additionalProperties: true,
       },
     },

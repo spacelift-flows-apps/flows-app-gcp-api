@@ -16,30 +16,44 @@ const clustersSetMasterAuth: AppBlock = {
             properties: {
               clientKey: {
                 type: "string",
+                description:
+                  "Output only. Base64-encoded private key used by clients to authenticate to the cluster endpoint.",
               },
               clusterCaCertificate: {
                 type: "string",
+                description:
+                  "Output only. Base64-encoded public certificate that is the root of trust for the cluster.",
               },
               clientCertificateConfig: {
                 type: "object",
                 properties: {
                   issueClientCertificate: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "boolean",
+                    description: "Issue a client certificate.",
                   },
                 },
+                description:
+                  "Configuration for client certificates on the cluster.",
                 additionalProperties: true,
               },
               username: {
                 type: "string",
+                description:
+                  "The username to use for HTTP basic authentication to the master endpoint. For clusters v1.6.0 and later, basic authentication can be disabled by leaving username unspecified (or setting it to the empty string). Warning: basic authentication is deprecated, and will be removed in GKE control plane versions 1.19 and newer. For a list of recommended authentication methods, see: https://cloud.google.com/kubernetes-engine/docs/how-to/api-server-authentication",
               },
               password: {
                 type: "string",
+                description:
+                  "The password to use for HTTP basic authentication to the master endpoint. Because the master endpoint is open to the Internet, you should create a strong password. If a password is provided for cluster creation, username must be non-empty. Warning: basic authentication is deprecated, and will be removed in GKE control plane versions 1.19 and newer. For a list of recommended authentication methods, see: https://cloud.google.com/kubernetes-engine/docs/how-to/api-server-authentication",
               },
               clientCertificate: {
                 type: "string",
+                description:
+                  "Output only. Base64-encoded public certificate used by clients to authenticate to the cluster endpoint. Issued only if client_certificate_config is set.",
               },
             },
+            description:
+              "The authentication information for accessing the master endpoint. Authentication can be done using HTTP basic auth or using client certificates.",
             additionalProperties: true,
           },
           required: false,
@@ -48,13 +62,27 @@ const clustersSetMasterAuth: AppBlock = {
           name: "Name",
           description:
             "The name (project, location, cluster) of the cluster to set auth.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The name (project, location, cluster) of the cluster to set auth. Specified in the format `projects/*/locations/*/clusters/*`.",
+          },
           required: false,
         },
         action: {
           name: "Action",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            enum: [
+              "UNKNOWN",
+              "SET_PASSWORD",
+              "GENERATE_PASSWORD",
+              "SET_USERNAME",
+            ],
+            description:
+              "Required. The exact form of action to be taken on the master auth.",
+          },
           required: false,
         },
       },
@@ -139,6 +167,8 @@ const clustersSetMasterAuth: AppBlock = {
         properties: {
           startTime: {
             type: "string",
+            description:
+              "Output only. The time the operation started, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
           },
           clusterConditions: {
             type: "array",
@@ -146,32 +176,73 @@ const clustersSetMasterAuth: AppBlock = {
               type: "object",
               properties: {
                 message: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Human-friendly representation of the condition",
                 },
                 code: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "UNKNOWN",
+                    "GCE_STOCKOUT",
+                    "GKE_SERVICE_ACCOUNT_DELETED",
+                    "GCE_QUOTA_EXCEEDED",
+                    "SET_BY_OPERATOR",
+                    "CLOUD_KMS_KEY_ERROR",
+                    "CA_EXPIRING",
+                    "NODE_SERVICE_ACCOUNT_MISSING_PERMISSIONS",
+                    "CLOUD_KMS_KEY_DESTROYED",
+                  ],
+                  description:
+                    "Machine-friendly representation of the condition Deprecated. Use canonical_code instead.",
                 },
                 canonicalCode: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "OK",
+                    "CANCELLED",
+                    "UNKNOWN",
+                    "INVALID_ARGUMENT",
+                    "DEADLINE_EXCEEDED",
+                    "NOT_FOUND",
+                    "ALREADY_EXISTS",
+                    "PERMISSION_DENIED",
+                    "UNAUTHENTICATED",
+                    "RESOURCE_EXHAUSTED",
+                    "FAILED_PRECONDITION",
+                    "ABORTED",
+                    "OUT_OF_RANGE",
+                    "UNIMPLEMENTED",
+                    "INTERNAL",
+                    "UNAVAILABLE",
+                    "DATA_LOSS",
+                  ],
+                  description: "Canonical code of the condition.",
                 },
               },
+              description:
+                "StatusCondition describes why a cluster or a node pool has a certain status (e.g., ERROR or DEGRADED).",
               additionalProperties: true,
             },
+            description:
+              "Which conditions caused the current cluster state. Deprecated. Use field error instead.",
           },
           location: {
             type: "string",
+            description:
+              "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) or [region](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) in which the cluster resides.",
           },
           error: {
             type: "object",
             properties: {
               code: {
-                type: "number",
+                type: "integer",
+                description:
+                  "The status code, which should be an enum value of google.rpc.Code. (Format: int32)",
               },
               message: {
                 type: "string",
+                description:
+                  "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
               },
               details: {
                 type: "array",
@@ -179,12 +250,18 @@ const clustersSetMasterAuth: AppBlock = {
                   type: "object",
                   additionalProperties: true,
                 },
+                description:
+                  "A list of messages that carry the error details. There is a common set of message types for APIs to use.",
               },
             },
+            description:
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
             additionalProperties: true,
           },
           name: {
             type: "string",
+            description:
+              "Output only. The server-assigned ID for the operation.",
           },
           progress: {
             type: "object",
@@ -193,11 +270,241 @@ const clustersSetMasterAuth: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    stages: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          stages: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                stages: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      stages: {
+                                        type: "array",
+                                        items: {
+                                          type: "object",
+                                          additionalProperties: true,
+                                        },
+                                        description:
+                                          "Substages of an operation or a stage.",
+                                      },
+                                      name: {
+                                        type: "string",
+                                        description:
+                                          "A non-parameterized string describing an operation stage. Unset for single-stage operations.",
+                                      },
+                                      status: {
+                                        type: "string",
+                                        enum: [
+                                          "STATUS_UNSPECIFIED",
+                                          "PENDING",
+                                          "RUNNING",
+                                          "DONE",
+                                          "ABORTING",
+                                        ],
+                                        description:
+                                          "Status of an operation stage. Unset for single-stage operations.",
+                                      },
+                                      metrics: {
+                                        type: "array",
+                                        items: {
+                                          type: "object",
+                                          additionalProperties: true,
+                                        },
+                                        description:
+                                          'Progress metric bundle, for example: metrics: [{name: "nodes done", int_value: 15}, {name: "nodes total", int_value: 32}] or metrics: [{name: "progress", double_value: 0.56}, {name: "progress scale", double_value: 1.0}]',
+                                      },
+                                    },
+                                    description:
+                                      "Information about operation (or operation stage) progress.",
+                                    additionalProperties: true,
+                                  },
+                                  description:
+                                    "Substages of an operation or a stage.",
+                                },
+                                name: {
+                                  type: "string",
+                                  description:
+                                    "A non-parameterized string describing an operation stage. Unset for single-stage operations.",
+                                },
+                                status: {
+                                  type: "string",
+                                  enum: [
+                                    "STATUS_UNSPECIFIED",
+                                    "PENDING",
+                                    "RUNNING",
+                                    "DONE",
+                                    "ABORTING",
+                                  ],
+                                  description:
+                                    "Status of an operation stage. Unset for single-stage operations.",
+                                },
+                                metrics: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      name: {
+                                        type: "string",
+                                        description:
+                                          'Required. Metric name, e.g., "nodes total", "percent done".',
+                                      },
+                                      stringValue: {
+                                        type: "string",
+                                        description:
+                                          "For metrics with custom values (ratios, visual progress, etc.).",
+                                      },
+                                      intValue: {
+                                        type: "string",
+                                        description:
+                                          "For metrics with integer value. (Format: int64)",
+                                      },
+                                      doubleValue: {
+                                        type: "number",
+                                        description:
+                                          "For metrics with floating point value. (Format: double)",
+                                      },
+                                    },
+                                    description:
+                                      "Progress metric is (string, int|float|string) pair.",
+                                    additionalProperties: true,
+                                  },
+                                  description:
+                                    'Progress metric bundle, for example: metrics: [{name: "nodes done", int_value: 15}, {name: "nodes total", int_value: 32}] or metrics: [{name: "progress", double_value: 0.56}, {name: "progress scale", double_value: 1.0}]',
+                                },
+                              },
+                              description:
+                                "Information about operation (or operation stage) progress.",
+                              additionalProperties: true,
+                            },
+                            description:
+                              "Substages of an operation or a stage.",
+                          },
+                          name: {
+                            type: "string",
+                            description:
+                              "A non-parameterized string describing an operation stage. Unset for single-stage operations.",
+                          },
+                          status: {
+                            type: "string",
+                            enum: [
+                              "STATUS_UNSPECIFIED",
+                              "PENDING",
+                              "RUNNING",
+                              "DONE",
+                              "ABORTING",
+                            ],
+                            description:
+                              "Status of an operation stage. Unset for single-stage operations.",
+                          },
+                          metrics: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                name: {
+                                  type: "string",
+                                  description:
+                                    'Required. Metric name, e.g., "nodes total", "percent done".',
+                                },
+                                stringValue: {
+                                  type: "string",
+                                  description:
+                                    "For metrics with custom values (ratios, visual progress, etc.).",
+                                },
+                                intValue: {
+                                  type: "string",
+                                  description:
+                                    "For metrics with integer value. (Format: int64)",
+                                },
+                                doubleValue: {
+                                  type: "number",
+                                  description:
+                                    "For metrics with floating point value. (Format: double)",
+                                },
+                              },
+                              description:
+                                "Progress metric is (string, int|float|string) pair.",
+                              additionalProperties: true,
+                            },
+                            description:
+                              'Progress metric bundle, for example: metrics: [{name: "nodes done", int_value: 15}, {name: "nodes total", int_value: 32}] or metrics: [{name: "progress", double_value: 0.56}, {name: "progress scale", double_value: 1.0}]',
+                          },
+                        },
+                        description:
+                          "Information about operation (or operation stage) progress.",
+                        additionalProperties: true,
+                      },
+                      description: "Substages of an operation or a stage.",
+                    },
+                    name: {
+                      type: "string",
+                      description:
+                        "A non-parameterized string describing an operation stage. Unset for single-stage operations.",
+                    },
+                    status: {
+                      type: "string",
+                      enum: [
+                        "STATUS_UNSPECIFIED",
+                        "PENDING",
+                        "RUNNING",
+                        "DONE",
+                        "ABORTING",
+                      ],
+                      description:
+                        "Status of an operation stage. Unset for single-stage operations.",
+                    },
+                    metrics: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          name: {
+                            type: "string",
+                            description:
+                              'Required. Metric name, e.g., "nodes total", "percent done".',
+                          },
+                          stringValue: {
+                            type: "string",
+                            description:
+                              "For metrics with custom values (ratios, visual progress, etc.).",
+                          },
+                          intValue: {
+                            type: "string",
+                            description:
+                              "For metrics with integer value. (Format: int64)",
+                          },
+                          doubleValue: {
+                            type: "number",
+                            description:
+                              "For metrics with floating point value. (Format: double)",
+                          },
+                        },
+                        description:
+                          "Progress metric is (string, int|float|string) pair.",
+                        additionalProperties: true,
+                      },
+                      description:
+                        'Progress metric bundle, for example: metrics: [{name: "nodes done", int_value: 15}, {name: "nodes total", int_value: 32}] or metrics: [{name: "progress", double_value: 0.56}, {name: "progress scale", double_value: 1.0}]',
+                    },
+                  },
+                  description:
+                    "Information about operation (or operation stage) progress.",
                   additionalProperties: true,
                 },
+                description: "Substages of an operation or a stage.",
               },
               name: {
                 type: "string",
+                description:
+                  "A non-parameterized string describing an operation stage. Unset for single-stage operations.",
               },
               status: {
                 type: "string",
@@ -208,19 +515,51 @@ const clustersSetMasterAuth: AppBlock = {
                   "DONE",
                   "ABORTING",
                 ],
+                description:
+                  "Status of an operation stage. Unset for single-stage operations.",
               },
               metrics: {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    name: {
+                      type: "string",
+                      description:
+                        'Required. Metric name, e.g., "nodes total", "percent done".',
+                    },
+                    stringValue: {
+                      type: "string",
+                      description:
+                        "For metrics with custom values (ratios, visual progress, etc.).",
+                    },
+                    intValue: {
+                      type: "string",
+                      description:
+                        "For metrics with integer value. (Format: int64)",
+                    },
+                    doubleValue: {
+                      type: "number",
+                      description:
+                        "For metrics with floating point value. (Format: double)",
+                    },
+                  },
+                  description:
+                    "Progress metric is (string, int|float|string) pair.",
                   additionalProperties: true,
                 },
+                description:
+                  'Progress metric bundle, for example: metrics: [{name: "nodes done", int_value: 15}, {name: "nodes total", int_value: 32}] or metrics: [{name: "progress", double_value: 0.56}, {name: "progress scale", double_value: 1.0}]',
               },
             },
+            description:
+              "Information about operation (or operation stage) progress.",
             additionalProperties: true,
           },
           statusMessage: {
             type: "string",
+            description:
+              "Output only. If an error has occurred, a textual description of the error. Deprecated. Use the field error instead.",
           },
           nodepoolConditions: {
             type: "array",
@@ -228,23 +567,60 @@ const clustersSetMasterAuth: AppBlock = {
               type: "object",
               properties: {
                 message: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Human-friendly representation of the condition",
                 },
                 code: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "UNKNOWN",
+                    "GCE_STOCKOUT",
+                    "GKE_SERVICE_ACCOUNT_DELETED",
+                    "GCE_QUOTA_EXCEEDED",
+                    "SET_BY_OPERATOR",
+                    "CLOUD_KMS_KEY_ERROR",
+                    "CA_EXPIRING",
+                    "NODE_SERVICE_ACCOUNT_MISSING_PERMISSIONS",
+                    "CLOUD_KMS_KEY_DESTROYED",
+                  ],
+                  description:
+                    "Machine-friendly representation of the condition Deprecated. Use canonical_code instead.",
                 },
                 canonicalCode: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "OK",
+                    "CANCELLED",
+                    "UNKNOWN",
+                    "INVALID_ARGUMENT",
+                    "DEADLINE_EXCEEDED",
+                    "NOT_FOUND",
+                    "ALREADY_EXISTS",
+                    "PERMISSION_DENIED",
+                    "UNAUTHENTICATED",
+                    "RESOURCE_EXHAUSTED",
+                    "FAILED_PRECONDITION",
+                    "ABORTED",
+                    "OUT_OF_RANGE",
+                    "UNIMPLEMENTED",
+                    "INTERNAL",
+                    "UNAVAILABLE",
+                    "DATA_LOSS",
+                  ],
+                  description: "Canonical code of the condition.",
                 },
               },
+              description:
+                "StatusCondition describes why a cluster or a node pool has a certain status (e.g., ERROR or DEGRADED).",
               additionalProperties: true,
             },
+            description:
+              "Which conditions caused the current node pool state. Deprecated. Use field error instead.",
           },
           selfLink: {
             type: "string",
+            description:
+              "Output only. Server-defined URI for the operation. Example: `https://container.googleapis.com/v1alpha1/projects/123/locations/us-central1/operations/operation-123`.",
           },
           status: {
             type: "string",
@@ -255,12 +631,17 @@ const clustersSetMasterAuth: AppBlock = {
               "DONE",
               "ABORTING",
             ],
+            description: "Output only. The current status of the operation.",
           },
           zone: {
             type: "string",
+            description:
+              "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/zones#available) in which the operation is taking place. This field is deprecated, use location instead.",
           },
           endTime: {
             type: "string",
+            description:
+              "Output only. The time the operation completed, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
           },
           operationType: {
             type: "string",
@@ -285,14 +666,21 @@ const clustersSetMasterAuth: AppBlock = {
               "RESIZE_CLUSTER",
               "FLEET_FEATURE_UPGRADE",
             ],
+            description: "Output only. The operation type.",
           },
           targetLink: {
             type: "string",
+            description:
+              "Output only. Server-defined URI for the target of the operation. The format of this is a URI to the resource being modified (such as a cluster, node pool, or node). For node pool repairs, there may be multiple nodes being repaired, but only one will be the target. Examples: - ## `https://container.googleapis.com/v1/projects/123/locations/us-central1/clusters/my-cluster` ## `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np` `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np/node/my-node`",
           },
           detail: {
             type: "string",
+            description:
+              "Output only. Detailed operation progress, if available.",
           },
         },
+        description:
+          "This operation resource represents operations that may have happened or are happening on the cluster. All fields are output only.",
         additionalProperties: true,
       },
     },

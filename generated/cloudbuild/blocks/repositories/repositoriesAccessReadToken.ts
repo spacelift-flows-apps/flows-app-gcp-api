@@ -12,7 +12,9 @@ const repositoriesAccessReadToken: AppBlock = {
           name: "Repository",
           description:
             "Required. The resource name of the repository in the format `projects/*/locations/*/connections/*/repositories/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,11 +85,15 @@ const repositoriesAccessReadToken: AppBlock = {
         properties: {
           token: {
             type: "string",
+            description: "The token content.",
           },
           expirationTime: {
             type: "string",
+            description:
+              "Expiration timestamp. Can be empty if unknown or non-expiring. (Format: google-datetime)",
           },
         },
+        description: "Message for responding to get read token.",
         additionalProperties: true,
       },
     },

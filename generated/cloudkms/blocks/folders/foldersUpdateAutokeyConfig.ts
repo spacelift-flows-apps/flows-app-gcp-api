@@ -11,32 +11,40 @@ const foldersUpdateAutokeyConfig: AppBlock = {
         name: {
           name: "Name",
           description: "Identifier.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` `projects/{PROJECT_NUMBER}/autokeyConfig`.",
+          },
           required: false,
         },
         updateMask: {
           name: "Update Mask",
           description:
             "Required. Masks which fields of the AutokeyConfig to update, e.g. `keyProject`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         keyProject: {
           name: "Key Project",
           description: "Optional.",
-          type: "string",
-          required: false,
-        },
-        state: {
-          name: "State",
-          description: "Output only.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. Name of the key project, e.g. `projects/{PROJECT_ID}` or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new CryptoKey when a KeyHandle is created. On UpdateAutokeyConfig, the caller will require `cloudkms.cryptoKeys.setIamPolicy` permission on this key project. Once configured, for Cloud KMS Autokey to function properly, this key project must have the Cloud KMS API activated and the Cloud KMS Service Agent for this key project must be granted the `cloudkms.admin` role (or pertinent permissions). A request with an empty key project field will clear the configuration.",
+          },
           required: false,
         },
         etag: {
           name: "Etag",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. A checksum computed by the server based on the value of other fields. This may be sent on update requests to ensure that the client has an up-to-date value before proceeding. The request will be rejected with an ABORTED error on a mismatched etag.",
+          },
           required: false,
         },
       },
@@ -96,8 +104,6 @@ const foldersUpdateAutokeyConfig: AppBlock = {
           requestBody.name = input.event.inputConfig.name;
         if (input.event.inputConfig.keyProject !== undefined)
           requestBody.keyProject = input.event.inputConfig.keyProject;
-        if (input.event.inputConfig.state !== undefined)
-          requestBody.state = input.event.inputConfig.state;
         if (input.event.inputConfig.etag !== undefined)
           requestBody.etag = input.event.inputConfig.etag;
 
@@ -126,9 +132,13 @@ const foldersUpdateAutokeyConfig: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Identifier. Name of the AutokeyConfig resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` `projects/{PROJECT_NUMBER}/autokeyConfig`.",
           },
           keyProject: {
             type: "string",
+            description:
+              "Optional. Name of the key project, e.g. `projects/{PROJECT_ID}` or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new CryptoKey when a KeyHandle is created. On UpdateAutokeyConfig, the caller will require `cloudkms.cryptoKeys.setIamPolicy` permission on this key project. Once configured, for Cloud KMS Autokey to function properly, this key project must have the Cloud KMS API activated and the Cloud KMS Service Agent for this key project must be granted the `cloudkms.admin` role (or pertinent permissions). A request with an empty key project field will clear the configuration.",
           },
           state: {
             type: "string",
@@ -138,11 +148,15 @@ const foldersUpdateAutokeyConfig: AppBlock = {
               "KEY_PROJECT_DELETED",
               "UNINITIALIZED",
             ],
+            description: "Output only. The state for the AutokeyConfig.",
           },
           etag: {
             type: "string",
+            description:
+              "Optional. A checksum computed by the server based on the value of other fields. This may be sent on update requests to ensure that the client has an up-to-date value before proceeding. The request will be rejected with an ABORTED error on a mismatched etag.",
           },
         },
+        description: "Cloud KMS Autokey configuration for a folder or project.",
         additionalProperties: true,
       },
     },

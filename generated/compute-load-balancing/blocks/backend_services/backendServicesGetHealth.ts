@@ -12,14 +12,20 @@ const backendServicesGetHealth: AppBlock = {
           name: "Backend Service",
           description:
             "Name of the BackendService resource to which the queried instance belongs.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         group: {
           name: "Group",
           description:
             "A URI referencing one of the instance groups or network endpoint groups listed in the backend service.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A URI referencing one of the instance groups or network endpoint groups\nlisted in the backend service.",
+          },
           required: false,
         },
       },
@@ -108,59 +114,82 @@ const backendServicesGetHealth: AppBlock = {
               type: "object",
               properties: {
                 forwardingRule: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "URL of the forwarding rule associated with the health status of the\ninstance.",
                 },
                 instance: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "URL of the instance resource.",
                 },
                 healthState: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["HEALTHY", "UNHEALTHY"],
+                  description:
+                    "Health state of the IPv4 address of the instance.",
                 },
                 weight: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
                 },
                 ipv6HealthState: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["HEALTHY", "UNHEALTHY"],
+                  description:
+                    "Health state of the IPv6 address of the instance.",
                 },
                 ipv6Address: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
                 },
                 weightError: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "INVALID_WEIGHT",
+                    "MISSING_WEIGHT",
+                    "UNAVAILABLE_WEIGHT",
+                    "WEIGHT_NONE",
+                  ],
                 },
                 forwardingRuleIp: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "A forwarding rule IP address assigned to this instance.",
                 },
                 port: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "integer",
+                  description:
+                    "The named port of the instance group, not necessarily the port that is\nhealth-checked. (Format: int32)",
                 },
                 ipAddress: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "For target pool based Network Load Balancing, it indicates the forwarding\nrule's IP address assigned to this instance. For other types of load\nbalancing, the field indicates VM internal ip.",
                 },
                 annotations: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "Metadata defined as annotations for network endpoint.",
                 },
               },
               additionalProperties: true,
             },
+            description:
+              "Health state of the backend instances or endpoints in requested instance or\nnetwork endpoint group, determined based on configured health checks.",
           },
           annotations: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Metadata defined as annotations on the network endpoint group.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of resource. Alwayscompute#backendServiceGroupHealth for the health of backend\nservices.",
           },
         },
         additionalProperties: true,

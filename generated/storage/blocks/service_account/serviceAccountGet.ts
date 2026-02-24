@@ -11,7 +11,9 @@ const serviceAccountGet: AppBlock = {
         userProject: {
           name: "User Project",
           description: "The project to be billed for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -88,11 +90,15 @@ const serviceAccountGet: AppBlock = {
         properties: {
           email_address: {
             type: "string",
+            description: "The ID of the notification.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For notifications, this is always storage#notification.",
           },
         },
+        description: "A subscription to receive Google PubSub notifications.",
         additionalProperties: true,
       },
     },

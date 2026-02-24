@@ -11,7 +11,9 @@ const ekmConnectionsGet: AppBlock = {
         name: {
           name: "Name",
           description: "Required. The name of the EkmConnection to get.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -85,12 +87,18 @@ const ekmConnectionsGet: AppBlock = {
         properties: {
           etag: {
             type: "string",
+            description:
+              "Optional. Etag of the currently stored EkmConnection.",
           },
           name: {
             type: "string",
+            description:
+              "Output only. The resource name for the EkmConnection in the format `projects/*/locations/*/ekmConnections/*`.",
           },
           cryptoSpacePath: {
             type: "string",
+            description:
+              "Optional. Identifies the EKM Crypto Space that this EkmConnection maps to. Note: This field is required if KeyManagementMode is CLOUD_KMS.",
           },
           serviceResolvers: {
             type: "array",
@@ -98,33 +106,103 @@ const ekmConnectionsGet: AppBlock = {
               type: "object",
               properties: {
                 hostname: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. The hostname of the EKM replica used at TLS and HTTP layers.",
                 },
                 endpointFilter: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Optional. The filter applied to the endpoints of the resolved service. If no filter is specified, all endpoints will be considered. An endpoint will be chosen arbitrarily from the filtered list for each request. For endpoint filter syntax and examples, see https://cloud.google.com/service-directory/docs/reference/rpc/google.cloud.servicedirectory.v1#resolveservicerequest.",
                 },
                 serverCertificates: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      issuer: {
+                        type: "string",
+                        description:
+                          "Output only. The issuer distinguished name in RFC 2253 format. Only present if parsed is true.",
+                      },
+                      rawDer: {
+                        type: "string",
+                        description:
+                          "Required. The raw certificate bytes in DER format. (Format: byte)",
+                      },
+                      notAfterTime: {
+                        type: "string",
+                        description:
+                          "Output only. The certificate is not valid after this time. Only present if parsed is true. (Format: google-datetime)",
+                      },
+                      parsed: {
+                        type: "boolean",
+                        description:
+                          "Output only. True if the certificate was parsed successfully.",
+                      },
+                      serialNumber: {
+                        type: "string",
+                        description:
+                          "Output only. The certificate serial number as a hex string. Only present if parsed is true.",
+                      },
+                      notBeforeTime: {
+                        type: "string",
+                        description:
+                          "Output only. The certificate is not valid before this time. Only present if parsed is true. (Format: google-datetime)",
+                      },
+                      sha256Fingerprint: {
+                        type: "string",
+                        description:
+                          "Output only. The SHA-256 certificate fingerprint as a hex string. Only present if parsed is true.",
+                      },
+                      subject: {
+                        type: "string",
+                        description:
+                          "Output only. The subject distinguished name in RFC 2253 format. Only present if parsed is true.",
+                      },
+                      subjectAlternativeDnsNames: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Output only. The subject Alternative DNS names. Only present if parsed is true.",
+                      },
+                    },
+                    description:
+                      "A Certificate represents an X.509 certificate used to authenticate HTTPS connections to EKM replicas.",
+                    additionalProperties: true,
+                  },
+                  description:
+                    "Required. A list of leaf server certificates used to authenticate HTTPS connections to the EKM replica. Currently, a maximum of 10 Certificate is supported.",
                 },
                 serviceDirectoryService: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. The resource name of the Service Directory service pointing to an EKM replica, in the format `projects/*/locations/*/namespaces/*/services/*`.",
                 },
               },
+              description:
+                "A ServiceResolver represents an EKM replica that can be reached within an EkmConnection.",
               additionalProperties: true,
             },
+            description:
+              "Optional. A list of ServiceResolvers where the EKM can be reached. There should be one ServiceResolver per EKM replica. Currently, only a single ServiceResolver is supported.",
           },
           createTime: {
             type: "string",
+            description:
+              "Output only. The time at which the EkmConnection was created. (Format: google-datetime)",
           },
           keyManagementMode: {
             type: "string",
             enum: ["KEY_MANAGEMENT_MODE_UNSPECIFIED", "MANUAL", "CLOUD_KMS"],
+            description:
+              "Optional. Describes who can perform control plane operations on the EKM. If unset, this defaults to MANUAL.",
           },
         },
+        description:
+          "An EkmConnection represents an individual EKM connection. It can be used for creating CryptoKeys and CryptoKeyVersions with a ProtectionLevel of EXTERNAL_VPC, as well as performing cryptographic operations using keys created within the EkmConnection.",
         additionalProperties: true,
       },
     },

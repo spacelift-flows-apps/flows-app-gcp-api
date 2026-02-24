@@ -11,105 +11,143 @@ const objectsWatchAll: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket in which to look for objects.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         delimiter: {
           name: "Delimiter",
           description:
             "Returns results in a directory-like mode. items will contain only objects whose names, aside from the prefix, do not contain delimiter. Objects whose names, aside from the prefix, contain delimiter will have their name, truncated after the delimiter, returned in prefixes. Duplicate prefixes are omitted.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         endOffset: {
           name: "End Offset",
           description:
             "Filter results to objects whose names are lexicographically before endOffset. If startOffset is also set, the objects listed will have names between startOffset (inclusive) and endOffset (exclusive).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         includeTrailingDelimiter: {
           name: "Include Trailing Delimiter",
           description:
             "If true, objects that end in exactly one instance of delimiter will have their metadata included in items in addition to prefixes.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
             "Maximum number of items plus prefixes to return in a single page of responses. As duplicate prefixes are omitted, fewer total results may be returned than requested. The service will use this parameter or 1,000 items, whichever is smaller.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "A previously-returned page token representing part of the larger set of results to view.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         prefix: {
           name: "Prefix",
           description:
             "Filter results to objects whose names begin with this prefix.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         projection: {
           name: "Projection",
-          description:
-            "Set of properties to return. Defaults to noAcl. Valid values: full, noAcl",
-          type: "string",
+          description: "Set of properties to return. Defaults to noAcl.",
+          type: {
+            type: "string",
+            enum: ["full", "noAcl"],
+          },
           required: false,
         },
         startOffset: {
           name: "Start Offset",
           description:
             "Filter results to objects whose names are lexicographically equal to or after startOffset. If endOffset is also set, the objects listed will have names between startOffset (inclusive) and endOffset (exclusive).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         versions: {
           name: "Versions",
           description:
             "If true, lists all versions of an object as distinct results. The default is false. For more information, see [Object Versioning](https://cloud.google.com/storage/docs/object-versioning).",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
         address: {
           name: "Address",
           description:
             "The address where notifications are delivered for this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The address where notifications are delivered for this channel.",
+          },
           required: false,
         },
         expiration: {
           name: "Expiration",
           description:
             "Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. (Format: int64)",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description:
             "A UUID or similar unique string that identifies this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A UUID or similar unique string that identifies this channel.",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description:
             'Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel".',
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              'Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel".',
+          },
           required: false,
         },
         params: {
@@ -118,41 +156,65 @@ const objectsWatchAll: AppBlock = {
             "Additional parameters controlling delivery channel behavior.",
           type: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Additional parameters controlling delivery channel behavior. Optional.",
           },
           required: false,
         },
         payload: {
           name: "Payload",
           description: "A Boolean value to indicate whether payload is wanted.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+            description:
+              "A Boolean value to indicate whether payload is wanted. Optional.",
+          },
           required: false,
         },
         resourceId: {
           name: "Resource ID",
           description:
             "An opaque ID that identifies the resource being watched on this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "An opaque ID that identifies the resource being watched on this channel. Stable across different API versions.",
+          },
           required: false,
         },
         resourceUri: {
           name: "Resource Uri",
           description:
             "A version-specific identifier for the watched resource.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A version-specific identifier for the watched resource.",
+          },
           required: false,
         },
         token: {
           name: "Token",
           description:
             "An arbitrary string delivered to the target address with each notification delivered over this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "An arbitrary string delivered to the target address with each notification delivered over this channel. Optional.",
+          },
           required: false,
         },
         type: {
           name: "Type",
           description: "The type of delivery mechanism used for this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The type of delivery mechanism used for this channel.",
+          },
           required: false,
         },
       },
@@ -257,36 +319,60 @@ const objectsWatchAll: AppBlock = {
         properties: {
           address: {
             type: "string",
+            description:
+              "The address where notifications are delivered for this channel.",
           },
           expiration: {
             type: "string",
+            description:
+              "Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. (Format: int64)",
           },
           id: {
             type: "string",
+            description:
+              "A UUID or similar unique string that identifies this channel.",
           },
           kind: {
             type: "string",
+            description:
+              'Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel".',
           },
           params: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Additional parameters controlling delivery channel behavior. Optional.",
           },
           payload: {
             type: "boolean",
+            description:
+              "A Boolean value to indicate whether payload is wanted. Optional.",
           },
           resourceId: {
             type: "string",
+            description:
+              "An opaque ID that identifies the resource being watched on this channel. Stable across different API versions.",
           },
           resourceUri: {
             type: "string",
+            description:
+              "A version-specific identifier for the watched resource.",
           },
           token: {
             type: "string",
+            description:
+              "An arbitrary string delivered to the target address with each notification delivered over this channel. Optional.",
           },
           type: {
             type: "string",
+            description:
+              "The type of delivery mechanism used for this channel.",
           },
         },
+        description:
+          "An notification channel used to watch for resource changes.",
         additionalProperties: true,
       },
     },

@@ -11,13 +11,17 @@ const instancesSendDiagnosticInterrupt: AppBlock = {
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         instance: {
           name: "Instance",
           description: "Name of the instance scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },

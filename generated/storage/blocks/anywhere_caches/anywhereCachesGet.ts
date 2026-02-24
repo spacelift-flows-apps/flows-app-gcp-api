@@ -11,13 +11,17 @@ const anywhereCachesGet: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the parent bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         anywhereCacheId: {
           name: "Anywhere Cache ID",
           description: "The ID of requested Anywhere Cache instance.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -94,41 +98,62 @@ const anywhereCachesGet: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For Anywhere Cache, this is always storage#anywhereCache.",
           },
           id: {
             type: "string",
+            description:
+              "The ID of the resource, including the project number, bucket name and anywhere cache ID.",
           },
           selfLink: {
             type: "string",
+            description: "The link to this cache instance.",
           },
           bucket: {
             type: "string",
+            description:
+              "The name of the bucket containing this cache instance.",
           },
           anywhereCacheId: {
             type: "string",
+            description: "The ID of the Anywhere cache instance.",
           },
           zone: {
             type: "string",
+            description:
+              "The zone in which the cache instance is running. For example, us-central1-a.",
           },
           state: {
             type: "string",
+            description: "The current state of the cache instance.",
           },
           createTime: {
             type: "string",
+            description:
+              "The creation time of the cache instance in RFC 3339 format. (Format: date-time)",
           },
           updateTime: {
             type: "string",
+            description:
+              "The modification time of the cache instance metadata in RFC 3339 format. (Format: date-time)",
           },
           ttl: {
             type: "string",
+            description:
+              'The TTL of all cache entries in whole seconds. e.g., "7200s". (Format: google-duration)',
           },
           admissionPolicy: {
             type: "string",
+            description: "The cache-level entry admission policy.",
           },
           pendingUpdate: {
             type: "boolean",
+            description:
+              "True if the cache instance has an active Update long-running operation.",
           },
         },
+        description: "An Anywhere Cache instance.",
         additionalProperties: true,
       },
     },

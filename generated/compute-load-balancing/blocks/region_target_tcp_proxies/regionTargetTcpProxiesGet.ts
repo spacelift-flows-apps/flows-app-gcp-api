@@ -11,13 +11,17 @@ const regionTargetTcpProxiesGet: AppBlock = {
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         targetTcpProxy: {
           name: "Target TCP Proxy",
           description: "Name of the TargetTcpProxy resource to return.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -92,36 +96,56 @@ const regionTargetTcpProxiesGet: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
           },
           description: {
             type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you\ncreate the resource.",
           },
           region: {
             type: "string",
+            description:
+              "[Output Only] URL of the region where the regional TCP proxy resides.\nThis field is not applicable to global TCP proxy.",
           },
           proxyHeader: {
             type: "string",
             enum: ["NONE", "PROXY_V1"],
+            description:
+              "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
           },
           creationTimestamp: {
             type: "string",
+            description:
+              "[Output Only] Creation timestamp inRFC3339\ntext format.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Alwayscompute#targetTcpProxy for target TCP proxies.",
           },
           service: {
             type: "string",
+            description: "URL to the BackendService resource.",
           },
           proxyBind: {
             type: "boolean",
+            description:
+              "This field only applies when the forwarding rule that references this\ntarget proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.\n\nWhen this field is set to true, Envoy proxies set up inbound\ntraffic interception and bind to the IP address and port specified in the\nforwarding rule. This is generally useful when using Traffic Director to\nconfigure Envoy as a gateway or middle proxy (in other words, not a\nsidecar proxy). The Envoy proxy listens for inbound requests and handles\nrequests when it receives them.\n\nThe default is false.",
           },
         },
+        description:
+          "Represents a Target TCP Proxy resource.\n\nA target TCP proxy is a component of a Proxy Network Load Balancer.\nThe forwarding rule references the target TCP proxy, and the target proxy\nthen references a backend service. For more information, readProxy Network\nLoad Balancer overview.",
         additionalProperties: true,
       },
     },

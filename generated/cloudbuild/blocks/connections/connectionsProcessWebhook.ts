@@ -12,27 +12,39 @@ const connectionsProcessWebhook: AppBlock = {
           name: "Parent",
           description:
             "Required. Project and location where the webhook will be received. Format: `projects/*/locations/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         webhookKey: {
           name: "Webhook Key",
           description:
             "Arbitrary additional key to find the matching repository for a webhook event if needed.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         contentType: {
           name: "Content Type",
           description:
             "The HTTP Content-Type header value specifying the content type of the body.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The HTTP Content-Type header value specifying the content type of the body.",
+          },
           required: false,
         },
         data: {
           name: "Data",
           description: "The HTTP request/response body as raw binary.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The HTTP request/response body as raw binary. (Format: byte)",
+          },
           required: false,
         },
         extensions: {
@@ -44,6 +56,8 @@ const connectionsProcessWebhook: AppBlock = {
               type: "object",
               additionalProperties: true,
             },
+            description:
+              "Application specific response metadata. Must be set in the first response for streaming APIs.",
           },
           required: false,
         },
@@ -127,6 +141,8 @@ const connectionsProcessWebhook: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

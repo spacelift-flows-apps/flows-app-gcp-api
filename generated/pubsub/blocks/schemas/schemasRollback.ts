@@ -12,13 +12,19 @@ const schemasRollback: AppBlock = {
           name: "Name",
           description:
             "Required. The schema being rolled back with revision id.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         revisionId: {
           name: "Revision ID",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. The revision ID to roll back to. It must be a revision of the same schema. Example: c7cfa2a8",
+          },
           required: false,
         },
       },
@@ -102,21 +108,31 @@ const schemasRollback: AppBlock = {
         properties: {
           definition: {
             type: "string",
+            description:
+              "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
           revisionCreateTime: {
             type: "string",
+            description:
+              "Output only. The timestamp that the revision was created. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
           },
           revisionId: {
             type: "string",
+            description:
+              "Output only. Immutable. The revision ID of the schema.",
           },
           type: {
             type: "string",
             enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+            description: "The type of the schema definition.",
           },
         },
+        description: "A schema resource.",
         additionalProperties: true,
       },
     },

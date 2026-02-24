@@ -12,28 +12,36 @@ const keyHandlesList: AppBlock = {
           name: "Parent",
           description:
             "Required. Name of the resource project and location from which to list KeyHandles, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Optional. Optional limit on the number of KeyHandles to include in the response. The service may return fewer than this value. Further KeyHandles can subsequently be obtained by including the ListKeyHandlesResponse.next_page_token in a subsequent request. If unspecified, at most 100 KeyHandles will be returned.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         filter: {
           name: "Filter",
           description:
             'Optional. Filter to apply when listing KeyHandles, e.g. `resource_type_selector="{SERVICE}.googleapis.com/{TYPE}"`.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Optional. Optional pagination token, returned earlier via ListKeyHandlesResponse.next_page_token.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -111,25 +119,34 @@ const keyHandlesList: AppBlock = {
               type: "object",
               properties: {
                 resourceTypeSelector: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. Indicates the resource type that the resulting CryptoKey is meant to protect, e.g. `{SERVICE}.googleapis.com/{TYPE}`. See documentation for supported resource types.",
                 },
                 kmsKey: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Name of a CryptoKey that has been provisioned for Customer Managed Encryption Key (CMEK) use in the KeyHandle project and location for the requested resource type. The CryptoKey project will reflect the value configured in the AutokeyConfig on the resource project's ancestor folder at the time of the KeyHandle creation. If more than one ancestor folder has a configured AutokeyConfig, the nearest of these configurations is used.",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.",
                 },
               },
+              description:
+                "Resource-oriented representation of a request to Cloud KMS Autokey and the resulting provisioning of a CryptoKey.",
               additionalProperties: true,
             },
+            description: "Resulting KeyHandles.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A token to retrieve next page of results. Pass this value in ListKeyHandlesRequest.page_token to retrieve the next page of results.",
           },
         },
+        description: "Response message for Autokey.ListKeyHandles.",
         additionalProperties: true,
       },
     },

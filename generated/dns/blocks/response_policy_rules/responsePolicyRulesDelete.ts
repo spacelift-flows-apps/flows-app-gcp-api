@@ -12,21 +12,27 @@ const responsePolicyRulesDelete: AppBlock = {
           name: "Response Policy",
           description:
             "User assigned name of the Response Policy containing the Response Policy Rule.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         responsePolicyRule: {
           name: "Response Policy Rule",
           description:
             "User assigned name of the Response Policy Rule addressed by this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         clientOperationId: {
           name: "Client Operation ID",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

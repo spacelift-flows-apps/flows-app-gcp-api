@@ -11,13 +11,17 @@ const instancesGetShieldedInstanceIdentity: AppBlock = {
         instance: {
           name: "Instance",
           description: "Name or id of the instance scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -95,26 +99,36 @@ const instancesGetShieldedInstanceIdentity: AppBlock = {
             properties: {
               ekPub: {
                 type: "string",
+                description: "A PEM-encoded public key.",
               },
               ekCert: {
                 type: "string",
+                description:
+                  "A PEM-encoded X.509 certificate. This field can be empty.",
               },
             },
+            description: "A Shielded Instance Identity Entry.",
             additionalProperties: true,
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Alwayscompute#shieldedInstanceIdentity for shielded Instance\nidentity entry.",
           },
           eccP256SigningKey: {
             type: "object",
             properties: {
               ekPub: {
                 type: "string",
+                description: "A PEM-encoded public key.",
               },
               ekCert: {
                 type: "string",
+                description:
+                  "A PEM-encoded X.509 certificate. This field can be empty.",
               },
             },
+            description: "A Shielded Instance Identity Entry.",
             additionalProperties: true,
           },
           encryptionKey: {
@@ -122,11 +136,15 @@ const instancesGetShieldedInstanceIdentity: AppBlock = {
             properties: {
               ekPub: {
                 type: "string",
+                description: "A PEM-encoded public key.",
               },
               ekCert: {
                 type: "string",
+                description:
+                  "A PEM-encoded X.509 certificate. This field can be empty.",
               },
             },
+            description: "A Shielded Instance Identity Entry.",
             additionalProperties: true,
           },
           signingKey: {
@@ -134,14 +152,19 @@ const instancesGetShieldedInstanceIdentity: AppBlock = {
             properties: {
               ekPub: {
                 type: "string",
+                description: "A PEM-encoded public key.",
               },
               ekCert: {
                 type: "string",
+                description:
+                  "A PEM-encoded X.509 certificate. This field can be empty.",
               },
             },
+            description: "A Shielded Instance Identity Entry.",
             additionalProperties: true,
           },
         },
+        description: "A Shielded Instance Identity.",
         additionalProperties: true,
       },
     },

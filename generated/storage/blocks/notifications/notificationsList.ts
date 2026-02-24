@@ -11,14 +11,18 @@ const notificationsList: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of a Google Cloud Storage bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -100,48 +104,66 @@ const notificationsList: AppBlock = {
               properties: {
                 custom_attributes: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "An optional list of additional attributes to attach to each Cloud PubSub message published for this notification subscription.",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "HTTP 1.1 Entity tag for this subscription notification.",
                 },
                 event_types: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "If present, only send notifications about listed event types. If empty, sent notifications for all event types.",
                 },
                 id: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The ID of the notification.",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The kind of item this is. For notifications, this is always storage#notification.",
                 },
                 object_name_prefix: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "If present, only apply this notification configuration to object names that begin with this prefix.",
                 },
                 payload_format: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The desired content of the Payload.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The canonical URL of this notification.",
                 },
                 topic: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The Cloud PubSub topic to which this subscription publishes. Formatted as: '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'",
                 },
               },
+              description:
+                "A subscription to receive Google PubSub notifications.",
               additionalProperties: true,
             },
+            description: "The list of items.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For lists of notifications, this is always storage#notifications.",
           },
         },
+        description: "A list of notification subscriptions.",
         additionalProperties: true,
       },
     },

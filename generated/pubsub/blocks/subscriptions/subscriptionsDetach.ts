@@ -12,7 +12,9 @@ const subscriptionsDetach: AppBlock = {
           name: "Subscription",
           description:
             "Required. The subscription to detach. Format is `projects/{project}/subscriptions/{subscription}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -84,6 +86,8 @@ const subscriptionsDetach: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "Response for the DetachSubscription method. Reserved for future use.",
         additionalProperties: true,
       },
     },

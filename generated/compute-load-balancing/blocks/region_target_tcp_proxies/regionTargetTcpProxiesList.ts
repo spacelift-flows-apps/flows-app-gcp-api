@@ -11,42 +11,54 @@ const regionTargetTcpProxiesList: AppBlock = {
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         filter: {
           name: "Filter",
           description:
             'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
       },
@@ -125,57 +137,73 @@ const regionTargetTcpProxiesList: AppBlock = {
               type: "object",
               properties: {
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
                 },
                 id: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] Server-defined URL for the resource.",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this property when you\ncreate the resource.",
                 },
                 region: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] URL of the region where the regional TCP proxy resides.\nThis field is not applicable to global TCP proxy.",
                 },
                 proxyHeader: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["NONE", "PROXY_V1"],
+                  description:
+                    "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
                 },
                 creationTimestamp: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] Creation timestamp inRFC3339\ntext format.",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] Type of the resource. Alwayscompute#targetTcpProxy for target TCP proxies.",
                 },
                 service: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "URL to the BackendService resource.",
                 },
                 proxyBind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "boolean",
+                  description:
+                    "This field only applies when the forwarding rule that references this\ntarget proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.\n\nWhen this field is set to true, Envoy proxies set up inbound\ntraffic interception and bind to the IP address and port specified in the\nforwarding rule. This is generally useful when using Traffic Director to\nconfigure Envoy as a gateway or middle proxy (in other words, not a\nsidecar proxy). The Envoy proxy listens for inbound requests and handles\nrequests when it receives them.\n\nThe default is false.",
                 },
               },
+              description:
+                "Represents a Target TCP Proxy resource.\n\nA target TCP proxy is a component of a Proxy Network Load Balancer.\nThe forwarding rule references the target TCP proxy, and the target proxy\nthen references a backend service. For more information, readProxy Network\nLoad Balancer overview.",
               additionalProperties: true,
             },
+            description: "A list of TargetTcpProxy resources.",
           },
           kind: {
             type: "string",
+            description: "Type of resource.",
           },
           warning: {
             type: "object",
             properties: {
               message: {
                 type: "string",
+                description:
+                  "[Output Only] A human-readable description of the warning code.",
               },
               code: {
                 type: "string",
@@ -210,6 +238,8 @@ const regionTargetTcpProxiesList: AppBlock = {
                   "UNDECLARED_PROPERTIES",
                   "UNREACHABLE",
                 ],
+                description:
+                  "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
               },
               data: {
                 type: "array",
@@ -217,30 +247,41 @@ const regionTargetTcpProxiesList: AppBlock = {
                   type: "object",
                   properties: {
                     value: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A warning data value corresponding to the key.",
                     },
                     key: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
                     },
                   },
                   additionalProperties: true,
                 },
+                description:
+                  '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
               },
             },
+            description: "[Output Only] Informational warning message.",
             additionalProperties: true,
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for this resource.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] Unique identifier for the resource; defined by the server.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for\nlist requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for\nthe query parameter pageToken in the next list request.\nSubsequent list requests will have their own nextPageToken to\ncontinue paging through the results.",
           },
         },
+        description: "Contains a list of TargetTcpProxy resources.",
         additionalProperties: true,
       },
     },

@@ -11,7 +11,9 @@ const liensDelete: AppBlock = {
         name: {
           name: "Name",
           description: "Required. The name/identifier of the Lien to delete.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,6 +85,8 @@ const liensDelete: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

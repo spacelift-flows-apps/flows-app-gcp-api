@@ -12,7 +12,9 @@ const notificationChannelDescriptorsGet: AppBlock = {
           name: "Name",
           description:
             "Required. The channel type for which to execute the request. The format is: projects/[PROJECT_ID_OR_NUMBER]/notificationChannelDescriptors/[CHANNEL_TYPE] ",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -87,15 +89,23 @@ const notificationChannelDescriptorsGet: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "The full REST resource name for this descriptor. The format is: projects/[PROJECT_ID_OR_NUMBER]/notificationChannelDescriptors/[TYPE] In the above, [TYPE] is the value of the type field.",
           },
           type: {
             type: "string",
+            description:
+              'The type of notification channel, such as "email" and "sms". To view the full list of channels, see Channel descriptors (https://cloud.google.com/monitoring/alerts/using-channels-api#ncd). Notification channel types are globally unique.',
           },
           displayName: {
             type: "string",
+            description:
+              "A human-readable name for the notification channel type. This form of the name is suitable for a user interface.",
           },
           description: {
             type: "string",
+            description:
+              "A human-readable description of the notification channel type. The description may include a description of the properties of the channel and pointers to external documentation.",
           },
           labels: {
             type: "array",
@@ -103,20 +113,26 @@ const notificationChannelDescriptorsGet: AppBlock = {
               type: "object",
               properties: {
                 key: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The key for this label. The key must meet the following criteria: Does not exceed 100 characters. Matches the following regular expression: [a-zA-Z][a-zA-Z0-9_]* The first character must be an upper- or lower-case letter. The remaining characters must be letters, digits, or underscores.",
                 },
                 valueType: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["STRING", "BOOL", "INT64"],
+                  description:
+                    "The type of data that can be assigned to the label.",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "A human-readable description for the label.",
                 },
               },
+              description: "A description of a label.",
               additionalProperties: true,
             },
+            description:
+              "The set of labels that must be defined to identify a particular channel of the corresponding type. Each label includes a description for how that field should be populated.",
           },
           supportedTiers: {
             type: "array",
@@ -128,6 +144,8 @@ const notificationChannelDescriptorsGet: AppBlock = {
                 "SERVICE_TIER_PREMIUM",
               ],
             },
+            description:
+              "The tiers that support this notification channel; the project service tier must be one of the supported_tiers.",
           },
           launchStage: {
             type: "string",
@@ -141,8 +159,11 @@ const notificationChannelDescriptorsGet: AppBlock = {
               "GA",
               "DEPRECATED",
             ],
+            description: "The product launch stage for channels of this type.",
           },
         },
+        description:
+          "A description of a notification channel. The descriptor includes the properties of the channel and the set of labels or fields that must be specified to configure channels of a given type.",
         additionalProperties: true,
       },
     },

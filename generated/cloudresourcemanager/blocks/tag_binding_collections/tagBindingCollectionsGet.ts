@@ -12,7 +12,9 @@ const tagBindingCollectionsGet: AppBlock = {
           name: "Name",
           description:
             'Required. The full name of the TagBindingCollection in format: `locations/{location}/tagBindingCollections/{encoded-full-resource-name}` where the enoded-full-resource-name is the UTF-8 encoded name of the resource the TagBindings are bound to. E.g. "locations/global/tagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123"',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,18 +88,30 @@ const tagBindingCollectionsGet: AppBlock = {
         properties: {
           etag: {
             type: "string",
+            description:
+              "Optional. A checksum based on the current bindings which can be passed to prevent race conditions. This field is always set in server responses.",
           },
           tags: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              'Tag keys/values directly bound to this resource, specified in namespaced format. For example: "123/environment": "production"',
           },
           fullResourceName: {
             type: "string",
+            description:
+              "The full resource name of the resource the TagBindings are bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123`",
           },
           name: {
             type: "string",
+            description:
+              'Identifier. The name of the TagBindingCollection, following the convention: `locations/{location}/tagBindingCollections/{encoded-full-resource-name}` where the encoded-full-resource-name is the UTF-8 encoded name of the GCP resource the TagBindings are bound to. "locations/global/tagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123"',
           },
         },
+        description:
+          "Represents a collection of tags directly bound to a GCP resource.",
         additionalProperties: true,
       },
     },

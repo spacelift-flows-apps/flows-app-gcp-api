@@ -12,13 +12,17 @@ const zoneOperationsDelete: AppBlock = {
           name: "Operation",
           description:
             "Name of the Operations resource to delete, or its unique numeric\nidentifier.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         zone: {
           name: "Zone",
           description: "Name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },

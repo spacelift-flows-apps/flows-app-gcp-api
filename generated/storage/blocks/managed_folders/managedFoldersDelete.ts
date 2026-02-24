@@ -11,34 +11,44 @@ const managedFoldersDelete: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket containing the managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         managedFolder: {
           name: "Managed Folder",
           description: "The managed folder name/path.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "If set, only deletes the managed folder if its metageneration matches this value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "If set, only deletes the managed folder if its metageneration does not match this value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         allowNonEmpty: {
           name: "Allow Non Empty",
           description:
             "Allows the deletion of a managed folder even if it is not empty. A managed folder is empty if there are no objects or managed folders that it applies to. Callers must have storage.managedFolders.setIamPolicy permission.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
       },

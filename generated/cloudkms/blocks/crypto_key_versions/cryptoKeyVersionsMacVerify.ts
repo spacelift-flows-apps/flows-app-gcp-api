@@ -12,31 +12,48 @@ const cryptoKeyVersionsMacVerify: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the CryptoKeyVersion to use for verification.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         dataCrc32c: {
           name: "Data Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the MacVerifyRequest.data. If specified, KeyManagementService will verify the integrity of the received MacVerifyRequest.data using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(MacVerifyRequest.data) is equal to MacVerifyRequest.data_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
         macCrc32c: {
           name: "Mac Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the MacVerifyRequest.mac. If specified, KeyManagementService will verify the integrity of the received MacVerifyRequest.mac using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(MacVerifyRequest.mac) is equal to MacVerifyRequest.mac_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
         mac: {
           name: "Mac",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Required. The signature to verify. (Format: byte)",
+          },
           required: false,
         },
         data: {
           name: "Data",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. The data used previously as a MacSignRequest.data to generate the MAC tag. (Format: byte)",
+          },
           required: false,
         },
       },
@@ -126,9 +143,13 @@ const cryptoKeyVersionsMacVerify: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "The resource name of the CryptoKeyVersion used for verification. Check this field to verify that the intended resource was used for verification.",
           },
           verifiedMacCrc32c: {
             type: "boolean",
+            description:
+              "Integrity verification field. A flag indicating whether MacVerifyRequest.mac_crc32c was received by KeyManagementService and used for the integrity verification of the data. A false value of this field indicates either that MacVerifyRequest.mac_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set MacVerifyRequest.mac_crc32c but this field is still false, discard the response and perform a limited number of retries.",
           },
           protectionLevel: {
             type: "string",
@@ -139,17 +160,26 @@ const cryptoKeyVersionsMacVerify: AppBlock = {
               "EXTERNAL",
               "EXTERNAL_VPC",
             ],
+            description:
+              "The ProtectionLevel of the CryptoKeyVersion used for verification.",
           },
           success: {
             type: "boolean",
+            description:
+              "This field indicates whether or not the verification operation for MacVerifyRequest.mac over MacVerifyRequest.data was successful.",
           },
           verifiedDataCrc32c: {
             type: "boolean",
+            description:
+              "Integrity verification field. A flag indicating whether MacVerifyRequest.data_crc32c was received by KeyManagementService and used for the integrity verification of the data. A false value of this field indicates either that MacVerifyRequest.data_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set MacVerifyRequest.data_crc32c but this field is still false, discard the response and perform a limited number of retries.",
           },
           verifiedSuccessIntegrity: {
             type: "boolean",
+            description:
+              "Integrity verification field. This value is used for the integrity verification of [MacVerifyResponse.success]. If the value of this field contradicts the value of [MacVerifyResponse.success], discard the response and perform a limited number of retries.",
           },
         },
+        description: "Response message for KeyManagementService.MacVerify.",
         additionalProperties: true,
       },
     },

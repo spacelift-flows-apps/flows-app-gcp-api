@@ -12,7 +12,9 @@ const exportImageMetadata: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the resource of which image metadata should be exported. Format: `projects/{project_id_or_number}/locations/{location}/services/{service}/revisions/{revision}` for Revision `projects/{project_id_or_number}/locations/{location}/jobs/{job}/executions/{execution}` for Execution",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,8 +85,12 @@ const exportImageMetadata: AppBlock = {
         properties: {
           metadata: {
             type: "string",
+            description:
+              "JSON encoded Google-generated Customer Metadata for a given resource/project.",
           },
         },
+        description:
+          "Metadata represents the JSON encoded generated customer metadata.",
         additionalProperties: true,
       },
     },

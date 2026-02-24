@@ -12,7 +12,9 @@ const subscriptionsAcknowledge: AppBlock = {
           name: "Subscription",
           description:
             "Required. The subscription whose message is being acknowledged. Format is `projects/{project}/subscriptions/{sub}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ackIds: {
@@ -23,6 +25,8 @@ const subscriptionsAcknowledge: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "Required. The acknowledgment ID for the messages being acknowledged that was returned by the Pub/Sub system in the `Pull` response. Must not be empty.",
           },
           required: false,
         },
@@ -105,6 +109,8 @@ const subscriptionsAcknowledge: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

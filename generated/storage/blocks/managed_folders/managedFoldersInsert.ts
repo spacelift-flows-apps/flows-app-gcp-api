@@ -11,52 +11,83 @@ const managedFoldersInsert: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "The name of the bucket containing this managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The name of the bucket containing this managed folder.",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description:
             "The ID of the managed folder, including the bucket name and managed folder name.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The ID of the managed folder, including the bucket name and managed folder name.",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description: "The kind of item this is.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The kind of item this is. For managed folders, this is always storage#managedFolder.",
+          },
           required: false,
         },
         metageneration: {
           name: "Metageneration",
           description: "The version of the metadata for this managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The version of the metadata for this managed folder. Used for preconditions and for detecting changes in metadata. (Format: int64)",
+          },
           required: false,
         },
         name: {
           name: "Name",
           description: "The name of the managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The name of the managed folder. Required if not specified by URL parameter.",
+          },
           required: false,
         },
         selfLink: {
           name: "Self Link",
           description: "The link to this managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The link to this managed folder.",
+          },
           required: false,
         },
         createTime: {
           name: "Create Time",
           description:
             "The creation time of the managed folder in RFC 3339 format.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The creation time of the managed folder in RFC 3339 format. (Format: date-time)",
+          },
           required: false,
         },
         updateTime: {
           name: "Update Time",
           description:
             "The last update time of the managed folder metadata in RFC 3339 format.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The last update time of the managed folder metadata in RFC 3339 format. (Format: date-time)",
+          },
           required: false,
         },
       },
@@ -155,29 +186,45 @@ const managedFoldersInsert: AppBlock = {
         properties: {
           bucket: {
             type: "string",
+            description:
+              "The name of the bucket containing this managed folder.",
           },
           id: {
             type: "string",
+            description:
+              "The ID of the managed folder, including the bucket name and managed folder name.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For managed folders, this is always storage#managedFolder.",
           },
           metageneration: {
             type: "string",
+            description:
+              "The version of the metadata for this managed folder. Used for preconditions and for detecting changes in metadata. (Format: int64)",
           },
           name: {
             type: "string",
+            description:
+              "The name of the managed folder. Required if not specified by URL parameter.",
           },
           selfLink: {
             type: "string",
+            description: "The link to this managed folder.",
           },
           createTime: {
             type: "string",
+            description:
+              "The creation time of the managed folder in RFC 3339 format. (Format: date-time)",
           },
           updateTime: {
             type: "string",
+            description:
+              "The last update time of the managed folder metadata in RFC 3339 format. (Format: date-time)",
           },
         },
+        description: "A managed folder.",
         additionalProperties: true,
       },
     },

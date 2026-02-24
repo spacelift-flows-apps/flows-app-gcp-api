@@ -12,21 +12,32 @@ const functionsGenerateUploadUrl: AppBlock = {
           name: "Parent",
           description:
             "Required. The project and location in which the Google Cloud Storage signed URL should be generated, specified in the format `projects/*/locations/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         kmsKeyName: {
           name: "KMS Key Name",
           description:
             "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function source code objects in intermediate Cloud Storage buckets.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function source code objects in intermediate Cloud Storage buckets. When you generate an upload url and upload your source code, it gets copied to an intermediate Cloud Storage bucket. The source code is then copied to a versioned directory in the sources bucket in the consumer project during the function deployment. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`. The Google Cloud Functions service account (service-{project_number}@gcf-admin-robot.iam.gserviceaccount.com) must be granted the role 'Cloud KMS CryptoKey Encrypter/Decrypter (roles/cloudkms.cryptoKeyEncrypterDecrypter)' on the Key/KeyRing/Project/Organization (least access preferred).",
+          },
           required: false,
         },
         environment: {
           name: "Environment",
           description:
             "The function environment the generated upload url will be used for.",
-          type: "string",
+          type: {
+            type: "string",
+            enum: ["ENVIRONMENT_UNSPECIFIED", "GEN_1", "GEN_2"],
+            description:
+              "The function environment the generated upload url will be used for. The upload url for 2nd Gen functions can also be used for 1st gen functions, but not vice versa. If not specified, 2nd generation-style upload URLs are generated.",
+          },
           required: false,
         },
       },
@@ -109,26 +120,39 @@ const functionsGenerateUploadUrl: AppBlock = {
         properties: {
           uploadUrl: {
             type: "string",
+            description:
+              "The generated Google Cloud Storage signed URL that should be used for a function source code upload. The uploaded file should be a zip archive which contains a function.",
           },
           storageSource: {
             type: "object",
             properties: {
               bucket: {
                 type: "string",
+                description:
+                  "Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).",
               },
               object: {
                 type: "string",
+                description:
+                  "Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.",
               },
               generation: {
                 type: "string",
+                description:
+                  "Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used. (Format: int64)",
               },
               sourceUploadUrl: {
                 type: "string",
+                description:
+                  "When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.",
               },
             },
+            description:
+              "Location of the source in an archive file in Google Cloud Storage.",
             additionalProperties: true,
           },
         },
+        description: "Response of `GenerateSourceUploadUrl` method.",
         additionalProperties: true,
       },
     },

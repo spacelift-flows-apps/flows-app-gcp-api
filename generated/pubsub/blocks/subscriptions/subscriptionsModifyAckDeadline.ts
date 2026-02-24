@@ -12,7 +12,9 @@ const subscriptionsModifyAckDeadline: AppBlock = {
           name: "Subscription",
           description:
             "Required. The name of the subscription. Format is `projects/{project}/subscriptions/{sub}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ackIds: {
@@ -23,13 +25,18 @@ const subscriptionsModifyAckDeadline: AppBlock = {
             items: {
               type: "string",
             },
+            description: "Required. List of acknowledgment IDs.",
           },
           required: false,
         },
         ackDeadlineSeconds: {
           name: "Ack Deadline Seconds",
           description: "Required.",
-          type: "number",
+          type: {
+            type: "integer",
+            description:
+              "Required. The new ack deadline with respect to the time this request was sent to the Pub/Sub system. For example, if the value is 10, the new ack deadline will expire 10 seconds after the `ModifyAckDeadline` call was made. Specifying zero might immediately make the message available for delivery to another subscriber client. This typically results in an increase in the rate of message redeliveries (that is, duplicates). The minimum deadline you can specify is 0 seconds. The maximum deadline you can specify in a single request is 600 seconds (10 minutes). (Format: int32)",
+          },
           required: false,
         },
       },
@@ -114,6 +121,8 @@ const subscriptionsModifyAckDeadline: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

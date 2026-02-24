@@ -12,7 +12,9 @@ const subscriptionsModifyPushConfig: AppBlock = {
           name: "Subscription",
           description:
             "Required. The name of the subscription. Format is `projects/{project}/subscriptions/{sub}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pushConfig: {
@@ -24,40 +26,56 @@ const subscriptionsModifyPushConfig: AppBlock = {
               pubsubWrapper: {
                 type: "object",
                 properties: {},
+                description:
+                  "The payload to the push endpoint is in the form of the JSON representation of a PubsubMessage (https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#pubsubmessage).",
                 additionalProperties: true,
               },
               pushEndpoint: {
                 type: "string",
+                description:
+                  "Optional. A URL locating the endpoint to which messages should be pushed. For example, a Webhook endpoint might use `https://example.com/push`.",
               },
               attributes: {
                 type: "object",
-                additionalProperties: true,
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  'Optional. Endpoint configuration attributes that can be used to control different aspects of the message delivery. The only currently supported attribute is `x-goog-version`, which you can use to change the format of the pushed message. This attribute indicates the version of the data expected by the endpoint. This controls the shape of the pushed message (i.e., its fields and metadata). If not present during the `CreateSubscription` call, it will default to the version of the Pub/Sub API used to make such call. If not present in a `ModifyPushConfig` call, its value will not be changed. `GetSubscription` calls will always return a valid version, even if the subscription was created without this attribute. The only supported values for the `x-goog-version` attribute are: * `v1beta1`: uses the push format defined in the v1beta1 Pub/Sub API. * `v1` or `v1beta2`: uses the push format defined in the v1 Pub/Sub API. For example: `attributes { "x-goog-version": "v1" }`',
               },
               noWrapper: {
                 type: "object",
                 properties: {
                   writeMetadata: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "boolean",
+                    description:
+                      "Optional. When true, writes the Pub/Sub message metadata to `x-goog-pubsub-:` headers of the HTTP request. Writes the Pub/Sub message attributes to `:` headers of the HTTP request.",
                   },
                 },
+                description:
+                  "Sets the `data` field as the HTTP body for delivery.",
                 additionalProperties: true,
               },
               oidcToken: {
                 type: "object",
                 properties: {
                   serviceAccountEmail: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description:
+                      "Optional. [Service account email](https://cloud.google.com/iam/docs/service-accounts) used for generating the OIDC token. For more information on setting up authentication, see [Push subscriptions](https://cloud.google.com/pubsub/docs/push).",
                   },
                   audience: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description:
+                      "Optional. Audience to be used when generating OIDC token. The audience claim identifies the recipients that the JWT is intended for. The audience value is a single case-sensitive string. Having multiple values (array) for the audience field is not supported. More info about the OIDC JWT token audience here: https://tools.ietf.org/html/rfc7519#section-4.1.3 Note: if not specified, the Push endpoint URL will be used.",
                   },
                 },
+                description:
+                  "Contains information needed for generating an [OpenID Connect token](https://developers.google.com/identity/protocols/OpenIDConnect).",
                 additionalProperties: true,
               },
             },
+            description: "Configuration for a push delivery endpoint.",
             additionalProperties: true,
           },
           required: false,
@@ -141,6 +159,8 @@ const subscriptionsModifyPushConfig: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

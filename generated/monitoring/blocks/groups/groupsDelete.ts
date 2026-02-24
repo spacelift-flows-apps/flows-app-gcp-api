@@ -12,14 +12,18 @@ const groupsDelete: AppBlock = {
           name: "Name",
           description:
             "Required. The group to delete. The format is: projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID] ",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         recursive: {
           name: "Recursive",
           description:
             "If this field is true, then the request means to delete a group with all its descendants. Otherwise, the request means to delete a group only when it has no descendants. The default value is false.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
       },
@@ -91,6 +95,8 @@ const groupsDelete: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

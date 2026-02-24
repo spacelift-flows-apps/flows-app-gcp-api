@@ -12,14 +12,18 @@ const firewallPoliciesGetAssociation: AppBlock = {
           name: "Firewall Policy",
           description:
             "Name of the firewall policy to which the queried rule belongs.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         name: {
           name: "Name",
           description:
             "The name of the association to get from the firewall policy.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -94,18 +98,26 @@ const firewallPoliciesGetAssociation: AppBlock = {
         properties: {
           displayName: {
             type: "string",
+            description:
+              "[Output Only] Deprecated, please use short name instead. The display name\nof the firewall policy of the association.",
           },
           name: {
             type: "string",
+            description: "The name for an association.",
           },
           firewallPolicyId: {
             type: "string",
+            description:
+              "[Output Only] The firewall policy ID of the association.",
           },
           shortName: {
             type: "string",
+            description:
+              "[Output Only] The short name of the firewall policy of the association.",
           },
           attachmentTarget: {
             type: "string",
+            description: "The target that the firewall policy is attached to.",
           },
         },
         additionalProperties: true,

@@ -11,49 +11,63 @@ const foldersList: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket in which to look for folders.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         delimiter: {
           name: "Delimiter",
           description:
             "Returns results in a directory-like mode. The only supported value is '/'. If set, items will only contain folders that either exactly match the prefix, or are one level below the prefix.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         endOffset: {
           name: "End Offset",
           description:
             "Filter results to folders whose names are lexicographically before endOffset. If startOffset is also set, the folders listed will have names between startOffset (inclusive) and endOffset (exclusive).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Maximum number of items to return in a single page of responses.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "A previously-returned page token representing part of the larger set of results to view.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         prefix: {
           name: "Prefix",
           description:
             "Filter results to folders whose paths begin with this prefix. If set, the value must either be an empty string or end with a '/'.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         startOffset: {
           name: "Start Offset",
           description:
             "Filter results to folders whose names are lexicographically equal to or after startOffset. If endOffset is also set, the folders listed will have names between startOffset (inclusive) and endOffset (exclusive).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -134,52 +148,74 @@ const foldersList: AppBlock = {
               type: "object",
               properties: {
                 bucket: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The name of the bucket containing this folder.",
                 },
                 id: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The ID of the folder, including the bucket name, folder name.",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The kind of item this is. For folders, this is always storage#folder.",
                 },
                 metageneration: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The version of the metadata for this folder. Used for preconditions and for detecting changes in metadata. (Format: int64)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the folder. Required if not specified by URL parameter.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The link to this folder.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The creation time of the folder in RFC 3339 format. (Format: date-time)",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The modification time of the folder metadata in RFC 3339 format. (Format: date-time)",
                 },
                 pendingRenameInfo: {
                   type: "object",
+                  properties: {
+                    operationId: {
+                      type: "string",
+                      description: "The ID of the rename folder operation.",
+                    },
+                  },
+                  description:
+                    "Only present if the folder is part of an ongoing rename folder operation. Contains information which can be used to query the operation status.",
                   additionalProperties: true,
                 },
               },
+              description:
+                "A folder. Only available in buckets with hierarchical namespace enabled.",
               additionalProperties: true,
             },
+            description: "The list of items.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For lists of folders, this is always storage#folders.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results.",
           },
         },
+        description: "A list of folders.",
         additionalProperties: true,
       },
     },

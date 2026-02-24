@@ -11,13 +11,17 @@ const vpnGatewaysGetStatus: AppBlock = {
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         vpnGateway: {
           name: "VPN Gateway",
           description: "Name of the VPN gateway to return.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -97,8 +101,73 @@ const vpnGatewaysGetStatus: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    tunnels: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          localGatewayInterface: {
+                            type: "integer",
+                            description:
+                              "The VPN gateway interface this VPN tunnel is associated with. (Format: uint32)",
+                          },
+                          peerGatewayInterface: {
+                            type: "integer",
+                            description:
+                              "The peer gateway interface this VPN tunnel is connected to, the peer\ngateway could either be an external VPN gateway or a Google Cloud\nVPN gateway. (Format: uint32)",
+                          },
+                          tunnelUrl: {
+                            type: "string",
+                            description: "URL reference to the VPN tunnel.",
+                          },
+                        },
+                        description:
+                          "Contains some information about a VPN tunnel.",
+                        additionalProperties: true,
+                      },
+                      description:
+                        "List of VPN tunnels that are in this VPN connection.",
+                    },
+                    state: {
+                      type: "object",
+                      properties: {
+                        state: {
+                          type: "string",
+                          enum: [
+                            "CONNECTION_REDUNDANCY_MET",
+                            "CONNECTION_REDUNDANCY_NOT_MET",
+                          ],
+                          description:
+                            "Indicates the high availability requirement state for the VPN connection.\nValid values are CONNECTION_REDUNDANCY_MET,CONNECTION_REDUNDANCY_NOT_MET.",
+                        },
+                        unsatisfiedReason: {
+                          type: "string",
+                          enum: ["INCOMPLETE_TUNNELS_COVERAGE"],
+                          description:
+                            "Indicates the reason why the VPN connection does not meet the high\navailability redundancy criteria/requirement.\nValid values is INCOMPLETE_TUNNELS_COVERAGE.",
+                        },
+                      },
+                      description:
+                        "Describes the high availability requirement state for the VPN connection\nbetween this Cloud VPN gateway and a peer gateway.",
+                      additionalProperties: true,
+                    },
+                    peerExternalGateway: {
+                      type: "string",
+                      description:
+                        "URL reference to the peer external VPN gateways to which the VPN tunnels\nin this VPN connection are connected.\nThis field is mutually exclusive with peer_gcp_gateway.",
+                    },
+                    peerGcpGateway: {
+                      type: "string",
+                      description:
+                        "URL reference to the peer side VPN gateways to which the VPN tunnels in\nthis VPN connection are connected.\nThis field is mutually exclusive with peer_gcp_gateway.",
+                    },
+                  },
+                  description:
+                    "A VPN connection contains all VPN tunnels connected from this VpnGateway\nto the same peer gateway. The peer gateway could either be an external VPN\ngateway or a Google Cloud VPN gateway.",
                   additionalProperties: true,
                 },
+                description: "List of VPN connection for this VpnGateway.",
               },
             },
             additionalProperties: true,

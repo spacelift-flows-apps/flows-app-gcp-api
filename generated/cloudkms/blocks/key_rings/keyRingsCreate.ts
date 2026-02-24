@@ -12,26 +12,18 @@ const keyRingsCreate: AppBlock = {
           name: "Parent",
           description:
             "Required. The resource name of the location associated with the KeyRings, in the format `projects/*/locations/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         keyRingId: {
           name: "Key Ring ID",
           description:
             "Required. It must be unique within a location and match the regular expression `[a-zA-Z0-9_-]{1,63}`",
-          type: "string",
-          required: false,
-        },
-        createTime: {
-          name: "Create Time",
-          description: "Output only.",
-          type: "string",
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Output only.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -84,18 +76,6 @@ const keyRingsCreate: AppBlock = {
           },
         };
 
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
-        if (input.event.inputConfig.createTime !== undefined)
-          requestBody.createTime = input.event.inputConfig.createTime;
-        if (input.event.inputConfig.name !== undefined)
-          requestBody.name = input.event.inputConfig.name;
-
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
-
         const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
@@ -117,11 +97,16 @@ const keyRingsCreate: AppBlock = {
         properties: {
           createTime: {
             type: "string",
+            description:
+              "Output only. The time at which this KeyRing was created. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Output only. The resource name for the KeyRing in the format `projects/*/locations/*/keyRings/*`.",
           },
         },
+        description: "A KeyRing is a toplevel logical grouping of CryptoKeys.",
         additionalProperties: true,
       },
     },

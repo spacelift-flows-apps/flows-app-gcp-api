@@ -11,7 +11,9 @@ const snapshotsPatch: AppBlock = {
         name: {
           name: "Name",
           description: "Optional. The name of the snapshot.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         snapshot: {
@@ -22,18 +24,29 @@ const snapshotsPatch: AppBlock = {
             properties: {
               expireTime: {
                 type: "string",
+                description:
+                  "Optional. The snapshot is guaranteed to exist up until this time. A newly-created snapshot expires no later than 7 days from the time of its creation. Its exact lifetime is determined at creation by the existing backlog in the source subscription. Specifically, the lifetime of the snapshot is `7 days - (age of oldest unacked message in the subscription)`. For example, consider a subscription whose oldest unacked message is 3 days old. If a snapshot is created from this subscription, the snapshot -- which will always capture this 3-day-old backlog as long as the snapshot exists -- will expire in 4 days. The service will refuse to create a snapshot that would expire in less than 1 hour after creation. (Format: google-datetime)",
               },
               name: {
                 type: "string",
+                description: "Optional. The name of the snapshot.",
               },
               topic: {
                 type: "string",
+                description:
+                  "Optional. The name of the topic from which this snapshot is retaining messages.",
               },
               labels: {
                 type: "object",
-                additionalProperties: true,
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "Optional. See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).",
               },
             },
+            description:
+              "A snapshot resource. Snapshots are used in [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations, which allow you to manage message acknowledgments in bulk. That is, you can set the acknowledgment state of messages in an existing subscription to the state captured by a snapshot.",
             additionalProperties: true,
           },
           required: false,
@@ -41,7 +54,11 @@ const snapshotsPatch: AppBlock = {
         updateMask: {
           name: "Update Mask",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. Indicates which fields in the provided snapshot to update. Must be specified and non-empty. (Format: google-fieldmask)",
+          },
           required: false,
         },
       },
@@ -127,18 +144,29 @@ const snapshotsPatch: AppBlock = {
         properties: {
           expireTime: {
             type: "string",
+            description:
+              "Optional. The snapshot is guaranteed to exist up until this time. A newly-created snapshot expires no later than 7 days from the time of its creation. Its exact lifetime is determined at creation by the existing backlog in the source subscription. Specifically, the lifetime of the snapshot is `7 days - (age of oldest unacked message in the subscription)`. For example, consider a subscription whose oldest unacked message is 3 days old. If a snapshot is created from this subscription, the snapshot -- which will always capture this 3-day-old backlog as long as the snapshot exists -- will expire in 4 days. The service will refuse to create a snapshot that would expire in less than 1 hour after creation. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description: "Optional. The name of the snapshot.",
           },
           topic: {
             type: "string",
+            description:
+              "Optional. The name of the topic from which this snapshot is retaining messages.",
           },
           labels: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Optional. See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).",
           },
         },
+        description:
+          "A snapshot resource. Snapshots are used in [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations, which allow you to manage message acknowledgments in bulk. That is, you can set the acknowledgment state of messages in an existing subscription to the state captured by a snapshot.",
         additionalProperties: true,
       },
     },

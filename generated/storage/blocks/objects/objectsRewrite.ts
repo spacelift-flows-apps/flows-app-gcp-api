@@ -12,132 +12,179 @@ const objectsRewrite: AppBlock = {
           name: "Destination Bucket",
           description:
             "Name of the bucket in which to store the new object. Overrides the provided object metadata's bucket value, if any.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         destinationObject: {
           name: "Destination Object",
           description:
             "Name of the new object. Required when the object metadata is not otherwise provided. Overrides the object metadata's name value, if any. For information about how to URL encode object names to be path safe, see [Encoding URI Path Parts](https://cloud.google.com/storage/docs/request-endpoints#encoding).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         sourceBucket: {
           name: "Source Bucket",
           description: "Name of the bucket in which to find the source object.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         sourceObject: {
           name: "Source Object",
           description:
             "Name of the source object. For information about how to URL encode object names to be path safe, see [Encoding URI Path Parts](https://cloud.google.com/storage/docs/request-endpoints#encoding).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         destinationKmsKeyName: {
           name: "Destination KMS Key Name",
           description:
             "Resource name of the Cloud KMS key, of the form projects/my-project/locations/global/keyRings/my-kr/cryptoKeys/my-key, that will be used to encrypt the object. Overrides the object metadata's kms_key_name value, if any.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         destinationPredefinedAcl: {
           name: "Destination Predefined ACL",
           description:
-            "Apply a predefined set of access controls to the destination object. Valid values: authenticatedRead, bucketOwnerFullControl, bucketOwnerRead, private, projectPrivate, publicRead",
-          type: "string",
+            "Apply a predefined set of access controls to the destination object.",
+          type: {
+            type: "string",
+            enum: [
+              "authenticatedRead",
+              "bucketOwnerFullControl",
+              "bucketOwnerRead",
+              "private",
+              "projectPrivate",
+              "publicRead",
+            ],
+          },
           required: false,
         },
         ifGenerationMatch: {
           name: "If Generation Match",
           description:
             "Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifGenerationNotMatch: {
           name: "If Generation Not Match",
           description:
             "Makes the operation conditional on whether the object's current generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "Makes the operation conditional on whether the destination object's current metageneration matches the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "Makes the operation conditional on whether the destination object's current metageneration does not match the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifSourceGenerationMatch: {
           name: "If Source Generation Match",
           description:
             "Makes the operation conditional on whether the source object's current generation matches the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifSourceGenerationNotMatch: {
           name: "If Source Generation Not Match",
           description:
             "Makes the operation conditional on whether the source object's current generation does not match the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifSourceMetagenerationMatch: {
           name: "If Source Metageneration Match",
           description:
             "Makes the operation conditional on whether the source object's current metageneration matches the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifSourceMetagenerationNotMatch: {
           name: "If Source Metageneration Not Match",
           description:
             "Makes the operation conditional on whether the source object's current metageneration does not match the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         maxBytesRewrittenPerCall: {
           name: "Max Bytes Rewritten Per Call",
           description:
             "The maximum number of bytes that will be rewritten per rewrite request. Most callers shouldn't need to specify this parameter - it is primarily in place to support testing. If specified the value must be an integral multiple of 1 MiB (1048576). Also, this only applies to requests where the source and destination span locations and/or storage classes. Finally, this value must not change across rewrite calls else you'll get an error that the rewriteToken is invalid.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         projection: {
           name: "Projection",
           description:
-            "Set of properties to return. Defaults to noAcl, unless the object resource specifies the acl property, when it defaults to full. Valid values: full, noAcl",
-          type: "string",
+            "Set of properties to return. Defaults to noAcl, unless the object resource specifies the acl property, when it defaults to full.",
+          type: {
+            type: "string",
+            enum: ["full", "noAcl"],
+          },
           required: false,
         },
         rewriteToken: {
           name: "Rewrite Token",
           description:
             "Include this field (from the previous rewrite response) on each rewrite request after the first one, until the rewrite response 'done' flag is true. Calls that provide a rewriteToken can omit all other request fields, but if included those fields must match the values provided in the first rewrite request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         sourceGeneration: {
           name: "Source Generation",
           description:
             "If present, selects a specific revision of the source object (as opposed to the latest version, the default).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         acl: {
@@ -150,115 +197,169 @@ const objectsRewrite: AppBlock = {
               properties: {
                 bucket: {
                   type: "string",
+                  description: "The name of the bucket.",
                 },
                 domain: {
                   type: "string",
+                  description: "The domain associated with the entity, if any.",
                 },
                 email: {
                   type: "string",
+                  description:
+                    "The email address associated with the entity, if any.",
                 },
                 entity: {
                   type: "string",
+                  description:
+                    "The entity holding the permission, in one of the following forms: \n- user-userId \n- user-email \n- group-groupId \n- group-email \n- domain-domain \n- project-team-projectId \n- allUsers \n- allAuthenticatedUsers Examples: \n- The user liz@example.com would be user-liz@example.com. \n- The group example@googlegroups.com would be group-example@googlegroups.com. \n- To refer to all members of the Google Apps for Business domain example.com, the entity would be domain-example.com.",
                 },
                 entityId: {
                   type: "string",
+                  description: "The ID for the entity, if any.",
                 },
                 etag: {
                   type: "string",
+                  description:
+                    "HTTP 1.1 Entity tag for the access-control entry.",
                 },
                 generation: {
                   type: "string",
+                  description:
+                    "The content generation of the object, if applied to an object. (Format: int64)",
                 },
                 id: {
                   type: "string",
+                  description: "The ID of the access-control entry.",
                 },
                 kind: {
                   type: "string",
+                  description:
+                    "The kind of item this is. For object access control entries, this is always storage#objectAccessControl.",
                 },
                 object: {
                   type: "string",
+                  description:
+                    "The name of the object, if applied to an object.",
                 },
                 projectTeam: {
                   type: "object",
                   properties: {
                     projectNumber: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description: "The project number.",
                     },
                     team: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description: "The team.",
                     },
                   },
+                  description:
+                    "The project team associated with the entity, if any.",
                   additionalProperties: true,
                 },
                 role: {
                   type: "string",
+                  description: "The access permission for the entity.",
                 },
                 selfLink: {
                   type: "string",
+                  description: "The link to this access-control entry.",
                 },
               },
+              description: "An access-control entry.",
               additionalProperties: true,
             },
+            description: "Access controls on the object.",
           },
           required: false,
         },
         bucket: {
           name: "Bucket",
           description: "The name of the bucket containing this object.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The name of the bucket containing this object.",
+          },
           required: false,
         },
         cacheControl: {
           name: "Cache Control",
           description: "Cache-Control directive for the object data.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Cache-Control directive for the object data. If omitted, and the object is accessible to all anonymous users, the default will be public, max-age=3600.",
+          },
           required: false,
         },
         componentCount: {
           name: "Component Count",
           description:
             "Number of underlying components that make up this object.",
-          type: "number",
+          type: {
+            type: "integer",
+            description:
+              "Number of underlying components that make up this object. Components are accumulated by compose operations. (Format: int32)",
+          },
           required: false,
         },
         contentDisposition: {
           name: "Content Disposition",
           description: "Content-Disposition of the object data.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Content-Disposition of the object data.",
+          },
           required: false,
         },
         contentEncoding: {
           name: "Content Encoding",
           description: "Content-Encoding of the object data.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Content-Encoding of the object data.",
+          },
           required: false,
         },
         contentLanguage: {
           name: "Content Language",
           description: "Content-Language of the object data.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Content-Language of the object data.",
+          },
           required: false,
         },
         contentType: {
           name: "Content Type",
           description: "Content-Type of the object data.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Content-Type of the object data. If an object is stored without a Content-Type, it is served as application/octet-stream.",
+          },
           required: false,
         },
         crc32c: {
           name: "Crc32c",
           description:
             "CRC32c checksum, as described in RFC 4960, Appendix B; encoded using base64 in big-endian byte order.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "CRC32c checksum, as described in RFC 4960, Appendix B; encoded using base64 in big-endian byte order. For more information about using the CRC32c checksum, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation).",
+          },
           required: false,
         },
         customTime: {
           name: "Custom Time",
           description:
             "A timestamp in RFC 3339 format specified by the user for an object.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A timestamp in RFC 3339 format specified by the user for an object. (Format: date-time)",
+          },
           required: false,
         },
         customerEncryption: {
@@ -270,11 +371,15 @@ const objectsRewrite: AppBlock = {
             properties: {
               encryptionAlgorithm: {
                 type: "string",
+                description: "The encryption algorithm.",
               },
               keySha256: {
                 type: "string",
+                description: "SHA256 hash value of the encryption key.",
               },
             },
+            description:
+              "Metadata of customer-supplied encryption key, if the object is encrypted by such a key.",
             additionalProperties: true,
           },
           required: false,
@@ -282,50 +387,80 @@ const objectsRewrite: AppBlock = {
         etag: {
           name: "Etag",
           description: "HTTP 1.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "HTTP 1.1 Entity tag for the object.",
+          },
           required: false,
         },
         eventBasedHold: {
           name: "Event Based Hold",
           description: "Whether an object is under event-based hold.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+            description:
+              "Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One sample use case of this flag is for banks to hold loan documents for at least 3 years after loan is paid in full. Here, bucket-level retention is 3 years and the event is the loan being paid in full. In this example, these objects will be held intact for any number of years until the event has occurred (event-based hold on the object is released) and then 3 more years after that. That means retention duration of the objects begins from the moment event-based hold transitioned from true to false.",
+          },
           required: false,
         },
         generation: {
           name: "Generation",
           description: "The content generation of this object.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The content generation of this object. Used for object versioning. (Format: int64)",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description:
             "The ID of the object, including the bucket name, object name, and generation number.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The ID of the object, including the bucket name, object name, and generation number.",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description: "The kind of item this is.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The kind of item this is. For objects, this is always storage#object.",
+          },
           required: false,
         },
         kmsKeyName: {
           name: "KMS Key Name",
           description: "Not currently supported.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request.",
+          },
           required: false,
         },
         md5Hash: {
           name: "Md5 Hash",
           description: "MD5 hash of the data; encoded using base64.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation).",
+          },
           required: false,
         },
         mediaLink: {
           name: "Media Link",
           description: "Media download link.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Media download link.",
+          },
           required: false,
         },
         metadata: {
@@ -333,7 +468,10 @@ const objectsRewrite: AppBlock = {
           description: "User-provided metadata, in key/value pairs.",
           type: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description: "User-provided metadata, in key/value pairs.",
           },
           required: false,
         },
@@ -345,9 +483,14 @@ const objectsRewrite: AppBlock = {
             properties: {
               custom: {
                 type: "object",
-                additionalProperties: true,
+                additionalProperties: {
+                  type: "object",
+                },
+                description: "User-defined object contexts.",
               },
             },
+            description:
+              "User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata.",
             additionalProperties: true,
           },
           required: false,
@@ -356,20 +499,32 @@ const objectsRewrite: AppBlock = {
           name: "Restore Token",
           description:
             "Restore token used to differentiate deleted objects with the same name and generation.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets.",
+          },
           required: false,
         },
         metageneration: {
           name: "Metageneration",
           description:
             "The version of the metadata for this object at this generation.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. (Format: int64)",
+          },
           required: false,
         },
         name: {
           name: "Name",
           description: "The name of the object.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The name of the object. Required if not specified by URL parameter.",
+          },
           required: false,
         },
         owner: {
@@ -380,11 +535,15 @@ const objectsRewrite: AppBlock = {
             properties: {
               entity: {
                 type: "string",
+                description: "The entity, in the form user-userId.",
               },
               entityId: {
                 type: "string",
+                description: "The ID for the entity.",
               },
             },
+            description:
+              "The owner of the object. This will always be the uploader of the object.",
             additionalProperties: true,
           },
           required: false,
@@ -393,7 +552,11 @@ const objectsRewrite: AppBlock = {
           name: "Retention Expiration Time",
           description:
             "A server-determined value that specifies the earliest time that the object's retention period expires.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This value can be provided even when temporary hold is set (so that the user can reason about policy without having to first unset the temporary hold). (Format: date-time)",
+          },
           required: false,
         },
         retention: {
@@ -404,11 +567,16 @@ const objectsRewrite: AppBlock = {
             properties: {
               retainUntilTime: {
                 type: "string",
+                description:
+                  "A time in RFC 3339 format until which object retention protects this object. (Format: date-time)",
               },
               mode: {
                 type: "string",
+                description:
+                  "The bucket's object retention mode, can only be Unlocked or Locked.",
               },
             },
+            description: "A collection of object level retention parameters.",
             additionalProperties: true,
           },
           required: false,
@@ -416,72 +584,114 @@ const objectsRewrite: AppBlock = {
         selfLink: {
           name: "Self Link",
           description: "The link to this object.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The link to this object.",
+          },
           required: false,
         },
         size: {
           name: "Size",
           description: "Content-Length of the data in bytes.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Content-Length of the data in bytes. (Format: uint64)",
+          },
           required: false,
         },
         storageClass: {
           name: "Storage Class",
           description: "Storage class of the object.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Storage class of the object.",
+          },
           required: false,
         },
         temporaryHold: {
           name: "Temporary Hold",
           description: "Whether an object is under temporary hold.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+            description:
+              "Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
+          },
           required: false,
         },
         timeCreated: {
           name: "Time Created",
           description: "The creation time of the object in RFC 3339 format.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The creation time of the object in RFC 3339 format. (Format: date-time)",
+          },
           required: false,
         },
         timeDeleted: {
           name: "Time Deleted",
           description:
             "The time at which the object became noncurrent in RFC 3339 format.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The time at which the object became noncurrent in RFC 3339 format. Will be returned if and only if this version of the object has been deleted. (Format: date-time)",
+          },
           required: false,
         },
         timeFinalized: {
           name: "Time Finalized",
           description: "The time when the object was finalized.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The time when the object was finalized. (Format: date-time)",
+          },
           required: false,
         },
         softDeleteTime: {
           name: "Soft Delete Time",
           description:
             "The time at which the object became soft-deleted in RFC 3339 format.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The time at which the object became soft-deleted in RFC 3339 format. (Format: date-time)",
+          },
           required: false,
         },
         hardDeleteTime: {
           name: "Hard Delete Time",
           description:
             "This is the time (in the future) when the soft-deleted object will no longer be restorable.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "This is the time (in the future) when the soft-deleted object will no longer be restorable. It is equal to the soft delete time plus the current soft delete retention duration of the bucket. (Format: date-time)",
+          },
           required: false,
         },
         timeStorageClassUpdated: {
           name: "Time Storage Class Updated",
           description:
             "The time at which the object's storage class was last changed.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. (Format: date-time)",
+          },
           required: false,
         },
         updated: {
           name: "Updated",
           description:
             "The modification time of the object metadata in RFC 3339 format.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of a requester, such as changing the storage class based on an Object Lifecycle Configuration. (Format: date-time)",
+          },
           required: false,
         },
       },
@@ -644,12 +854,17 @@ const objectsRewrite: AppBlock = {
         properties: {
           done: {
             type: "boolean",
+            description:
+              "true if the copy is finished; otherwise, false if the copy is in progress. This property is always present in the response.",
           },
           kind: {
             type: "string",
+            description: "The kind of item this is.",
           },
           objectSize: {
             type: "string",
+            description:
+              "The total size of the object being copied in bytes. This property is always present in the response. (Format: int64)",
           },
           resource: {
             type: "object",
@@ -658,171 +873,324 @@ const objectsRewrite: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    bucket: {
+                      type: "string",
+                      description: "The name of the bucket.",
+                    },
+                    domain: {
+                      type: "string",
+                      description:
+                        "The domain associated with the entity, if any.",
+                    },
+                    email: {
+                      type: "string",
+                      description:
+                        "The email address associated with the entity, if any.",
+                    },
+                    entity: {
+                      type: "string",
+                      description:
+                        "The entity holding the permission, in one of the following forms: \n- user-userId \n- user-email \n- group-groupId \n- group-email \n- domain-domain \n- project-team-projectId \n- allUsers \n- allAuthenticatedUsers Examples: \n- The user liz@example.com would be user-liz@example.com. \n- The group example@googlegroups.com would be group-example@googlegroups.com. \n- To refer to all members of the Google Apps for Business domain example.com, the entity would be domain-example.com.",
+                    },
+                    entityId: {
+                      type: "string",
+                      description: "The ID for the entity, if any.",
+                    },
+                    etag: {
+                      type: "string",
+                      description:
+                        "HTTP 1.1 Entity tag for the access-control entry.",
+                    },
+                    generation: {
+                      type: "string",
+                      description:
+                        "The content generation of the object, if applied to an object. (Format: int64)",
+                    },
+                    id: {
+                      type: "string",
+                      description: "The ID of the access-control entry.",
+                    },
+                    kind: {
+                      type: "string",
+                      description:
+                        "The kind of item this is. For object access control entries, this is always storage#objectAccessControl.",
+                    },
+                    object: {
+                      type: "string",
+                      description:
+                        "The name of the object, if applied to an object.",
+                    },
+                    projectTeam: {
+                      type: "object",
+                      properties: {
+                        projectNumber: {
+                          type: "string",
+                          description: "The project number.",
+                        },
+                        team: {
+                          type: "string",
+                          description: "The team.",
+                        },
+                      },
+                      description:
+                        "The project team associated with the entity, if any.",
+                      additionalProperties: true,
+                    },
+                    role: {
+                      type: "string",
+                      description: "The access permission for the entity.",
+                    },
+                    selfLink: {
+                      type: "string",
+                      description: "The link to this access-control entry.",
+                    },
+                  },
+                  description: "An access-control entry.",
                   additionalProperties: true,
                 },
+                description: "Access controls on the object.",
               },
               bucket: {
                 type: "string",
+                description: "The name of the bucket containing this object.",
               },
               cacheControl: {
                 type: "string",
+                description:
+                  "Cache-Control directive for the object data. If omitted, and the object is accessible to all anonymous users, the default will be public, max-age=3600.",
               },
               componentCount: {
-                type: "number",
+                type: "integer",
+                description:
+                  "Number of underlying components that make up this object. Components are accumulated by compose operations. (Format: int32)",
               },
               contentDisposition: {
                 type: "string",
+                description: "Content-Disposition of the object data.",
               },
               contentEncoding: {
                 type: "string",
+                description: "Content-Encoding of the object data.",
               },
               contentLanguage: {
                 type: "string",
+                description: "Content-Language of the object data.",
               },
               contentType: {
                 type: "string",
+                description:
+                  "Content-Type of the object data. If an object is stored without a Content-Type, it is served as application/octet-stream.",
               },
               crc32c: {
                 type: "string",
+                description:
+                  "CRC32c checksum, as described in RFC 4960, Appendix B; encoded using base64 in big-endian byte order. For more information about using the CRC32c checksum, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation).",
               },
               customTime: {
                 type: "string",
+                description:
+                  "A timestamp in RFC 3339 format specified by the user for an object. (Format: date-time)",
               },
               customerEncryption: {
                 type: "object",
                 properties: {
                   encryptionAlgorithm: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description: "The encryption algorithm.",
                   },
                   keySha256: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description: "SHA256 hash value of the encryption key.",
                   },
                 },
+                description:
+                  "Metadata of customer-supplied encryption key, if the object is encrypted by such a key.",
                 additionalProperties: true,
               },
               etag: {
                 type: "string",
+                description: "HTTP 1.1 Entity tag for the object.",
               },
               eventBasedHold: {
                 type: "boolean",
+                description:
+                  "Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One sample use case of this flag is for banks to hold loan documents for at least 3 years after loan is paid in full. Here, bucket-level retention is 3 years and the event is the loan being paid in full. In this example, these objects will be held intact for any number of years until the event has occurred (event-based hold on the object is released) and then 3 more years after that. That means retention duration of the objects begins from the moment event-based hold transitioned from true to false.",
               },
               generation: {
                 type: "string",
+                description:
+                  "The content generation of this object. Used for object versioning. (Format: int64)",
               },
               id: {
                 type: "string",
+                description:
+                  "The ID of the object, including the bucket name, object name, and generation number.",
               },
               kind: {
                 type: "string",
+                description:
+                  "The kind of item this is. For objects, this is always storage#object.",
               },
               kmsKeyName: {
                 type: "string",
+                description:
+                  "Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request.",
               },
               md5Hash: {
                 type: "string",
+                description:
+                  "MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation).",
               },
               mediaLink: {
                 type: "string",
+                description: "Media download link.",
               },
               metadata: {
                 type: "object",
-                additionalProperties: true,
+                additionalProperties: {
+                  type: "string",
+                },
+                description: "User-provided metadata, in key/value pairs.",
               },
               contexts: {
                 type: "object",
                 properties: {
                   custom: {
                     type: "object",
-                    additionalProperties: true,
+                    additionalProperties: {
+                      type: "object",
+                    },
+                    description: "User-defined object contexts.",
                   },
                 },
+                description:
+                  "User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata.",
                 additionalProperties: true,
               },
               restoreToken: {
                 type: "string",
+                description:
+                  "Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets.",
               },
               metageneration: {
                 type: "string",
+                description:
+                  "The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. (Format: int64)",
               },
               name: {
                 type: "string",
+                description:
+                  "The name of the object. Required if not specified by URL parameter.",
               },
               owner: {
                 type: "object",
                 properties: {
                   entity: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description: "The entity, in the form user-userId.",
                   },
                   entityId: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description: "The ID for the entity.",
                   },
                 },
+                description:
+                  "The owner of the object. This will always be the uploader of the object.",
                 additionalProperties: true,
               },
               retentionExpirationTime: {
                 type: "string",
+                description:
+                  "A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This value can be provided even when temporary hold is set (so that the user can reason about policy without having to first unset the temporary hold). (Format: date-time)",
               },
               retention: {
                 type: "object",
                 properties: {
                   retainUntilTime: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description:
+                      "A time in RFC 3339 format until which object retention protects this object. (Format: date-time)",
                   },
                   mode: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
+                    description:
+                      "The bucket's object retention mode, can only be Unlocked or Locked.",
                   },
                 },
+                description:
+                  "A collection of object level retention parameters.",
                 additionalProperties: true,
               },
               selfLink: {
                 type: "string",
+                description: "The link to this object.",
               },
               size: {
                 type: "string",
+                description:
+                  "Content-Length of the data in bytes. (Format: uint64)",
               },
               storageClass: {
                 type: "string",
+                description: "Storage class of the object.",
               },
               temporaryHold: {
                 type: "boolean",
+                description:
+                  "Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
               },
               timeCreated: {
                 type: "string",
+                description:
+                  "The creation time of the object in RFC 3339 format. (Format: date-time)",
               },
               timeDeleted: {
                 type: "string",
+                description:
+                  "The time at which the object became noncurrent in RFC 3339 format. Will be returned if and only if this version of the object has been deleted. (Format: date-time)",
               },
               timeFinalized: {
                 type: "string",
+                description:
+                  "The time when the object was finalized. (Format: date-time)",
               },
               softDeleteTime: {
                 type: "string",
+                description:
+                  "The time at which the object became soft-deleted in RFC 3339 format. (Format: date-time)",
               },
               hardDeleteTime: {
                 type: "string",
+                description:
+                  "This is the time (in the future) when the soft-deleted object will no longer be restorable. It is equal to the soft delete time plus the current soft delete retention duration of the bucket. (Format: date-time)",
               },
               timeStorageClassUpdated: {
                 type: "string",
+                description:
+                  "The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. (Format: date-time)",
               },
               updated: {
                 type: "string",
+                description:
+                  "The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of a requester, such as changing the storage class based on an Object Lifecycle Configuration. (Format: date-time)",
               },
             },
+            description: "An object.",
             additionalProperties: true,
           },
           rewriteToken: {
             type: "string",
+            description:
+              "A token to use in subsequent requests to continue copying data. This token is present in the response only when there is more data to copy.",
           },
           totalBytesRewritten: {
             type: "string",
+            description:
+              "The total bytes written so far, which can be used to provide a waiting user with a progress indicator. This property is always present in the response. (Format: int64)",
           },
         },
+        description: "A rewrite response.",
         additionalProperties: true,
       },
     },

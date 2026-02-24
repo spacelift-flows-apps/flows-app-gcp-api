@@ -12,28 +12,44 @@ const channelsStop: AppBlock = {
           name: "Address",
           description:
             "The address where notifications are delivered for this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The address where notifications are delivered for this channel.",
+          },
           required: false,
         },
         expiration: {
           name: "Expiration",
           description:
             "Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. (Format: int64)",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description:
             "A UUID or similar unique string that identifies this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A UUID or similar unique string that identifies this channel.",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description:
             'Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel".',
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              'Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel".',
+          },
           required: false,
         },
         params: {
@@ -42,41 +58,65 @@ const channelsStop: AppBlock = {
             "Additional parameters controlling delivery channel behavior.",
           type: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Additional parameters controlling delivery channel behavior. Optional.",
           },
           required: false,
         },
         payload: {
           name: "Payload",
           description: "A Boolean value to indicate whether payload is wanted.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+            description:
+              "A Boolean value to indicate whether payload is wanted. Optional.",
+          },
           required: false,
         },
         resourceId: {
           name: "Resource ID",
           description:
             "An opaque ID that identifies the resource being watched on this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "An opaque ID that identifies the resource being watched on this channel. Stable across different API versions.",
+          },
           required: false,
         },
         resourceUri: {
           name: "Resource Uri",
           description:
             "A version-specific identifier for the watched resource.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A version-specific identifier for the watched resource.",
+          },
           required: false,
         },
         token: {
           name: "Token",
           description:
             "An arbitrary string delivered to the target address with each notification delivered over this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "An arbitrary string delivered to the target address with each notification delivered over this channel. Optional.",
+          },
           required: false,
         },
         type: {
           name: "Type",
           description: "The type of delivery mechanism used for this channel.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The type of delivery mechanism used for this channel.",
+          },
           required: false,
         },
       },

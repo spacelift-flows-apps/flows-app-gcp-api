@@ -12,7 +12,9 @@ const schemasCommit: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the schema we are revising. Format is `projects/{project}/schemas/{schema}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         schema: {
@@ -23,21 +25,31 @@ const schemasCommit: AppBlock = {
             properties: {
               definition: {
                 type: "string",
+                description:
+                  "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
               },
               revisionCreateTime: {
                 type: "string",
+                description:
+                  "Output only. The timestamp that the revision was created. (Format: google-datetime)",
               },
               name: {
                 type: "string",
+                description:
+                  "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
               },
               revisionId: {
                 type: "string",
+                description:
+                  "Output only. Immutable. The revision ID of the schema.",
               },
               type: {
                 type: "string",
                 enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+                description: "The type of the schema definition.",
               },
             },
+            description: "A schema resource.",
             additionalProperties: true,
           },
           required: false,
@@ -123,21 +135,31 @@ const schemasCommit: AppBlock = {
         properties: {
           definition: {
             type: "string",
+            description:
+              "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
           revisionCreateTime: {
             type: "string",
+            description:
+              "Output only. The timestamp that the revision was created. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
           },
           revisionId: {
             type: "string",
+            description:
+              "Output only. Immutable. The revision ID of the schema.",
           },
           type: {
             type: "string",
             enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+            description: "The type of the schema definition.",
           },
         },
+        description: "A schema resource.",
         additionalProperties: true,
       },
     },

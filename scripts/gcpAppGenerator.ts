@@ -51,7 +51,10 @@ interface Schema {
   required?: string[];
   additionalProperties?: boolean | Schema;
   enum?: string[];
+  enumDescriptions?: string[];
   $ref?: string;
+  readOnly?: boolean;
+  format?: string;
 }
 
 interface Method {
@@ -531,9 +534,12 @@ Provide a pre-generated GCP access token for keyless authentication.
         requestBodyFields.push(...Object.keys(schema.properties).filter(key => {
           const propSchema = schema.properties![key];
           const description = propSchema.description || '';
-          // Skip deprecated and project-related fields
+          const resolved = this.resolveRef(propSchema, service.schemas);
+          // Skip deprecated, project-related, and readOnly fields
           return !description.toLowerCase().includes('deprecated') &&
-                 !['project', 'projectId', 'projectsId'].includes(key);
+                 !['project', 'projectId', 'projectsId'].includes(key) &&
+                 !propSchema.readOnly &&
+                 !resolved.readOnly;
         }));
       }
     }
@@ -648,14 +654,16 @@ export default ${blockName};
           continue;
         }
 
-        const enumNote = param.enum ? ` Valid values: ${param.enum.join(', ')}` : '';
+        // Use the unified type mapper via a synthesized schema
+        const paramSchema: Schema = { type: param.type, enum: param.enum };
+        const paramType = this.schemaToFlowsType(paramSchema, service.schemas);
 
         fields.push({
           key: paramName,
           value: {
             name: this.humanizeName(paramName),
-            description: description + enumNote,
-            type: this.mapGCPTypeToFlows(param.type),
+            description: description,
+            type: paramType,
             required: param.required || false,
           },
         });
@@ -678,12 +686,22 @@ export default ${blockName};
             continue;
           }
 
+          // Skip readOnly fields - these are output-only and shouldn't be user inputs
+          // readOnly can be on the property itself (before $ref) or on the resolved schema
+          if (propSchema.readOnly) {
+            continue;
+          }
+          const resolved = this.resolveRef(propSchema, service.schemas);
+          if (resolved.readOnly) {
+            continue;
+          }
+
           fields.push({
             key: propName,
             value: {
               name: this.humanizeName(propName),
               description: this.cleanDocumentation(description),
-              type: this.schemaToFlowsInputType(propSchema, service.schemas),
+              type: this.schemaToFlowsType(propSchema, service.schemas),
               required: schema.required?.includes(propName) || false,
             },
           });
@@ -707,51 +725,6 @@ export default ${blockName};
     return config;
   }
 
-  private schemaToFlowsInputType(
-    schema: Schema,
-    allSchemas: Record<string, Schema>,
-    depth = 0
-  ): any {
-    // For input configs: primitives are simple strings, complex types are full schemas
-    // This method returns the correct format for AppBlockConfigField.type
-
-    // Prevent infinite recursion
-    if (depth > 3) {
-      return { type: "object", additionalProperties: true };
-    }
-
-    // Handle $ref
-    if (schema.$ref) {
-      const refSchema = allSchemas[schema.$ref];
-      if (refSchema) {
-        return this.schemaToFlowsInputType(refSchema, allSchemas, depth + 1);
-      }
-    }
-
-    switch (schema.type) {
-      case "string":
-        // Simple string - no need for object wrapper in input configs
-        return "string";
-
-      case "integer":
-      case "number":
-        // Simple number - no need for object wrapper in input configs
-        return "number";
-
-      case "boolean":
-        // Simple boolean - no need for object wrapper in input configs
-        return "boolean";
-
-      case "array":
-      case "object":
-        // Complex types need full schema
-        return this.schemaToFlowsType(schema, allSchemas, depth);
-
-      default:
-        return "string";
-    }
-  }
-
   private generateOutputType(
     service: ParsedService,
     method: Method
@@ -768,31 +741,44 @@ export default ${blockName};
     return this.schemaToFlowsType(schema, service.schemas);
   }
 
+  /**
+   * Resolve $ref indirection without counting as depth increase.
+   * Returns the resolved schema (or the original if no $ref).
+   */
+  private resolveRef(
+    schema: Schema,
+    allSchemas: Record<string, Schema>
+  ): Schema {
+    if (schema.$ref) {
+      const resolved = allSchemas[schema.$ref];
+      if (resolved) return resolved;
+    }
+    return schema;
+  }
+
   private schemaToFlowsType(
     schema: Schema,
     allSchemas: Record<string, Schema>,
     depth = 0
   ): any {
-    // Prevent infinite recursion
-    if (depth > 3) {
+    // Prevent infinite recursion (max observed chain is 8 in compute-v1)
+    if (depth > 10) {
       return { type: "object", additionalProperties: true };
     }
 
-    // Handle $ref
-    if (schema.$ref) {
-      const refSchema = allSchemas[schema.$ref];
-      if (refSchema) {
-        return this.schemaToFlowsType(refSchema, allSchemas, depth + 1);
-      }
-    }
+    // Resolve $ref without incrementing depth — it's indirection, not nesting
+    const resolved = this.resolveRef(schema, allSchemas);
 
-    switch (schema.type) {
-      case "object":
-        if (schema.properties) {
+    // Build description: use schema description, append format hint if present
+    const description = this.buildSchemaDescription(resolved);
+
+    switch (resolved.type) {
+      case "object": {
+        if (resolved.properties) {
           const properties: Record<string, any> = {};
-          const required: string[] = schema.required || [];
+          const required: string[] = resolved.required || [];
 
-          for (const [propName, propSchema] of Object.entries(schema.properties)) {
+          for (const [propName, propSchema] of Object.entries(resolved.properties)) {
             properties[propName] = this.schemaToFlowsType(
               propSchema,
               allSchemas,
@@ -800,58 +786,112 @@ export default ${blockName};
             );
           }
 
-          return {
-            type: "object",
-            properties,
-            ...(required.length > 0 ? { required } : { additionalProperties: true }),
-          };
+          const result: any = { type: "object", properties };
+          if (required.length > 0) {
+            result.required = required;
+          }
+          if (description) {
+            result.description = description;
+          }
+          result.additionalProperties = true;
+          return result;
         }
-        return { type: "object", additionalProperties: true };
 
-      case "array":
-        if (schema.items) {
-          return {
+        // Map types: additionalProperties with typed values (e.g., labels: { additionalProperties: { type: "string" } })
+        if (resolved.additionalProperties && typeof resolved.additionalProperties === 'object') {
+          const apSchema = resolved.additionalProperties as Schema;
+          const apResolved = this.resolveRef(apSchema, allSchemas);
+          const apType = apResolved.type || 'string';
+          const validTypes = ['string', 'number', 'boolean', 'object', 'array'];
+          if (validTypes.includes(apType)) {
+            const result: any = {
+              type: "object",
+              additionalProperties: { type: apType as "string" | "number" | "boolean" | "object" | "array" },
+            };
+            if (description) {
+              result.description = description;
+            }
+            return result;
+          }
+        }
+
+        const result: any = { type: "object", additionalProperties: true };
+        if (description) {
+          result.description = description;
+        }
+        return result;
+      }
+
+      case "array": {
+        if (resolved.items) {
+          const result: any = {
             type: "array",
-            items: this.schemaToFlowsType(schema.items, allSchemas, depth + 1),
+            items: this.schemaToFlowsType(resolved.items, allSchemas, depth + 1),
           };
+          if (description) {
+            result.description = description;
+          }
+          return result;
         }
-        return { type: "array", items: { type: "any" } };
+        const result: any = { type: "array", items: { type: "any" } };
+        if (description) {
+          result.description = description;
+        }
+        return result;
+      }
 
-      case "string":
-        if (schema.enum) {
-          return { type: "string", enum: schema.enum };
+      case "string": {
+        if (resolved.enum) {
+          const result: any = { type: "string", enum: resolved.enum };
+          if (description) {
+            result.description = description;
+          }
+          return result;
+        }
+        if (description) {
+          return { type: "string", description };
         }
         return { type: "string" };
+      }
 
       case "integer":
+        if (description) {
+          return { type: "integer", description };
+        }
+        return { type: "integer" };
+
       case "number":
+        if (description) {
+          return { type: "number", description };
+        }
         return { type: "number" };
 
       case "boolean":
+        if (description) {
+          return { type: "boolean", description };
+        }
         return { type: "boolean" };
 
       default:
+        if (description) {
+          return { type: "string", description };
+        }
         return { type: "string" };
     }
   }
 
-  private mapGCPTypeToFlows(type: string): string {
-    switch (type) {
-      case "string":
-        return "string";
-      case "integer":
-      case "number":
-        return "number";
-      case "boolean":
-        return "boolean";
-      case "array":
-        return "array";
-      case "object":
-        return "object";
-      default:
-        return "string";
+  /**
+   * Build a description string for a schema, appending format hint if present.
+   */
+  private buildSchemaDescription(schema: Schema): string | undefined {
+    let desc = schema.description?.trim();
+    if (schema.format) {
+      const formatHint = `Format: ${schema.format}`;
+      desc = desc ? `${desc} (${formatHint})` : formatHint;
     }
+    return desc || undefined;
   }
+
 
   private async generatePackageJson(service: ParsedService, appDir: string) {
     // Only include @google-cloud packages that actually exist on npm
@@ -873,7 +913,7 @@ export default ${blockName};
         bundle: "npx flowctl version bundle -e main.ts",
       },
       dependencies: {
-        "@slflows/sdk": "*",
+        "@slflows/sdk": "^0.9.0",
         "google-auth-library": "^9.0.0",
         ...(hasNpmPackage ? { [service.metadata.packageName]: "^3.0.0" } : {}),
       },
@@ -884,7 +924,7 @@ export default ${blockName};
         "@useflows/flowctl": "^0.1.1",
       },
       peerDependencies: {
-        "@slflows/sdk": "*",
+        "@slflows/sdk": "^0.9.0",
       },
       overrides: {
         "protobufjs": ">=7.2.5",

@@ -12,7 +12,9 @@ const uptimeCheckConfigsDelete: AppBlock = {
           name: "Name",
           description:
             "Required. The Uptime check configuration to delete. The format is: projects/[PROJECT_ID_OR_NUMBER]/uptimeCheckConfigs/[UPTIME_CHECK_ID] ",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -84,6 +86,8 @@ const uptimeCheckConfigsDelete: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

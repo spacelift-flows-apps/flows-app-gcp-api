@@ -12,13 +12,17 @@ const regionOperationsDelete: AppBlock = {
           name: "Operation",
           description:
             "Name of the Operations resource to delete, or its unique numeric\nidentifier.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },

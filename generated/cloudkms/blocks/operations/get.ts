@@ -11,7 +11,9 @@ const get: AppBlock = {
         name: {
           name: "Name",
           description: "Resource name for the location.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -85,22 +87,35 @@ const get: AppBlock = {
         properties: {
           displayName: {
             type: "string",
+            description:
+              'The friendly name for this location, typically a nearby city name. For example, "Tokyo".',
           },
           name: {
             type: "string",
+            description:
+              'Resource name for the location, which may vary between implementations. For example: `"projects/example-project/locations/us-east1"`',
           },
           metadata: {
             type: "object",
             additionalProperties: true,
+            description:
+              "Service-specific metadata. For example the available capacity at the given location.",
           },
           labels: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              'Cross-service attributes for the location. For example {"cloud.googleapis.com/region": "us-east1"}',
           },
           locationId: {
             type: "string",
+            description:
+              'The canonical id for this location. For example: `"us-east1"`.',
           },
         },
+        description: "A resource that represents a Google Cloud location.",
         additionalProperties: true,
       },
     },

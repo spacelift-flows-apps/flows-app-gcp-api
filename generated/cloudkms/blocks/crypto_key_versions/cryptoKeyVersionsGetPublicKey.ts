@@ -12,14 +12,25 @@ const cryptoKeyVersionsGetPublicKey: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the CryptoKeyVersion public key to get.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         publicKeyFormat: {
           name: "Public Key Format",
           description:
-            "Optional. The PublicKey format specified by the user. This field is required for PQC algorithms. If specified, the public key will be exported through the public_key field in the requested format. Otherwise, the pem field will be populated for non-PQC algorithms, and an error will be returned for PQC algorithms. Valid values: PUBLIC_KEY_FORMAT_UNSPECIFIED, PEM, DER, NIST_PQC, XWING_RAW_BYTES",
-          type: "string",
+            "Optional. The PublicKey format specified by the user. This field is required for PQC algorithms. If specified, the public key will be exported through the public_key field in the requested format. Otherwise, the pem field will be populated for non-PQC algorithms, and an error will be returned for PQC algorithms.",
+          type: {
+            type: "string",
+            enum: [
+              "PUBLIC_KEY_FORMAT_UNSPECIFIED",
+              "PEM",
+              "DER",
+              "NIST_PQC",
+              "XWING_RAW_BYTES",
+            ],
+          },
           required: false,
         },
       },
@@ -93,6 +104,8 @@ const cryptoKeyVersionsGetPublicKey: AppBlock = {
         properties: {
           pemCrc32c: {
             type: "string",
+            description:
+              "Integrity verification field. A CRC32C checksum of the returned PublicKey.pem. An integrity check of PublicKey.pem can be performed by computing the CRC32C checksum of PublicKey.pem and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed `2^32-1`, and can be safely downconverted to uint32 in languages that support this type. NOTE: This field is in Beta. (Format: int64)",
           },
           algorithm: {
             type: "string",
@@ -142,17 +155,22 @@ const cryptoKeyVersionsGetPublicKey: AppBlock = {
               "PQ_SIGN_SLH_DSA_SHA2_128S",
               "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
             ],
+            description: "The Algorithm associated with this key.",
           },
           publicKey: {
             type: "object",
             properties: {
               data: {
                 type: "string",
+                description: "Raw Data. (Format: byte)",
               },
               crc32cChecksum: {
                 type: "string",
+                description:
+                  "Integrity verification field. A CRC32C checksum of the returned ChecksummedData.data. An integrity check of ChecksummedData.data can be performed by computing the CRC32C checksum of ChecksummedData.data and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed `2^32-1`, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
               },
             },
+            description: "Data with integrity verification field.",
             additionalProperties: true,
           },
           publicKeyFormat: {
@@ -164,12 +182,18 @@ const cryptoKeyVersionsGetPublicKey: AppBlock = {
               "NIST_PQC",
               "XWING_RAW_BYTES",
             ],
+            description:
+              "The PublicKey format specified by the customer through the public_key_format field.",
           },
           name: {
             type: "string",
+            description:
+              "The name of the CryptoKeyVersion public key. Provided here for verification. NOTE: This field is in Beta.",
           },
           pem: {
             type: "string",
+            description:
+              "The public key, encoded in PEM format. For more information, see the [RFC 7468](https://tools.ietf.org/html/rfc7468) sections for [General Considerations](https://tools.ietf.org/html/rfc7468#section-2) and [Textual Encoding of Subject Public Key Info] (https://tools.ietf.org/html/rfc7468#section-13).",
           },
           protectionLevel: {
             type: "string",
@@ -180,8 +204,12 @@ const cryptoKeyVersionsGetPublicKey: AppBlock = {
               "EXTERNAL",
               "EXTERNAL_VPC",
             ],
+            description:
+              "The ProtectionLevel of the CryptoKeyVersion public key.",
           },
         },
+        description:
+          "The public keys for a given CryptoKeyVersion. Obtained via GetPublicKey.",
         additionalProperties: true,
       },
     },

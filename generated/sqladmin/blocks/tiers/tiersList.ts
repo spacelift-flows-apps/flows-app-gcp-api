@@ -78,6 +78,7 @@ const tiersList: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#tiersList`.",
           },
           items: {
             type: "array",
@@ -85,30 +86,39 @@ const tiersList: AppBlock = {
               type: "object",
               properties: {
                 tier: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "An identifier for the machine type, for example, `db-custom-1-3840`. For related information, see [Pricing](/sql/pricing).",
                 },
                 RAM: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The maximum RAM usage of this tier in bytes. (Format: int64)",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "This is always `sql#tier`.",
                 },
                 DiskQuota: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The maximum disk size of this tier in bytes. (Format: int64)",
                 },
                 region: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description: "The applicable regions for this tier.",
                 },
               },
+              description: "A Google Cloud SQL service tier resource.",
               additionalProperties: true,
             },
+            description: "List of tiers.",
           },
         },
+        description: "Tiers list response.",
         additionalProperties: true,
       },
     },

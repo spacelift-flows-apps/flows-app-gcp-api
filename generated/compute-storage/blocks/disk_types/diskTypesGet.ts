@@ -11,13 +11,17 @@ const diskTypesGet: AppBlock = {
         diskType: {
           name: "Disk Type",
           description: "Name of the disk type to return.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -92,18 +96,28 @@ const diskTypesGet: AppBlock = {
         properties: {
           zone: {
             type: "string",
+            description:
+              "[Output Only] URL of the zone where the disk type resides.\nYou must specify this field as part of the HTTP request URL. It is\nnot settable as a field in the request body.",
           },
           defaultDiskSizeGb: {
             type: "string",
+            description:
+              "[Output Only] Server-defined default disk size in GB. (Format: int64)",
           },
           region: {
             type: "string",
+            description:
+              "[Output Only] URL of the region where the disk type resides. Only\napplicable for regional resources.\nYou must specify this field as part of the HTTP request URL. It is\nnot settable as a field in the request body.",
           },
           validDiskSize: {
             type: "string",
+            description:
+              '[Output Only] An optional textual description of the valid disk size,\nsuch as "10GB-10TB".',
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Always compute#diskType\nfor disk types.",
           },
           deprecated: {
             type: "object",
@@ -111,38 +125,59 @@ const diskTypesGet: AppBlock = {
               state: {
                 type: "string",
                 enum: ["ACTIVE", "DELETED", "DEPRECATED", "OBSOLETE"],
+                description:
+                  "The deprecation state of this resource. This can be ACTIVE,DEPRECATED, OBSOLETE, or DELETED.\nOperations which communicate the end of life date for an image, can useACTIVE. Operations which create a new resource using aDEPRECATED resource will return successfully, but with a\nwarning indicating the deprecated resource and recommending its\nreplacement. Operations which use OBSOLETE orDELETED resources will be rejected and result in an error.",
               },
               deprecated: {
                 type: "string",
+                description:
+                  "An optional RFC3339 timestamp on or after which the state of this\nresource is intended to change to DEPRECATED. This is only\ninformational and the status will not change unless the client explicitly\nchanges it.",
               },
               replacement: {
                 type: "string",
+                description:
+                  "The URL of the suggested replacement for a deprecated resource.\nThe suggested replacement resource must be the same kind of resource as the\ndeprecated resource.",
               },
               obsolete: {
                 type: "string",
+                description:
+                  "An optional RFC3339 timestamp on or after which the state of this\nresource is intended to change to OBSOLETE. This is only\ninformational and the status will not change unless the client explicitly\nchanges it.",
               },
               deleted: {
                 type: "string",
+                description:
+                  "An optional RFC3339 timestamp on or after which the state of this\nresource is intended to change to DELETED. This is only\ninformational and the status will not change unless the client explicitly\nchanges it.",
               },
             },
+            description: "Deprecation status for a public resource.",
             additionalProperties: true,
           },
           creationTimestamp: {
             type: "string",
+            description:
+              "[Output Only] Creation timestamp inRFC3339\ntext format.",
           },
           name: {
             type: "string",
+            description: "[Output Only] Name of the resource.",
           },
           description: {
             type: "string",
+            description:
+              "[Output Only] An optional description of this resource.",
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
           },
         },
+        description:
+          "Represents a Disk Type resource.\n\nGoogle Compute Engine has two Disk Type resources:\n\n* [Regional](/compute/docs/reference/rest/v1/regionDiskTypes)\n* [Zonal](/compute/docs/reference/rest/v1/diskTypes)\n\nYou can choose from a variety of disk types based on your needs.\nFor more information, readStorage options.\n\nThe diskTypes resource represents disk types for a zonal\npersistent disk.\nFor more information, readZonal persistent disks.\n\nThe regionDiskTypes resource represents disk types for a\nregional persistent disk. For more information, read Regional persistent disks.",
         additionalProperties: true,
       },
     },

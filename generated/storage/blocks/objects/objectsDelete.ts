@@ -11,56 +11,72 @@ const objectsDelete: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket in which the object resides.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         object: {
           name: "Object",
           description:
             "Name of the object. For information about how to URL encode object names to be path safe, see [Encoding URI Path Parts](https://cloud.google.com/storage/docs/request-endpoints#encoding).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         generation: {
           name: "Generation",
           description:
             "If present, permanently deletes a specific revision of this object (as opposed to the latest version, the default).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifGenerationMatch: {
           name: "If Generation Match",
           description:
             "Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifGenerationNotMatch: {
           name: "If Generation Not Match",
           description:
             "Makes the operation conditional on whether the object's current generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration matches the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration does not match the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

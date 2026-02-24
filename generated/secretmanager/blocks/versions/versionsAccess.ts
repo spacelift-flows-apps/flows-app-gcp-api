@@ -12,7 +12,9 @@ const versionsAccess: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the SecretVersion in the format `projects/*/secrets/*/versions/*` or `projects/*/locations/*/secrets/*/versions/*`. `projects/*/secrets/*/versions/latest` or `projects/*/locations/*/secrets/*/versions/latest` is an alias to the most recently created SecretVersion.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,20 +85,30 @@ const versionsAccess: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "The resource name of the SecretVersion in the format `projects/*/secrets/*/versions/*` or `projects/*/locations/*/secrets/*/versions/*`.",
           },
           payload: {
             type: "object",
             properties: {
               dataCrc32c: {
                 type: "string",
+                description:
+                  "Optional. If specified, SecretManagerService will verify the integrity of the received data on SecretManagerService.AddSecretVersion calls using the crc32c checksum and store it to include in future SecretManagerService.AccessSecretVersion responses. If a checksum is not provided in the SecretManagerService.AddSecretVersion request, the SecretManagerService will generate and store one for you. The CRC32C value is encoded as a Int64 for compatibility, and can be safely downconverted to uint32 in languages that support this type. https://cloud.google.com/apis/design/design_patterns#integer_types (Format: int64)",
               },
               data: {
                 type: "string",
+                description:
+                  "The secret data. Must be no larger than 64KiB. (Format: byte)",
               },
             },
+            description:
+              "A secret payload resource in the Secret Manager API. This contains the sensitive secret payload that is associated with a SecretVersion.",
             additionalProperties: true,
           },
         },
+        description:
+          "Response message for SecretManagerService.AccessSecretVersion.",
         additionalProperties: true,
       },
     },

@@ -11,7 +11,9 @@ const targetSslProxiesGet: AppBlock = {
         targetSslProxy: {
           name: "Target SSL Proxy",
           description: "Name of the TargetSslProxy resource to return.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -87,41 +89,63 @@ const targetSslProxiesGet: AppBlock = {
           proxyHeader: {
             type: "string",
             enum: ["NONE", "PROXY_V1"],
+            description:
+              "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
           },
           service: {
             type: "string",
+            description: "URL to the BackendService resource.",
           },
           sslCertificates: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "URLs to SslCertificate resources that are used to\nauthenticate connections to Backends. At least one SSL certificate\nmust be specified. Currently, you may specify up to 15 SSL certificates.\nsslCertificates do not apply when the load balancing scheme is set to\nINTERNAL_SELF_MANAGED.",
           },
           name: {
             type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
           },
           creationTimestamp: {
             type: "string",
+            description:
+              "[Output Only] Creation timestamp inRFC3339\ntext format.",
           },
           sslPolicy: {
             type: "string",
+            description:
+              "URL of SslPolicy resource that will be associated with the TargetSslProxy\nresource. If not set, the TargetSslProxy resource will not have any\nSSL policy configured.",
           },
           certificateMap: {
             type: "string",
+            description:
+              "URL of a certificate map that identifies a certificate map associated with\nthe given target proxy.\nThis field can only be set for global target proxies.\nIf set, sslCertificates will be ignored.\n\n Accepted format is//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificateMaps/{resourceName}.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Alwayscompute#targetSslProxy for target SSL proxies.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
           },
           description: {
             type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you\ncreate the resource.",
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
           },
         },
+        description:
+          "Represents a Target SSL Proxy resource.\n\nA target SSL proxy is a component of a Proxy Network Load Balancer.\nThe forwarding rule references the target SSL proxy, and the target proxy\nthen references a backend service. For more information, readProxy Network\nLoad Balancer overview.",
         additionalProperties: true,
       },
     },

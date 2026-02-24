@@ -12,14 +12,19 @@ const schemasGet: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the schema to get. Format is `projects/{project}/schemas/{schema}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         view: {
           name: "View",
           description:
-            "The set of fields to return in the response. If not set, returns a Schema with all fields filled out. Set to `BASIC` to omit the `definition`. Valid values: SCHEMA_VIEW_UNSPECIFIED, BASIC, FULL",
-          type: "string",
+            "The set of fields to return in the response. If not set, returns a Schema with all fields filled out. Set to `BASIC` to omit the `definition`.",
+          type: {
+            type: "string",
+            enum: ["SCHEMA_VIEW_UNSPECIFIED", "BASIC", "FULL"],
+          },
           required: false,
         },
       },
@@ -93,21 +98,31 @@ const schemasGet: AppBlock = {
         properties: {
           definition: {
             type: "string",
+            description:
+              "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
           revisionCreateTime: {
             type: "string",
+            description:
+              "Output only. The timestamp that the revision was created. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
           },
           revisionId: {
             type: "string",
+            description:
+              "Output only. Immutable. The revision ID of the schema.",
           },
           type: {
             type: "string",
             enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+            description: "The type of the schema definition.",
           },
         },
+        description: "A schema resource.",
         additionalProperties: true,
       },
     },

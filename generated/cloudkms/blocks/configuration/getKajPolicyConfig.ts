@@ -12,7 +12,9 @@ const getKajPolicyConfig: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,6 +88,8 @@ const getKajPolicyConfig: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              'Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of "{organizations|folders|projects}/*/kajPolicyConfig".',
           },
           defaultKeyAccessJustificationPolicy: {
             type: "object",
@@ -93,14 +97,33 @@ const getKajPolicyConfig: AppBlock = {
               allowedAccessReasons: {
                 type: "array",
                 items: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "REASON_UNSPECIFIED",
+                    "CUSTOMER_INITIATED_SUPPORT",
+                    "GOOGLE_INITIATED_SERVICE",
+                    "THIRD_PARTY_DATA_REQUEST",
+                    "GOOGLE_INITIATED_REVIEW",
+                    "CUSTOMER_INITIATED_ACCESS",
+                    "GOOGLE_INITIATED_SYSTEM_OPERATION",
+                    "REASON_NOT_EXPECTED",
+                    "MODIFIED_CUSTOMER_INITIATED_ACCESS",
+                    "MODIFIED_GOOGLE_INITIATED_SYSTEM_OPERATION",
+                    "GOOGLE_RESPONSE_TO_PRODUCTION_ALERT",
+                    "CUSTOMER_AUTHORIZED_WORKFLOW_SERVICING",
+                  ],
                 },
+                description:
+                  "The list of allowed reasons for access to a CryptoKey. Zero allowed access reasons means all encrypt, decrypt, and sign operations for the CryptoKey associated with this policy will fail.",
               },
             },
+            description:
+              "A KeyAccessJustificationsPolicy specifies zero or more allowed AccessReason values for encrypt, decrypt, and sign operations on a CryptoKey.",
             additionalProperties: true,
           },
         },
+        description:
+          "A singleton configuration for Key Access Justifications policies.",
         additionalProperties: true,
       },
     },

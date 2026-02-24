@@ -11,7 +11,9 @@ const getEkmConfig: AppBlock = {
         name: {
           name: "Name",
           description: "Required. The name of the EkmConfig to get.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -85,11 +87,17 @@ const getEkmConfig: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Output only. The resource name for the EkmConfig in the format `projects/*/locations/*/ekmConfig`.",
           },
           defaultEkmConnection: {
             type: "string",
+            description:
+              "Optional. Resource name of the default EkmConnection. Setting this field to the empty string removes the default.",
           },
         },
+        description:
+          "An EkmConfig is a singleton resource that represents configuration parameters that apply to all CryptoKeys and CryptoKeyVersions with a ProtectionLevel of EXTERNAL_VPC in a given project and location.",
         additionalProperties: true,
       },
     },

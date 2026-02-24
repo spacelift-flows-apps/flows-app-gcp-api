@@ -11,25 +11,33 @@ const instancesGetGuestAttributes: AppBlock = {
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         instance: {
           name: "Instance",
           description: "Name of the instance scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         variableKey: {
           name: "Variable Key",
           description: "Specifies the key for the guest attributes entry.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         queryPath: {
           name: "Query Path",
           description: "Specifies the guest attributes path to be queried.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -104,6 +112,8 @@ const instancesGetGuestAttributes: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Alwayscompute#guestAttributes for guest attributes entry.",
           },
           queryValue: {
             type: "object",
@@ -112,25 +122,47 @@ const instancesGetGuestAttributes: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    key: {
+                      type: "string",
+                      description: "Key for the guest attribute entry.",
+                    },
+                    namespace: {
+                      type: "string",
+                      description: "Namespace for the guest attribute entry.",
+                    },
+                    value: {
+                      type: "string",
+                      description: "Value for the guest attribute entry.",
+                    },
+                  },
+                  description: "A guest attributes namespace/key/value entry.",
                   additionalProperties: true,
                 },
               },
             },
+            description: "Array of guest attribute namespace/key/value tuples.",
             additionalProperties: true,
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for this resource.",
           },
           queryPath: {
             type: "string",
+            description:
+              "The path to be queried. This can be the default namespace ('') or a\nnested namespace ('\\/') or a specified key\n('\\/\\').",
           },
           variableValue: {
             type: "string",
+            description: "[Output Only] The value found for the requested key.",
           },
           variableKey: {
             type: "string",
+            description: "The key to search for.",
           },
         },
+        description: "A guest attributes entry.",
         additionalProperties: true,
       },
     },

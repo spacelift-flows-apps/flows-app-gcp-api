@@ -12,31 +12,49 @@ const cryptoKeysDecrypt: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the CryptoKey to use for decryption. The server will choose the appropriate version.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ciphertext: {
           name: "Ciphertext",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. The encrypted data originally returned in EncryptResponse.ciphertext. (Format: byte)",
+          },
           required: false,
         },
         additionalAuthenticatedData: {
           name: "Additional Authenticated Data",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. Optional data that must match the data originally supplied in EncryptRequest.additional_authenticated_data. (Format: byte)",
+          },
           required: false,
         },
         additionalAuthenticatedDataCrc32c: {
           name: "Additional Authenticated Data Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the DecryptRequest.additional_authenticated_data. If specified, KeyManagementService will verify the integrity of the received DecryptRequest.additional_authenticated_data using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(DecryptRequest.additional_authenticated_data) is equal to DecryptRequest.additional_authenticated_data_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
         ciphertextCrc32c: {
           name: "Ciphertext Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the DecryptRequest.ciphertext. If specified, KeyManagementService will verify the integrity of the received DecryptRequest.ciphertext using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(DecryptRequest.ciphertext) is equal to DecryptRequest.ciphertext_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
       },
@@ -132,12 +150,18 @@ const cryptoKeysDecrypt: AppBlock = {
         properties: {
           plaintext: {
             type: "string",
+            description:
+              "The decrypted data originally supplied in EncryptRequest.plaintext. (Format: byte)",
           },
           usedPrimary: {
             type: "boolean",
+            description:
+              "Whether the Decryption was performed using the primary key version.",
           },
           plaintextCrc32c: {
             type: "string",
+            description:
+              "Integrity verification field. A CRC32C checksum of the returned DecryptResponse.plaintext. An integrity check of DecryptResponse.plaintext can be performed by computing the CRC32C checksum of DecryptResponse.plaintext and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: receiving this response message indicates that KeyManagementService is able to successfully decrypt the ciphertext. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
           },
           protectionLevel: {
             type: "string",
@@ -148,8 +172,11 @@ const cryptoKeysDecrypt: AppBlock = {
               "EXTERNAL",
               "EXTERNAL_VPC",
             ],
+            description:
+              "The ProtectionLevel of the CryptoKeyVersion used in decryption.",
           },
         },
+        description: "Response message for KeyManagementService.Decrypt.",
         additionalProperties: true,
       },
     },

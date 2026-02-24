@@ -11,21 +11,27 @@ const defaultObjectAccessControlsDelete: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of a bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         entity: {
           name: "Entity",
           description:
             "The entity holding the permission. Can be user-userId, user-emailAddress, group-groupId, group-emailAddress, allUsers, or allAuthenticatedUsers.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

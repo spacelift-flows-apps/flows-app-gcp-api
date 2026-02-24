@@ -12,7 +12,9 @@ const effectiveTagBindingCollectionsGet: AppBlock = {
           name: "Name",
           description:
             'Required. The full name of the EffectiveTagBindingCollection in format: `locations/{location}/effectiveTagBindingCollections/{encoded-full-resource-name}` where the encoded-full-resource-name is the UTF-8 encoded name of the resource the TagBindings are bound to. E.g. "locations/global/effectiveTagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123"',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,15 +88,25 @@ const effectiveTagBindingCollectionsGet: AppBlock = {
         properties: {
           fullResourceName: {
             type: "string",
+            description:
+              "The full resource name of the resource the TagBindings are bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123`",
           },
           name: {
             type: "string",
+            description:
+              'Identifier. The name of the EffectiveTagBindingCollection, following the convention: `locations/{location}/effectiveTagBindingCollections/{encoded-full-resource-name}` where the encoded-full-resource-name is the UTF-8 encoded name of the GCP resource the TagBindings are bound to. E.g. "locations/global/effectiveTagBindingCollections/%2f%2fcloudresourcemanager.googleapis.com%2fprojects%2f123"',
           },
           effectiveTags: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              'Tag keys/values effectively bound to this resource, specified in namespaced format. For example: "123/environment": "production"',
           },
         },
+        description:
+          "Represents a collection of effective tag bindings for a GCP resource.",
         additionalProperties: true,
       },
     },

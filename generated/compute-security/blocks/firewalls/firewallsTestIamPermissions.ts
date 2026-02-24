@@ -11,7 +11,9 @@ const firewallsTestIamPermissions: AppBlock = {
         resource: {
           name: "Resource",
           description: "Name or id of the resource for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         permissions: {
@@ -22,6 +24,8 @@ const firewallsTestIamPermissions: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "The set of permissions to check for the 'resource'. Permissions with\nwildcards (such as '*' or 'storage.*') are not allowed.",
           },
           required: false,
         },
@@ -110,6 +114,8 @@ const firewallsTestIamPermissions: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "A subset of `TestPermissionsRequest.permissions` that the caller is\nallowed.",
           },
         },
         additionalProperties: true,

@@ -12,7 +12,9 @@ const showEffectiveAutokeyConfig: AppBlock = {
           name: "Parent",
           description:
             "Required. Name of the resource project to the show effective Cloud KMS Autokey configuration for. This may be helpful for interrogating the effect of nested folder configurations on a given resource project.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,8 +88,11 @@ const showEffectiveAutokeyConfig: AppBlock = {
         properties: {
           keyProject: {
             type: "string",
+            description:
+              "Name of the key project configured in the resource project's folder ancestry.",
           },
         },
+        description: "Response message for ShowEffectiveAutokeyConfig.",
         additionalProperties: true,
       },
     },

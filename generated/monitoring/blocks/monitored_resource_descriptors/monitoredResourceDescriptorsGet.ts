@@ -12,7 +12,9 @@ const monitoredResourceDescriptorsGet: AppBlock = {
           name: "Name",
           description:
             "Required. The monitored resource descriptor to get. The format is: projects/[PROJECT_ID_OR_NUMBER]/monitoredResourceDescriptors/[RESOURCE_TYPE] The [RESOURCE_TYPE] is a predefined type, such as cloudsql_database.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -88,15 +90,23 @@ const monitoredResourceDescriptorsGet: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              'Optional. The resource name of the monitored resource descriptor: "projects/{project_id}/monitoredResourceDescriptors/{type}" where {type} is the value of the type field in this object and {project_id} is a project ID that provides API-specific context for accessing the type. APIs that do not use project information can use the resource name format "monitoredResourceDescriptors/{type}".',
           },
           type: {
             type: "string",
+            description:
+              'Required. The monitored resource type. For example, the type "cloudsql_database" represents databases in Google Cloud SQL. For a list of types, see Monitored resource types (https://cloud.google.com/monitoring/api/resources) and Logging resource types (https://cloud.google.com/logging/docs/api/v2/resource-list).',
           },
           displayName: {
             type: "string",
+            description:
+              'Optional. A concise name for the monitored resource type that might be displayed in user interfaces. It should be a Title Cased Noun Phrase, without any article or other determiners. For example, "Google Cloud SQL Database".',
           },
           description: {
             type: "string",
+            description:
+              "Optional. A detailed description of the monitored resource type that might be used in documentation.",
           },
           labels: {
             type: "array",
@@ -104,20 +114,26 @@ const monitoredResourceDescriptorsGet: AppBlock = {
               type: "object",
               properties: {
                 key: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The key for this label. The key must meet the following criteria: Does not exceed 100 characters. Matches the following regular expression: [a-zA-Z][a-zA-Z0-9_]* The first character must be an upper- or lower-case letter. The remaining characters must be letters, digits, or underscores.",
                 },
                 valueType: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["STRING", "BOOL", "INT64"],
+                  description:
+                    "The type of data that can be assigned to the label.",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "A human-readable description for the label.",
                 },
               },
+              description: "A description of a label.",
               additionalProperties: true,
             },
+            description:
+              'Required. A set of labels used to describe instances of this monitored resource type. For example, an individual Google Cloud SQL database is identified by values for the labels "database_id" and "zone".',
           },
           launchStage: {
             type: "string",
@@ -131,8 +147,12 @@ const monitoredResourceDescriptorsGet: AppBlock = {
               "GA",
               "DEPRECATED",
             ],
+            description:
+              "Optional. The launch stage of the monitored resource definition.",
           },
         },
+        description:
+          'An object that describes the schema of a MonitoredResource object using a type name and a set of labels. For example, the monitored resource descriptor for Google Compute Engine VM instances has a type of "gce_instance" and specifies the use of the labels "instance_id" and "zone" to identify particular VM instances.Different APIs can support different monitored resource types. APIs generally provide a list method that returns the monitored resource descriptors used by the API.',
         additionalProperties: true,
       },
     },

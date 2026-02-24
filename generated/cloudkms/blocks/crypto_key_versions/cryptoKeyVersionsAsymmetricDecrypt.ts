@@ -12,19 +12,29 @@ const cryptoKeyVersionsAsymmetricDecrypt: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the CryptoKeyVersion to use for decryption.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ciphertextCrc32c: {
           name: "Ciphertext Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the AsymmetricDecryptRequest.ciphertext. If specified, KeyManagementService will verify the integrity of the received AsymmetricDecryptRequest.ciphertext using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(AsymmetricDecryptRequest.ciphertext) is equal to AsymmetricDecryptRequest.ciphertext_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
         ciphertext: {
           name: "Ciphertext",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. The data encrypted with the named CryptoKeyVersion's public key using OAEP. (Format: byte)",
+          },
           required: false,
         },
       },
@@ -118,17 +128,27 @@ const cryptoKeyVersionsAsymmetricDecrypt: AppBlock = {
               "EXTERNAL",
               "EXTERNAL_VPC",
             ],
+            description:
+              "The ProtectionLevel of the CryptoKeyVersion used in decryption.",
           },
           verifiedCiphertextCrc32c: {
             type: "boolean",
+            description:
+              "Integrity verification field. A flag indicating whether AsymmetricDecryptRequest.ciphertext_crc32c was received by KeyManagementService and used for the integrity verification of the ciphertext. A false value of this field indicates either that AsymmetricDecryptRequest.ciphertext_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set AsymmetricDecryptRequest.ciphertext_crc32c but this field is still false, discard the response and perform a limited number of retries.",
           },
           plaintext: {
             type: "string",
+            description:
+              "The decrypted data originally encrypted with the matching public key. (Format: byte)",
           },
           plaintextCrc32c: {
             type: "string",
+            description:
+              "Integrity verification field. A CRC32C checksum of the returned AsymmetricDecryptResponse.plaintext. An integrity check of AsymmetricDecryptResponse.plaintext can be performed by computing the CRC32C checksum of AsymmetricDecryptResponse.plaintext and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
           },
         },
+        description:
+          "Response message for KeyManagementService.AsymmetricDecrypt.",
         additionalProperties: true,
       },
     },

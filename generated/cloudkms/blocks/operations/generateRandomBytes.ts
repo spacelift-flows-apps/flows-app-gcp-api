@@ -12,21 +12,38 @@ const generateRandomBytes: AppBlock = {
           name: "Location",
           description:
             'The project-specific location in which to generate random bytes. For example, "projects/my-project/locations/us-central1".',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         lengthBytes: {
           name: "Length Bytes",
           description:
             "The length in bytes of the amount of randomness to retrieve.",
-          type: "number",
+          type: {
+            type: "integer",
+            description:
+              "The length in bytes of the amount of randomness to retrieve. Minimum 8 bytes, maximum 1024 bytes. (Format: int32)",
+          },
           required: false,
         },
         protectionLevel: {
           name: "Protection Level",
           description:
             "The ProtectionLevel to use when generating the random data.",
-          type: "string",
+          type: {
+            type: "string",
+            enum: [
+              "PROTECTION_LEVEL_UNSPECIFIED",
+              "SOFTWARE",
+              "HSM",
+              "EXTERNAL",
+              "EXTERNAL_VPC",
+            ],
+            description:
+              "The ProtectionLevel to use when generating the random data. Currently, only HSM protection level is supported.",
+          },
           required: false,
         },
       },
@@ -112,11 +129,16 @@ const generateRandomBytes: AppBlock = {
         properties: {
           data: {
             type: "string",
+            description: "The generated data. (Format: byte)",
           },
           dataCrc32c: {
             type: "string",
+            description:
+              "Integrity verification field. A CRC32C checksum of the returned GenerateRandomBytesResponse.data. An integrity check of GenerateRandomBytesResponse.data can be performed by computing the CRC32C checksum of GenerateRandomBytesResponse.data and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
           },
         },
+        description:
+          "Response message for KeyManagementService.GenerateRandomBytes.",
         additionalProperties: true,
       },
     },

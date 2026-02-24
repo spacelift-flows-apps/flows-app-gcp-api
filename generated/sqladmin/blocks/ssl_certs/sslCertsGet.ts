@@ -12,13 +12,17 @@ const sslCertsGet: AppBlock = {
           name: "Instance",
           description:
             "Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         sha1Fingerprint: {
           name: "Sha1 Fingerprint",
           description: "Sha1 FingerPrint.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -92,32 +96,44 @@ const sslCertsGet: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#sslCert`.",
           },
           certSerialNumber: {
             type: "string",
+            description: "Serial number, as extracted from the certificate.",
           },
           cert: {
             type: "string",
+            description: "PEM representation.",
           },
           createTime: {
             type: "string",
+            description:
+              "The time when the certificate was created in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z` (Format: google-datetime)",
           },
           commonName: {
             type: "string",
+            description: "User supplied name. Constrained to [a-zA-Z.-_ ]+.",
           },
           expirationTime: {
             type: "string",
+            description:
+              "The time when the certificate expires in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
           },
           sha1Fingerprint: {
             type: "string",
+            description: "Sha1 Fingerprint.",
           },
           instance: {
             type: "string",
+            description: "Name of the database instance.",
           },
           selfLink: {
             type: "string",
+            description: "The URI of this resource.",
           },
         },
+        description: "SslCerts Resource",
         additionalProperties: true,
       },
     },

@@ -12,13 +12,19 @@ const cryptoKeyVersionsAsymmetricSign: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the CryptoKeyVersion to use for signing.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         data: {
           name: "Data",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. The data to sign. It can't be supplied if AsymmetricSignRequest.digest is supplied. (Format: byte)",
+          },
           required: false,
         },
         digest: {
@@ -29,14 +35,21 @@ const cryptoKeyVersionsAsymmetricSign: AppBlock = {
             properties: {
               sha512: {
                 type: "string",
+                description:
+                  "A message digest produced with the SHA-512 algorithm. (Format: byte)",
               },
               sha256: {
                 type: "string",
+                description:
+                  "A message digest produced with the SHA-256 algorithm. (Format: byte)",
               },
               sha384: {
                 type: "string",
+                description:
+                  "A message digest produced with the SHA-384 algorithm. (Format: byte)",
               },
             },
+            description: "A Digest holds a cryptographic message digest.",
             additionalProperties: true,
           },
           required: false,
@@ -44,13 +57,21 @@ const cryptoKeyVersionsAsymmetricSign: AppBlock = {
         dataCrc32c: {
           name: "Data Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the AsymmetricSignRequest.data. If specified, KeyManagementService will verify the integrity of the received AsymmetricSignRequest.data using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(AsymmetricSignRequest.data) is equal to AsymmetricSignRequest.data_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
         digestCrc32c: {
           name: "Digest Crc32c",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. An optional CRC32C checksum of the AsymmetricSignRequest.digest. If specified, KeyManagementService will verify the integrity of the received AsymmetricSignRequest.digest using this checksum. KeyManagementService will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C(AsymmetricSignRequest.digest) is equal to AsymmetricSignRequest.digest_crc32c, and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
+          },
           required: false,
         },
       },
@@ -140,18 +161,27 @@ const cryptoKeyVersionsAsymmetricSign: AppBlock = {
         properties: {
           verifiedDigestCrc32c: {
             type: "boolean",
+            description:
+              "Integrity verification field. A flag indicating whether AsymmetricSignRequest.digest_crc32c was received by KeyManagementService and used for the integrity verification of the digest. A false value of this field indicates either that AsymmetricSignRequest.digest_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set AsymmetricSignRequest.digest_crc32c but this field is still false, discard the response and perform a limited number of retries.",
           },
           signature: {
             type: "string",
+            description: "The created signature. (Format: byte)",
           },
           verifiedDataCrc32c: {
             type: "boolean",
+            description:
+              "Integrity verification field. A flag indicating whether AsymmetricSignRequest.data_crc32c was received by KeyManagementService and used for the integrity verification of the data. A false value of this field indicates either that AsymmetricSignRequest.data_crc32c was left unset or that it was not delivered to KeyManagementService. If you've set AsymmetricSignRequest.data_crc32c but this field is still false, discard the response and perform a limited number of retries.",
           },
           name: {
             type: "string",
+            description:
+              "The resource name of the CryptoKeyVersion used for signing. Check this field to verify that the intended resource was used for signing.",
           },
           signatureCrc32c: {
             type: "string",
+            description:
+              "Integrity verification field. A CRC32C checksum of the returned AsymmetricSignResponse.signature. An integrity check of AsymmetricSignResponse.signature can be performed by computing the CRC32C checksum of AsymmetricSignResponse.signature and comparing your results to this field. Discard the response in case of non-matching checksum values, and perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type. (Format: int64)",
           },
           protectionLevel: {
             type: "string",
@@ -162,8 +192,12 @@ const cryptoKeyVersionsAsymmetricSign: AppBlock = {
               "EXTERNAL",
               "EXTERNAL_VPC",
             ],
+            description:
+              "The ProtectionLevel of the CryptoKeyVersion used for signing.",
           },
         },
+        description:
+          "Response message for KeyManagementService.AsymmetricSign.",
         additionalProperties: true,
       },
     },

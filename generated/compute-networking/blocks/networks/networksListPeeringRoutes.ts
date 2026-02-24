@@ -11,63 +11,81 @@ const networksListPeeringRoutes: AppBlock = {
         network: {
           name: "Network",
           description: "Name of the network for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
         direction: {
           name: "Direction",
-          description:
-            "The direction of the exchanged routes. Valid values: INCOMING, OUTGOING",
-          type: "string",
+          description: "The direction of the exchanged routes.",
+          type: {
+            type: "string",
+            enum: ["INCOMING", "OUTGOING"],
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         region: {
           name: "Region",
           description:
             "The region of the request. The response will include all subnet routes,\nstatic routes and dynamic routes in the region.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         peeringName: {
           name: "Peering Name",
           description:
             "The response will show routes exchanged over the given peering connection.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         filter: {
           name: "Filter",
           description:
             'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -146,37 +164,52 @@ const networksListPeeringRoutes: AppBlock = {
               type: "object",
               properties: {
                 destRange: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The destination range of the route.",
                 },
                 imported: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "boolean",
+                  description:
+                    "True if the peering route has been imported from a peer. The actual import\nhappens if the field networkPeering.importCustomRoutes is true\nfor this network, and networkPeering.exportCustomRoutes is\ntrue for the peer network, and the import does not result in a route\nconflict.",
                 },
                 type: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "DYNAMIC_PEERING_ROUTE",
+                    "STATIC_PEERING_ROUTE",
+                    "SUBNET_PEERING_ROUTE",
+                  ],
+                  description: "The type of the peering route.",
                 },
                 nextHopRegion: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The region of peering route next hop, only applies to dynamic routes.",
                 },
                 priority: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "integer",
+                  description:
+                    "The priority of the peering route. (Format: uint32)",
                 },
               },
               additionalProperties: true,
             },
+            description: "A list of ExchangedPeeringRoute resources.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for\nlist requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for\nthe query parameter pageToken in the next list request.\nSubsequent list requests will have their own nextPageToken to\ncontinue paging through the results.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] Unique identifier for the resource; defined by the server.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of resource. Alwayscompute#exchangedPeeringRoutesList for exchanged peering\nroutes lists.",
           },
           warning: {
             type: "object",
@@ -187,16 +220,20 @@ const networksListPeeringRoutes: AppBlock = {
                   type: "object",
                   properties: {
                     key: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
                     },
                     value: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A warning data value corresponding to the key.",
                     },
                   },
                   additionalProperties: true,
                 },
+                description:
+                  '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
               },
               code: {
                 type: "string",
@@ -231,15 +268,21 @@ const networksListPeeringRoutes: AppBlock = {
                   "UNDECLARED_PROPERTIES",
                   "UNREACHABLE",
                 ],
+                description:
+                  "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
               },
               message: {
                 type: "string",
+                description:
+                  "[Output Only] A human-readable description of the warning code.",
               },
             },
+            description: "[Output Only] Informational warning message.",
             additionalProperties: true,
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for this resource.",
           },
         },
         additionalProperties: true,

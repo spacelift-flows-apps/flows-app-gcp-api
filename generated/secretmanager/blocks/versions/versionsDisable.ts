@@ -12,13 +12,19 @@ const versionsDisable: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the SecretVersion to disable in the format `projects/*/secrets/*/versions/*` or `projects/*/locations/*/secrets/*/versions/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         etag: {
           name: "Etag",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. Etag of the SecretVersion. The request succeeds if it matches the etag of the currently stored secret version object. If the etag is omitted, the request succeeds.",
+          },
           required: false,
         },
       },
@@ -99,50 +105,120 @@ const versionsDisable: AppBlock = {
         properties: {
           scheduledDestroyTime: {
             type: "string",
+            description:
+              "Optional. Output only. Scheduled destroy time for secret version. This is a part of the Delayed secret version destroy feature. For a Secret with a valid version destroy TTL, when a secert version is destroyed, version is moved to disabled state and it is scheduled for destruction Version is destroyed only after the scheduled_destroy_time. (Format: google-datetime)",
           },
           etag: {
             type: "string",
+            description:
+              "Output only. Etag of the currently stored SecretVersion.",
           },
           destroyTime: {
             type: "string",
+            description:
+              "Output only. The time this SecretVersion was destroyed. Only present if state is DESTROYED. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Output only. The resource name of the SecretVersion in the format `projects/*/secrets/*/versions/*`. SecretVersion IDs in a Secret start at 1 and are incremented for each subsequent version of the secret.",
           },
           createTime: {
             type: "string",
+            description:
+              "Output only. The time at which the SecretVersion was created. (Format: google-datetime)",
           },
           state: {
             type: "string",
             enum: ["STATE_UNSPECIFIED", "ENABLED", "DISABLED", "DESTROYED"],
+            description: "Output only. The current state of the SecretVersion.",
           },
           replicationStatus: {
             type: "object",
             properties: {
               userManaged: {
                 type: "object",
+                properties: {
+                  replicas: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        location: {
+                          type: "string",
+                          description:
+                            'Output only. The canonical ID of the replica location. For example: `"us-east1"`.',
+                        },
+                        customerManagedEncryption: {
+                          type: "object",
+                          properties: {
+                            kmsKeyVersionName: {
+                              type: "string",
+                              description:
+                                "Required. The resource name of the Cloud KMS CryptoKeyVersion used to encrypt the secret payload, in the following format: `projects/*/locations/*/keyRings/*/cryptoKeys/*/versions/*`.",
+                            },
+                          },
+                          description:
+                            "Describes the status of customer-managed encryption.",
+                          additionalProperties: true,
+                        },
+                      },
+                      description:
+                        "Describes the status of a user-managed replica for the SecretVersion.",
+                      additionalProperties: true,
+                    },
+                    description:
+                      "Output only. The list of replica statuses for the SecretVersion.",
+                  },
+                },
+                description:
+                  "The replication status of a SecretVersion using user-managed replication. Only populated if the parent Secret has a user-managed replication policy.",
                 additionalProperties: true,
               },
               automatic: {
                 type: "object",
+                properties: {
+                  customerManagedEncryption: {
+                    type: "object",
+                    properties: {
+                      kmsKeyVersionName: {
+                        type: "string",
+                        description:
+                          "Required. The resource name of the Cloud KMS CryptoKeyVersion used to encrypt the secret payload, in the following format: `projects/*/locations/*/keyRings/*/cryptoKeys/*/versions/*`.",
+                      },
+                    },
+                    description:
+                      "Describes the status of customer-managed encryption.",
+                    additionalProperties: true,
+                  },
+                },
+                description:
+                  "The replication status of a SecretVersion using automatic replication. Only populated if the parent Secret has an automatic replication policy.",
                 additionalProperties: true,
               },
             },
+            description: "The replication status of a SecretVersion.",
             additionalProperties: true,
           },
           clientSpecifiedPayloadChecksum: {
             type: "boolean",
+            description:
+              "Output only. True if payload checksum specified in SecretPayload object has been received by SecretManagerService on SecretManagerService.AddSecretVersion.",
           },
           customerManagedEncryption: {
             type: "object",
             properties: {
               kmsKeyVersionName: {
                 type: "string",
+                description:
+                  "Required. The resource name of the Cloud KMS CryptoKeyVersion used to encrypt the secret payload, in the following format: `projects/*/locations/*/keyRings/*/cryptoKeys/*/versions/*`.",
               },
             },
+            description: "Describes the status of customer-managed encryption.",
             additionalProperties: true,
           },
         },
+        description: "A secret version resource in the Secret Manager API.",
         additionalProperties: true,
       },
     },

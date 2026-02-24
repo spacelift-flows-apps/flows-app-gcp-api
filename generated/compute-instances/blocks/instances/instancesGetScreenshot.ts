@@ -11,13 +11,17 @@ const instancesGetScreenshot: AppBlock = {
         instance: {
           name: "Instance",
           description: "Name of the instance scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -92,11 +96,15 @@ const instancesGetScreenshot: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Always compute#screenshot\nfor the screenshots.",
           },
           contents: {
             type: "string",
+            description: "[Output Only] The Base64-encoded screenshot data.",
           },
         },
+        description: "An instance's screenshot.",
         additionalProperties: true,
       },
     },

@@ -11,27 +11,35 @@ const foldersGet: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket in which the folder resides.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         folder: {
           name: "Folder",
           description: "Name of a folder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "Makes the return of the folder metadata conditional on whether the folder's current metageneration matches the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "Makes the return of the folder metadata conditional on whether the folder's current metageneration does not match the given value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -108,38 +116,57 @@ const foldersGet: AppBlock = {
         properties: {
           bucket: {
             type: "string",
+            description: "The name of the bucket containing this folder.",
           },
           id: {
             type: "string",
+            description:
+              "The ID of the folder, including the bucket name, folder name.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For folders, this is always storage#folder.",
           },
           metageneration: {
             type: "string",
+            description:
+              "The version of the metadata for this folder. Used for preconditions and for detecting changes in metadata. (Format: int64)",
           },
           name: {
             type: "string",
+            description:
+              "The name of the folder. Required if not specified by URL parameter.",
           },
           selfLink: {
             type: "string",
+            description: "The link to this folder.",
           },
           createTime: {
             type: "string",
+            description:
+              "The creation time of the folder in RFC 3339 format. (Format: date-time)",
           },
           updateTime: {
             type: "string",
+            description:
+              "The modification time of the folder metadata in RFC 3339 format. (Format: date-time)",
           },
           pendingRenameInfo: {
             type: "object",
             properties: {
               operationId: {
                 type: "string",
+                description: "The ID of the rename folder operation.",
               },
             },
+            description:
+              "Only present if the folder is part of an ongoing rename folder operation. Contains information which can be used to query the operation status.",
             additionalProperties: true,
           },
         },
+        description:
+          "A folder. Only available in buckets with hierarchical namespace enabled.",
         additionalProperties: true,
       },
     },

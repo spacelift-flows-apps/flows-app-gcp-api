@@ -12,27 +12,35 @@ const repositoriesFetchGitRefs: AppBlock = {
           name: "Repository",
           description:
             "Required. The resource name of the repository in the format `projects/*/locations/*/connections/*/repositories/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         refType: {
           name: "Ref Type",
-          description:
-            "Type of refs to fetch Valid values: REF_TYPE_UNSPECIFIED, TAG, BRANCH",
-          type: "string",
+          description: "Type of refs to fetch",
+          type: {
+            type: "string",
+            enum: ["REF_TYPE_UNSPECIFIED", "TAG", "BRANCH"],
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Optional. Number of results to return in the list. Default to 20.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description: "Optional. Page start.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -106,11 +114,15 @@ const repositoriesFetchGitRefs: AppBlock = {
             items: {
               type: "string",
             },
+            description: "Name of the refs fetched.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A token identifying a page of results the server should return.",
           },
         },
+        description: "Response for fetching git refs",
         additionalProperties: true,
       },
     },

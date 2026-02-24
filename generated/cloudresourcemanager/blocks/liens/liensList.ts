@@ -12,21 +12,27 @@ const liensList: AppBlock = {
           name: "Parent",
           description:
             "Required. The name of the resource to list all attached Liens. For example, `projects/1234`. (google.api.field_policy).resource_type annotation is not set since the parent depends on the meta api implementation. This field could be a project or other sub project resources.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "The `next_page_token` value returned from a previous List request, if any.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description:
             "The maximum number of items to return. This is a suggestion for the server. The server can return fewer liens than requested. If unspecified, server picks an appropriate default.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -104,37 +110,52 @@ const liensList: AppBlock = {
               type: "object",
               properties: {
                 restrictions: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "The types of operations which should be blocked as a result of this Lien. Each value should correspond to an IAM permission. The server will validate the permissions against those for which Liens are supported. An empty list is meaningless and will be rejected. Example: ['resourcemanager.projects.delete']",
                 },
                 origin: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "A stable, user-visible/meaningful string identifying the origin of the Lien, intended to be inspected programmatically. Maximum length of 200 characters. Example: 'compute.googleapis.com'",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The creation time of this Lien. (Format: google-datetime)",
                 },
                 reason: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Concise user-visible strings indicating why an action cannot be performed on a resource. Maximum length of 200 characters. Example: 'Holds production API key'",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "A system-generated unique identifier for this Lien. Example: `liens/1234abcd`",
                 },
                 parent: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "A reference to the resource this Lien is attached to. The server will validate the parent against those for which Liens are supported. Example: `projects/1234`",
                 },
               },
+              description:
+                "A Lien represents an encumbrance on the actions that can be performed on a resource.",
               additionalProperties: true,
             },
+            description: "A list of Liens.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "Token to retrieve the next page of results, or empty if there are no more results in the list.",
           },
         },
+        description: "The response message for Liens.ListLiens.",
         additionalProperties: true,
       },
     },

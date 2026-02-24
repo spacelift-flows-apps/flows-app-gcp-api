@@ -12,27 +12,36 @@ const schemasList: AppBlock = {
           name: "Parent",
           description:
             "Required. The name of the project in which to list schemas. Format is `projects/{project-id}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         view: {
           name: "View",
           description:
-            "The set of Schema fields to return in the response. If not set, returns Schemas with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all fields. Valid values: SCHEMA_VIEW_UNSPECIFIED, BASIC, FULL",
-          type: "string",
+            "The set of Schema fields to return in the response. If not set, returns Schemas with `name` and `type`, but not `definition`. Set to `FULL` to retrieve all fields.",
+          type: {
+            type: "string",
+            enum: ["SCHEMA_VIEW_UNSPECIFIED", "BASIC", "FULL"],
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "The value returned by the last `ListSchemasResponse`; indicates that this is a continuation of a prior `ListSchemas` call, and that the system should return the next page of data.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageSize: {
           name: "Page Size",
           description: "Maximum number of schemas to return.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -110,33 +119,43 @@ const schemasList: AppBlock = {
               type: "object",
               properties: {
                 definition: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
                 },
                 revisionCreateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. The timestamp that the revision was created. (Format: google-datetime)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
                 },
                 revisionId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Immutable. The revision ID of the schema.",
                 },
                 type: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+                  description: "The type of the schema definition.",
                 },
               },
+              description: "A schema resource.",
               additionalProperties: true,
             },
+            description: "The resulting schemas.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "If not empty, indicates that there may be more schemas that match the request; this value should be passed in a new `ListSchemasRequest`.",
           },
         },
+        description: "Response for the `ListSchemas` method.",
         additionalProperties: true,
       },
     },

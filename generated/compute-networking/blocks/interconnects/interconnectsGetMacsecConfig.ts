@@ -11,7 +11,9 @@ const interconnectsGetMacsecConfig: AppBlock = {
         interconnect: {
           name: "Interconnect",
           description: "Name of the interconnect resource to query.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,6 +88,7 @@ const interconnectsGetMacsecConfig: AppBlock = {
         properties: {
           etag: {
             type: "string",
+            description: "end_interface: MixerGetResponseWithEtagBuilder",
           },
           result: {
             type: "object",
@@ -94,13 +97,42 @@ const interconnectsGetMacsecConfig: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    cak: {
+                      type: "string",
+                      description:
+                        "An auto-generated Connectivity Association Key (CAK) for this key.",
+                    },
+                    name: {
+                      type: "string",
+                      description:
+                        "User provided name for this pre-shared key.",
+                    },
+                    startTime: {
+                      type: "string",
+                      description:
+                        "User provided timestamp on or after which this key is valid.",
+                    },
+                    ckn: {
+                      type: "string",
+                      description:
+                        "An auto-generated Connectivity Association Key Name (CKN) for this key.",
+                    },
+                  },
+                  description:
+                    "Describes a pre-shared key used to setup MACsec in static connectivity\nassociation key (CAK) mode.",
                   additionalProperties: true,
                 },
+                description:
+                  "A keychain placeholder describing a set of named key objects\nalong with their start times. A MACsec CKN/CAK is generated for each key in\nthe key chain. Google router automatically picks the key with the most\nrecent startTime when establishing or re-establishing a MACsec secure link.",
               },
             },
+            description:
+              "MACsec configuration information for the Interconnect connection. Contains\nthe generated Connectivity Association Key Name (CKN) and the key (CAK) for\nthis Interconnect connection.",
             additionalProperties: true,
           },
         },
+        description: "Response for the InterconnectsGetMacsecConfigRequest.",
         additionalProperties: true,
       },
     },

@@ -12,14 +12,18 @@ const secretsDelete: AppBlock = {
           name: "Name",
           description:
             "Required. The resource name of the Secret to delete in the format `projects/*/secrets/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         etag: {
           name: "Etag",
           description:
             "Optional. Etag of the Secret. The request succeeds if it matches the etag of the currently stored secret object. If the etag is omitted, the request succeeds.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -88,6 +92,8 @@ const secretsDelete: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
         additionalProperties: true,
       },
     },

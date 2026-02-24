@@ -11,20 +11,26 @@ const notificationsDelete: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "The parent bucket of the notification.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         notification: {
           name: "Notification",
           description: "ID of the notification to delete.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

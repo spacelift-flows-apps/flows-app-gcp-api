@@ -11,13 +11,17 @@ const hmacKeysGet: AppBlock = {
         accessId: {
           name: "Access ID",
           description: "Name of the HMAC key.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description: "The project to be billed for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -93,35 +97,54 @@ const hmacKeysGet: AppBlock = {
         properties: {
           accessId: {
             type: "string",
+            description: "The ID of the HMAC Key.",
           },
           etag: {
             type: "string",
+            description: "HTTP 1.1 Entity tag for the HMAC key.",
           },
           id: {
             type: "string",
+            description:
+              "The ID of the HMAC key, including the Project ID and the Access ID.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For HMAC Key metadata, this is always storage#hmacKeyMetadata.",
           },
           projectId: {
             type: "string",
+            description:
+              "Project ID owning the service account to which the key authenticates.",
           },
           selfLink: {
             type: "string",
+            description: "The link to this resource.",
           },
           serviceAccountEmail: {
             type: "string",
+            description:
+              "The email address of the key's associated service account.",
           },
           state: {
             type: "string",
+            description:
+              "The state of the key. Can be one of ACTIVE, INACTIVE, or DELETED.",
           },
           timeCreated: {
             type: "string",
+            description:
+              "The creation time of the HMAC key in RFC 3339 format. (Format: date-time)",
           },
           updated: {
             type: "string",
+            description:
+              "The last modification time of the HMAC key metadata in RFC 3339 format. (Format: date-time)",
           },
         },
+        description:
+          "JSON template to produce a JSON-style HMAC Key metadata resource.",
         additionalProperties: true,
       },
     },

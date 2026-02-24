@@ -12,14 +12,18 @@ const organizationSecurityPoliciesGetAssociation: AppBlock = {
           name: "Security Policy",
           description:
             "Name of the security policy to which the queried rule belongs.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         name: {
           name: "Name",
           description:
             "The name of the association to get from the security policy.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -94,30 +98,43 @@ const organizationSecurityPoliciesGetAssociation: AppBlock = {
         properties: {
           securityPolicyId: {
             type: "string",
+            description:
+              "[Output Only] The security policy ID of the association.",
           },
           name: {
             type: "string",
+            description: "The name for an association.",
           },
           attachmentId: {
             type: "string",
+            description:
+              "The resource that the security policy is attached to.",
           },
           shortName: {
             type: "string",
+            description:
+              "[Output Only] The short name of the security policy of the association.",
           },
           excludedProjects: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "A list of projects to exclude from the security policy.",
           },
           excludedFolders: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "A list of folders to exclude from the security policy.",
           },
           displayName: {
             type: "string",
+            description:
+              "[Output Only] The display name of the security policy of the association.",
           },
         },
         additionalProperties: true,

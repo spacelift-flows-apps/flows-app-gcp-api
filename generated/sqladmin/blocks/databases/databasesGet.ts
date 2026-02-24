@@ -12,13 +12,17 @@ const databasesGet: AppBlock = {
           name: "Instance",
           description:
             "Database instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         database: {
           name: "Database",
           description: "Name of the database in the instance.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -92,41 +96,59 @@ const databasesGet: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#database`.",
           },
           charset: {
             type: "string",
+            description: "The Cloud SQL charset value.",
           },
           collation: {
             type: "string",
+            description: "The Cloud SQL collation value.",
           },
           etag: {
             type: "string",
+            description:
+              "This field is deprecated and will be removed from a future version of the API.",
           },
           name: {
             type: "string",
+            description:
+              "The name of the database in the Cloud SQL instance. This does not include the project ID or instance name.",
           },
           instance: {
             type: "string",
+            description:
+              "The name of the Cloud SQL instance. This does not include the project ID.",
           },
           selfLink: {
             type: "string",
+            description: "The URI of this resource.",
           },
           project: {
             type: "string",
+            description:
+              "The project ID of the project containing the Cloud SQL database. The Google apps domain is prefixed if applicable.",
           },
           sqlserverDatabaseDetails: {
             type: "object",
             properties: {
               compatibilityLevel: {
-                type: "number",
+                type: "integer",
+                description:
+                  "The version of SQL Server with which the database is to be made compatible (Format: int32)",
               },
               recoveryModel: {
                 type: "string",
+                description: "The recovery model of a SQL Server database",
               },
             },
+            description:
+              "Represents a Sql Server database on the Cloud SQL instance.",
             additionalProperties: true,
           },
         },
+        description: "Represents a SQL database on the Cloud SQL instance.",
         additionalProperties: true,
       },
     },

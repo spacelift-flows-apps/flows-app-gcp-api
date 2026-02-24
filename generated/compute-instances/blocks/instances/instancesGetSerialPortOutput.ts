@@ -11,27 +11,35 @@ const instancesGetSerialPortOutput: AppBlock = {
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         instance: {
           name: "Instance",
           description: "Name of the instance for this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         start: {
           name: "Start",
           description:
             "Specifies the starting byte position of the output to return. To start with\nthe first byte of output to the specified port, omit this field or set it\nto `0`.\n\nIf the output for that byte position is available, this field matches the\n`start` parameter sent with the request. If the amount of serial console\noutput exceeds the size of the buffer (1 MB), the oldest output is\ndiscarded and is no longer available. If the requested start position\nrefers to discarded output, the start position is adjusted to the oldest\noutput still available, and the adjusted start position is returned as the\n`start` property value.\n\nYou can also provide a negative start position, which translates to the\nmost recent number of bytes written to the serial port. For example, -3 is\ninterpreted as the most recent 3 bytes written to the serial console. Note\nthat the negative start is bounded by the retained buffer size, and the\nreturned serial console output will not exceed the max buffer size.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         port: {
           name: "Port",
           description:
             "Specifies which COM or serial port to retrieve data from.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
       },
@@ -106,20 +114,29 @@ const instancesGetSerialPortOutput: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of the resource. Alwayscompute#serialPortOutput for serial port output.",
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for this resource.",
           },
           contents: {
             type: "string",
+            description: "[Output Only] The contents of the console output.",
           },
           next: {
             type: "string",
+            description:
+              "[Output Only] The position of the next byte of content, regardless of\nwhether the content exists, following the output returned in the `contents`\nproperty. Use this value in the next request as the start\nparameter. (Format: int64)",
           },
           start: {
             type: "string",
+            description:
+              "The starting byte position of the output that was returned.\nThis should match the start parameter sent with the request.\nIf the serial console output exceeds the size of the buffer (1 MB), older\noutput is overwritten by newer content. The output start value will\nindicate the byte position of the output that was returned, which might be\ndifferent than the `start` value that was specified in the request. (Format: int64)",
           },
         },
+        description: "An instance serial console output.",
         additionalProperties: true,
       },
     },

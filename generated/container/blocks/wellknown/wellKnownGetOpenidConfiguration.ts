@@ -12,7 +12,9 @@ const wellKnownGetOpenidConfiguration: AppBlock = {
           name: "Parent",
           description:
             "The cluster (project, location, cluster name) to get the discovery document for. Specified in the format `projects/*/locations/*/clusters/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,53 +88,68 @@ const wellKnownGetOpenidConfiguration: AppBlock = {
             items: {
               type: "string",
             },
+            description: "Supported response types.",
           },
           cacheHeader: {
             type: "object",
             properties: {
               expires: {
                 type: "string",
+                description:
+                  "14.21 response cache expires, in RFC 1123 date format",
               },
               directive: {
                 type: "string",
+                description: "14.9 request and response directives",
               },
               age: {
                 type: "string",
+                description:
+                  "14.6 response cache age, in seconds since the response is generated (Format: int64)",
               },
             },
+            description: "RFC-2616: cache control support",
             additionalProperties: true,
           },
           jwks_uri: {
             type: "string",
+            description: "JSON Web Key uri.",
           },
           issuer: {
             type: "string",
+            description: "OIDC Issuer.",
           },
           grant_types: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "Supported grant types.",
           },
           subject_types_supported: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "Supported subject types.",
           },
           claims_supported: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "Supported claims.",
           },
           id_token_signing_alg_values_supported: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "supported ID Token signing Algorithms.",
           },
         },
+        description:
+          "GetOpenIDConfigResponse is an OIDC discovery document for the cluster. See the OpenID Connect Discovery 1.0 specification for details.",
         additionalProperties: true,
       },
     },

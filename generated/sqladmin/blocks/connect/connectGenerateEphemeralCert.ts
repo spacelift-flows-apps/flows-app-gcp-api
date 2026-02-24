@@ -12,32 +12,50 @@ const connectGenerateEphemeralCert: AppBlock = {
           name: "Instance",
           description:
             "Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         public_key: {
           name: "Public_key",
           description:
             "PEM encoded public key to include in the signed certificate.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "PEM encoded public key to include in the signed certificate.",
+          },
           required: false,
         },
         access_token: {
           name: "Access_token",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. Access token to include in the signed certificate.",
+          },
           required: false,
         },
         readTime: {
           name: "Read Time",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. Optional snapshot read timestamp to trade freshness for performance. (Format: google-datetime)",
+          },
           required: false,
         },
         validDuration: {
           name: "Valid Duration",
           description: "Optional.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Optional. If set, it will contain the cert valid duration. (Format: google-duration)",
+          },
           required: false,
         },
       },
@@ -130,35 +148,50 @@ const connectGenerateEphemeralCert: AppBlock = {
             properties: {
               kind: {
                 type: "string",
+                description: "This is always `sql#sslCert`.",
               },
               certSerialNumber: {
                 type: "string",
+                description:
+                  "Serial number, as extracted from the certificate.",
               },
               cert: {
                 type: "string",
+                description: "PEM representation.",
               },
               createTime: {
                 type: "string",
+                description:
+                  "The time when the certificate was created in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z` (Format: google-datetime)",
               },
               commonName: {
                 type: "string",
+                description:
+                  "User supplied name. Constrained to [a-zA-Z.-_ ]+.",
               },
               expirationTime: {
                 type: "string",
+                description:
+                  "The time when the certificate expires in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
               },
               sha1Fingerprint: {
                 type: "string",
+                description: "Sha1 Fingerprint.",
               },
               instance: {
                 type: "string",
+                description: "Name of the database instance.",
               },
               selfLink: {
                 type: "string",
+                description: "The URI of this resource.",
               },
             },
+            description: "SslCerts Resource",
             additionalProperties: true,
           },
         },
+        description: "Ephemeral certificate creation request.",
         additionalProperties: true,
       },
     },

@@ -12,49 +12,63 @@ const targetHttpProxiesAggregatedList: AppBlock = {
           name: "Service Project Number",
           description:
             "The Shared VPC service project id or service project number for which\naggregated list request is invoked for subnetworks list-usable api.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         filter: {
           name: "Filter",
           description:
             'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         includeAllScopes: {
           name: "Include All Scopes",
           description:
             "Indicates whether every visible scope for each scope type (zone, region,\nglobal) should be included in the response. For new resource types added\nafter this field, the flag has no effect as new resource types will always\ninclude every visible scope for each scope type in response. For resource\ntypes which predate this field, if this flag is omitted or false, only\nscopes of the scope types where the resource type is expected to be found\nwill be included.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
       },
@@ -129,25 +143,36 @@ const targetHttpProxiesAggregatedList: AppBlock = {
         properties: {
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for this resource.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of resource. Alwayscompute#targetHttpProxyAggregatedList for lists of Target HTTP\nProxies.",
           },
           id: {
             type: "string",
+            description:
+              "[Output Only] Unique identifier for the resource; defined by the server.",
           },
           unreachables: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "[Output Only] Unreachable resources.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for\nlist requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for\nthe query parameter pageToken in the next list request.\nSubsequent list requests will have their own nextPageToken to\ncontinue paging through the results.",
           },
           items: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "object",
+            },
+            description: "A list of TargetHttpProxiesScopedList resources.",
           },
         },
         additionalProperties: true,

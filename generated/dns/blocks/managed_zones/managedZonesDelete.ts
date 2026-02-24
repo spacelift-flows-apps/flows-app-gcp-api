@@ -12,14 +12,18 @@ const managedZonesDelete: AppBlock = {
           name: "Managed Zone",
           description:
             "Identifies the managed zone addressed by this request. Can be the managed zone name or ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         clientOperationId: {
           name: "Client Operation ID",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

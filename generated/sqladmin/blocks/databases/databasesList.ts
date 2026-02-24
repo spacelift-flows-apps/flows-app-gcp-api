@@ -12,7 +12,9 @@ const databasesList: AppBlock = {
           name: "Instance",
           description:
             "Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,6 +88,7 @@ const databasesList: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#databasesList`.",
           },
           items: {
             type: "array",
@@ -93,46 +96,68 @@ const databasesList: AppBlock = {
               type: "object",
               properties: {
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "This is always `sql#database`.",
                 },
                 charset: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The Cloud SQL charset value.",
                 },
                 collation: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The Cloud SQL collation value.",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "This field is deprecated and will be removed from a future version of the API.",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the database in the Cloud SQL instance. This does not include the project ID or instance name.",
                 },
                 instance: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the Cloud SQL instance. This does not include the project ID.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The URI of this resource.",
                 },
                 project: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The project ID of the project containing the Cloud SQL database. The Google apps domain is prefixed if applicable.",
                 },
                 sqlserverDatabaseDetails: {
                   type: "object",
+                  properties: {
+                    compatibilityLevel: {
+                      type: "integer",
+                      description:
+                        "The version of SQL Server with which the database is to be made compatible (Format: int32)",
+                    },
+                    recoveryModel: {
+                      type: "string",
+                      description:
+                        "The recovery model of a SQL Server database",
+                    },
+                  },
+                  description:
+                    "Represents a Sql Server database on the Cloud SQL instance.",
                   additionalProperties: true,
                 },
               },
+              description:
+                "Represents a SQL database on the Cloud SQL instance.",
               additionalProperties: true,
             },
+            description: "List of database resources in the instance.",
           },
         },
+        description: "Database list response.",
         additionalProperties: true,
       },
     },

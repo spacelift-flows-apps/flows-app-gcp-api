@@ -11,7 +11,9 @@ const ekmConnectionsVerifyConnectivity: AppBlock = {
         name: {
           name: "Name",
           description: "Required. The name of the EkmConnection to verify.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,6 +85,7 @@ const ekmConnectionsVerifyConnectivity: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description: "Response message for EkmService.VerifyConnectivity.",
         additionalProperties: true,
       },
     },

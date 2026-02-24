@@ -11,26 +11,34 @@ const managedFoldersTestIamPermissions: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket containing the managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         managedFolder: {
           name: "Managed Folder",
           description: "The managed folder name/path.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         permissions: {
           name: "Permissions",
           description: "Permissions to test.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -107,14 +115,19 @@ const managedFoldersTestIamPermissions: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "The kind of item this is.",
           },
           permissions: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "The permissions held by the caller. Permissions are always of the format storage.resource.capability, where resource is one of buckets, objects, or managedFolders. The supported permissions are as follows:  \n- storage.buckets.delete - Delete bucket.  \n- storage.buckets.get - Read bucket metadata.  \n- storage.buckets.getIamPolicy - Read bucket IAM policy.  \n- storage.buckets.create - Create bucket.  \n- storage.buckets.list - List buckets.  \n- storage.buckets.setIamPolicy - Update bucket IAM policy.  \n- storage.buckets.update - Update bucket metadata.  \n- storage.objects.delete - Delete object.  \n- storage.objects.get - Read object data and metadata.  \n- storage.objects.getIamPolicy - Read object IAM policy.  \n- storage.objects.create - Create object.  \n- storage.objects.list - List objects.  \n- storage.objects.setIamPolicy - Update object IAM policy.  \n- storage.objects.update - Update object metadata. \n- storage.managedFolders.delete - Delete managed folder.  \n- storage.managedFolders.get - Read managed folder metadata.  \n- storage.managedFolders.getIamPolicy - Read managed folder IAM policy.  \n- storage.managedFolders.create - Create managed folder.  \n- storage.managedFolders.list - List managed folders.  \n- storage.managedFolders.setIamPolicy - Update managed folder IAM policy.",
           },
         },
+        description:
+          "A storage.(buckets|objects|managedFolders).testIamPermissions response.",
         additionalProperties: true,
       },
     },

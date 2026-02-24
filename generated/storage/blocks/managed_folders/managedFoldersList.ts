@@ -11,28 +11,36 @@ const managedFoldersList: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket containing the managed folder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Maximum number of items to return in a single page of responses.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
             "A previously-returned page token representing part of the larger set of results to view.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         prefix: {
           name: "Prefix",
           description:
             "The managed folder name/path prefix to filter the output list of results.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -113,48 +121,62 @@ const managedFoldersList: AppBlock = {
               type: "object",
               properties: {
                 bucket: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the bucket containing this managed folder.",
                 },
                 id: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The ID of the managed folder, including the bucket name and managed folder name.",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The kind of item this is. For managed folders, this is always storage#managedFolder.",
                 },
                 metageneration: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The version of the metadata for this managed folder. Used for preconditions and for detecting changes in metadata. (Format: int64)",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the managed folder. Required if not specified by URL parameter.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The link to this managed folder.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The creation time of the managed folder in RFC 3339 format. (Format: date-time)",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The last update time of the managed folder metadata in RFC 3339 format. (Format: date-time)",
                 },
               },
+              description: "A managed folder.",
               additionalProperties: true,
             },
+            description: "The list of items.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For lists of managed folders, this is always storage#managedFolders.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results.",
           },
         },
+        description: "A list of managed folders.",
         additionalProperties: true,
       },
     },

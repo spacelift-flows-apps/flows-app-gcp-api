@@ -12,7 +12,9 @@ const exportProjectMetadata: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the project of which metadata should be exported. Format: `projects/{project_id_or_number}/locations/{location}` for Project in a given location.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,8 +85,12 @@ const exportProjectMetadata: AppBlock = {
         properties: {
           metadata: {
             type: "string",
+            description:
+              "JSON encoded Google-generated Customer Metadata for a given resource/project.",
           },
         },
+        description:
+          "Metadata represents the JSON encoded generated customer metadata.",
         additionalProperties: true,
       },
     },

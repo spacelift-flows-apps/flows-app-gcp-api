@@ -5,7 +5,7 @@
     "bundle": "npx flowctl version bundle -e main.ts"
   },
   "dependencies": {
-    "@slflows/sdk": "*",
+    "@slflows/sdk": "^0.9.0",
     "google-auth-library": "^9.0.0",
     "@google-cloud/run": "^3.0.0"
   },
@@ -16,7 +16,7 @@
     "@useflows/flowctl": "^0.1.1"
   },
   "peerDependencies": {
-    "@slflows/sdk": "*"
+    "@slflows/sdk": "^0.9.0"
   },
   "overrides": {
     "protobufjs": ">=7.2.5"

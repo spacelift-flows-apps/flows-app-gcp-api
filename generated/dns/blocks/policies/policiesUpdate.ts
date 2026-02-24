@@ -12,21 +12,29 @@ const policiesUpdate: AppBlock = {
           name: "Policy",
           description:
             "User given friendly name of the policy addressed by this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         clientOperationId: {
           name: "Client Operation ID",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         enableInboundForwarding: {
           name: "Enable Inbound Forwarding",
           description:
             "Allows networks bound to this policy to receive DNS queries sent by VMs or applications over VPN connections.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+            description:
+              "Allows networks bound to this policy to receive DNS queries sent by VMs or applications over VPN connections. When enabled, a virtual IP address is allocated from each of the subnetworks that are bound to this policy.",
+          },
           required: false,
         },
         networks: {
@@ -40,6 +48,8 @@ const policiesUpdate: AppBlock = {
               properties: {
                 networkUrl: {
                   type: "string",
+                  description:
+                    "The fully qualified URL of the VPC network to bind to. This should be formatted like https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}",
                 },
                 kind: {
                   type: "string",
@@ -47,6 +57,8 @@ const policiesUpdate: AppBlock = {
               },
               additionalProperties: true,
             },
+            description:
+              "List of network names specifying networks to which this policy is applied.",
           },
           required: false,
         },
@@ -60,12 +72,12 @@ const policiesUpdate: AppBlock = {
                 type: "object",
                 properties: {
                   kind: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "string",
                   },
                   allQueries: {
-                    type: "object",
-                    additionalProperties: true,
+                    type: "boolean",
+                    description:
+                      "Controls whether DNS64 is enabled globally for all networks bound to the policy.",
                   },
                 },
                 additionalProperties: true,
@@ -74,6 +86,7 @@ const policiesUpdate: AppBlock = {
                 type: "string",
               },
             },
+            description: "DNS64 policies",
             additionalProperties: true,
           },
           required: false,
@@ -81,13 +94,18 @@ const policiesUpdate: AppBlock = {
         kind: {
           name: "Kind",
           description: "Request body field: kind",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         name: {
           name: "Name",
           description: "User-assigned name for this policy.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "User-assigned name for this policy.",
+          },
           required: false,
         },
         alternativeNameServerConfig: {
@@ -101,8 +119,30 @@ const policiesUpdate: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    kind: {
+                      type: "string",
+                    },
+                    ipv4Address: {
+                      type: "string",
+                      description: "IPv4 address to forward queries to.",
+                    },
+                    forwardingPath: {
+                      type: "string",
+                      enum: ["default", "private"],
+                      description:
+                        "Forwarding path for this TargetNameServer. If unset or set to DEFAULT, Cloud DNS makes forwarding decisions based on address ranges; that is, RFC1918 addresses go to the VPC network, non-RFC1918 addresses go to the internet. When set to PRIVATE, Cloud DNS always sends queries through the VPC network for this target.",
+                    },
+                    ipv6Address: {
+                      type: "string",
+                      description:
+                        "IPv6 address to forward to. Does not accept both fields (ipv4 & ipv6) being populated. Public preview as of November 2022.",
+                    },
+                  },
                   additionalProperties: true,
                 },
+                description:
+                  "Sets an alternative name server for the associated networks. When specified, all DNS queries are forwarded to a name server that you choose. Names such as .internal are not available when an alternative name server is specified.",
               },
               kind: {
                 type: "string",
@@ -116,21 +156,33 @@ const policiesUpdate: AppBlock = {
           name: "Description",
           description:
             "A mutable string of at most 1024 characters associated with this resource for the user's convenience.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "A mutable string of at most 1024 characters associated with this resource for the user's convenience. Has no effect on the policy's function.",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description:
             "Unique identifier for the resource; defined by the server (output only).",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Unique identifier for the resource; defined by the server (output only). (Format: uint64)",
+          },
           required: false,
         },
         enableLogging: {
           name: "Enable Logging",
           description:
             "Controls whether logging is enabled for the networks bound to this policy.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+            description:
+              "Controls whether logging is enabled for the networks bound to this policy. Defaults to no logging if not set.",
+          },
           required: false,
         },
       },
@@ -235,16 +287,50 @@ const policiesUpdate: AppBlock = {
             properties: {
               enableInboundForwarding: {
                 type: "boolean",
+                description:
+                  "Allows networks bound to this policy to receive DNS queries sent by VMs or applications over VPN connections. When enabled, a virtual IP address is allocated from each of the subnetworks that are bound to this policy.",
               },
               networks: {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    networkUrl: {
+                      type: "string",
+                      description:
+                        "The fully qualified URL of the VPC network to bind to. This should be formatted like https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}",
+                    },
+                    kind: {
+                      type: "string",
+                    },
+                  },
                   additionalProperties: true,
                 },
+                description:
+                  "List of network names specifying networks to which this policy is applied.",
               },
               dns64Config: {
                 type: "object",
+                properties: {
+                  scope: {
+                    type: "object",
+                    properties: {
+                      kind: {
+                        type: "string",
+                      },
+                      allQueries: {
+                        type: "boolean",
+                        description:
+                          "Controls whether DNS64 is enabled globally for all networks bound to the policy.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  kind: {
+                    type: "string",
+                  },
+                },
+                description: "DNS64 policies",
                 additionalProperties: true,
               },
               kind: {
@@ -252,21 +338,64 @@ const policiesUpdate: AppBlock = {
               },
               name: {
                 type: "string",
+                description: "User-assigned name for this policy.",
               },
               alternativeNameServerConfig: {
                 type: "object",
+                properties: {
+                  targetNameServers: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        kind: {
+                          type: "string",
+                        },
+                        ipv4Address: {
+                          type: "string",
+                          description: "IPv4 address to forward queries to.",
+                        },
+                        forwardingPath: {
+                          type: "string",
+                          enum: ["default", "private"],
+                          description:
+                            "Forwarding path for this TargetNameServer. If unset or set to DEFAULT, Cloud DNS makes forwarding decisions based on address ranges; that is, RFC1918 addresses go to the VPC network, non-RFC1918 addresses go to the internet. When set to PRIVATE, Cloud DNS always sends queries through the VPC network for this target.",
+                        },
+                        ipv6Address: {
+                          type: "string",
+                          description:
+                            "IPv6 address to forward to. Does not accept both fields (ipv4 & ipv6) being populated. Public preview as of November 2022.",
+                        },
+                      },
+                      additionalProperties: true,
+                    },
+                    description:
+                      "Sets an alternative name server for the associated networks. When specified, all DNS queries are forwarded to a name server that you choose. Names such as .internal are not available when an alternative name server is specified.",
+                  },
+                  kind: {
+                    type: "string",
+                  },
+                },
                 additionalProperties: true,
               },
               description: {
                 type: "string",
+                description:
+                  "A mutable string of at most 1024 characters associated with this resource for the user's convenience. Has no effect on the policy's function.",
               },
               id: {
                 type: "string",
+                description:
+                  "Unique identifier for the resource; defined by the server (output only). (Format: uint64)",
               },
               enableLogging: {
                 type: "boolean",
+                description:
+                  "Controls whether logging is enabled for the networks bound to this policy. Defaults to no logging if not set.",
               },
             },
+            description:
+              "A policy is a collection of DNS rules applied to one or more Virtual Private Cloud resources.",
             additionalProperties: true,
           },
         },

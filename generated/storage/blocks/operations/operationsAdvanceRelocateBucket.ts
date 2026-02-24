@@ -11,27 +11,39 @@ const operationsAdvanceRelocateBucket: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of the bucket to advance the relocate for.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         operationId: {
           name: "Operation ID",
           description: "ID of the operation resource.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ttl: {
           name: "Ttl",
           description:
             "Specifies the duration after which the relocation will revert to the sync stage if the relocation hasn't succeeded.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Specifies the duration after which the relocation will revert to the sync stage if the relocation hasn't succeeded. Optional, if not supplied, a default value of 12h will be used. (Format: google-duration)",
+          },
           required: false,
         },
         expireTime: {
           name: "Expire Time",
           description:
             "Specifies the time when the relocation will revert to the sync stage if the relocation hasn't succeeded.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Specifies the time when the relocation will revert to the sync stage if the relocation hasn't succeeded. (Format: date-time)",
+          },
           required: false,
         },
       },

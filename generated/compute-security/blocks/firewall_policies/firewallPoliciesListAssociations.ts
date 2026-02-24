@@ -12,7 +12,9 @@ const firewallPoliciesListAssociations: AppBlock = {
           name: "Target Resource",
           description:
             "The target resource to list associations. It is an organization, or a\nfolder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -91,31 +93,38 @@ const firewallPoliciesListAssociations: AppBlock = {
               type: "object",
               properties: {
                 displayName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] Deprecated, please use short name instead. The display name\nof the firewall policy of the association.",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The name for an association.",
                 },
                 firewallPolicyId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] The firewall policy ID of the association.",
                 },
                 shortName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] The short name of the firewall policy of the association.",
                 },
                 attachmentTarget: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The target that the firewall policy is attached to.",
                 },
               },
               additionalProperties: true,
             },
+            description: "A list of associations.",
           },
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of firewallPolicy associations. Alwayscompute#FirewallPoliciesListAssociations for lists of\nfirewallPolicy associations.",
           },
         },
         additionalProperties: true,

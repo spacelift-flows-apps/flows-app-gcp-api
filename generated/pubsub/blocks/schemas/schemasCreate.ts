@@ -12,44 +12,48 @@ const schemasCreate: AppBlock = {
           name: "Parent",
           description:
             "Required. The name of the project in which to create the schema. Format is `projects/{project-id}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         schemaId: {
           name: "Schema ID",
           description:
             "The ID to use for the schema, which will become the final component of the schema's resource name. See https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names for resource name constraints.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         definition: {
           name: "Definition",
           description: "The definition of the schema.",
-          type: "string",
-          required: false,
-        },
-        revisionCreateTime: {
-          name: "Revision Create Time",
-          description: "Output only.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
+          },
           required: false,
         },
         name: {
           name: "Name",
           description: "Required.",
-          type: "string",
-          required: false,
-        },
-        revisionId: {
-          name: "Revision ID",
-          description: "Output only.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
+          },
           required: false,
         },
         type: {
           name: "Type",
           description: "The type of the schema definition.",
-          type: "string",
+          type: {
+            type: "string",
+            enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+            description: "The type of the schema definition.",
+          },
           required: false,
         },
       },
@@ -107,13 +111,8 @@ const schemasCreate: AppBlock = {
 
         if (input.event.inputConfig.definition !== undefined)
           requestBody.definition = input.event.inputConfig.definition;
-        if (input.event.inputConfig.revisionCreateTime !== undefined)
-          requestBody.revisionCreateTime =
-            input.event.inputConfig.revisionCreateTime;
         if (input.event.inputConfig.name !== undefined)
           requestBody.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.revisionId !== undefined)
-          requestBody.revisionId = input.event.inputConfig.revisionId;
         if (input.event.inputConfig.type !== undefined)
           requestBody.type = input.event.inputConfig.type;
 
@@ -142,21 +141,31 @@ const schemasCreate: AppBlock = {
         properties: {
           definition: {
             type: "string",
+            description:
+              "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
           revisionCreateTime: {
             type: "string",
+            description:
+              "Output only. The timestamp that the revision was created. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
           },
           revisionId: {
             type: "string",
+            description:
+              "Output only. Immutable. The revision ID of the schema.",
           },
           type: {
             type: "string",
             enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+            description: "The type of the schema definition.",
           },
         },
+        description: "A schema resource.",
         additionalProperties: true,
       },
     },

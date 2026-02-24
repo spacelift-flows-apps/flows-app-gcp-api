@@ -12,14 +12,18 @@ const instancesGetLatestRecoveryTime: AppBlock = {
           name: "Instance",
           description:
             "Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         sourceInstanceDeletionTime: {
           name: "Source Instance Deletion Time",
           description:
             "The timestamp used to identify the time when the source instance is deleted. If this instance is deleted, then you must set the timestamp.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -93,14 +97,20 @@ const instancesGetLatestRecoveryTime: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#getLatestRecoveryTime`.",
           },
           latestRecoveryTime: {
             type: "string",
+            description:
+              "Timestamp, identifies the latest recovery time of the source instance. (Format: google-datetime)",
           },
           earliestRecoveryTime: {
             type: "string",
+            description:
+              "Timestamp, identifies the earliest recovery time of the source instance. (Format: google-datetime)",
           },
         },
+        description: "Instance get latest recovery time response.",
         additionalProperties: true,
       },
     },

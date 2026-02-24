@@ -11,28 +11,36 @@ const objectAccessControlsList: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of a bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         object: {
           name: "Object",
           description:
             "Name of the object. For information about how to URL encode object names to be path safe, see [Encoding URI Path Parts](https://cloud.google.com/storage/docs/request-endpoints#encoding).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         generation: {
           name: "Generation",
           description:
             "If present, selects a specific revision of this object (as opposed to the latest version, the default).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -110,65 +118,88 @@ const objectAccessControlsList: AppBlock = {
               type: "object",
               properties: {
                 bucket: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The name of the bucket.",
                 },
                 domain: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The domain associated with the entity, if any.",
                 },
                 email: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The email address associated with the entity, if any.",
                 },
                 entity: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The entity holding the permission, in one of the following forms: \n- user-userId \n- user-email \n- group-groupId \n- group-email \n- domain-domain \n- project-team-projectId \n- allUsers \n- allAuthenticatedUsers Examples: \n- The user liz@example.com would be user-liz@example.com. \n- The group example@googlegroups.com would be group-example@googlegroups.com. \n- To refer to all members of the Google Apps for Business domain example.com, the entity would be domain-example.com.",
                 },
                 entityId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The ID for the entity, if any.",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "HTTP 1.1 Entity tag for the access-control entry.",
                 },
                 generation: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The content generation of the object, if applied to an object. (Format: int64)",
                 },
                 id: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The ID of the access-control entry.",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The kind of item this is. For object access control entries, this is always storage#objectAccessControl.",
                 },
                 object: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name of the object, if applied to an object.",
                 },
                 projectTeam: {
                   type: "object",
+                  properties: {
+                    projectNumber: {
+                      type: "string",
+                      description: "The project number.",
+                    },
+                    team: {
+                      type: "string",
+                      description: "The team.",
+                    },
+                  },
+                  description:
+                    "The project team associated with the entity, if any.",
                   additionalProperties: true,
                 },
                 role: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The access permission for the entity.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The link to this access-control entry.",
                 },
               },
+              description: "An access-control entry.",
               additionalProperties: true,
             },
+            description: "The list of items.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For lists of object access control entries, this is always storage#objectAccessControls.",
           },
         },
+        description: "An access-control list.",
         additionalProperties: true,
       },
     },

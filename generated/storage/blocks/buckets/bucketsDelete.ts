@@ -11,28 +11,36 @@ const bucketsDelete: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of a bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "If set, only deletes the bucket if its metageneration matches this value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "If set, only deletes the bucket if its metageneration does not match this value.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },

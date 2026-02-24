@@ -12,13 +12,17 @@ const backupRunsGet: AppBlock = {
           name: "Instance",
           description:
             "Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         id: {
           name: "ID",
           description: "The ID of this backup run.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -92,6 +96,7 @@ const backupRunsGet: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description: "This is always `sql#backupRun`.",
           },
           status: {
             type: "string",
@@ -107,52 +112,75 @@ const backupRunsGet: AppBlock = {
               "DELETION_FAILED",
               "DELETED",
             ],
+            description: "The status of this run.",
           },
           enqueuedTime: {
             type: "string",
+            description:
+              "The time the run was enqueued in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
           },
           id: {
             type: "string",
+            description:
+              "The identifier for this backup run. Unique only for a specific Cloud SQL instance. (Format: int64)",
           },
           startTime: {
             type: "string",
+            description:
+              "The time the backup operation actually started in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
           },
           endTime: {
             type: "string",
+            description:
+              "The time the backup operation completed in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
           },
           error: {
             type: "object",
             properties: {
               kind: {
                 type: "string",
+                description: "This is always `sql#operationError`.",
               },
               code: {
                 type: "string",
+                description: "Identifies the specific error that occurred.",
               },
               message: {
                 type: "string",
+                description:
+                  "Additional information about the error encountered.",
               },
             },
+            description: "Database instance operation error.",
             additionalProperties: true,
           },
           type: {
             type: "string",
             enum: ["SQL_BACKUP_RUN_TYPE_UNSPECIFIED", "AUTOMATED", "ON_DEMAND"],
+            description:
+              'The type of this run; can be either "AUTOMATED" or "ON_DEMAND" or "FINAL". This field defaults to "ON_DEMAND" and is ignored, when specified for insert requests.',
           },
           description: {
             type: "string",
+            description:
+              "The description of this run, only applicable to on-demand backups.",
           },
           windowStartTime: {
             type: "string",
+            description:
+              "The start time of the backup window during which this the backup was attempted in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
           },
           instance: {
             type: "string",
+            description: "Name of the database instance.",
           },
           selfLink: {
             type: "string",
+            description: "The URI of this resource.",
           },
           location: {
             type: "string",
+            description: "Location of the backups.",
           },
           databaseVersion: {
             type: "string",
@@ -208,17 +236,23 @@ const backupRunsGet: AppBlock = {
               "SQLSERVER_2022_EXPRESS",
               "SQLSERVER_2022_WEB",
             ],
+            description:
+              "Output only. The instance database version at the time this backup was made.",
           },
           diskEncryptionConfiguration: {
             type: "object",
             properties: {
               kmsKeyName: {
                 type: "string",
+                description: "Resource name of KMS key for disk encryption",
               },
               kind: {
                 type: "string",
+                description:
+                  "This is always `sql#diskEncryptionConfiguration`.",
               },
             },
+            description: "Disk encryption configuration for an instance.",
             additionalProperties: true,
           },
           diskEncryptionStatus: {
@@ -226,24 +260,35 @@ const backupRunsGet: AppBlock = {
             properties: {
               kmsKeyVersionName: {
                 type: "string",
+                description:
+                  "KMS key version used to encrypt the Cloud SQL instance resource",
               },
               kind: {
                 type: "string",
+                description: "This is always `sql#diskEncryptionStatus`.",
               },
             },
+            description: "Disk encryption status for an instance.",
             additionalProperties: true,
           },
           backupKind: {
             type: "string",
             enum: ["SQL_BACKUP_KIND_UNSPECIFIED", "SNAPSHOT", "PHYSICAL"],
+            description:
+              "Specifies the kind of backup, PHYSICAL or DEFAULT_SNAPSHOT.",
           },
           timeZone: {
             type: "string",
+            description:
+              "Backup time zone to prevent restores to an instance with a different time zone. Now relevant only for SQL Server.",
           },
           maxChargeableBytes: {
             type: "string",
+            description:
+              "Output only. The maximum chargeable bytes for the backup. (Format: int64)",
           },
         },
+        description: "A BackupRun resource.",
         additionalProperties: true,
       },
     },

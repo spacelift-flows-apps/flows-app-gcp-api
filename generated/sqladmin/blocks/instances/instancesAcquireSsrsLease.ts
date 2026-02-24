@@ -12,7 +12,9 @@ const instancesAcquireSsrsLease: AppBlock = {
           name: "Instance",
           description:
             "Required. Cloud SQL instance ID. This doesn't include the project ID. It's composed of lowercase letters, numbers, and hyphens, and it must start with a letter. The total length must be 98 characters or less (Example: instance-id).",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         acquireSsrsLeaseContext: {
@@ -24,17 +26,25 @@ const instancesAcquireSsrsLease: AppBlock = {
             properties: {
               setupLogin: {
                 type: "string",
+                description:
+                  "The username to be used as the setup login to connect to the database server for SSRS setup.",
               },
               serviceLogin: {
                 type: "string",
+                description:
+                  "The username to be used as the service login to connect to the report database for SSRS setup.",
               },
               reportDatabase: {
                 type: "string",
+                description: "The report database to be used for SSRS setup.",
               },
               duration: {
                 type: "string",
+                description:
+                  "Lease duration needed for SSRS setup. (Format: google-duration)",
               },
             },
+            description: "Acquire SSRS lease context.",
             additionalProperties: true,
           },
           required: false,
@@ -121,8 +131,10 @@ const instancesAcquireSsrsLease: AppBlock = {
         properties: {
           operationId: {
             type: "string",
+            description: "The unique identifier for this operation.",
           },
         },
+        description: "Response for the acquire SSRS lease request.",
         additionalProperties: true,
       },
     },

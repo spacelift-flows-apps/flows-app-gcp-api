@@ -12,7 +12,9 @@ const instancesReleaseSsrsLease: AppBlock = {
           name: "Instance",
           description:
             "Required. The Cloud SQL instance ID. This doesn't include the project ID. The instance ID contains lowercase letters, numbers, and hyphens, and it must start with a letter. This ID can have a maximum length of 98 characters.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -86,8 +88,10 @@ const instancesReleaseSsrsLease: AppBlock = {
         properties: {
           operationId: {
             type: "string",
+            description: "The unique identifier for this operation.",
           },
         },
+        description: "Response for the release SSRS lease request.",
         additionalProperties: true,
       },
     },

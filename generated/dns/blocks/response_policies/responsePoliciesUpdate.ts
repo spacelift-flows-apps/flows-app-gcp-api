@@ -12,14 +12,18 @@ const responsePoliciesUpdate: AppBlock = {
           name: "Response Policy",
           description:
             "User assigned name of the Response Policy addressed by this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         clientOperationId: {
           name: "Client Operation ID",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         gkeClusters: {
@@ -36,30 +40,43 @@ const responsePoliciesUpdate: AppBlock = {
                 },
                 gkeClusterName: {
                   type: "string",
+                  description:
+                    "The resource name of the cluster to bind this response policy to. This should be specified in the format like: projects/*/locations/*/clusters/*. This is referenced from GKE projects.locations.clusters.get API: https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/get",
                 },
               },
               additionalProperties: true,
             },
+            description:
+              "The list of Google Kubernetes Engine clusters to which this response policy is applied.",
           },
           required: false,
         },
         responsePolicyName: {
           name: "Response Policy Name",
           description: "User assigned name for this Response Policy.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "User assigned name for this Response Policy.",
+          },
           required: false,
         },
         id: {
           name: "ID",
           description:
             "Unique identifier for the resource; defined by the server (output only).",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Unique identifier for the resource; defined by the server (output only). (Format: int64)",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description: "Request body field: kind",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         labels: {
@@ -67,7 +84,10 @@ const responsePoliciesUpdate: AppBlock = {
           description: "User labels.",
           type: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description: "User labels.",
           },
           required: false,
         },
@@ -85,17 +105,24 @@ const responsePoliciesUpdate: AppBlock = {
                 },
                 networkUrl: {
                   type: "string",
+                  description:
+                    "The fully qualified URL of the VPC network to bind to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`",
                 },
               },
               additionalProperties: true,
             },
+            description:
+              "List of network names specifying networks to which this policy is applied.",
           },
           required: false,
         },
         description: {
           name: "Description",
           description: "User-provided description for this Response Policy.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "User-provided description for this Response Policy.",
+          },
           required: false,
         },
       },
@@ -197,33 +224,67 @@ const responsePoliciesUpdate: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    kind: {
+                      type: "string",
+                    },
+                    gkeClusterName: {
+                      type: "string",
+                      description:
+                        "The resource name of the cluster to bind this response policy to. This should be specified in the format like: projects/*/locations/*/clusters/*. This is referenced from GKE projects.locations.clusters.get API: https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/get",
+                    },
+                  },
                   additionalProperties: true,
                 },
+                description:
+                  "The list of Google Kubernetes Engine clusters to which this response policy is applied.",
               },
               responsePolicyName: {
                 type: "string",
+                description: "User assigned name for this Response Policy.",
               },
               id: {
                 type: "string",
+                description:
+                  "Unique identifier for the resource; defined by the server (output only). (Format: int64)",
               },
               kind: {
                 type: "string",
               },
               labels: {
                 type: "object",
-                additionalProperties: true,
+                additionalProperties: {
+                  type: "string",
+                },
+                description: "User labels.",
               },
               networks: {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    kind: {
+                      type: "string",
+                    },
+                    networkUrl: {
+                      type: "string",
+                      description:
+                        "The fully qualified URL of the VPC network to bind to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`",
+                    },
+                  },
                   additionalProperties: true,
                 },
+                description:
+                  "List of network names specifying networks to which this policy is applied.",
               },
               description: {
                 type: "string",
+                description:
+                  "User-provided description for this Response Policy.",
               },
             },
+            description:
+              "A Response Policy is a collection of selectors that apply to queries made against one or more Virtual Private Cloud networks.",
             additionalProperties: true,
           },
         },

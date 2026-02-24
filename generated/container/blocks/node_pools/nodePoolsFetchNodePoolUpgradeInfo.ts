@@ -12,13 +12,17 @@ const nodePoolsFetchNodePoolUpgradeInfo: AppBlock = {
           name: "Name",
           description:
             "Required. The name (project, location, cluster, nodepool) of the nodepool to get. Specified in the format `projects/*/locations/*/clusters/*/nodePools/*` or `projects/*/zones/*/clusters/*/nodePools/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         version: {
           name: "Version",
           description: "API request version that initiates this operation.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -89,9 +93,13 @@ const nodePoolsFetchNodePoolUpgradeInfo: AppBlock = {
         properties: {
           endOfStandardSupportTimestamp: {
             type: "string",
+            description:
+              "The nodepool's current minor version's end of standard support timestamp.",
           },
           patchTargetVersion: {
             type: "string",
+            description:
+              "patch_target_version indicates the target version for patch upgrade.",
           },
           pausedReason: {
             type: "array",
@@ -105,9 +113,12 @@ const nodePoolsFetchNodePoolUpgradeInfo: AppBlock = {
                 "SYSTEM_CONFIG",
               ],
             },
+            description: "The auto upgrade paused reason.",
           },
           endOfExtendedSupportTimestamp: {
             type: "string",
+            description:
+              "The nodepool's current minor version's end of extended support timestamp.",
           },
           upgradeDetails: {
             type: "array",
@@ -115,35 +126,50 @@ const nodePoolsFetchNodePoolUpgradeInfo: AppBlock = {
               type: "object",
               properties: {
                 targetVersion: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The version after the upgrade.",
                 },
                 initialVersion: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The version before the upgrade.",
                 },
                 startTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The start timestamp of the upgrade. (Format: google-datetime)",
                 },
                 endTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The end timestamp of the upgrade. (Format: google-datetime)",
                 },
                 state: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "UNKNOWN",
+                    "FAILED",
+                    "SUCCEEDED",
+                    "CANCELED",
+                    "RUNNING",
+                  ],
+                  description: "Output only. The state of the upgrade.",
                 },
                 startType: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["START_TYPE_UNSPECIFIED", "AUTOMATIC", "MANUAL"],
+                  description: "The start type of the upgrade.",
                 },
               },
+              description:
+                "UpgradeDetails contains detailed information of each individual upgrade operation.",
               additionalProperties: true,
             },
+            description: "The list of past auto upgrades.",
           },
           minorTargetVersion: {
             type: "string",
+            description:
+              "minor_target_version indicates the target version for minor upgrade.",
           },
           autoUpgradeStatus: {
             type: "array",
@@ -156,8 +182,11 @@ const nodePoolsFetchNodePoolUpgradeInfo: AppBlock = {
                 "UPGRADE_PAUSED",
               ],
             },
+            description: "The auto upgrade status.",
           },
         },
+        description:
+          "NodePoolUpgradeInfo contains the upgrade information of a nodepool.",
         additionalProperties: true,
       },
     },

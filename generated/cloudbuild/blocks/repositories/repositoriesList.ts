@@ -12,33 +12,43 @@ const repositoriesList: AppBlock = {
           name: "Parent",
           description:
             "Required. The parent, which owns this collection of Repositories. Format: `projects/*/locations/*/connections/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageSize: {
           name: "Page Size",
           description: "Number of results to return in the list.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description: "Page start.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         filter: {
           name: "Filter",
           description:
             'A filter expression that filters resources listed in the response. Expressions must follow API improvement proposal [AIP-160](https://google.aip.dev/160). e.g. `remote_uri:"https://github.com*"`.',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Optional. If set to true, the response will return partial results when some regions are unreachable. If set to false, the response will fail if any region is unreachable.",
-          type: "boolean",
+          type: {
+            type: "boolean",
+          },
           required: false,
         },
       },
@@ -113,47 +123,62 @@ const repositoriesList: AppBlock = {
               type: "object",
               properties: {
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
                 },
                 remoteUri: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Required. Git Clone HTTPS URI.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Server assigned timestamp for when the connection was created. (Format: google-datetime)",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Server assigned timestamp for when the connection was updated. (Format: google-datetime)",
                 },
                 annotations: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "Optional. Allows clients to store small amounts of arbitrary data.",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
                 },
                 webhookId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. External ID of the webhook created for the repository.",
                 },
               },
+              description: "A repository associated to a parent connection.",
               additionalProperties: true,
             },
+            description: "The list of Repositories.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A token identifying a page of results the server should return.",
           },
           unreachable: {
             type: "array",
             items: {
               type: "string",
             },
+            description: "Locations that could not be reached.",
           },
         },
+        description: "Message for response to listing Repositories.",
         additionalProperties: true,
       },
     },

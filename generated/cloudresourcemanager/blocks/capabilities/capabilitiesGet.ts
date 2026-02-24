@@ -12,7 +12,9 @@ const capabilitiesGet: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the capability to get. For example, `folders/123/capabilities/app-management`",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,11 +85,16 @@ const capabilitiesGet: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Immutable. Identifier. The resource name of the capability. Must be in the following form: * `folders/{folder_id}/capabilities/{capability_name}` For example, `folders/123/capabilities/app-management` Following are the allowed {capability_name} values: * `app-management`",
           },
           value: {
             type: "boolean",
+            description:
+              "Required. The configured value of the capability at the given parent resource.",
           },
         },
+        description: "Representation of a Capability.",
         additionalProperties: true,
       },
     },

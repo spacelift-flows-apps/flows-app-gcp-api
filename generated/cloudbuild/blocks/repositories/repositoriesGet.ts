@@ -12,7 +12,9 @@ const repositoriesGet: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the Repository to retrieve. Format: `projects/*/locations/*/connections/*/repositories/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -83,27 +85,43 @@ const repositoriesGet: AppBlock = {
         properties: {
           name: {
             type: "string",
+            description:
+              "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
           },
           remoteUri: {
             type: "string",
+            description: "Required. Git Clone HTTPS URI.",
           },
           createTime: {
             type: "string",
+            description:
+              "Output only. Server assigned timestamp for when the connection was created. (Format: google-datetime)",
           },
           updateTime: {
             type: "string",
+            description:
+              "Output only. Server assigned timestamp for when the connection was updated. (Format: google-datetime)",
           },
           annotations: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Optional. Allows clients to store small amounts of arbitrary data.",
           },
           etag: {
             type: "string",
+            description:
+              "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
           },
           webhookId: {
             type: "string",
+            description:
+              "Output only. External ID of the webhook created for the repository.",
           },
         },
+        description: "A repository associated to a parent connection.",
         additionalProperties: true,
       },
     },

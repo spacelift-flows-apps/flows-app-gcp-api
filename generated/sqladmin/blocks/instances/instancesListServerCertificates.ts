@@ -12,7 +12,9 @@ const instancesListServerCertificates: AppBlock = {
           name: "Instance",
           description:
             "Required. Cloud SQL instance ID. This does not include the project ID.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -90,44 +92,50 @@ const instancesListServerCertificates: AppBlock = {
               type: "object",
               properties: {
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "This is always `sql#sslCert`.",
                 },
                 certSerialNumber: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Serial number, as extracted from the certificate.",
                 },
                 cert: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "PEM representation.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The time when the certificate was created in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z` (Format: google-datetime)",
                 },
                 commonName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "User supplied name. Constrained to [a-zA-Z.-_ ]+.",
                 },
                 expirationTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The time when the certificate expires in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
                 },
                 sha1Fingerprint: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Sha1 Fingerprint.",
                 },
                 instance: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Name of the database instance.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The URI of this resource.",
                 },
               },
+              description: "SslCerts Resource",
               additionalProperties: true,
             },
+            description: "List of server CA certificates for the instance.",
           },
           serverCerts: {
             type: "array",
@@ -135,52 +143,64 @@ const instancesListServerCertificates: AppBlock = {
               type: "object",
               properties: {
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "This is always `sql#sslCert`.",
                 },
                 certSerialNumber: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Serial number, as extracted from the certificate.",
                 },
                 cert: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "PEM representation.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The time when the certificate was created in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z` (Format: google-datetime)",
                 },
                 commonName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "User supplied name. Constrained to [a-zA-Z.-_ ]+.",
                 },
                 expirationTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The time when the certificate expires in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`. (Format: google-datetime)",
                 },
                 sha1Fingerprint: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Sha1 Fingerprint.",
                 },
                 instance: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Name of the database instance.",
                 },
                 selfLink: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The URI of this resource.",
                 },
               },
+              description: "SslCerts Resource",
               additionalProperties: true,
             },
+            description:
+              "List of server certificates for the instance, signed by the corresponding CA from the `ca_certs` list.",
           },
           activeVersion: {
             type: "string",
+            description:
+              "The `sha1_fingerprint` of the active certificate from `server_certs`.",
           },
           kind: {
             type: "string",
+            description:
+              "This is always `sql#instancesListServerCertificates`.",
           },
         },
+        description: "Instances ListServerCertificates response.",
         additionalProperties: true,
       },
     },

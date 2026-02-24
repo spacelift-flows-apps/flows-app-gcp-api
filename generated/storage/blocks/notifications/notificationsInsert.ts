@@ -11,14 +11,18 @@ const notificationsInsert: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "The parent bucket of the notification.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         userProject: {
           name: "User Project",
           description:
             "The project to be billed for this request. Required for Requester Pays buckets.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
         custom_attributes: {
@@ -27,14 +31,22 @@ const notificationsInsert: AppBlock = {
             "An optional list of additional attributes to attach to each Cloud PubSub message published for this notification subscription.",
           type: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "An optional list of additional attributes to attach to each Cloud PubSub message published for this notification subscription.",
           },
           required: false,
         },
         etag: {
           name: "Etag",
           description: "HTTP 1.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "HTTP 1.1 Entity tag for this subscription notification.",
+          },
           required: false,
         },
         event_types: {
@@ -46,45 +58,68 @@ const notificationsInsert: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "If present, only send notifications about listed event types. If empty, sent notifications for all event types.",
           },
           required: false,
         },
         id: {
           name: "ID",
           description: "The ID of the notification.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The ID of the notification.",
+          },
           required: false,
         },
         kind: {
           name: "Kind",
           description: "The kind of item this is.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The kind of item this is. For notifications, this is always storage#notification.",
+          },
           required: false,
         },
         object_name_prefix: {
           name: "Object_name_prefix",
           description:
             "If present, only apply this notification configuration to object names that begin with this prefix.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "If present, only apply this notification configuration to object names that begin with this prefix.",
+          },
           required: false,
         },
         payload_format: {
           name: "Payload_format",
           description: "The desired content of the Payload.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The desired content of the Payload.",
+          },
           required: false,
         },
         selfLink: {
           name: "Self Link",
           description: "The canonical URL of this notification.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The canonical URL of this notification.",
+          },
           required: false,
         },
         topic: {
           name: "Topic",
           description:
             "The Cloud PubSub topic to which this subscription publishes.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The Cloud PubSub topic to which this subscription publishes. Formatted as: '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'",
+          },
           required: false,
         },
       },
@@ -187,36 +222,54 @@ const notificationsInsert: AppBlock = {
         properties: {
           custom_attributes: {
             type: "object",
-            additionalProperties: true,
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "An optional list of additional attributes to attach to each Cloud PubSub message published for this notification subscription.",
           },
           etag: {
             type: "string",
+            description:
+              "HTTP 1.1 Entity tag for this subscription notification.",
           },
           event_types: {
             type: "array",
             items: {
               type: "string",
             },
+            description:
+              "If present, only send notifications about listed event types. If empty, sent notifications for all event types.",
           },
           id: {
             type: "string",
+            description: "The ID of the notification.",
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For notifications, this is always storage#notification.",
           },
           object_name_prefix: {
             type: "string",
+            description:
+              "If present, only apply this notification configuration to object names that begin with this prefix.",
           },
           payload_format: {
             type: "string",
+            description: "The desired content of the Payload.",
           },
           selfLink: {
             type: "string",
+            description: "The canonical URL of this notification.",
           },
           topic: {
             type: "string",
+            description:
+              "The Cloud PubSub topic to which this subscription publishes. Formatted as: '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'",
           },
         },
+        description: "A subscription to receive Google PubSub notifications.",
         additionalProperties: true,
       },
     },

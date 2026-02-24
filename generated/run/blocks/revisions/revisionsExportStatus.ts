@@ -12,13 +12,17 @@ const revisionsExportStatus: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the resource of which image export operation status has to be fetched. Format: `projects/{project_id_or_number}/locations/{location}/services/{service}/revisions/{revision}` for Revision `projects/{project_id_or_number}/locations/{location}/jobs/{job}/executions/{execution}` for Execution",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         operationId: {
           name: "Operation ID",
           description: "Required. The operation id returned from ExportImage.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
       },
@@ -89,10 +93,13 @@ const revisionsExportStatus: AppBlock = {
         properties: {
           operationId: {
             type: "string",
+            description: "The operation id.",
           },
           operationState: {
             type: "string",
             enum: ["OPERATION_STATE_UNSPECIFIED", "IN_PROGRESS", "FINISHED"],
+            description:
+              "Output only. The state of the overall export operation.",
           },
           imageExportStatuses: {
             type: "array",
@@ -100,26 +107,68 @@ const revisionsExportStatus: AppBlock = {
               type: "object",
               properties: {
                 exportJobState: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "EXPORT_JOB_STATE_UNSPECIFIED",
+                    "IN_PROGRESS",
+                    "FINISHED",
+                  ],
+                  description:
+                    "Output only. Has the image export job finished (regardless of successful or failure).",
                 },
                 status: {
                   type: "object",
+                  properties: {
+                    code: {
+                      type: "integer",
+                      description:
+                        "Numeric code drawn from the space specified below. Often, this is the canonical error space, and code is drawn from google3/util/task/codes.proto copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional int32 code = 1; (Format: int32)",
+                    },
+                    space: {
+                      type: "string",
+                      description:
+                        "copybara:strip_begin(b/383363683) Space to which this status belongs copybara:strip_end_and_replace optional string space = 2; // Space to which this status belongs",
+                    },
+                    message: {
+                      type: "string",
+                      description:
+                        "Detail message copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional string message = 3;",
+                    },
+                    canonicalCode: {
+                      type: "integer",
+                      description:
+                        "copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional int32 canonical_code = 6; (Format: int32)",
+                    },
+                    messageSet: {
+                      type: "object",
+                      properties: {},
+                      description:
+                        'This is proto2\'s version of MessageSet. DEPRECATED: DO NOT USE FOR NEW FIELDS. If you are using editions or proto2, please make your own extendable messages for your use case. If you are using proto3, please use `Any` instead. MessageSet was the implementation of extensions for proto1. When proto2 was introduced, extensions were implemented as a first-class feature. This schema for MessageSet was meant to be a "bridge" solution to migrate MessageSet-bearing messages from proto1 to proto2. This schema has been open-sourced only to facilitate the migration of Google products with MessageSet-bearing messages to open-source environments.',
+                      additionalProperties: true,
+                    },
+                  },
+                  description: "Wire-format for a Status object",
                   additionalProperties: true,
                 },
                 exportedImageDigest: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The exported image ID as it will appear in Artifact Registry.",
                 },
                 tag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The image tag as it will appear in Artifact Registry.",
                 },
               },
+              description: "The status of an image export job.",
               additionalProperties: true,
             },
+            description: "The status of each image export job.",
           },
         },
+        description:
+          "ExportStatusResponse contains the status of image export operation, with the status of each image export job.",
         additionalProperties: true,
       },
     },

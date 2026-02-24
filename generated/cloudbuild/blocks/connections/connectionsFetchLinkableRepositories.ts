@@ -12,20 +12,26 @@ const connectionsFetchLinkableRepositories: AppBlock = {
           name: "Connection",
           description:
             "Required. The name of the Connection. Format: `projects/*/locations/*/connections/*`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         pageSize: {
           name: "Page Size",
           description:
             "Number of results to return in the list. Default to 20.",
-          type: "number",
+          type: {
+            type: "integer",
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description: "Page start.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -100,41 +106,55 @@ const connectionsFetchLinkableRepositories: AppBlock = {
               type: "object",
               properties: {
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
                 },
                 remoteUri: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "Required. Git Clone HTTPS URI.",
                 },
                 createTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Server assigned timestamp for when the connection was created. (Format: google-datetime)",
                 },
                 updateTime: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. Server assigned timestamp for when the connection was updated. (Format: google-datetime)",
                 },
                 annotations: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "Optional. Allows clients to store small amounts of arbitrary data.",
                 },
                 etag: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
                 },
                 webhookId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. External ID of the webhook created for the repository.",
                 },
               },
+              description: "A repository associated to a parent connection.",
               additionalProperties: true,
             },
+            description: "repositories ready to be created.",
           },
           nextPageToken: {
             type: "string",
+            description:
+              "A token identifying a page of results the server should return.",
           },
         },
+        description: "Response message for FetchLinkableRepositories.",
         additionalProperties: true,
       },
     },

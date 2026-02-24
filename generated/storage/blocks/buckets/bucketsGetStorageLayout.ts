@@ -11,14 +11,18 @@ const bucketsGetStorageLayout: AppBlock = {
         bucket: {
           name: "Bucket",
           description: "Name of a bucket.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         prefix: {
           name: "Prefix",
           description:
             "An optional prefix used for permission check. It is useful when the caller only has storage.objects.list permission under a specific prefix.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -95,6 +99,7 @@ const bucketsGetStorageLayout: AppBlock = {
         properties: {
           bucket: {
             type: "string",
+            description: "The name of the bucket.",
           },
           customPlacementConfig: {
             type: "object",
@@ -104,8 +109,12 @@ const bucketsGetStorageLayout: AppBlock = {
                 items: {
                   type: "string",
                 },
+                description:
+                  "The list of regional locations in which data is placed.",
               },
             },
+            description:
+              "The bucket's custom placement configuration for Custom Dual Regions.",
             additionalProperties: true,
           },
           hierarchicalNamespace: {
@@ -113,20 +122,28 @@ const bucketsGetStorageLayout: AppBlock = {
             properties: {
               enabled: {
                 type: "boolean",
+                description:
+                  "When set to true, hierarchical namespace is enabled for this bucket.",
               },
             },
+            description: "The bucket's hierarchical namespace configuration.",
             additionalProperties: true,
           },
           kind: {
             type: "string",
+            description:
+              "The kind of item this is. For storage layout, this is always storage#storageLayout.",
           },
           location: {
             type: "string",
+            description: "The location of the bucket.",
           },
           locationType: {
             type: "string",
+            description: "The type of the bucket location.",
           },
         },
+        description: "The storage layout configuration of a bucket.",
         additionalProperties: true,
       },
     },

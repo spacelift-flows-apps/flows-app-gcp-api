@@ -12,7 +12,9 @@ const tagValuesGetNamespaced: AppBlock = {
           name: "Name",
           description:
             'Required. A namespaced tag value name in the following format: `{parentId}/{tagKeyShort}/{tagValueShort}` Examples: - `42/foo/abc` for a value with short name "abc" under the key with short name "foo" under the organization with ID 42 - `r2-d2/bar/xyz` for a value with short name "xyz" under the key with short name "bar" under the project with ID "r2-d2"',
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -86,29 +88,46 @@ const tagValuesGetNamespaced: AppBlock = {
         properties: {
           shortName: {
             type: "string",
+            description:
+              "Required. Immutable. User-assigned short name for TagValue. The short name should be unique for TagValues within the same parent TagKey. The short name must be 256 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.",
           },
           updateTime: {
             type: "string",
+            description: "Output only. Update time. (Format: google-datetime)",
           },
           name: {
             type: "string",
+            description:
+              "Immutable. Resource name for TagValue in the format `tagValues/456`.",
           },
           parent: {
             type: "string",
+            description:
+              "Immutable. The resource name of the new TagValue's parent TagKey. Must be of the form `tagKeys/{tag_key_id}`.",
           },
           namespacedName: {
             type: "string",
+            description:
+              "Output only. The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`.",
           },
           etag: {
             type: "string",
+            description:
+              "Optional. Entity tag which users can pass to prevent race conditions. This field is always set in server responses. See UpdateTagValueRequest for details.",
           },
           createTime: {
             type: "string",
+            description:
+              "Output only. Creation time. (Format: google-datetime)",
           },
           description: {
             type: "string",
+            description:
+              "Optional. User-assigned description of the TagValue. Must not exceed 256 characters. Read-write.",
           },
         },
+        description:
+          "A TagValue is a child of a particular TagKey. This is used to group cloud resources for the purpose of controlling them using policies.",
         additionalProperties: true,
       },
     },

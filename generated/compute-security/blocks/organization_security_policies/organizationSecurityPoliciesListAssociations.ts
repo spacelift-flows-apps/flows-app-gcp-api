@@ -12,7 +12,9 @@ const organizationSecurityPoliciesListAssociations: AppBlock = {
           name: "Target Resource",
           description:
             "The target resource to list associations. It is an organization, or a\nfolder.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
@@ -87,6 +89,8 @@ const organizationSecurityPoliciesListAssociations: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of securityPolicy associations. Alwayscompute#organizationSecurityPoliciesListAssociations for lists\nof securityPolicy associations.",
           },
           associations: {
             type: "array",
@@ -94,36 +98,49 @@ const organizationSecurityPoliciesListAssociations: AppBlock = {
               type: "object",
               properties: {
                 securityPolicyId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] The security policy ID of the association.",
                 },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "The name for an association.",
                 },
                 attachmentId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The resource that the security policy is attached to.",
                 },
                 shortName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] The short name of the security policy of the association.",
                 },
                 excludedProjects: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "A list of projects to exclude from the security policy.",
                 },
                 excludedFolders: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "A list of folders to exclude from the security policy.",
                 },
                 displayName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "[Output Only] The display name of the security policy of the association.",
                 },
               },
               additionalProperties: true,
             },
+            description: "A list of associations.",
           },
         },
         additionalProperties: true,

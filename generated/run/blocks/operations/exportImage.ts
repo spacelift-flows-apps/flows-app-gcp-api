@@ -12,13 +12,19 @@ const exportImage: AppBlock = {
           name: "Name",
           description:
             "Required. The name of the resource of which image metadata should be exported. Format: `projects/{project_id_or_number}/locations/{location}/services/{service}/revisions/{revision}` for Revision `projects/{project_id_or_number}/locations/{location}/jobs/{job}/executions/{execution}` for Execution",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         destinationRepo: {
           name: "Destination Repo",
           description: "Required.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Required. The export destination url (the Artifact Registry repo).",
+          },
           required: false,
         },
       },
@@ -99,8 +105,12 @@ const exportImage: AppBlock = {
         properties: {
           operationId: {
             type: "string",
+            description:
+              "An operation ID used to track the status of image exports tied to the original pod ID in the request.",
           },
         },
+        description:
+          "ExportImageResponse contains an operation Id to track the image export operation.",
         additionalProperties: true,
       },
     },

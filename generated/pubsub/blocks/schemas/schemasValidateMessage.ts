@@ -12,7 +12,9 @@ const schemasValidateMessage: AppBlock = {
           name: "Parent",
           description:
             "Required. The name of the project in which to validate schemas. Format is `projects/{project-id}`.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         schema: {
@@ -23,21 +25,31 @@ const schemasValidateMessage: AppBlock = {
             properties: {
               definition: {
                 type: "string",
+                description:
+                  "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
               },
               revisionCreateTime: {
                 type: "string",
+                description:
+                  "Output only. The timestamp that the revision was created. (Format: google-datetime)",
               },
               name: {
                 type: "string",
+                description:
+                  "Required. Name of the schema. Format is `projects/{project}/schemas/{schema}`.",
               },
               revisionId: {
                 type: "string",
+                description:
+                  "Output only. Immutable. The revision ID of the schema.",
               },
               type: {
                 type: "string",
                 enum: ["TYPE_UNSPECIFIED", "PROTOCOL_BUFFER", "AVRO"],
+                description: "The type of the schema definition.",
               },
             },
+            description: "A schema resource.",
             additionalProperties: true,
           },
           required: false,
@@ -45,20 +57,32 @@ const schemasValidateMessage: AppBlock = {
         name: {
           name: "Name",
           description: "Name of the schema against which to validate.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Name of the schema against which to validate. Format is `projects/{project}/schemas/{schema}`.",
+          },
           required: false,
         },
         message: {
           name: "Message",
           description:
             "Message to validate against the provided 'schema_spec'.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "Message to validate against the provided `schema_spec`. (Format: byte)",
+          },
           required: false,
         },
         encoding: {
           name: "Encoding",
           description: "The encoding expected for messages",
-          type: "string",
+          type: {
+            type: "string",
+            enum: ["ENCODING_UNSPECIFIED", "JSON", "BINARY"],
+            description: "The encoding expected for messages",
+          },
           required: false,
         },
       },
@@ -146,6 +170,8 @@ const schemasValidateMessage: AppBlock = {
       type: {
         type: "object",
         properties: {},
+        description:
+          "Response for the `ValidateMessage` method. Empty for now.",
         additionalProperties: true,
       },
     },

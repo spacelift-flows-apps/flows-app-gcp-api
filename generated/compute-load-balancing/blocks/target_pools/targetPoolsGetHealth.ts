@@ -12,19 +12,27 @@ const targetPoolsGetHealth: AppBlock = {
           name: "Target Pool",
           description:
             "Name of the TargetPool resource to which the queried instance belongs.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         instance: {
           name: "Instance",
           description: "The URL for a specific instance.",
-          type: "string",
+          type: {
+            type: "string",
+            description:
+              "The URL for a specific instance.\n@required compute.instancegroups.addInstances/removeInstances",
+          },
           required: false,
         },
       },
@@ -109,6 +117,8 @@ const targetPoolsGetHealth: AppBlock = {
         properties: {
           kind: {
             type: "string",
+            description:
+              "[Output Only] Type of resource. Alwayscompute#targetPoolInstanceHealth when checking the health of\nan instance.",
           },
           healthStatus: {
             type: "array",
@@ -116,48 +126,63 @@ const targetPoolsGetHealth: AppBlock = {
               type: "object",
               properties: {
                 forwardingRule: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "URL of the forwarding rule associated with the health status of the\ninstance.",
                 },
                 instance: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description: "URL of the instance resource.",
                 },
                 healthState: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["HEALTHY", "UNHEALTHY"],
+                  description:
+                    "Health state of the IPv4 address of the instance.",
                 },
                 weight: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
                 },
                 ipv6HealthState: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["HEALTHY", "UNHEALTHY"],
+                  description:
+                    "Health state of the IPv6 address of the instance.",
                 },
                 ipv6Address: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
                 },
                 weightError: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: [
+                    "INVALID_WEIGHT",
+                    "MISSING_WEIGHT",
+                    "UNAVAILABLE_WEIGHT",
+                    "WEIGHT_NONE",
+                  ],
                 },
                 forwardingRuleIp: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "A forwarding rule IP address assigned to this instance.",
                 },
                 port: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "integer",
+                  description:
+                    "The named port of the instance group, not necessarily the port that is\nhealth-checked. (Format: int32)",
                 },
                 ipAddress: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "For target pool based Network Load Balancing, it indicates the forwarding\nrule's IP address assigned to this instance. For other types of load\nbalancing, the field indicates VM internal ip.",
                 },
                 annotations: {
                   type: "object",
-                  additionalProperties: true,
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "Metadata defined as annotations for network endpoint.",
                 },
               },
               additionalProperties: true,

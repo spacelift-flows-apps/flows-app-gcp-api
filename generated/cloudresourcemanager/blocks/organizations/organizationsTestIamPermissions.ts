@@ -12,7 +12,9 @@ const organizationsTestIamPermissions: AppBlock = {
           name: "Resource",
           description:
             "REQUIRED: The resource for which the policy detail is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         permissions: {
@@ -23,6 +25,8 @@ const organizationsTestIamPermissions: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "The set of permissions to check for the `resource`. Permissions with wildcards (such as `*` or `storage.*`) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).",
           },
           required: false,
         },
@@ -110,8 +114,11 @@ const organizationsTestIamPermissions: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
           },
         },
+        description: "Response message for `TestIamPermissions` method.",
         additionalProperties: true,
       },
     },
