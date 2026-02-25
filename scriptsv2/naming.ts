@@ -77,7 +77,39 @@ export function rpcToHumanName(category: string, rpcName: string): string {
 }
 
 /**
+ * Known resource patterns to category mappings.
+ * Order matters - first match wins. More specific patterns should come first.
+ */
+const RESOURCE_PATTERNS: Array<{ pattern: RegExp; category: string }> = [
+  // Pubsub-specific
+  { pattern: /snapshot/i, category: "Snapshots" },
+  { pattern: /subscription/i, category: "Subscriptions" },
+  { pattern: /topic/i, category: "Topics" },
+  { pattern: /schema/i, category: "Schemas" },
+  // Cloud Storage
+  { pattern: /bucket/i, category: "Buckets" },
+  { pattern: /object/i, category: "Objects" },
+  { pattern: /resumablewrite/i, category: "Objects" },
+  // IAM (used by multiple services)
+  { pattern: /iampoli/i, category: "IAM" },
+  { pattern: /iampermission/i, category: "IAM" },
+];
+
+/**
+ * Service-level category defaults when no resource pattern matches.
+ */
+const SERVICE_DEFAULTS: Record<string, string> = {
+  Publisher: "Topics",
+  Subscriber: "Subscriptions",
+  SchemaService: "Schemas",
+  Storage: "Objects",
+};
+
+/**
  * Derive the category for an RPC based on its service and the resource it operates on.
+ *
+ * Uses the RPC name and request type name to detect the resource, falling back
+ * to service-level defaults.
  *
  * For pubsub:
  * - Publisher RPCs that operate on topics -> "Topics"
@@ -85,41 +117,36 @@ export function rpcToHumanName(category: string, rpcName: string): string {
  * - Subscriber RPCs that operate on subscriptions -> "Subscriptions"
  * - Subscriber RPCs that operate on snapshots -> "Snapshots"
  * - SchemaService RPCs -> "Schemas"
+ *
+ * For Cloud Storage:
+ * - *Bucket* RPCs -> "Buckets"
+ * - *Object* RPCs -> "Objects"
+ * - *IamPolicy* / *IamPermissions* RPCs -> "IAM"
+ * - *ResumableWrite* RPCs -> "Objects"
  */
 export function rpcToCategory(
   serviceName: string,
   rpcName: string,
   requestTypeName: string,
 ): string {
-  // SchemaService -> always Schemas
-  if (serviceName === "SchemaService") {
-    return "Schemas";
-  }
-
-  // Check the request type name and RPC name for resource hints
   const rpcLower = rpcName.toLowerCase();
   const reqLower = requestTypeName.toLowerCase();
+  const combined = rpcLower + " " + reqLower;
 
-  if (rpcLower.includes("snapshot") || reqLower.includes("snapshot")) {
-    return "Snapshots";
-  }
-  if (rpcLower.includes("subscription") || reqLower.includes("subscription")) {
-    if (serviceName === "Publisher") {
-      // DetachSubscription, ListTopicSubscriptions are Publisher methods but about subscriptions
-      // Keep them in Topics since they're Publisher operations
-      return "Topics";
+  for (const { pattern, category } of RESOURCE_PATTERNS) {
+    if (pattern.test(combined)) {
+      // Special case: Publisher methods about subscriptions stay in Topics
+      if (
+        serviceName === "Publisher" &&
+        (category === "Subscriptions" || category === "Snapshots")
+      ) {
+        return "Topics";
+      }
+      return category;
     }
-    return "Subscriptions";
-  }
-  if (rpcLower.includes("topic") || reqLower.includes("topic")) {
-    return "Topics";
   }
 
-  // Default based on service
-  if (serviceName === "Publisher") return "Topics";
-  if (serviceName === "Subscriber") return "Subscriptions";
-
-  return "General";
+  return SERVICE_DEFAULTS[serviceName] || "General";
 }
 
 /** Convert category name to directory name: "Topics" -> "topics" */

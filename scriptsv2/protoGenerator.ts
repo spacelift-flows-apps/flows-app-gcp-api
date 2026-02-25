@@ -34,6 +34,14 @@ const SERVICES: Record<string, ServiceConfig> = {
     title: "Cloud Pub/Sub",
     outputDir: "generatedv2/pubsub",
   },
+  storage: {
+    protoFiles: [
+      "local/googleapis/google/storage/v2/storage.proto",
+    ],
+    host: "storage.googleapis.com",
+    title: "Cloud Storage",
+    outputDir: "generatedv2/storage",
+  },
 };
 
 async function generateService(
@@ -53,10 +61,26 @@ async function generateService(
     console.log(`    ${svc.name}: ${svc.rpcs.length} RPCs`);
   }
 
-  // Step 2: Generate block metadata for each non-streaming RPC
+  // Step 2: Filter services to only those from the target proto package.
+  // Imported dependencies (e.g. google.iam.v1.IAMPolicy) should be excluded.
+  const targetPackages = config.protoFiles.map((f) => {
+    // "local/googleapis/google/storage/v2/storage.proto" -> ".google.storage.v2"
+    const parts = f.replace(/^local\/googleapis\//, "").replace(/\/[^/]+\.proto$/, "").split("/");
+    return "." + parts.join(".");
+  });
+  const filteredServices = protoResult.services.filter((svc) =>
+    targetPackages.some((pkg) => svc.fullName.startsWith(pkg + ".")),
+  );
+
+  if (filteredServices.length < protoResult.services.length) {
+    const skipped = protoResult.services.length - filteredServices.length;
+    console.log(`  Filtered out ${skipped} imported service(s), keeping ${filteredServices.length}`);
+  }
+
+  // Step 3: Generate block metadata for each non-streaming RPC
   const blocks: GeneratedBlock[] = [];
 
-  for (const service of protoResult.services) {
+  for (const service of filteredServices) {
     for (const rpc of service.rpcs) {
       // Skip streaming RPCs
       if (rpc.requestStream || rpc.responseStream) {
@@ -89,14 +113,14 @@ async function generateService(
 
   console.log(`  Generating ${blocks.length} blocks...`);
 
-  // Step 3: Generate block source code
+  // Step 4: Generate block source code
   const blockSources = new Map<string, string>();
   for (const block of blocks) {
     const source = generateBlockSource(block);
     blockSources.set(block.blockName, source);
   }
 
-  // Step 4: Write all files
+  // Step 5: Write all files
   console.log("  Writing output files...");
   await writeAppFiles(config, blocks, blockSources, protoResult);
 

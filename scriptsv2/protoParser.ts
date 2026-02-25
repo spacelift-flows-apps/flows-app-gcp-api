@@ -24,6 +24,16 @@ const PROJECT_ROOT = path.resolve(".");
 const GOOGLEAPIS_ROOT = path.join(PROJECT_ROOT, "local", "googleapis");
 
 /**
+ * Strip the proto package prefix from a protobufjs fullName to get the short message path.
+ * e.g. ".google.pubsub.v1.Topic" -> "Topic"
+ *      ".google.storage.v2.Bucket.Lifecycle" -> "Bucket.Lifecycle"
+ */
+function stripPackagePrefix(fullName: string): string {
+  // Strip leading dot, then all lowercase/digit package segments (google.pubsub.v1.)
+  return fullName.replace(/^\.(?:[a-z][a-z0-9]*\.)+/, "");
+}
+
+/**
  * Parse field behaviors from raw proto source text using regex.
  * protobufjs doesn't reliably expose google.api.field_behavior parsed options,
  * so we fall back to regex parsing.
@@ -334,9 +344,7 @@ function convertType(
   }
 
   // Look up comment using short name path
-  const shortName = type.fullName
-    .replace(/^\.google\.pubsub\.v1\./, "")
-    .replace(/\./g, ".");
+  const shortName = stripPackagePrefix(type.fullName);
   const comment = sourceComments.get(shortName) || sourceComments.get(type.name);
 
   visited.delete(type.fullName);
@@ -386,9 +394,7 @@ function convertField(
   }
 
   // Look up field behaviors using the short message.field path
-  const shortParent = parentType.fullName
-    .replace(/^\.google\.pubsub\.v1\./, "")
-    .replace(/\./g, ".");
+  const shortParent = stripPackagePrefix(parentType.fullName);
   const behaviorKey = `${shortParent}.${field.name}`;
   const behaviors = fieldBehaviors.get(behaviorKey) || [];
 
