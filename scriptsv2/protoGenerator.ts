@@ -34,6 +34,12 @@ const SERVICES: Record<string, ServiceConfig> = {
     title: "Cloud Pub/Sub",
     outputDir: "generatedv2/pubsub",
   },
+  iam: {
+    protoFiles: ["local/googleapis/google/iam/admin/v1/iam.proto"],
+    host: "iam.googleapis.com",
+    title: "IAM Admin",
+    outputDir: "generatedv2/iam",
+  },
   storage: {
     protoFiles: [
       "local/googleapis/google/storage/v2/storage.proto",

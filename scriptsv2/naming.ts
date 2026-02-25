@@ -68,6 +68,7 @@ export function humanizePascalCase(str: string): string {
     .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/\b(Iam)\b/g, "IAM")
+    .replace(/\b(Jwt)\b/g, "JWT")
     .replace(/\b(Ack)\b/g, "Ack");
 }
 
@@ -90,6 +91,10 @@ const RESOURCE_PATTERNS: Array<{ pattern: RegExp; category: string }> = [
   { pattern: /bucket/i, category: "Buckets" },
   { pattern: /object/i, category: "Objects" },
   { pattern: /resumablewrite/i, category: "Objects" },
+  // IAM Admin
+  { pattern: /serviceaccountkey/i, category: "Service Account Keys" },
+  { pattern: /serviceaccount/i, category: "Service Accounts" },
+  { pattern: /role/i, category: "Roles" },
   // IAM (used by multiple services)
   { pattern: /iampoli/i, category: "IAM" },
   { pattern: /iampermission/i, category: "IAM" },
@@ -103,6 +108,7 @@ const SERVICE_DEFAULTS: Record<string, string> = {
   Subscriber: "Subscriptions",
   SchemaService: "Schemas",
   Storage: "Objects",
+  IAM: "IAM",
 };
 
 /**
