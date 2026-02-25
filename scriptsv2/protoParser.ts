@@ -19,6 +19,7 @@ import {
   ParsedRPC,
   ParsedService,
   ParsedProtoResult,
+  RoutingParameter,
 } from "./types.ts";
 
 const PROJECT_ROOT = path.resolve(".");
@@ -268,6 +269,86 @@ function parseCommentsFromSource(
 }
 
 /**
+ * Parse google.api.routing annotations from raw proto source.
+ * Returns a map from RPC name -> RoutingParameter[].
+ */
+function parseRoutingAnnotationsFromSource(
+  protoFiles: string[],
+): Map<string, RoutingParameter[]> {
+  const result = new Map<string, RoutingParameter[]>();
+
+  for (const filePath of protoFiles) {
+    const absPath = path.resolve(PROJECT_ROOT, filePath);
+    const content = fs.readFileSync(absPath, "utf8");
+
+    // Find all RPC definitions with bodies
+    const rpcBlockRegex =
+      /rpc\s+(\w+)\s*\([^)]*\)\s*returns\s*\([^)]*\)\s*\{/g;
+    let match;
+    while ((match = rpcBlockRegex.exec(content)) !== null) {
+      const rpcName = match[1];
+      const startIdx = match.index + match[0].length;
+
+      // Find the matching closing brace (handling nested braces)
+      let depth = 1;
+      let endIdx = startIdx;
+      while (depth > 0 && endIdx < content.length) {
+        if (content[endIdx] === "{") depth++;
+        if (content[endIdx] === "}") depth--;
+        endIdx++;
+      }
+
+      const rpcBody = content.substring(startIdx, endIdx - 1);
+
+      // Find routing annotation
+      const routingMatch = rpcBody.match(
+        /option\s*\(google\.api\.routing\)\s*=\s*\{([\s\S]*?)\};/,
+      );
+      if (!routingMatch) continue;
+
+      const routingBody = routingMatch[1];
+      const params: RoutingParameter[] = [];
+
+      // Find all routing_parameters blocks (handles } inside quoted strings)
+      const paramRegex = /routing_parameters\s*\{((?:[^}"]*(?:"[^"]*")?)*)\}/g;
+      let paramMatch;
+      while ((paramMatch = paramRegex.exec(routingBody)) !== null) {
+        const paramBody = paramMatch[1];
+        const fieldMatch = paramBody.match(/field:\s*"([^"]+)"/);
+        const templateMatch = paramBody.match(/path_template:\s*"([^"]+)"/);
+
+        if (fieldMatch) {
+          const field = fieldMatch[1];
+          let key = field;
+          let extractPattern: string | undefined;
+
+          if (templateMatch) {
+            const template = templateMatch[1];
+            // Parse template like "{project=**}" or "{bucket=projects/*/buckets/*}/**"
+            const tmplMatch = template.match(/\{(\w+)=([^}]+)\}/);
+            if (tmplMatch) {
+              key = tmplMatch[1];
+              const pattern = tmplMatch[2];
+              if (pattern !== "**") {
+                extractPattern = pattern;
+              }
+            }
+          }
+
+          params.push({ key, fieldPath: field, extractPattern });
+        }
+      }
+
+      if (params.length > 0) {
+        result.set(rpcName, params);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
  * Convert a protobufjs Type to a ParsedMessage.
  */
 function convertType(
@@ -465,9 +546,10 @@ function convertEnum(
 export async function parseProtoFiles(
   protoFiles: string[],
 ): Promise<ParsedProtoResult> {
-  // Parse field behaviors and comments from raw source
+  // Parse field behaviors, comments, and routing annotations from raw source
   const fieldBehaviors = parseFieldBehaviorsFromSource(protoFiles);
   const sourceComments = parseCommentsFromSource(protoFiles);
+  const routingAnnotations = parseRoutingAnnotationsFromSource(protoFiles);
 
   // Load protos with protobufjs
   const root = new protobuf.Root();
@@ -523,7 +605,7 @@ export async function parseProtoFiles(
       for (const nested of ns.nestedArray) {
         if (nested instanceof protobuf.Service) {
           services.push(
-            convertService(nested, fieldBehaviors, sourceComments),
+            convertService(nested, fieldBehaviors, sourceComments, routingAnnotations),
           );
         }
         if (nested instanceof protobuf.Type) {
@@ -570,6 +652,7 @@ function convertService(
   service: protobuf.Service,
   fieldBehaviors: Map<string, FieldBehavior[]>,
   sourceComments: Map<string, string>,
+  routingAnnotations: Map<string, RoutingParameter[]>,
 ): ParsedService {
   // Extract host and scopes from service options
   let host: string | undefined;
@@ -618,6 +701,7 @@ function convertService(
       requestStream: method.requestStream || false,
       responseStream: method.responseStream || false,
       comment: sourceComments.get(`rpc:${method.name}`),
+      routingParameters: routingAnnotations.get(method.name) || [],
     });
   }
 

@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const getIamPolicy: AppBlock = {
   name: "Get IAM Policy",
@@ -40,8 +43,18 @@ const getIamPolicy: AppBlock = {
         if (input.event.inputConfig.options !== undefined)
           request.options = input.event.inputConfig.options;
 
+        const routingParams: Record<string, string> = {};
+        if (request.resource !== undefined)
+          routingParams["bucket"] = String(request.resource);
+        if (request.resource !== undefined) {
+          const m = String(request.resource).match(
+            /^(projects\/[^/]+\/buckets\/[^/]+)/,
+          );
+          if (m) routingParams["bucket"] = m[1];
+        }
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getIamPolicy(request, (err: any, response: any) => {
+          client.getIamPolicy(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

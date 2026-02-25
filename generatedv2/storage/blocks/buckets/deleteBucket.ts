@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const deleteBucket: AppBlock = {
   name: "Delete Bucket",
@@ -51,8 +54,12 @@ const deleteBucket: AppBlock = {
           request.ifMetagenerationNotMatch =
             input.event.inputConfig.ifMetagenerationNotMatch;
 
+        const routingParams: Record<string, string> = {};
+        if (request.name !== undefined)
+          routingParams["bucket"] = String(request.name);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteBucket(request, (err: any, response: any) => {
+          client.deleteBucket(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

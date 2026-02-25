@@ -59,6 +59,28 @@ async function createCredentials(
   );
 }
 
+export function createRoutingMetadata(
+  params: Record<string, string>,
+): grpc.Metadata {
+  const metadata = new grpc.Metadata();
+  const parts = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== "")
+    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+    .join("&");
+  if (parts) {
+    metadata.set("x-goog-request-params", parts);
+  }
+  return metadata;
+}
+
+export async function getSchemaServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.pubsub.v1", "SchemaService");
+  return new Service("pubsub.googleapis.com:443", credentials);
+}
+
 export async function getPublisherClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -72,13 +94,5 @@ export async function getSubscriberClient(
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.pubsub.v1", "Subscriber");
-  return new Service("pubsub.googleapis.com:443", credentials);
-}
-
-export async function getSchemaServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.pubsub.v1", "SchemaService");
   return new Service("pubsub.googleapis.com:443", credentials);
 }

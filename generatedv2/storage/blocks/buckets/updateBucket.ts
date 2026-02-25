@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const updateBucket: AppBlock = {
   name: "Update Bucket",
@@ -762,8 +765,12 @@ const updateBucket: AppBlock = {
         if (input.event.inputConfig.updateMask !== undefined)
           request.updateMask = input.event.inputConfig.updateMask;
 
+        const routingParams: Record<string, string> = {};
+        if (request.bucket?.name !== undefined)
+          routingParams["bucket"] = String(request.bucket?.name);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.updateBucket(request, (err: any, response: any) => {
+          client.updateBucket(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

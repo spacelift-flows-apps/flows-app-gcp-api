@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const lockBucketRetentionPolicy: AppBlock = {
   name: "Lock Bucket Retention Policy",
@@ -38,9 +41,14 @@ const lockBucketRetentionPolicy: AppBlock = {
           request.ifMetagenerationMatch =
             input.event.inputConfig.ifMetagenerationMatch;
 
+        const routingParams: Record<string, string> = {};
+        if (request.bucket !== undefined)
+          routingParams["bucket"] = String(request.bucket);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
           client.lockBucketRetentionPolicy(
             request,
+            metadata,
             (err: any, response: any) => {
               if (err)
                 reject(

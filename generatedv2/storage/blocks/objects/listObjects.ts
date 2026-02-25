@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const listObjects: AppBlock = {
   name: "List Objects",
@@ -199,8 +202,12 @@ const listObjects: AppBlock = {
         if (input.event.inputConfig.filter !== undefined)
           request.filter = input.event.inputConfig.filter;
 
+        const routingParams: Record<string, string> = {};
+        if (request.parent !== undefined)
+          routingParams["bucket"] = String(request.parent);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listObjects(request, (err: any, response: any) => {
+          client.listObjects(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

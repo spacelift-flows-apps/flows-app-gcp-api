@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const queryWriteStatus: AppBlock = {
   name: "Query Write Status",
@@ -56,16 +59,28 @@ const queryWriteStatus: AppBlock = {
           request.commonObjectRequestParams =
             input.event.inputConfig.commonObjectRequestParams;
 
+        const routingParams: Record<string, string> = {};
+        if (request.uploadId !== undefined) {
+          const m = String(request.uploadId).match(
+            /^(projects\/[^/]+\/buckets\/[^/]+)/,
+          );
+          if (m) routingParams["bucket"] = m[1];
+        }
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.queryWriteStatus(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.queryWriteStatus(
+            request,
+            metadata,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
         await events.emit(result || {});

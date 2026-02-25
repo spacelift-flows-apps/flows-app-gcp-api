@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const rewriteObject: AppBlock = {
   name: "Rewrite Object",
@@ -536,8 +539,14 @@ const rewriteObject: AppBlock = {
         if (input.event.inputConfig.objectChecksums !== undefined)
           request.objectChecksums = input.event.inputConfig.objectChecksums;
 
+        const routingParams: Record<string, string> = {};
+        if (request.sourceBucket !== undefined)
+          routingParams["source_bucket"] = String(request.sourceBucket);
+        if (request.destinationBucket !== undefined)
+          routingParams["bucket"] = String(request.destinationBucket);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.rewriteObject(request, (err: any, response: any) => {
+          client.rewriteObject(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

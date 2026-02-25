@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const composeObject: AppBlock = {
   name: "Compose Object",
@@ -381,8 +384,12 @@ const composeObject: AppBlock = {
           request.deleteSourceObjects =
             input.event.inputConfig.deleteSourceObjects;
 
+        const routingParams: Record<string, string> = {};
+        if (request.destination?.bucket !== undefined)
+          routingParams["bucket"] = String(request.destination?.bucket);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.composeObject(request, (err: any, response: any) => {
+          client.composeObject(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

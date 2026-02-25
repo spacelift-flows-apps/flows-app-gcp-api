@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const restoreObject: AppBlock = {
   name: "Restore Object",
@@ -156,8 +159,12 @@ const restoreObject: AppBlock = {
           request.commonObjectRequestParams =
             input.event.inputConfig.commonObjectRequestParams;
 
+        const routingParams: Record<string, string> = {};
+        if (request.bucket !== undefined)
+          routingParams["bucket"] = String(request.bucket);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.restoreObject(request, (err: any, response: any) => {
+          client.restoreObject(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

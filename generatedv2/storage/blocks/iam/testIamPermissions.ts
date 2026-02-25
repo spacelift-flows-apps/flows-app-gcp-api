@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const testIamPermissions: AppBlock = {
   name: "Test IAM Permissions",
@@ -37,16 +40,36 @@ const testIamPermissions: AppBlock = {
         if (input.event.inputConfig.permissions !== undefined)
           request.permissions = input.event.inputConfig.permissions;
 
+        const routingParams: Record<string, string> = {};
+        if (request.resource !== undefined)
+          routingParams["bucket"] = String(request.resource);
+        if (request.resource !== undefined) {
+          const m = String(request.resource).match(
+            /^(projects\/[^/]+\/buckets\/[^/]+)/,
+          );
+          if (m) routingParams["bucket"] = m[1];
+        }
+        if (request.resource !== undefined) {
+          const m = String(request.resource).match(
+            /^(projects\/[^/]+\/buckets\/[^/]+)/,
+          );
+          if (m) routingParams["bucket"] = m[1];
+        }
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.testIamPermissions(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.testIamPermissions(
+            request,
+            metadata,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
         await events.emit(result || {});

@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const updateObject: AppBlock = {
   name: "Update Object",
@@ -339,8 +342,12 @@ const updateObject: AppBlock = {
           request.overrideUnlockedRetention =
             input.event.inputConfig.overrideUnlockedRetention;
 
+        const routingParams: Record<string, string> = {};
+        if (request.object?.bucket !== undefined)
+          routingParams["bucket"] = String(request.object?.bucket);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.updateObject(request, (err: any, response: any) => {
+          client.updateObject(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const listBuckets: AppBlock = {
   name: "List Buckets",
@@ -91,8 +94,12 @@ const listBuckets: AppBlock = {
           request.returnPartialSuccess =
             input.event.inputConfig.returnPartialSuccess;
 
+        const routingParams: Record<string, string> = {};
+        if (request.parent !== undefined)
+          routingParams["project"] = String(request.parent);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listBuckets(request, (err: any, response: any) => {
+          client.listBuckets(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

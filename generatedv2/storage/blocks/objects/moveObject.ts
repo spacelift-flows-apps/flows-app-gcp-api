@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const moveObject: AppBlock = {
   name: "Move Object",
@@ -154,8 +157,12 @@ const moveObject: AppBlock = {
           request.ifMetagenerationNotMatch =
             input.event.inputConfig.ifMetagenerationNotMatch;
 
+        const routingParams: Record<string, string> = {};
+        if (request.bucket !== undefined)
+          routingParams["bucket"] = String(request.bucket);
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.moveObject(request, (err: any, response: any) => {
+          client.moveObject(request, metadata, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(

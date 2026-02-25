@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const startResumableWrite: AppBlock = {
   name: "Start Resumable Write",
@@ -315,16 +318,26 @@ const startResumableWrite: AppBlock = {
         if (input.event.inputConfig.objectChecksums !== undefined)
           request.objectChecksums = input.event.inputConfig.objectChecksums;
 
+        const routingParams: Record<string, string> = {};
+        if (request.writeObjectSpec?.resource?.bucket !== undefined)
+          routingParams["bucket"] = String(
+            request.writeObjectSpec?.resource?.bucket,
+          );
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.startResumableWrite(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.startResumableWrite(
+            request,
+            metadata,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
         await events.emit(result || {});

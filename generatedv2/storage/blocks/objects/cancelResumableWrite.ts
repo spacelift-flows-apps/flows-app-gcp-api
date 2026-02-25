@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getStorageClient } from "../../lib/grpcClient.ts";
+import {
+  getStorageClient,
+  createRoutingMetadata,
+} from "../../lib/grpcClient.ts";
 
 const cancelResumableWrite: AppBlock = {
   name: "Cancel Resumable Write",
@@ -27,16 +30,28 @@ const cancelResumableWrite: AppBlock = {
         if (input.event.inputConfig.uploadId !== undefined)
           request.uploadId = input.event.inputConfig.uploadId;
 
+        const routingParams: Record<string, string> = {};
+        if (request.uploadId !== undefined) {
+          const m = String(request.uploadId).match(
+            /^(projects\/[^/]+\/buckets\/[^/]+)/,
+          );
+          if (m) routingParams["bucket"] = m[1];
+        }
+        const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
-          client.cancelResumableWrite(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.cancelResumableWrite(
+            request,
+            metadata,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
         await events.emit(result || {});

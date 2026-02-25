@@ -72,6 +72,15 @@ export interface ParsedMessage {
   nestedEnums: ParsedEnum[];
 }
 
+export interface RoutingParameter {
+  /** The routing header key (e.g., "project", "bucket") */
+  key: string;
+  /** The request field path in proto snake_case (e.g., "parent", "bucket.project") */
+  fieldPath: string;
+  /** Optional extraction pattern (e.g., "projects/*/buckets/*"). Absent means use entire value. */
+  extractPattern?: string;
+}
+
 export interface ParsedRPC {
   name: string;
   /** Fully qualified name (e.g. "google.pubsub.v1.Publisher.CreateTopic") */
@@ -88,6 +97,8 @@ export interface ParsedRPC {
   responseStream: boolean;
   /** RPC comment/description */
   comment?: string;
+  /** Routing parameters for x-goog-request-params header */
+  routingParameters: RoutingParameter[];
 }
 
 export interface ParsedService {
