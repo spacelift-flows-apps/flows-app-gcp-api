@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const moveObject: AppBlock = {
-  name: "Objects - Move Object",
+  name: "Move Object",
   description: `Moves the source object to the destination object in the same bucket. This operation moves a source object to a destination object in the same bucket by renaming the object. The move itself is an atomic transaction, ensuring all steps either complete successfully or no changes are made. **IAM Permissions**: Requires the following IAM permissions to use this method: - 'storage.objects.move' - 'storage.objects.create' - 'storage.objects.delete' (only required if overwriting an existing object)`,
   category: "Objects",
   inputs: {

@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const lockBucketRetentionPolicy: AppBlock = {
-  name: "Buckets - Lock Bucket Retention Policy",
+  name: "Lock Bucket Retention Policy",
   description: `Permanently locks the retention policy that is currently applied to the specified bucket. Caution: Locking a bucket is an irreversible action. Once you lock a bucket: - You cannot remove the retention policy from the bucket. - You cannot decrease the retention period for the policy. Once locked, you must delete the entire bucket in order to remove the bucket's retention policy. However, before you can delete the bucket, you must delete all the objects in the bucket, which is only possible if all the objects have reached the retention period set by the retention policy. **IAM Permissions**: Requires 'storage.buckets.update' IAM permission on the bucket.`,
   category: "Buckets",
   inputs: {

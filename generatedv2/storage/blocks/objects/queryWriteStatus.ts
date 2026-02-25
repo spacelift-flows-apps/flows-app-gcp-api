@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const queryWriteStatus: AppBlock = {
-  name: "Objects - Query Write Status",
+  name: "Query Write Status",
   description: `Determines the 'persisted_size' of an object that is being written. This method is part of the resumable upload feature. The returned value is the size of the object that has been persisted so far. The value can be used as the 'write_offset' for the next 'Write()' call. If the object does not exist, meaning if it was deleted, or the first 'Write()' has not yet reached the service, this method returns the error 'NOT_FOUND'. This method is useful for clients that buffer data and need to know which data can be safely evicted. The client can call 'QueryWriteStatus()' at any time to determine how much data has been logged for this object. For any sequence of 'QueryWriteStatus()' calls for a given object name, the sequence of returned 'persisted_size' values are non-decreasing.`,
   category: "Objects",
   inputs: {

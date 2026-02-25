@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const getIamPolicy: AppBlock = {
-  name: "IAM - Get IAM Policy",
+  name: "Get IAM Policy",
   description: `Gets the IAM policy for a specified bucket or managed folder. The 'resource' field in the request should be 'projects/_/buckets/{bucket}' for a bucket, or 'projects/_/buckets/{bucket}/managedFolders/{managedFolder}' for a managed folder. **IAM Permissions**: Requires 'storage.buckets.getIamPolicy' on the bucket or 'storage.managedFolders.getIamPolicy' IAM permission on the managed folder.`,
   category: "IAM",
   inputs: {

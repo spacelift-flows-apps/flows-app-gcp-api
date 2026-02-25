@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const getObject: AppBlock = {
-  name: "Objects - Get Object",
+  name: "Get Object",
   description: `Retrieves object metadata. **IAM Permissions**: Requires 'storage.objects.get' IAM permission on the bucket. To return object ACLs, the authenticated user must also have the 'storage.objects.getIamPolicy' permission.`,
   category: "Objects",
   inputs: {

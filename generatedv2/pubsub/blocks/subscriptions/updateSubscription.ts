@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const updateSubscription: AppBlock = {
-  name: "Subscriptions - Update Subscription",
+  name: "Update Subscription",
   description: `Updates an existing subscription by updating the fields specified in the update mask. Note that certain properties of a subscription, such as its topic, are not modifiable.`,
   category: "Subscriptions",
   inputs: {

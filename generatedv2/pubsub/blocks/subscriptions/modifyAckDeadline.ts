@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const modifyAckDeadline: AppBlock = {
-  name: "Subscriptions - Modify Ack Deadline",
+  name: "Modify Ack Deadline",
   description: `Modifies the ack deadline for a specific message. This method is useful to indicate that more time is needed to process a message by the subscriber, or to make the message available for redelivery if the processing was interrupted. Note that this does not modify the subscription-level 'ackDeadlineSeconds' used for subsequent messages.`,
   category: "Subscriptions",
   inputs: {

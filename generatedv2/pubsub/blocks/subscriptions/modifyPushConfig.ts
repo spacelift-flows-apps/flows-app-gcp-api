@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const modifyPushConfig: AppBlock = {
-  name: "Subscriptions - Modify Push Config",
+  name: "Modify Push Config",
   description: `Modifies the 'PushConfig' for a specified subscription. This may be used to change a push subscription to a pull one (signified by an empty 'PushConfig') or vice versa, or change the endpoint URL and other attributes of a push subscription. Messages will accumulate for delivery continuously through the call regardless of changes to the 'PushConfig'.`,
   category: "Subscriptions",
   inputs: {

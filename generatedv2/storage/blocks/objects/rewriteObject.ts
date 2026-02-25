@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const rewriteObject: AppBlock = {
-  name: "Objects - Rewrite Object",
+  name: "Rewrite Object",
   description: `Rewrites a source object to a destination object. Optionally overrides metadata.`,
   category: "Objects",
   inputs: {

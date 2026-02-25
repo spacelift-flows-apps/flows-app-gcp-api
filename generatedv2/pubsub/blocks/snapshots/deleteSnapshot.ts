@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const deleteSnapshot: AppBlock = {
-  name: "Snapshots - Delete Snapshot",
+  name: "Delete Snapshot",
   description: `Removes an existing snapshot. Snapshots are used in [Seek] (https://cloud.google.com/pubsub/docs/replay-overview) operations, which allow you to manage message acknowledgments in bulk. That is, you can set the acknowledgment state of messages in an existing subscription to the state captured by a snapshot. When the snapshot is deleted, all messages retained in the snapshot are immediately dropped. After a snapshot is deleted, a new one may be created with the same name, but the new one has no association with the old snapshot or its subscription, unless the same subscription is specified.`,
   category: "Snapshots",
   inputs: {

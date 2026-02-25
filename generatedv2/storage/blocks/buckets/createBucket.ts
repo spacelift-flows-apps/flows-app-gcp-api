@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const createBucket: AppBlock = {
-  name: "Buckets - Create Bucket",
+  name: "Create Bucket",
   description: `Creates a new bucket. **IAM Permissions**: Requires 'storage.buckets.create' IAM permission on the bucket. Additionally, to enable specific bucket features, the authenticated user must have the following permissions: - To enable object retention using the 'enableObjectRetention' query parameter: 'storage.buckets.enableObjectRetention' - To set the bucket IP filtering rules: 'storage.buckets.setIpFilter'`,
   category: "Buckets",
   inputs: {

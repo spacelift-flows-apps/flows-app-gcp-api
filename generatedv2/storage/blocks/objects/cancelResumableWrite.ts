@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const cancelResumableWrite: AppBlock = {
-  name: "Objects - Cancel Resumable Write",
+  name: "Cancel Resumable Write",
   description: `Cancels an in-progress resumable upload. Any attempts to write to the resumable upload after cancelling the upload fail. The behavior for any in-progress write operations is not guaranteed; they could either complete before the cancellation or fail if the cancellation completes first.`,
   category: "Objects",
   inputs: {

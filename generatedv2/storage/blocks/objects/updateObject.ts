@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const updateObject: AppBlock = {
-  name: "Objects - Update Object",
+  name: "Update Object",
   description: `Updates an object's metadata. Equivalent to JSON API's 'storage.objects.patch' method. **IAM Permissions**: Requires 'storage.objects.update' IAM permission on the bucket.`,
   category: "Objects",
   inputs: {

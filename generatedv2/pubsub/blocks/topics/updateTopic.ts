@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const updateTopic: AppBlock = {
-  name: "Topics - Update Topic",
+  name: "Update Topic",
   description: `Updates an existing topic by updating the fields specified in the update mask. Note that certain properties of a topic are not modifiable.`,
   category: "Topics",
   inputs: {

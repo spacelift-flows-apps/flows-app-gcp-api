@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const createTopic: AppBlock = {
-  name: "Topics - Create Topic",
+  name: "Create Topic",
   description: `Creates the given topic with the given name. See the [resource name rules] (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).`,
   category: "Topics",
   inputs: {

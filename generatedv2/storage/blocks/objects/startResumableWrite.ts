@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const startResumableWrite: AppBlock = {
-  name: "Objects - Start Resumable Write",
+  name: "Start Resumable Write",
   description: `Starts a resumable write operation. This method is part of the Resumable upload feature. This allows you to upload large objects in multiple chunks, which is more resilient to network interruptions than a single upload. The validity duration of the write operation, and the consequences of it becoming invalid, are service-dependent. **IAM Permissions**: Requires 'storage.objects.create' IAM permission on the bucket.`,
   category: "Objects",
   inputs: {

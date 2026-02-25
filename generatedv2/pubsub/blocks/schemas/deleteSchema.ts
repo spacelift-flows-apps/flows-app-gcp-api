@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const deleteSchema: AppBlock = {
-  name: "Schemas - Delete Schema",
+  name: "Delete Schema",
   description: `Deletes a schema.`,
   category: "Schemas",
   inputs: {

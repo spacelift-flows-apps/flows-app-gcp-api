@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const createSchema: AppBlock = {
-  name: "Schemas - Create Schema",
+  name: "Create Schema",
   description: `Creates a schema.`,
   category: "Schemas",
   inputs: {

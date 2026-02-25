@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const deleteBucket: AppBlock = {
-  name: "Buckets - Delete Bucket",
+  name: "Delete Bucket",
   description: `Permanently deletes an empty bucket. The request fails if there are any live or noncurrent objects in the bucket, but the request succeeds if the bucket only contains soft-deleted objects or incomplete uploads, such as ongoing XML API multipart uploads. Does not permanently delete soft-deleted objects. When this API is used to delete a bucket containing an object that has a soft delete policy enabled, the object becomes soft deleted, and the 'softDeleteTime' and 'hardDeleteTime' properties are set on the object. Objects and multipart uploads that were in the bucket at the time of deletion are also retained for the specified retention duration. When a soft-deleted bucket reaches the end of its retention duration, it is permanently deleted. The 'hardDeleteTime' of the bucket always equals or exceeds the expiration time of the last soft-deleted object in the bucket. **IAM Permissions**: Requires 'storage.buckets.delete' IAM permission on the bucket.`,
   category: "Buckets",
   inputs: {

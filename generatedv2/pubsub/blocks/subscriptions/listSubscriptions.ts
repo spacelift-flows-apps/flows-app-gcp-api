@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const listSubscriptions: AppBlock = {
-  name: "Subscriptions - List Subscriptions",
+  name: "List Subscriptions",
   description: `Lists matching subscriptions.`,
   category: "Subscriptions",
   inputs: {

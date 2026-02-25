@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const composeObject: AppBlock = {
-  name: "Objects - Compose Object",
+  name: "Compose Object",
   description: `Concatenates a list of existing objects into a new object in the same bucket. The existing source objects are unaffected by this operation. **IAM Permissions**: Requires the 'storage.objects.create' and 'storage.objects.get' IAM permissions to use this method. If the new composite object overwrites an existing object, the authenticated user must also have the 'storage.objects.delete' permission. If the request body includes the retention property, the authenticated user must also have the 'storage.objects.setRetention' IAM permission.`,
   category: "Objects",
   inputs: {

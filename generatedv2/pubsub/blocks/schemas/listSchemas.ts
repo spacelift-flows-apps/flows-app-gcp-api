@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const listSchemas: AppBlock = {
-  name: "Schemas - List Schemas",
+  name: "List Schemas",
   description: `Lists schemas in a project.`,
   category: "Schemas",
   inputs: {

@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const createSubscription: AppBlock = {
-  name: "Subscriptions - Create Subscription",
+  name: "Create Subscription",
   description: `Creates a subscription to a given topic. See the [resource name rules] (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names). If the subscription already exists, returns 'ALREADY_EXISTS'. If the corresponding topic doesn't exist, returns 'NOT_FOUND'. If the name is not provided in the request, the server will assign a random name for this subscription on the same project as the topic, conforming to the [resource name format] (https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names). The generated name is populated in the returned Subscription object. Note that for REST API requests, you must specify a name in the request.`,
   category: "Subscriptions",
   inputs: {

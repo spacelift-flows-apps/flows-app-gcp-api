@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const deleteTopic: AppBlock = {
-  name: "Topics - Delete Topic",
+  name: "Delete Topic",
   description: `Deletes the topic with the given name. Returns 'NOT_FOUND' if the topic does not exist. After a topic is deleted, a new topic may be created with the same name; this is an entirely new topic with none of the old configuration or subscriptions. Existing subscriptions to this topic are not deleted, but their 'topic' field is set to '_deleted-topic_'.`,
   category: "Topics",
   inputs: {

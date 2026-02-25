@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const setIamPolicy: AppBlock = {
-  name: "IAM - Set IAM Policy",
+  name: "Set IAM Policy",
   description: `Updates an IAM policy for the specified bucket or managed folder. The 'resource' field in the request should be 'projects/_/buckets/{bucket}' for a bucket, or 'projects/_/buckets/{bucket}/managedFolders/{managedFolder}' for a managed folder.`,
   category: "IAM",
   inputs: {

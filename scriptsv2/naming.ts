@@ -73,7 +73,7 @@ export function humanizePascalCase(str: string): string {
 
 /** Create the human-readable block name: "Topics", "CreateTopic" -> "Topics - Create Topic" */
 export function rpcToHumanName(category: string, rpcName: string): string {
-  return `${category} - ${humanizePascalCase(rpcName)}`;
+  return humanizePascalCase(rpcName);
 }
 
 /**

@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const deleteSubscription: AppBlock = {
-  name: "Subscriptions - Delete Subscription",
+  name: "Delete Subscription",
   description: `Deletes an existing subscription. All messages retained in the subscription are immediately dropped. Calls to 'Pull' after deletion will return 'NOT_FOUND'. After a subscription is deleted, a new one may be created with the same name, but the new one has no association with the old subscription or its topic unless the same topic is specified.`,
   category: "Subscriptions",
   inputs: {

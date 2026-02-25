@@ -1572,21 +1572,21 @@
               }
             },
             {
-              "name": ".google.api.field_behavior",
-              "number": 1052,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "api.FieldBehavior",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.resource_reference",
               "number": 1055,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.ResourceReference",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.field_behavior",
+              "number": 1052,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "api.FieldBehavior",
               "options": {
                 "packed": false
               }
@@ -7255,17 +7255,6 @@
           "type": "TYPE_STRING"
         },
         {
-          "name": "field_behavior",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1052,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_ENUM",
-          "typeName": "FieldBehavior",
-          "options": {
-            "packed": false
-          }
-        },
-        {
           "name": "resource_reference",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1055,
@@ -7288,6 +7277,17 @@
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
           "typeName": "ResourceDescriptor"
+        },
+        {
+          "name": "field_behavior",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1052,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior",
+          "options": {
+            "packed": false
+          }
         }
       ],
       "options": {

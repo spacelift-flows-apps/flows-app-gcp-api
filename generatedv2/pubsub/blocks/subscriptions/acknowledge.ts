@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const acknowledge: AppBlock = {
-  name: "Subscriptions - Acknowledge",
+  name: "Acknowledge",
   description: `Acknowledges the messages associated with the 'ack_ids' in the 'AcknowledgeRequest'. The Pub/Sub system can remove the relevant messages from the subscription. Acknowledging a message whose ack deadline has expired may succeed, but such a message may be redelivered later. Acknowledging a message more than once will not result in an error.`,
   category: "Subscriptions",
   inputs: {

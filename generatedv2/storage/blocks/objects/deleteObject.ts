@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const deleteObject: AppBlock = {
-  name: "Objects - Delete Object",
+  name: "Delete Object",
   description: `Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for the bucket, or if the generation parameter is used, or if soft delete is not enabled for the bucket. When this API is used to delete an object from a bucket that has soft delete policy enabled, the object becomes soft deleted, and the 'softDeleteTime' and 'hardDeleteTime' properties are set on the object. This API cannot be used to permanently delete soft-deleted objects. Soft-deleted objects are permanently deleted according to their 'hardDeleteTime'. You can use the ['RestoreObject'][google.storage.v2.Storage.RestoreObject] API to restore soft-deleted objects until the soft delete retention period has passed. **IAM Permissions**: Requires 'storage.objects.delete' IAM permission on the bucket.`,
   category: "Objects",
   inputs: {

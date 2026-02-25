@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const getBucket: AppBlock = {
-  name: "Buckets - Get Bucket",
+  name: "Get Bucket",
   description: `Returns metadata for the specified bucket. **IAM Permissions**: Requires 'storage.buckets.get' IAM permission on the bucket. Additionally, to return specific bucket metadata, the authenticated user must have the following permissions: - To return the IAM policies: 'storage.buckets.getIamPolicy' - To return the bucket IP filtering rules: 'storage.buckets.getIpFilter'`,
   category: "Buckets",
   inputs: {

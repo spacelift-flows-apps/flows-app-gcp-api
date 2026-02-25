@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const updateBucket: AppBlock = {
-  name: "Buckets - Update Bucket",
+  name: "Update Bucket",
   description: `Updates a bucket. Changes to the bucket are readable immediately after writing, but configuration changes might take time to propagate. This method supports 'patch' semantics. **IAM Permissions**: Requires 'storage.buckets.update' IAM permission on the bucket. Additionally, to enable specific bucket features, the authenticated user must have the following permissions: - To set bucket IP filtering rules: 'storage.buckets.setIpFilter' - To update public access prevention policies or access control lists (ACLs): 'storage.buckets.setIamPolicy'`,
   category: "Buckets",
   inputs: {

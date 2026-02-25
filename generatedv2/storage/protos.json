@@ -7406,6 +7406,35 @@
           ]
         },
         {
+          "name": "RoutingRule",
+          "field": [
+            {
+              "name": "routing_parameters",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RoutingParameter"
+            }
+          ]
+        },
+        {
+          "name": "RoutingParameter",
+          "field": [
+            {
+              "name": "field",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "path_template",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
           "name": "ResourceDescriptor",
           "field": [
             {
@@ -7497,35 +7526,6 @@
             },
             {
               "name": "child_type",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "RoutingRule",
-          "field": [
-            {
-              "name": "routing_parameters",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RoutingParameter"
-            }
-          ]
-        },
-        {
-          "name": "RoutingParameter",
-          "field": [
-            {
-              "name": "field",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "path_template",
               "number": 2,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING"
@@ -7821,6 +7821,14 @@
           }
         },
         {
+          "name": "routing",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 72295729,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "RoutingRule"
+        },
+        {
           "name": "resource_reference",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1055,
@@ -7843,14 +7851,6 @@
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
           "typeName": "ResourceDescriptor"
-        },
-        {
-          "name": "routing",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 72295729,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "RoutingRule"
         },
         {
           "name": "http",

@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const validateMessage: AppBlock = {
-  name: "Schemas - Validate Message",
+  name: "Validate Message",
   description: `Validates a message against a schema.`,
   category: "Schemas",
   inputs: {

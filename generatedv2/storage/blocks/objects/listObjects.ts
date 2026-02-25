@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const listObjects: AppBlock = {
-  name: "Objects - List Objects",
+  name: "List Objects",
   description: `Retrieves a list of objects matching the criteria. **IAM Permissions**: The authenticated user requires 'storage.objects.list' IAM permission to use this method. To return object ACLs, the authenticated user must also have the 'storage.objects.getIamPolicy' permission.`,
   category: "Objects",
   inputs: {

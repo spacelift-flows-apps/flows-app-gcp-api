@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const listBuckets: AppBlock = {
-  name: "Buckets - List Buckets",
+  name: "List Buckets",
   description: `Retrieves a list of buckets for a given project, ordered lexicographically by name. **IAM Permissions**: Requires 'storage.buckets.list' IAM permission on the bucket. Additionally, to enable specific bucket features, the authenticated user must have the following permissions: - To list the IAM policies: 'storage.buckets.getIamPolicy' - To list the bucket IP filtering rules: 'storage.buckets.getIpFilter'`,
   category: "Buckets",
   inputs: {

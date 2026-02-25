@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const commitSchema: AppBlock = {
-  name: "Schemas - Commit Schema",
+  name: "Commit Schema",
   description: `Commits a new schema revision to an existing schema.`,
   category: "Schemas",
   inputs: {

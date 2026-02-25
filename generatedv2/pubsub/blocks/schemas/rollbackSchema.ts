@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const rollbackSchema: AppBlock = {
-  name: "Schemas - Rollback Schema",
+  name: "Rollback Schema",
   description: `Creates a new schema revision that is a copy of the provided revision_id.`,
   category: "Schemas",
   inputs: {

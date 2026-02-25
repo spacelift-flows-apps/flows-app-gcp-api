@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const publish: AppBlock = {
-  name: "Topics - Publish",
+  name: "Publish",
   description: `Adds one or more messages to the topic. Returns 'NOT_FOUND' if the topic does not exist.`,
   category: "Topics",
   inputs: {

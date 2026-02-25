@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const getSubscription: AppBlock = {
-  name: "Subscriptions - Get Subscription",
+  name: "Get Subscription",
   description: `Gets the configuration details of a subscription.`,
   category: "Subscriptions",
   inputs: {

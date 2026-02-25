@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getStorageClient } from "../../lib/grpcClient.ts";
 
 const testIamPermissions: AppBlock = {
-  name: "IAM - Test IAM Permissions",
+  name: "Test IAM Permissions",
   description: `Tests a set of permissions on the given bucket, object, or managed folder to see which, if any, are held by the caller. The 'resource' field in the request should be 'projects/_/buckets/{bucket}' for a bucket, 'projects/_/buckets/{bucket}/objects/{object}' for an object, or 'projects/_/buckets/{bucket}/managedFolders/{managedFolder}' for a managed folder.`,
   category: "IAM",
   inputs: {

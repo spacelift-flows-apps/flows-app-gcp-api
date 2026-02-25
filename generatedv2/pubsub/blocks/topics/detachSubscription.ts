@@ -2,7 +2,7 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const detachSubscription: AppBlock = {
-  name: "Topics - Detach Subscription",
+  name: "Detach Subscription",
   description: `Detaches a subscription from this topic. All messages retained in the subscription are dropped. Subsequent 'Pull' and 'StreamingPull' requests will return FAILED_PRECONDITION. If the subscription is a push subscription, pushes to the endpoint will stop.`,
   category: "Topics",
   inputs: {
