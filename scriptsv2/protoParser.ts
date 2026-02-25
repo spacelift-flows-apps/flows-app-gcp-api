@@ -6,6 +6,7 @@
  */
 
 import protobuf from "protobufjs";
+import descriptorPb from "protobufjs/ext/descriptor/index.js";
 import path from "path";
 import fs from "fs";
 import {
@@ -548,8 +549,14 @@ export async function parseProtoFiles(
 
   walkNamespace(root);
 
-  // Generate FileDescriptorSet JSON for runtime use
-  const descriptorSetJson = root.toJSON();
+  // Generate FileDescriptorSet JSON for runtime use.
+  // root.toDescriptor() produces a proper google.protobuf.FileDescriptorSet message,
+  // which loadFileDescriptorSetFromObject() expects (not protobufjs's internal JSON format).
+  const descriptorSet = (root as any).toDescriptor("proto3");
+  const descriptorSetJson = (descriptorPb as any).FileDescriptorSet.toObject(
+    descriptorSet,
+    { longs: String, enums: String, bytes: String },
+  );
 
   return {
     services,
