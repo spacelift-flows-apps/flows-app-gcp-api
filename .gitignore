@@ -143,3 +143,4 @@ bundle.tar.gz
 
 # Development
 .claude/
+local/
