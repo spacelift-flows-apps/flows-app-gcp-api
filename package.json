@@ -5,9 +5,10 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@types/node": "^24.0.7",
+    "@types/node": "^24.10.13",
     "@useflows/flowctl": "^0.1.2",
     "prettier": "^3.6.2",
+    "protobufjs": "^8.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.0.0"
   },
@@ -18,6 +19,7 @@
     "typecheck": "npx tsc --noEmit",
     "fetch-discovery": "npx tsx scripts/fetchDiscoveryDocs.ts",
     "generate": "npx tsx scripts/gcpAppGenerator.ts",
-    "generate:service": "npx tsx scripts/gcpAppGenerator.ts"
+    "generate:service": "npx tsx scripts/gcpAppGenerator.ts",
+    "generate:v2": "npx tsx scriptsv2/protoGenerator.ts"
   }
 }
