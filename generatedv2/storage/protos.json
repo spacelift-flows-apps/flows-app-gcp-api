@@ -1972,20 +1972,20 @@
               }
             },
             {
-              "name": ".google.api.routing",
-              "number": 72295729,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "api.RoutingRule",
+              "name": ".google.api.method_signature",
+              "number": 1051,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
               "options": {
                 "packed": false
               }
             },
             {
-              "name": ".google.api.method_signature",
-              "number": 1051,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
+              "name": ".google.api.routing",
+              "number": 72295729,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.RoutingRule",
               "options": {
                 "packed": false
               }
@@ -6883,133 +6883,6 @@
       "package": "google.api",
       "messageType": [
         {
-          "name": "ResourceDescriptor",
-          "field": [
-            {
-              "name": "type",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "pattern",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "name_field",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "history",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "History"
-            },
-            {
-              "name": "plural",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "singular",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "style",
-              "number": 10,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "Style"
-            }
-          ],
-          "enumType": [
-            {
-              "name": "History",
-              "value": [
-                {
-                  "name": "HISTORY_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "ORIGINALLY_SINGLE_PATTERN",
-                  "number": 1
-                },
-                {
-                  "name": "FUTURE_MULTI_PATTERN",
-                  "number": 2
-                }
-              ]
-            },
-            {
-              "name": "Style",
-              "value": [
-                {
-                  "name": "STYLE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "DECLARATIVE_FRIENDLY",
-                  "number": 1
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "ResourceReference",
-          "field": [
-            {
-              "name": "type",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "child_type",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "RoutingRule",
-          "field": [
-            {
-              "name": "routing_parameters",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RoutingParameter"
-            }
-          ]
-        },
-        {
-          "name": "RoutingParameter",
-          "field": [
-            {
-              "name": "field",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "path_template",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
           "name": "CommonLanguageSettings",
           "field": [
             {
@@ -7533,6 +7406,133 @@
           ]
         },
         {
+          "name": "ResourceDescriptor",
+          "field": [
+            {
+              "name": "type",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "pattern",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "name_field",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "history",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "History"
+            },
+            {
+              "name": "plural",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "singular",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "style",
+              "number": 10,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "Style"
+            }
+          ],
+          "enumType": [
+            {
+              "name": "History",
+              "value": [
+                {
+                  "name": "HISTORY_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ORIGINALLY_SINGLE_PATTERN",
+                  "number": 1
+                },
+                {
+                  "name": "FUTURE_MULTI_PATTERN",
+                  "number": 2
+                }
+              ]
+            },
+            {
+              "name": "Style",
+              "value": [
+                {
+                  "name": "STYLE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "DECLARATIVE_FRIENDLY",
+                  "number": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ResourceReference",
+          "field": [
+            {
+              "name": "type",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "child_type",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "RoutingRule",
+          "field": [
+            {
+              "name": "routing_parameters",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RoutingParameter"
+            }
+          ]
+        },
+        {
+          "name": "RoutingParameter",
+          "field": [
+            {
+              "name": "field",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "path_template",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
           "name": "Http",
           "field": [
             {
@@ -7648,47 +7648,6 @@
       ],
       "enumType": [
         {
-          "name": "FieldBehavior",
-          "value": [
-            {
-              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
-              "number": 0
-            },
-            {
-              "name": "OPTIONAL",
-              "number": 1
-            },
-            {
-              "name": "REQUIRED",
-              "number": 2
-            },
-            {
-              "name": "OUTPUT_ONLY",
-              "number": 3
-            },
-            {
-              "name": "INPUT_ONLY",
-              "number": 4
-            },
-            {
-              "name": "IMMUTABLE",
-              "number": 5
-            },
-            {
-              "name": "UNORDERED_LIST",
-              "number": 6
-            },
-            {
-              "name": "NON_EMPTY_DEFAULT",
-              "number": 7
-            },
-            {
-              "name": "IDENTIFIER",
-              "number": 8
-            }
-          ]
-        },
-        {
           "name": "ClientLibraryOrganization",
           "value": [
             {
@@ -7743,6 +7702,47 @@
           ]
         },
         {
+          "name": "FieldBehavior",
+          "value": [
+            {
+              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "OPTIONAL",
+              "number": 1
+            },
+            {
+              "name": "REQUIRED",
+              "number": 2
+            },
+            {
+              "name": "OUTPUT_ONLY",
+              "number": 3
+            },
+            {
+              "name": "INPUT_ONLY",
+              "number": 4
+            },
+            {
+              "name": "IMMUTABLE",
+              "number": 5
+            },
+            {
+              "name": "UNORDERED_LIST",
+              "number": 6
+            },
+            {
+              "name": "NON_EMPTY_DEFAULT",
+              "number": 7
+            },
+            {
+              "name": "IDENTIFIER",
+              "number": 8
+            }
+          ]
+        },
+        {
           "name": "LaunchStage",
           "value": [
             {
@@ -7781,6 +7781,34 @@
         }
       ],
       "extension": [
+        {
+          "name": "method_signature",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 1051,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_STRING"
+        },
+        {
+          "name": "default_host",
+          "extendee": ".google.protobuf.ServiceOptions",
+          "number": 1049,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_STRING"
+        },
+        {
+          "name": "oauth_scopes",
+          "extendee": ".google.protobuf.ServiceOptions",
+          "number": 1050,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_STRING"
+        },
+        {
+          "name": "api_version",
+          "extendee": ".google.protobuf.ServiceOptions",
+          "number": 525000001,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_STRING"
+        },
         {
           "name": "field_behavior",
           "extendee": ".google.protobuf.FieldOptions",
@@ -7825,34 +7853,6 @@
           "typeName": "RoutingRule"
         },
         {
-          "name": "method_signature",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 1051,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_STRING"
-        },
-        {
-          "name": "default_host",
-          "extendee": ".google.protobuf.ServiceOptions",
-          "number": 1049,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_STRING"
-        },
-        {
-          "name": "oauth_scopes",
-          "extendee": ".google.protobuf.ServiceOptions",
-          "number": 1050,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_STRING"
-        },
-        {
-          "name": "api_version",
-          "extendee": ".google.protobuf.ServiceOptions",
-          "number": 525000001,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_STRING"
-        },
-        {
           "name": "http",
           "extendee": ".google.protobuf.MethodOptions",
           "number": 72295728,
@@ -7867,6 +7867,45 @@
         "javaMultipleFiles": true,
         "goPackage": "google.golang.org/genproto/googleapis/api/annotations;annotations",
         "objcClassPrefix": "GAPI"
+      },
+      "syntax": "proto3"
+    },
+    {
+      "name": "google_rpc.proto",
+      "package": "google.rpc",
+      "messageType": [
+        {
+          "name": "Status",
+          "field": [
+            {
+              "name": "code",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            },
+            {
+              "name": "message",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "details",
+              "number": 3,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Any"
+            }
+          ]
+        }
+      ],
+      "options": {
+        "javaPackage": "com.google.rpc",
+        "javaOuterClassname": "StatusProto",
+        "javaMultipleFiles": true,
+        "goPackage": "google.golang.org/genproto/googleapis/rpc/status;status",
+        "ccEnableArenas": true,
+        "objcClassPrefix": "RPC"
       },
       "syntax": "proto3"
     },
@@ -8228,45 +8267,6 @@
         "ccEnableArenas": true,
         "csharpNamespace": "Google.Cloud.Iam.V1",
         "phpNamespace": "Google\\Cloud\\Iam\\V1"
-      },
-      "syntax": "proto3"
-    },
-    {
-      "name": "google_rpc.proto",
-      "package": "google.rpc",
-      "messageType": [
-        {
-          "name": "Status",
-          "field": [
-            {
-              "name": "code",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "message",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "details",
-              "number": 3,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Any"
-            }
-          ]
-        }
-      ],
-      "options": {
-        "javaPackage": "com.google.rpc",
-        "javaOuterClassname": "StatusProto",
-        "javaMultipleFiles": true,
-        "goPackage": "google.golang.org/genproto/googleapis/rpc/status;status",
-        "ccEnableArenas": true,
-        "objcClassPrefix": "RPC"
       },
       "syntax": "proto3"
     },
