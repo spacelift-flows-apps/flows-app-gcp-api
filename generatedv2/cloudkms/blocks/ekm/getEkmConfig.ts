@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getEkmServiceClient } from "../../lib/grpcClient.ts";
+import { getEkmServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  default_ekm_connection: "defaultEkmConnection",
+};
 
 const getEkmConfig: AppBlock = {
   name: "Get Ekm Config",
@@ -23,9 +27,7 @@ const getEkmConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getEkmServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getEkmConfig(request, (err: any, response: any) => {
@@ -39,7 +41,8 @@ const getEkmConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -54,7 +57,7 @@ const getEkmConfig: AppBlock = {
             description:
               "Output only. The resource name for the [EkmConfig][google.cloud.kms.v1.EkmConfig] in the format `projects/*/locations/*/ekmConfig`.",
           },
-          default_ekm_connection: {
+          defaultEkmConnection: {
             type: "string",
             description:
               "Optional. Resource name of the default [EkmConnection][google.cloud.kms.v1.EkmConnection]. Setting this field to the empty string removes the default.",

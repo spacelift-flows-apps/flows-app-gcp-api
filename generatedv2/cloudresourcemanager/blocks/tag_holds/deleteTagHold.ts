@@ -1,5 +1,35 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagHoldsClient } from "../../lib/grpcClient.ts";
+import { getTagHoldsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const deleteTagHold: AppBlock = {
   name: "Delete Tag Hold",
@@ -19,7 +49,7 @@ const deleteTagHold: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Optional. Set to true to perform the validations necessary for deleting the resource, but not actually perform the action.",
@@ -34,11 +64,7 @@ const deleteTagHold: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagHoldsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteTagHold(request, (err: any, response: any) => {
@@ -52,7 +78,8 @@ const deleteTagHold: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -68,7 +95,7 @@ const deleteTagHold: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -95,7 +122,7 @@ const deleteTagHold: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -114,7 +141,7 @@ const deleteTagHold: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

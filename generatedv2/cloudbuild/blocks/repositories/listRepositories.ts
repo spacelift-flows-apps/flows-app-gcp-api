@@ -1,5 +1,26 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  repositories: {
+    name: "repositories",
+    fields: {
+      remote_uri: "remoteUri",
+      create_time: "createTime",
+      update_time: "updateTime",
+      webhook_id: "webhookId",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listRepositories: AppBlock = {
   name: "List Repositories",
@@ -19,7 +40,7 @@ const listRepositories: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description: "Number of results to return in the list.",
           type: {
@@ -28,7 +49,7 @@ const listRepositories: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description: "Page start.",
           type: {
@@ -52,15 +73,7 @@ const listRepositories: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listRepositories(request, (err: any, response: any) => {
@@ -74,7 +87,8 @@ const listRepositories: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -94,16 +108,16 @@ const listRepositories: AppBlock = {
                   description:
                     "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
                 },
-                remote_uri: {
+                remoteUri: {
                   type: "string",
                   description: "Required. Git Clone HTTPS URI.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                update_time: {
+                updateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -121,19 +135,19 @@ const listRepositories: AppBlock = {
                   description:
                     "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
                 },
-                webhook_id: {
+                webhookId: {
                   type: "string",
                   description:
                     "Output only. External ID of the webhook created for the repository.",
                 },
               },
-              required: ["remote_uri"],
+              required: ["remoteUri"],
               description: "A repository associated to a parent connection.",
               additionalProperties: true,
             },
             description: "The list of Repositories.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token identifying a page of results the server should return.",

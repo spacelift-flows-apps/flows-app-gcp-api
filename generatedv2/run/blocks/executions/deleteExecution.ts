@@ -1,5 +1,35 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getExecutionsClient } from "../../lib/grpcClient.ts";
+import { getExecutionsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const deleteExecution: AppBlock = {
   name: "Delete Execution",
@@ -19,7 +49,7 @@ const deleteExecution: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Indicates that the request should be validated without actually deleting any resources.",
@@ -45,13 +75,7 @@ const deleteExecution: AppBlock = {
       onEvent: async (input) => {
         const client = await getExecutionsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteExecution(request, (err: any, response: any) => {
@@ -65,7 +89,8 @@ const deleteExecution: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -81,7 +106,7 @@ const deleteExecution: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -108,7 +133,7 @@ const deleteExecution: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -127,7 +152,7 @@ const deleteExecution: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

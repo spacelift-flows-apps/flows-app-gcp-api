@@ -25,7 +25,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -34,7 +34,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -43,7 +43,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -52,7 +52,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -80,17 +80,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
         if (input.event.inputConfig.views !== undefined)
           queryParams["views"] = String(input.event.inputConfig.views);
@@ -124,12 +124,12 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                allow_subnet_cidr_routes_overlap: {
+                allowSubnetCidrRoutesOverlap: {
                   type: "boolean",
                   description:
                     "Whether this subnetwork's ranges can conflict with existing static routes. Setting this to true allows this subnetwork's primary and secondary ranges to overlap with (and contain) static routes that have already been configured on the corresponding network.  For example if a static route has range 10.1.0.0/16, a subnet range 10.0.0.0/8 could only be created if allow_conflicting_routes=true.  Overlapping is only allowed on subnetwork operations; routes whose ranges conflict with this subnetwork's ranges won't be allowed unless route.allow_conflicting_subnetworks is set to true.  Typically packets destined to IPs within the subnetwork (which may contain private/sensitive data) are prevented from leaving the virtual network. Setting this field to true will disable this feature.  The default value is false and applies to all existing subnetworks and automatically created subnetworks.  This field cannot be set to true at resource creation time.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -139,12 +139,12 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource. This field can be set only at resource creation time.",
                 },
-                enable_flow_logs: {
+                enableFlowLogs: {
                   type: "boolean",
                   description:
                     "Whether to enable flow logging for this subnetwork. If this field is not explicitly set, it will not appear in get listings. If not set the default behavior is determined by the org policy, if there is no org policy specified, then it will default to disabled. This field isn't supported if the subnet purpose field is set toREGIONAL_MANAGED_PROXY. It is recommended to uselogConfig.enable field instead.",
                 },
-                external_ipv6_prefix: {
+                externalIpv6Prefix: {
                   type: "string",
                   description:
                     "The external IPv6 address range that is owned by this subnetwork.",
@@ -154,7 +154,7 @@ const list: AppBlock = {
                   description:
                     "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a Subnetwork. An up-to-date fingerprint must be provided in order to update the Subnetwork, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a Subnetwork.",
                 },
-                gateway_address: {
+                gatewayAddress: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The gateway address for default routes to reach destination addresses outside this subnetwork.",
@@ -163,32 +163,32 @@ const list: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                internal_ipv6_prefix: {
+                internalIpv6Prefix: {
                   type: "string",
                   description:
                     "The internal IPv6 address range that is owned by this subnetwork.",
                 },
-                ip_cidr_range: {
+                ipCidrRange: {
                   type: "string",
                   description:
                     "The range of internal addresses that are owned by this subnetwork. Provide this property when you create the subnetwork. For example,10.0.0.0/8 or 100.64.0.0/10. Ranges must be unique and non-overlapping within a network. Only IPv4 is supported. This field is set at resource creation time. The range can be any range listed in theValid ranges list. The range can be expanded after creation usingexpandIpCidrRange.",
                 },
-                ip_collection: {
+                ipCollection: {
                   type: "string",
                   description:
                     "Reference to the source of IP, like a PublicDelegatedPrefix (PDP) for BYOIP. The PDP must be a sub-PDP in EXTERNAL_IPV6_SUBNETWORK_CREATION or INTERNAL_IPV6_SUBNETWORK_CREATION mode.  Use one of the following formats to specify a sub-PDP when creating a dual stack or IPv6-only subnetwork with external access using BYOIP:     -    Full resource URL, as inhttps://www.googleapis.com/compute/v1/projects/projectId/regions/region/publicDelegatedPrefixes/sub-pdp-name    -    Partial URL, as in             - projects/projectId/regions/region/publicDelegatedPrefixes/sub-pdp-name           - regions/region/publicDelegatedPrefixes/sub-pdp-name",
                 },
-                ipv6_access_type: {
+                ipv6AccessType: {
                   type: "string",
                   description:
                     "The access type of IPv6 address this subnet holds. It's immutable and can only be specified during creation or the first time the subnet is updated into IPV4_IPV6 dual stack. Check the Ipv6AccessType enum for the list of possible values.",
                 },
-                ipv6_cidr_range: {
+                ipv6CidrRange: {
                   type: "string",
                   description:
                     "Output only. [Output Only] This field is for internal use.",
                 },
-                ipv6_gce_endpoint: {
+                ipv6GceEndpoint: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Possible endpoints of this subnetwork. It can be one of the following:     - VM_ONLY: The subnetwork can be used for creating instances and    IPv6 addresses with VM endpoint type. Such a subnetwork gets external IPv6    ranges from a public delegated prefix and cannot be used to create NetLb.    - VM_AND_FR: The subnetwork can be used for creating both VM    instances and Forwarding Rules. It can also be used to reserve IPv6    addresses with both VM and FR endpoint types. Such a subnetwork gets its    IPv6 range from Google IP Pool directly. Check the Ipv6GceEndpoint enum for the list of possible values.",
@@ -198,10 +198,10 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of the resource. Always compute#subnetwork for Subnetwork resources.",
                 },
-                log_config: {
+                logConfig: {
                   type: "object",
                   properties: {
-                    aggregation_interval: {
+                    aggregationInterval: {
                       type: "string",
                       description:
                         "Can only be specified if VPC flow logging for this subnetwork is enabled. Toggles the aggregation interval for collecting flow logs. Increasing the interval time will reduce the amount of generated flow logs for long lasting connections. Default is an interval of 5 seconds per connection. Check the AggregationInterval enum for the list of possible values.",
@@ -211,12 +211,12 @@ const list: AppBlock = {
                       description:
                         "Whether to enable flow logging for this subnetwork. If this field is not explicitly set, it will not appear in get listings. If not set the default behavior is determined by the org policy, if there is no org policy specified, then it will default to disabled. Flow logging isn't supported if the subnet purpose field is set to REGIONAL_MANAGED_PROXY.",
                     },
-                    filter_expr: {
+                    filterExpr: {
                       type: "string",
                       description:
                         "Can only be specified if VPC flow logs for this subnetwork is enabled. The filter expression is used to define which VPC flow logs should be exported to Cloud Logging.",
                     },
-                    flow_sampling: {
+                    flowSampling: {
                       type: "number",
                       description:
                         "Can only be specified if VPC flow logging for this subnetwork is enabled. The value of the field must be in [0, 1]. Set the sampling rate of VPC flow logs within the subnetwork where 1.0 means all collected logs are reported and 0.0 means no logs are reported. Default is 0.5 unless otherwise specified by the org policy, which means half of all collected logs are reported.",
@@ -226,7 +226,7 @@ const list: AppBlock = {
                       description:
                         "Can only be specified if VPC flow logs for this subnetwork is enabled. Configures whether all, none or a subset of metadata fields should be added to the reported VPC flow logs. Default isEXCLUDE_ALL_METADATA. Check the Metadata enum for the list of possible values.",
                     },
-                    metadata_fields: {
+                    metadataFields: {
                       type: "array",
                       items: {
                         type: "string",
@@ -252,7 +252,7 @@ const list: AppBlock = {
                 params: {
                   type: "object",
                   properties: {
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -264,12 +264,12 @@ const list: AppBlock = {
                   description: "Additional subnetwork parameters.",
                   additionalProperties: true,
                 },
-                private_ip_google_access: {
+                privateIpGoogleAccess: {
                   type: "boolean",
                   description:
                     "Whether the VMs in this subnet can access Google services without assigned external IP addresses. This field can be both set at resource creation time and updated using setPrivateIpGoogleAccess.",
                 },
-                private_ipv6_google_access: {
+                privateIpv6GoogleAccess: {
                   type: "string",
                   description:
                     "This field is for internal use.  This field can be both set at resource creation time and updated usingpatch. Check the PrivateIpv6GoogleAccess enum for the list of possible values.",
@@ -284,7 +284,7 @@ const list: AppBlock = {
                   description:
                     "URL of the region where the Subnetwork resides. This field can be set only at resource creation time.",
                 },
-                reserved_internal_range: {
+                reservedInternalRange: {
                   type: "string",
                   description: "The URL of the reserved internal range.",
                 },
@@ -293,22 +293,22 @@ const list: AppBlock = {
                   description:
                     "The role of subnetwork. Currently, this field is only used when purpose is set to GLOBAL_MANAGED_PROXY orREGIONAL_MANAGED_PROXY. The value can be set toACTIVE or BACKUP. An ACTIVE subnetwork is one that is currently being used for Envoy-based load balancers in a region. A BACKUP subnetwork is one that is ready to be promoted to ACTIVE or is currently draining. This field can be updated with a patch request. Check the Role enum for the list of possible values.",
                 },
-                secondary_ip_ranges: {
+                secondaryIpRanges: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      ip_cidr_range: {
+                      ipCidrRange: {
                         type: "string",
                         description:
                           "The range of IP addresses belonging to this subnetwork secondary range. Provide this property when you create the subnetwork. Ranges must be unique and non-overlapping with all primary and secondary IP ranges within a network. Only IPv4 is supported. The range can be any range listed in theValid ranges list.",
                       },
-                      range_name: {
+                      rangeName: {
                         type: "string",
                         description:
                           "The name associated with this subnetwork secondary range, used when adding an alias IP range to a VM instance. The name must be 1-63 characters long, and comply withRFC1035. The name must be unique within the subnetwork.",
                       },
-                      reserved_internal_range: {
+                      reservedInternalRange: {
                         type: "string",
                         description: "The URL of the reserved internal range.",
                       },
@@ -320,12 +320,12 @@ const list: AppBlock = {
                   description:
                     "An array of configurations for secondary IP ranges for VM instances contained in this subnetwork. The primary IP of such VM must belong to the primary ipCidrRange of the subnetwork. The alias IPs may belong to either primary or secondary ranges. This field can be updated with apatch request.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined URL for the resource.",
                 },
-                stack_type: {
+                stackType: {
                   type: "string",
                   description:
                     "The stack type for the subnet. If set to IPV4_ONLY, new VMs in the subnet are assigned IPv4 addresses only. If set toIPV4_IPV6, new VMs in the subnet can be assigned both IPv4 and IPv6 addresses. If not specified, IPV4_ONLY is used.  This field can be both set at resource creation time and updated usingpatch. Check the StackType enum for the list of possible values.",
@@ -335,7 +335,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The state of the subnetwork, which can be one of the following values:READY: Subnetwork is created and ready to useDRAINING: only applicable to subnetworks that have the purpose set to INTERNAL_HTTPS_LOAD_BALANCER and indicates that connections to the load balancer are being drained. A subnetwork that is draining cannot be used or modified until it reaches a status ofREADY Check the State enum for the list of possible values.",
                 },
-                system_reserved_external_ipv6_ranges: {
+                systemReservedExternalIpv6Ranges: {
                   type: "array",
                   items: {
                     type: "string",
@@ -343,7 +343,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The array of external IPv6 network ranges reserved from the subnetwork's external IPv6 range for system use.",
                 },
-                system_reserved_internal_ipv6_ranges: {
+                systemReservedInternalIpv6Ranges: {
                   type: "array",
                   items: {
                     type: "string",
@@ -351,13 +351,13 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The array of internal IPv6 network ranges reserved from the subnetwork's internal IPv6 range for system use.",
                 },
-                utilization_details: {
+                utilizationDetails: {
                   type: "object",
                   properties: {
-                    external_ipv6_instance_utilization: {
+                    externalIpv6InstanceUtilization: {
                       type: "object",
                       properties: {
-                        total_allocated_ip: {
+                        totalAllocatedIp: {
                           type: "object",
                           properties: {
                             high: {
@@ -371,7 +371,7 @@ const list: AppBlock = {
                           },
                           additionalProperties: true,
                         },
-                        total_free_ip: {
+                        totalFreeIp: {
                           type: "object",
                           properties: {
                             high: {
@@ -389,10 +389,10 @@ const list: AppBlock = {
                       description: "The IPV6 utilization of a single IP range.",
                       additionalProperties: true,
                     },
-                    external_ipv6_lb_utilization: {
+                    externalIpv6LbUtilization: {
                       type: "object",
                       properties: {
-                        total_allocated_ip: {
+                        totalAllocatedIp: {
                           type: "object",
                           properties: {
                             high: {
@@ -406,7 +406,7 @@ const list: AppBlock = {
                           },
                           additionalProperties: true,
                         },
-                        total_free_ip: {
+                        totalFreeIp: {
                           type: "object",
                           properties: {
                             high: {
@@ -424,10 +424,10 @@ const list: AppBlock = {
                       description: "The IPV6 utilization of a single IP range.",
                       additionalProperties: true,
                     },
-                    internal_ipv6_utilization: {
+                    internalIpv6Utilization: {
                       type: "object",
                       properties: {
-                        total_allocated_ip: {
+                        totalAllocatedIp: {
                           type: "object",
                           properties: {
                             high: {
@@ -441,7 +441,7 @@ const list: AppBlock = {
                           },
                           additionalProperties: true,
                         },
-                        total_free_ip: {
+                        totalFreeIp: {
                           type: "object",
                           properties: {
                             high: {
@@ -459,21 +459,21 @@ const list: AppBlock = {
                       description: "The IPV6 utilization of a single IP range.",
                       additionalProperties: true,
                     },
-                    ipv4_utilizations: {
+                    ipv4Utilizations: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          range_name: {
+                          rangeName: {
                             type: "string",
                             description:
                               "Will be set for secondary range. Empty for primary IPv4 range.",
                           },
-                          total_allocated_ip: {
+                          totalAllocatedIp: {
                             type: "string",
                             description: "64-bit integer as string",
                           },
-                          total_free_ip: {
+                          totalFreeIp: {
                             type: "string",
                             description: "64-bit integer as string",
                           },
@@ -502,12 +502,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Always compute#subnetworkList for lists of subnetworks.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

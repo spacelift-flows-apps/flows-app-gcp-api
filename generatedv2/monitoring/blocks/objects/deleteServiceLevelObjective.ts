@@ -25,9 +25,7 @@ const deleteServiceLevelObjective: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteServiceLevelObjective(

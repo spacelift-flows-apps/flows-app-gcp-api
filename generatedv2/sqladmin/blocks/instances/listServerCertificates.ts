@@ -1,5 +1,34 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  ca_certs: {
+    name: "caCerts",
+    fields: {
+      cert_serial_number: "certSerialNumber",
+      create_time: "createTime",
+      common_name: "commonName",
+      expiration_time: "expirationTime",
+      sha1_fingerprint: "sha1Fingerprint",
+      self_link: "selfLink",
+    },
+  },
+  server_certs: {
+    name: "serverCerts",
+    fields: {
+      cert_serial_number: "certSerialNumber",
+      create_time: "createTime",
+      common_name: "commonName",
+      expiration_time: "expirationTime",
+      sha1_fingerprint: "sha1Fingerprint",
+      self_link: "selfLink",
+    },
+  },
+  active_version: "activeVersion",
+};
 
 const listServerCertificates: AppBlock = {
   name: "List Server Certificates",
@@ -34,11 +63,7 @@ const listServerCertificates: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listServerCertificates(request, (err: any, response: any) => {
@@ -52,7 +77,8 @@ const listServerCertificates: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -62,7 +88,7 @@ const listServerCertificates: AppBlock = {
       type: {
         type: "object",
         properties: {
-          ca_certs: {
+          caCerts: {
             type: "array",
             items: {
               type: "object",
@@ -71,7 +97,7 @@ const listServerCertificates: AppBlock = {
                   type: "string",
                   description: "This is always `sql#sslCert`.",
                 },
-                cert_serial_number: {
+                certSerialNumber: {
                   type: "string",
                   description:
                     "Serial number, as extracted from the certificate.",
@@ -80,22 +106,22 @@ const listServerCertificates: AppBlock = {
                   type: "string",
                   description: "PEM representation.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                common_name: {
+                commonName: {
                   type: "string",
                   description:
                     "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
                 },
-                expiration_time: {
+                expirationTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                sha1_fingerprint: {
+                sha1Fingerprint: {
                   type: "string",
                   description: "Sha1 Fingerprint.",
                 },
@@ -103,7 +129,7 @@ const listServerCertificates: AppBlock = {
                   type: "string",
                   description: "Name of the database instance.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description: "The URI of this resource.",
                 },
@@ -113,7 +139,7 @@ const listServerCertificates: AppBlock = {
             },
             description: "List of server CA certificates for the instance.",
           },
-          server_certs: {
+          serverCerts: {
             type: "array",
             items: {
               type: "object",
@@ -122,7 +148,7 @@ const listServerCertificates: AppBlock = {
                   type: "string",
                   description: "This is always `sql#sslCert`.",
                 },
-                cert_serial_number: {
+                certSerialNumber: {
                   type: "string",
                   description:
                     "Serial number, as extracted from the certificate.",
@@ -131,22 +157,22 @@ const listServerCertificates: AppBlock = {
                   type: "string",
                   description: "PEM representation.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                common_name: {
+                commonName: {
                   type: "string",
                   description:
                     "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
                 },
-                expiration_time: {
+                expirationTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                sha1_fingerprint: {
+                sha1Fingerprint: {
                   type: "string",
                   description: "Sha1 Fingerprint.",
                 },
@@ -154,7 +180,7 @@ const listServerCertificates: AppBlock = {
                   type: "string",
                   description: "Name of the database instance.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description: "The URI of this resource.",
                 },
@@ -165,7 +191,7 @@ const listServerCertificates: AppBlock = {
             description:
               "List of server certificates for the instance, signed by the corresponding CA from the `ca_certs` list.",
           },
-          active_version: {
+          activeVersion: {
             type: "string",
             description:
               "The `sha1_fingerprint` of the active certificate from `server_certs`.",

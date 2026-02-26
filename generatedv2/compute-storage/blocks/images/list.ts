@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -107,11 +107,11 @@ const list: AppBlock = {
                   description:
                     "The architecture of the image. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
                 },
-                archive_size_bytes: {
+                archiveSizeBytes: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -153,11 +153,11 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                disk_size_gb: {
+                diskSizeGb: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                enable_confidential_compute: {
+                enableConfidentialCompute: {
                   type: "boolean",
                   description:
                     "Output only. Whether this image is created from a confidential compute mode disk. [Output Only]: This field is not set by user, but from source disk.",
@@ -167,7 +167,7 @@ const list: AppBlock = {
                   description:
                     "The name of the image family to which this image belongs. The image family name can be from a publicly managed image family provided by Compute Engine, or from a custom image family you create. For example,centos-stream-9 is a publicly available image family. For more information, see Image family best practices.  When creating disks, you can specify an image family instead of a specific image name. The image family always returns its latest image that is not deprecated. The name of the image family must comply with RFC1035.",
                 },
-                guest_os_features: {
+                guestOsFeatures: {
                   type: "array",
                   items: {
                     type: "object",
@@ -188,25 +188,25 @@ const list: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                image_encryption_key: {
+                imageEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -226,7 +226,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of the resource. Always compute#image for images.",
                 },
-                label_fingerprint: {
+                labelFingerprint: {
                   type: "string",
                   description:
                     "A fingerprint for the labels being applied to this image, which is essentially a hash of the labels used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an image.",
@@ -239,7 +239,7 @@ const list: AppBlock = {
                   description:
                     "Labels to apply to this image. These can be later modified by the setLabels method.",
                 },
-                license_codes: {
+                licenseCodes: {
                   type: "array",
                   items: {
                     type: "string",
@@ -263,7 +263,7 @@ const list: AppBlock = {
                 params: {
                   type: "object",
                   properties: {
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -275,15 +275,15 @@ const list: AppBlock = {
                   description: "Additional image params.",
                   additionalProperties: true,
                 },
-                raw_disk: {
+                rawDisk: {
                   type: "object",
                   properties: {
-                    container_type: {
+                    containerType: {
                       type: "string",
                       description:
                         "The format used to encode and transmit the block device, which should beTAR. This is just a container and transmission format and not a runtime format. Provided by the client when the disk image is created. Check the ContainerType enum for the list of possible values.",
                     },
-                    sha1_checksum: {
+                    sha1Checksum: {
                       type: "string",
                       description:
                         "[Deprecated] This field is deprecated. An optional SHA1 checksum of the disk image before unpackaging provided by the client when the disk image is created.",
@@ -297,21 +297,21 @@ const list: AppBlock = {
                   description: "The parameters of the raw disk image.",
                   additionalProperties: true,
                 },
-                satisfies_pzi: {
+                satisfiesPzi: {
                   type: "boolean",
                   description: "Output only. Reserved for future use.",
                 },
-                satisfies_pzs: {
+                satisfiesPzs: {
                   type: "boolean",
                   description:
                     "Output only. [Output Only] Reserved for future use.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for the resource.",
                 },
-                shielded_instance_initial_state: {
+                shieldedInstanceInitialState: {
                   type: "object",
                   properties: {
                     dbs: {
@@ -324,7 +324,7 @@ const list: AppBlock = {
                             description:
                               "The raw content in the secure keys file.",
                           },
-                          file_type: {
+                          fileType: {
                             type: "string",
                             description:
                               "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -344,7 +344,7 @@ const list: AppBlock = {
                             description:
                               "The raw content in the secure keys file.",
                           },
-                          file_type: {
+                          fileType: {
                             type: "string",
                             description:
                               "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -364,7 +364,7 @@ const list: AppBlock = {
                             description:
                               "The raw content in the secure keys file.",
                           },
-                          file_type: {
+                          fileType: {
                             type: "string",
                             description:
                               "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -382,7 +382,7 @@ const list: AppBlock = {
                           description:
                             "The raw content in the secure keys file.",
                         },
-                        file_type: {
+                        fileType: {
                           type: "string",
                           description:
                             "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -396,30 +396,30 @@ const list: AppBlock = {
                     "Initial State for shielded instance, these are public keys which are safe to store in public",
                   additionalProperties: true,
                 },
-                source_disk: {
+                sourceDisk: {
                   type: "string",
                   description:
                     "URL of the source disk used to create this image. For example, the following are valid values:     - https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk    - projects/project/zones/zone/disks/disk    - zones/zone/disks/disk    In order to create an image, you must provide the full or partial URL of one of the following:     - The rawDisk.source URL    - The sourceDisk URL    - The sourceImage URL    - The sourceSnapshot URL",
                 },
-                source_disk_encryption_key: {
+                sourceDiskEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -434,35 +434,35 @@ const list: AppBlock = {
                   description:
                     "Thecustomer-supplied encryption key of the source disk. Required if the source disk is protected by a customer-supplied encryption key.",
                 },
-                source_disk_id: {
+                sourceDiskId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The ID value of the disk used to create this image. This value may be used to determine whether the image was taken from the current or a previous instance of a given disk name.",
                 },
-                source_image: {
+                sourceImage: {
                   type: "string",
                   description:
                     "URL of the source image used to create this image. The following are valid formats for the URL:     - https://www.googleapis.com/compute/v1/projects/project_id/global/    images/image_name    - projects/project_id/global/images/image_name    In order to create an image, you must provide the full or partial URL of one of the following:     - The rawDisk.source URL    - The sourceDisk URL    - The sourceImage URL    - The sourceSnapshot URL",
                 },
-                source_image_encryption_key: {
+                sourceImageEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -477,35 +477,35 @@ const list: AppBlock = {
                   description:
                     "The customer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.",
                 },
-                source_image_id: {
+                sourceImageId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The ID value of the image used to create this image. This value may be used to determine whether the image was taken from the current or a previous instance of a given image name.",
                 },
-                source_snapshot: {
+                sourceSnapshot: {
                   type: "string",
                   description:
                     "URL of the source snapshot used to create this image. The following are valid formats for the URL:     - https://www.googleapis.com/compute/v1/projects/project_id/global/    snapshots/snapshot_name    - projects/project_id/global/snapshots/snapshot_name    In order to create an image, you must provide the full or partial URL of one of the following:     - The rawDisk.source URL    - The sourceDisk URL    - The sourceImage URL    - The sourceSnapshot URL",
                 },
-                source_snapshot_encryption_key: {
+                sourceSnapshotEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -520,12 +520,12 @@ const list: AppBlock = {
                   description:
                     "The customer-supplied encryption key of the source snapshot. Required if the source snapshot is protected by a customer-supplied encryption key.",
                 },
-                source_snapshot_id: {
+                sourceSnapshotId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The ID value of the snapshot used to create this image. This value may be used to determine whether the snapshot was taken from the current or a previous instance of a given snapshot name.",
                 },
-                source_type: {
+                sourceType: {
                   type: "string",
                   description:
                     "The type of the image used to create this disk. The default and only valid value is RAW. Check the SourceType enum for the list of possible values.",
@@ -535,7 +535,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The status of the image. An image can be used to create other resources, such as instances, only after the image has been successfully created and the status is set to READY. Possible values are FAILED, PENDING, orREADY. Check the Status enum for the list of possible values.",
                 },
-                storage_locations: {
+                storageLocations: {
                   type: "array",
                   items: {
                     type: "string",
@@ -554,12 +554,12 @@ const list: AppBlock = {
             type: "string",
             description: "Output only. Type of resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

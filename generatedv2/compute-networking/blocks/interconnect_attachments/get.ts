@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        interconnect_attachment: {
+        interconnectAttachment: {
           name: "Interconnect Attachment",
           description: "Name of the interconnect attachment to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.interconnect_attachment !== undefined)
+        if (input.event.inputConfig.interconnectAttachment !== undefined)
           pathParams["interconnect_attachment"] = String(
-            input.event.inputConfig.interconnect_attachment,
+            input.event.inputConfig.interconnectAttachment,
           );
 
         const result = await computeFetch({
@@ -53,12 +53,12 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          admin_enabled: {
+          adminEnabled: {
             type: "boolean",
             description:
               "Determines whether this Attachment will carry packets. Not present for PARTNER_PROVIDER.",
           },
-          attachment_group: {
+          attachmentGroup: {
             type: "string",
             description:
               "Output only. [Output Only] URL of the AttachmentGroup that includes this Attachment.",
@@ -68,34 +68,34 @@ const get: AppBlock = {
             description:
               "Provisioned bandwidth capacity for the interconnect attachment. For attachments of type DEDICATED, the user can set the bandwidth. For attachments of type PARTNER, the Google Partner that is operating the interconnect must set the bandwidth. Output only for PARTNER type, mutable for PARTNER_PROVIDER and DEDICATED, and can take one of the following values:     - BPS_50M: 50 Mbit/s    - BPS_100M: 100 Mbit/s    - BPS_200M: 200 Mbit/s    - BPS_300M: 300 Mbit/s    - BPS_400M: 400 Mbit/s    - BPS_500M: 500 Mbit/s    - BPS_1G: 1 Gbit/s    - BPS_2G: 2 Gbit/s    - BPS_5G: 5 Gbit/s    - BPS_10G: 10 Gbit/s    - BPS_20G: 20 Gbit/s    - BPS_50G: 50 Gbit/s    - BPS_100G: 100 Gbit/s    - BPS_400G: 400 Gbit/s Check the Bandwidth enum for the list of possible values.",
           },
-          candidate_cloud_router_ip_address: {
+          candidateCloudRouterIpAddress: {
             type: "string",
             description:
               "Single IPv4 address + prefix length to be configured on the cloud router interface for this interconnect attachment.     - Both candidate_cloud_router_ip_address and    candidate_customer_router_ip_address fields must be set or both must be    unset.    - Prefix length of both candidate_cloud_router_ip_address and    candidate_customer_router_ip_address must be the same.    - Max prefix length is 31.",
           },
-          candidate_cloud_router_ipv6_address: {
+          candidateCloudRouterIpv6Address: {
             type: "string",
             description:
               "Single IPv6 address + prefix length to be configured on the cloud router interface for this interconnect attachment.     - Both candidate_cloud_router_ipv6_address and    candidate_customer_router_ipv6_address fields must be set or both must be    unset.    - Prefix length of both candidate_cloud_router_ipv6_address and    candidate_customer_router_ipv6_address must be the same.    - Max prefix length is 126.",
           },
-          candidate_customer_router_ip_address: {
+          candidateCustomerRouterIpAddress: {
             type: "string",
             description:
               "Single IPv4 address + prefix length to be configured on the customer router interface for this interconnect attachment.",
           },
-          candidate_customer_router_ipv6_address: {
+          candidateCustomerRouterIpv6Address: {
             type: "string",
             description:
               "Single IPv6 address + prefix length to be configured on the customer router interface for this interconnect attachment.",
           },
-          candidate_ipv6_subnets: {
+          candidateIpv6Subnets: {
             type: "array",
             items: {
               type: "string",
             },
             description: "This field is not available.",
           },
-          candidate_subnets: {
+          candidateSubnets: {
             type: "array",
             items: {
               type: "string",
@@ -103,29 +103,29 @@ const get: AppBlock = {
             description:
               "Input only. Up to 16 candidate prefixes that can be used to restrict the allocation of cloudRouterIpAddress and customerRouterIpAddress for this attachment. All prefixes must be within link-local address space (169.254.0.0/16) and must be /29 or shorter (/28, /27, etc). Google will attempt to select an unused /29 from the supplied candidate prefix(es). The request will fail if all possible /29s are in use on Google's edge. If not supplied, Google will randomly select an unused /29 from all of link-local space.",
           },
-          cloud_router_ip_address: {
+          cloudRouterIpAddress: {
             type: "string",
             description:
               "Output only. [Output Only] IPv4 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
           },
-          cloud_router_ipv6_address: {
+          cloudRouterIpv6Address: {
             type: "string",
             description:
               "Output only. [Output Only] IPv6 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
           },
-          cloud_router_ipv6_interface_id: {
+          cloudRouterIpv6InterfaceId: {
             type: "string",
             description: "This field is not available.",
           },
-          configuration_constraints: {
+          configurationConstraints: {
             type: "object",
             properties: {
-              bgp_md5: {
+              bgpMd5: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Whether the attachment's BGP session requires/allows/disallows BGP MD5 authentication. This can take one of the following values: MD5_OPTIONAL, MD5_REQUIRED, MD5_UNSUPPORTED.  For example, a Cross-Cloud Interconnect connection to a remote cloud provider that requires BGP MD5 authentication has the interconnectRemoteLocation attachment_configuration_constraints.bgp_md5 field set to MD5_REQUIRED, and that property is propagated to the attachment. Similarly, if BGP MD5 is MD5_UNSUPPORTED, an error is returned if MD5 is requested. Check the BgpMd5 enum for the list of possible values.",
               },
-              bgp_peer_asn_ranges: {
+              bgpPeerAsnRanges: {
                 type: "array",
                 items: {
                   type: "object",
@@ -147,26 +147,26 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] Constraints for this attachment, if any. The attachment does not work if these constraints are not met.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
-          customer_router_ip_address: {
+          customerRouterIpAddress: {
             type: "string",
             description:
               "Output only. [Output Only] IPv4 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
           },
-          customer_router_ipv6_address: {
+          customerRouterIpv6Address: {
             type: "string",
             description:
               "Output only. [Output Only] IPv6 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
           },
-          customer_router_ipv6_interface_id: {
+          customerRouterIpv6InterfaceId: {
             type: "string",
             description: "This field is not available.",
           },
-          dataplane_version: {
+          dataplaneVersion: {
             type: "integer",
             description:
               "Output only. [Output Only] Dataplane version for this InterconnectAttachment. This field is only present for Dataplane version 2 and higher. Absence of this field in the API output indicates that the Dataplane is version 1.",
@@ -175,7 +175,7 @@ const get: AppBlock = {
             type: "string",
             description: "An optional description of this resource.",
           },
-          edge_availability_domain: {
+          edgeAvailabilityDomain: {
             type: "string",
             description:
               "Input only. Desired availability domain for the attachment. Only available for type PARTNER, at creation time, and can take one of the following values:     - AVAILABILITY_DOMAIN_ANY    - AVAILABILITY_DOMAIN_1    - AVAILABILITY_DOMAIN_2   For improved reliability, customers should configure a pair of attachments, one per availability domain. The selected availability domain will be provided to the Partner via the pairing key, so that the provisioned circuit will lie in the specified domain. If not specified, the value will default to AVAILABILITY_DOMAIN_ANY. Check the EdgeAvailabilityDomain enum for the list of possible values.",
@@ -185,7 +185,7 @@ const get: AppBlock = {
             description:
               "Indicates the user-supplied encryption option of this VLAN attachment (interconnectAttachment). Can only be specified at attachment creation for PARTNER or DEDICATED attachments. Possible values are:     - NONE - This is the default value, which means that the    VLAN attachment carries unencrypted traffic. VMs are able to send    traffic to, or receive traffic from, such a VLAN attachment.    - IPSEC - The VLAN attachment carries only encrypted    traffic that is encrypted by an IPsec device, such as an HA VPN gateway or    third-party IPsec VPN. VMs cannot directly send traffic to, or receive    traffic from, such a VLAN attachment. To use *HA VPN over Cloud    Interconnect*, the VLAN attachment must be created with this    option. Check the Encryption enum for the list of possible values.",
           },
-          google_reference_id: {
+          googleReferenceId: {
             type: "string",
             description:
               "Output only. [Output Only] Google reference ID, to be used when raising support tickets with Google or otherwise to debug backend connectivity issues. [Deprecated] This field is not used.",
@@ -199,7 +199,7 @@ const get: AppBlock = {
             description:
               "URL of the underlying Interconnect object that this attachment's traffic will traverse through.",
           },
-          ipsec_internal_addresses: {
+          ipsecInternalAddresses: {
             type: "array",
             items: {
               type: "string",
@@ -212,10 +212,10 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#interconnectAttachment for interconnect attachments.",
           },
-          l2_forwarding: {
+          l2Forwarding: {
             type: "object",
             properties: {
-              appliance_mappings: {
+              applianceMappings: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -223,12 +223,12 @@ const get: AppBlock = {
                 description:
                   'Optional. A map of VLAN tags to appliances and optional inner mapping rules. If VLANs are not explicitly mapped to any appliance, the defaultApplianceIpAddress is used.  Each VLAN tag can be a single number or a range of numbers in the range of 1 to 4094, e.g., "1" or "4001-4094". Non-empty and non-overlapping VLAN tag ranges are enforced, and violating operations will be rejected.  The VLAN tags in the Ethernet header must use an ethertype value of 0x88A8 or 0x8100.',
               },
-              default_appliance_ip_address: {
+              defaultApplianceIpAddress: {
                 type: "string",
                 description:
                   "Optional. A single IPv4 or IPv6 address used as the default destination IP when there is no VLAN mapping result found.  Unset field (null-value) indicates the unmatched packet should be dropped.",
               },
-              geneve_header: {
+              geneveHeader: {
                 type: "object",
                 properties: {
                   vni: {
@@ -245,7 +245,7 @@ const get: AppBlock = {
                 description:
                   "Required. Resource URL of the network to which this attachment belongs.",
               },
-              tunnel_endpoint_ip_address: {
+              tunnelEndpointIpAddress: {
                 type: "string",
                 description:
                   "Required. A single IPv4 or IPv6 address. This address will be used as the source IP address for packets sent to the appliances, and must be used as the destination IP address for packets that should be sent out through this attachment.",
@@ -254,7 +254,7 @@ const get: AppBlock = {
             description: "L2 Interconnect Attachment related configuration.",
             additionalProperties: true,
           },
-          label_fingerprint: {
+          labelFingerprint: {
             type: "string",
             description:
               "A fingerprint for the labels being applied to this InterconnectAttachment, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an InterconnectAttachment.",
@@ -277,12 +277,12 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          operational_status: {
+          operationalStatus: {
             type: "string",
             description:
               "Output only. [Output Only] The current status of whether or not this interconnect attachment is functional, which can take one of the following values:     - OS_ACTIVE: The attachment has been turned up and is ready to    use.    - OS_UNPROVISIONED: The attachment is not ready to use yet,    because turnup is not complete. Check the OperationalStatus enum for the list of possible values.",
           },
-          pairing_key: {
+          pairingKey: {
             type: "string",
             description:
               '[Output only for type PARTNER. Input only for PARTNER_PROVIDER. Not present for DEDICATED]. The opaque identifier of a PARTNER attachment used to initiate provisioning with a selected partner. Of the form "XXXXX/region/domain"',
@@ -290,7 +290,7 @@ const get: AppBlock = {
           params: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -302,24 +302,24 @@ const get: AppBlock = {
             description: "Additional interconnect attachment parameters.",
             additionalProperties: true,
           },
-          partner_asn: {
+          partnerAsn: {
             type: "string",
             description: "64-bit integer as string",
           },
-          partner_metadata: {
+          partnerMetadata: {
             type: "object",
             properties: {
-              interconnect_name: {
+              interconnectName: {
                 type: "string",
                 description:
                   'Plain text name of the Interconnect this attachment is connected to, as displayed in the Partner\'s portal. For instance "Chicago 1". This value may be validated to match approved Partner values.',
               },
-              partner_name: {
+              partnerName: {
                 type: "string",
                 description:
                   "Plain text name of the Partner providing this attachment. This value may be validated to match approved Partner values.",
               },
-              portal_url: {
+              portalUrl: {
                 type: "string",
                 description:
                   "URL of the Partner's portal for this Attachment. Partners may customise this to be a deep link to the specific resource on the Partner portal. This value may be validated to match approved Partner values.",
@@ -329,7 +329,7 @@ const get: AppBlock = {
               "Informational metadata about Partner attachments from Partners to display to customers.  These fields are propagated from PARTNER_PROVIDER attachments to their corresponding PARTNER attachments.",
             additionalProperties: true,
           },
-          private_interconnect_info: {
+          privateInterconnectInfo: {
             type: "object",
             properties: {
               tag8021q: {
@@ -347,7 +347,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] URL of the region where the regional interconnect attachment resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
-          remote_service: {
+          remoteService: {
             type: "string",
             description:
               'Output only. [Output Only] If the attachment is on a Cross-Cloud Interconnect connection, this field contains the interconnect\'s remote location service provider. Example values: "Amazon Web Services" "Microsoft Azure".  The field is set only for attachments on Cross-Cloud Interconnect connections. Its value is copied from the InterconnectRemoteLocation remoteService field.',
@@ -357,16 +357,16 @@ const get: AppBlock = {
             description:
               "URL of the Cloud Router to be used for dynamic routing. This router must be in the same region as this InterconnectAttachment. The InterconnectAttachment will automatically connect the Interconnect to the network & region within which the Cloud Router is configured.",
           },
-          satisfies_pzs: {
+          satisfiesPzs: {
             type: "boolean",
             description: "Output only. [Output Only] Reserved for future use.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",
           },
-          stack_type: {
+          stackType: {
             type: "string",
             description:
               "The stack type for this interconnect attachment to identify whether the IPv6 feature is enabled or not. If not specified, IPV4_ONLY will be used.  This field can be both set at interconnect attachments creation and update interconnect attachment operations. Check the StackType enum for the list of possible values.",
@@ -376,7 +376,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The current state of this attachment's functionality. Enum values ACTIVE and UNPROVISIONED are shared by DEDICATED/PRIVATE, PARTNER, and PARTNER_PROVIDER interconnect attachments, while enum values PENDING_PARTNER, PARTNER_REQUEST_RECEIVED, and PENDING_CUSTOMER are used for only PARTNER and PARTNER_PROVIDER interconnect attachments. This state can take one of the following values:     - ACTIVE: The attachment has been turned up and is ready to use.    - UNPROVISIONED: The attachment is not ready to use yet, because turnup    is not complete.    - PENDING_PARTNER: A newly-created PARTNER attachment that has not yet    been configured on the Partner side.    - PARTNER_REQUEST_RECEIVED: A PARTNER attachment is in the process of    provisioning after a PARTNER_PROVIDER attachment was created that    references it.    - PENDING_CUSTOMER: A PARTNER or PARTNER_PROVIDER    attachment that is waiting for a customer to activate it.    - DEFUNCT:    The attachment was deleted externally and is no longer functional. This    could be because the associated Interconnect was removed, or because the    other side of a Partner attachment was deleted. Check the State enum for the list of possible values.",
           },
-          subnet_length: {
+          subnetLength: {
             type: "integer",
             description:
               "Input only. Length of the IPv4 subnet mask. Allowed values:       - 29 (default)     - 30  The default value is 29, except for Cross-Cloud Interconnect connections that use an InterconnectRemoteLocation with a constraints.subnetLengthRange.min equal to 30. For example, connections that use an Azure remote location fall into this category. In these cases, the default value is 30, and requesting 29 returns an error.  Where both 29 and 30 are allowed, 29 is preferred, because it gives Google Cloud Support more debugging visibility.",
@@ -386,7 +386,7 @@ const get: AppBlock = {
             description:
               "The type of interconnect attachment this is, which can take one of the following values:     - DEDICATED: an attachment to a Dedicated Interconnect.    - PARTNER: an attachment to a Partner Interconnect, created by the    customer.    - PARTNER_PROVIDER: an attachment to a Partner Interconnect, created by    the partner.  - L2_DEDICATED: a L2 attachment to a Dedicated Interconnect. Check the Type enum for the list of possible values.",
           },
-          vlan_tag8021q: {
+          vlanTag8021q: {
             type: "integer",
             description:
               "The IEEE 802.1Q VLAN tag for this attachment, in the range 2-4093. Only specified at creation time.",

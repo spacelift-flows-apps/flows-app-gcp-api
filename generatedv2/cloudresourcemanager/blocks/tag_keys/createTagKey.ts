@@ -1,5 +1,42 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagKeysClient } from "../../lib/grpcClient.ts";
+import { getTagKeysClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  tagKey: {
+    name: "tag_key",
+    fields: {
+      shortName: "short_name",
+      purposeData: "purpose_data",
+    },
+  },
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createTagKey: AppBlock = {
   name: "Create Tag Key",
@@ -8,7 +45,7 @@ const createTagKey: AppBlock = {
   inputs: {
     default: {
       config: {
-        tag_key: {
+        tagKey: {
           name: "Tag Key",
           description:
             "Required. The TagKey to be created. Only fields `short_name`, `description`, and `parent` are considered during the creation request.",
@@ -25,7 +62,7 @@ const createTagKey: AppBlock = {
                 description:
                   "Immutable. The resource name of the TagKey's parent. A TagKey can be parented by an Organization or a Project. For a TagKey parented by an Organization, its parent must be in the form `organizations/{org_id}`. For a TagKey parented by a Project, its parent can be in the form `projects/{project_id}` or `projects/{project_number}`.",
               },
-              short_name: {
+              shortName: {
                 type: "string",
                 description:
                   "Required. Immutable. The user friendly name for a TagKey. The short name should be unique for TagKeys within the same tag namespace.  The short name must be 1-63 characters, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.",
@@ -46,7 +83,7 @@ const createTagKey: AppBlock = {
                 description:
                   "A purpose for each policy engine requiring such an integration. A single policy engine may have multiple purposes defined, however a TagKey may only specify a single purpose.",
               },
-              purpose_data: {
+              purposeData: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -55,13 +92,13 @@ const createTagKey: AppBlock = {
                   "Optional. Purpose data corresponds to the policy system that the tag is intended for. See documentation for `Purpose` for formatting of this field.  Purpose data cannot be changed once set.",
               },
             },
-            required: ["short_name"],
+            required: ["shortName"],
             description: "A TagKey, used to group a set of TagValues.",
             additionalProperties: true,
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Optional. Set to true to perform validations necessary for creating the resource, but not actually perform the action.",
@@ -76,11 +113,7 @@ const createTagKey: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagKeysClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.tag_key !== undefined)
-          request.tag_key = input.event.inputConfig.tag_key;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createTagKey(request, (err: any, response: any) => {
@@ -94,7 +127,8 @@ const createTagKey: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -110,7 +144,7 @@ const createTagKey: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -137,7 +171,7 @@ const createTagKey: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -156,7 +190,7 @@ const createTagKey: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

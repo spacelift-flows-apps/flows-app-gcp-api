@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -102,12 +102,12 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                as_paths: {
+                asPaths: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      as_lists: {
+                      asLists: {
                         type: "array",
                         items: {
                           type: "integer",
@@ -115,7 +115,7 @@ const list: AppBlock = {
                         description:
                           "[Output Only] The AS numbers of the AS Path.",
                       },
-                      path_segment_type: {
+                      pathSegmentType: {
                         type: "string",
                         description:
                           "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
@@ -125,7 +125,7 @@ const list: AppBlock = {
                   },
                   description: "Output only. [Output Only] AS path.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -135,7 +135,7 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this field when you create the resource.",
                 },
-                dest_range: {
+                destRange: {
                   type: "string",
                   description:
                     "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
@@ -159,62 +159,62 @@ const list: AppBlock = {
                   description:
                     "Fully-qualified URL of the network that this route applies to.",
                 },
-                next_hop_gateway: {
+                nextHopGateway: {
                   type: "string",
                   description:
                     "The URL to a gateway that should handle matching packets. You can only specify the internet gateway using a full or partial valid URL: projects/project/global/gateways/default-internet-gateway",
                 },
-                next_hop_hub: {
+                nextHopHub: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
                 },
-                next_hop_ilb: {
+                nextHopIlb: {
                   type: "string",
                   description:
                     "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule    - regions/region/forwardingRules/forwardingRule   If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses:         - 10.128.0.56       - 2001:db8::2d9:51:0:0       - 2001:db8:0:0:2d9:51:0:0   IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                 },
-                next_hop_instance: {
+                nextHopInstance: {
                   type: "string",
                   description:
                     "The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
                 },
-                next_hop_inter_region_cost: {
+                nextHopInterRegionCost: {
                   type: "integer",
                   description:
                     "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
                 },
-                next_hop_interconnect_attachment: {
+                nextHopInterconnectAttachment: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
                 },
-                next_hop_ip: {
+                nextHopIp: {
                   type: "string",
                   description:
                     "The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                 },
-                next_hop_med: {
+                nextHopMed: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
                 },
-                next_hop_network: {
+                nextHopNetwork: {
                   type: "string",
                   description:
                     "The URL of the local network if it should handle matching packets.",
                 },
-                next_hop_origin: {
+                nextHopOrigin: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
                 },
-                next_hop_peering: {
+                nextHopPeering: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
                 },
-                next_hop_vpn_tunnel: {
+                nextHopVpnTunnel: {
                   type: "string",
                   description:
                     "The URL to a VpnTunnel that should handle matching packets.",
@@ -222,7 +222,7 @@ const list: AppBlock = {
                 params: {
                   type: "object",
                   properties: {
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -239,17 +239,17 @@ const list: AppBlock = {
                   description:
                     "The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.",
                 },
-                route_status: {
+                routeStatus: {
                   type: "string",
                   description:
                     "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
                 },
-                route_type: {
+                routeType: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined fully-qualified URL for this resource.",
@@ -315,12 +315,12 @@ const list: AppBlock = {
             type: "string",
             description: "Output only. Type of resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

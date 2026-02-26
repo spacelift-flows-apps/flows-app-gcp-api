@@ -19,7 +19,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        admin_enabled: {
+        adminEnabled: {
           name: "Admin Enabled",
           description:
             "Determines whether this Attachment will carry packets. Not present for PARTNER_PROVIDER.",
@@ -30,7 +30,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        attachment_group: {
+        attachmentGroup: {
           name: "Attachment Group",
           description:
             "Output only. [Output Only] URL of the AttachmentGroup that includes this Attachment.",
@@ -52,7 +52,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        candidate_cloud_router_ip_address: {
+        candidateCloudRouterIpAddress: {
           name: "Candidate Cloud Router Ip Address",
           description:
             "Single IPv4 address + prefix length to be configured on the cloud router interface for this interconnect attachment.     - Both candidate_cloud_router_ip_address and    candidate_customer_router_ip_address fields must be set or both must be    unset.    - Prefix length of both candidate_cloud_router_ip_address and    candidate_customer_router_ip_address must be the same.    - Max prefix length is 31.",
@@ -63,7 +63,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        candidate_cloud_router_ipv6_address: {
+        candidateCloudRouterIpv6Address: {
           name: "Candidate Cloud Router Ipv6 Address",
           description:
             "Single IPv6 address + prefix length to be configured on the cloud router interface for this interconnect attachment.     - Both candidate_cloud_router_ipv6_address and    candidate_customer_router_ipv6_address fields must be set or both must be    unset.    - Prefix length of both candidate_cloud_router_ipv6_address and    candidate_customer_router_ipv6_address must be the same.    - Max prefix length is 126.",
@@ -74,7 +74,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        candidate_customer_router_ip_address: {
+        candidateCustomerRouterIpAddress: {
           name: "Candidate Customer Router Ip Address",
           description:
             "Single IPv4 address + prefix length to be configured on the customer router interface for this interconnect attachment.",
@@ -85,7 +85,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        candidate_customer_router_ipv6_address: {
+        candidateCustomerRouterIpv6Address: {
           name: "Candidate Customer Router Ipv6 Address",
           description:
             "Single IPv6 address + prefix length to be configured on the customer router interface for this interconnect attachment.",
@@ -96,7 +96,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        candidate_ipv6_subnets: {
+        candidateIpv6Subnets: {
           name: "Candidate Ipv6 Subnets",
           description: "This field is not available.",
           type: {
@@ -108,7 +108,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        candidate_subnets: {
+        candidateSubnets: {
           name: "Candidate Subnets",
           description:
             "Input only. Up to 16 candidate prefixes that can be used to restrict the allocation of cloudRouterIpAddress and customerRouterIpAddress for this attachment. All prefixes must be within link-local address space (169.254.0.0/16) and must be /29 or shorter (/28, /27, etc). Google will attempt to select an unused /29 from the supplied candidate prefix(es). The request will fail if all possible /29s are in use on Google's edge. If not supplied, Google will randomly select an unused /29 from all of link-local space.",
@@ -122,7 +122,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        cloud_router_ip_address: {
+        cloudRouterIpAddress: {
           name: "Cloud Router Ip Address",
           description:
             "Output only. [Output Only] IPv4 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
@@ -133,7 +133,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        cloud_router_ipv6_address: {
+        cloudRouterIpv6Address: {
           name: "Cloud Router Ipv6 Address",
           description:
             "Output only. [Output Only] IPv6 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
@@ -144,7 +144,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        cloud_router_ipv6_interface_id: {
+        cloudRouterIpv6InterfaceId: {
           name: "Cloud Router Ipv6 Interface Id",
           description: "This field is not available.",
           type: {
@@ -153,19 +153,19 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        configuration_constraints: {
+        configurationConstraints: {
           name: "Configuration Constraints",
           description:
             "Output only. [Output Only] Constraints for this attachment, if any. The attachment does not work if these constraints are not met.",
           type: {
             type: "object",
             properties: {
-              bgp_md5: {
+              bgpMd5: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Whether the attachment's BGP session requires/allows/disallows BGP MD5 authentication. This can take one of the following values: MD5_OPTIONAL, MD5_REQUIRED, MD5_UNSUPPORTED.  For example, a Cross-Cloud Interconnect connection to a remote cloud provider that requires BGP MD5 authentication has the interconnectRemoteLocation attachment_configuration_constraints.bgp_md5 field set to MD5_REQUIRED, and that property is propagated to the attachment. Similarly, if BGP MD5 is MD5_UNSUPPORTED, an error is returned if MD5 is requested. Check the BgpMd5 enum for the list of possible values.",
               },
-              bgp_peer_asn_ranges: {
+              bgpPeerAsnRanges: {
                 type: "array",
                 items: {
                   type: "object",
@@ -189,7 +189,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -200,7 +200,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        customer_router_ip_address: {
+        customerRouterIpAddress: {
           name: "Customer Router Ip Address",
           description:
             "Output only. [Output Only] IPv4 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
@@ -211,7 +211,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        customer_router_ipv6_address: {
+        customerRouterIpv6Address: {
           name: "Customer Router Ipv6 Address",
           description:
             "Output only. [Output Only] IPv6 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
@@ -222,7 +222,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        customer_router_ipv6_interface_id: {
+        customerRouterIpv6InterfaceId: {
           name: "Customer Router Ipv6 Interface Id",
           description: "This field is not available.",
           type: {
@@ -231,7 +231,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        dataplane_version: {
+        dataplaneVersion: {
           name: "Dataplane Version",
           description:
             "Output only. [Output Only] Dataplane version for this InterconnectAttachment. This field is only present for Dataplane version 2 and higher. Absence of this field in the API output indicates that the Dataplane is version 1.",
@@ -251,7 +251,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        edge_availability_domain: {
+        edgeAvailabilityDomain: {
           name: "Edge Availability Domain",
           description:
             "Input only. Desired availability domain for the attachment. Only available for type PARTNER, at creation time, and can take one of the following values:     - AVAILABILITY_DOMAIN_ANY    - AVAILABILITY_DOMAIN_1    - AVAILABILITY_DOMAIN_2   For improved reliability, customers should configure a pair of attachments, one per availability domain. The selected availability domain will be provided to the Partner via the pairing key, so that the provisioned circuit will lie in the specified domain. If not specified, the value will default to AVAILABILITY_DOMAIN_ANY. Check the EdgeAvailabilityDomain enum for the list of possible values.",
@@ -273,7 +273,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        google_reference_id: {
+        googleReferenceId: {
           name: "Google Reference Id",
           description:
             "Output only. [Output Only] Google reference ID, to be used when raising support tickets with Google or otherwise to debug backend connectivity issues. [Deprecated] This field is not used.",
@@ -305,7 +305,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        ipsec_internal_addresses: {
+        ipsecInternalAddresses: {
           name: "Ipsec Internal Addresses",
           description:
             "A list of URLs of addresses that have been reserved for the VLAN attachment. Used only for the VLAN attachment that has the encryption option as IPSEC. The addresses must be regional internal IP address ranges. When creating an HA VPN gateway over the VLAN attachment, if the attachment is configured to use a regional internal IP address, then the VPN gateway's IP address is allocated from the IP address range specified here. For example, if the HA VPN gateway's interface 0 is paired to this VLAN attachment, then a regional internal IP address for the VPN gateway interface 0 will be allocated from the IP address specified for this VLAN attachment. If this field is not specified when creating the VLAN attachment, then later on when creating an HA VPN gateway on this VLAN attachment, the HA VPN gateway's IP address is allocated from the regional external IP address pool.",
@@ -330,14 +330,14 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        l2_forwarding: {
+        l2Forwarding: {
           name: "L2 Forwarding",
           description:
             "L2 Interconnect Attachment related config. This field is required if the type is L2_DEDICATED.  The configuration specifies how VLAN tags (like dot1q, qinq, or dot1ad) within L2 packets are mapped to the destination appliances IP addresses. The packet is then encapsulated with the appliance IP address and sent to the edge appliance.",
           type: {
             type: "object",
             properties: {
-              appliance_mappings: {
+              applianceMappings: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -345,12 +345,12 @@ const insert: AppBlock = {
                 description:
                   'Optional. A map of VLAN tags to appliances and optional inner mapping rules. If VLANs are not explicitly mapped to any appliance, the defaultApplianceIpAddress is used.  Each VLAN tag can be a single number or a range of numbers in the range of 1 to 4094, e.g., "1" or "4001-4094". Non-empty and non-overlapping VLAN tag ranges are enforced, and violating operations will be rejected.  The VLAN tags in the Ethernet header must use an ethertype value of 0x88A8 or 0x8100.',
               },
-              default_appliance_ip_address: {
+              defaultApplianceIpAddress: {
                 type: "string",
                 description:
                   "Optional. A single IPv4 or IPv6 address used as the default destination IP when there is no VLAN mapping result found.  Unset field (null-value) indicates the unmatched packet should be dropped.",
               },
-              geneve_header: {
+              geneveHeader: {
                 type: "object",
                 properties: {
                   vni: {
@@ -367,7 +367,7 @@ const insert: AppBlock = {
                 description:
                   "Required. Resource URL of the network to which this attachment belongs.",
               },
-              tunnel_endpoint_ip_address: {
+              tunnelEndpointIpAddress: {
                 type: "string",
                 description:
                   "Required. A single IPv4 or IPv6 address. This address will be used as the source IP address for packets sent to the appliances, and must be used as the destination IP address for packets that should be sent out through this attachment.",
@@ -378,7 +378,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        label_fingerprint: {
+        labelFingerprint: {
           name: "Label Fingerprint",
           description:
             "A fingerprint for the labels being applied to this InterconnectAttachment, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an InterconnectAttachment.",
@@ -425,7 +425,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        operational_status: {
+        operationalStatus: {
           name: "Operational Status",
           description:
             "Output only. [Output Only] The current status of whether or not this interconnect attachment is functional, which can take one of the following values:     - OS_ACTIVE: The attachment has been turned up and is ready to    use.    - OS_UNPROVISIONED: The attachment is not ready to use yet,    because turnup is not complete. Check the OperationalStatus enum for the list of possible values.",
@@ -436,7 +436,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        pairing_key: {
+        pairingKey: {
           name: "Pairing Key",
           description:
             '[Output only for type PARTNER. Input only for PARTNER_PROVIDER. Not present for DEDICATED]. The opaque identifier of a PARTNER attachment used to initiate provisioning with a selected partner. Of the form "XXXXX/region/domain"',
@@ -454,7 +454,7 @@ const insert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -468,7 +468,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        partner_asn: {
+        partnerAsn: {
           name: "Partner Asn",
           description:
             "Optional BGP ASN for the router supplied by a Layer 3 Partner if they configured BGP on behalf of the customer. Output only for PARTNER type, input only for PARTNER_PROVIDER, not available for DEDICATED.",
@@ -478,24 +478,24 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        partner_metadata: {
+        partnerMetadata: {
           name: "Partner Metadata",
           description:
             "Informational metadata about Partner attachments from Partners to display to customers. Output only for PARTNER type, mutable for PARTNER_PROVIDER, not available for DEDICATED.",
           type: {
             type: "object",
             properties: {
-              interconnect_name: {
+              interconnectName: {
                 type: "string",
                 description:
                   'Plain text name of the Interconnect this attachment is connected to, as displayed in the Partner\'s portal. For instance "Chicago 1". This value may be validated to match approved Partner values.',
               },
-              partner_name: {
+              partnerName: {
                 type: "string",
                 description:
                   "Plain text name of the Partner providing this attachment. This value may be validated to match approved Partner values.",
               },
-              portal_url: {
+              portalUrl: {
                 type: "string",
                 description:
                   "URL of the Partner's portal for this Attachment. Partners may customise this to be a deep link to the specific resource on the Partner portal. This value may be validated to match approved Partner values.",
@@ -507,7 +507,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        private_interconnect_info: {
+        privateInterconnectInfo: {
           name: "Private Interconnect Info",
           description:
             "Output only. [Output Only] Information specific to an InterconnectAttachment. This property is populated if the interconnect that this is attached to is of type DEDICATED.",
@@ -526,7 +526,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        remote_service: {
+        remoteService: {
           name: "Remote Service",
           description:
             'Output only. [Output Only] If the attachment is on a Cross-Cloud Interconnect connection, this field contains the interconnect\'s remote location service provider. Example values: "Amazon Web Services" "Microsoft Azure".  The field is set only for attachments on Cross-Cloud Interconnect connections. Its value is copied from the InterconnectRemoteLocation remoteService field.',
@@ -548,7 +548,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzs: {
+        satisfiesPzs: {
           name: "Satisfies Pzs",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -557,7 +557,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] Server-defined URL for the resource.",
@@ -568,7 +568,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        stack_type: {
+        stackType: {
           name: "Stack Type",
           description:
             "The stack type for this interconnect attachment to identify whether the IPv6 feature is enabled or not. If not specified, IPV4_ONLY will be used.  This field can be both set at interconnect attachments creation and update interconnect attachment operations. Check the StackType enum for the list of possible values.",
@@ -590,7 +590,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        subnet_length: {
+        subnetLength: {
           name: "Subnet Length",
           description:
             "Input only. Length of the IPv4 subnet mask. Allowed values:       - 29 (default)     - 30  The default value is 29, except for Cross-Cloud Interconnect connections that use an InterconnectRemoteLocation with a constraints.subnetLengthRange.min equal to 30. For example, connections that use an Azure remote location fall into this category. In these cases, the default value is 30, and requesting 29 returns an error.  Where both 29 and 30 are allowed, 29 is preferred, because it gives Google Cloud Support more debugging visibility.",
@@ -612,7 +612,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        vlan_tag8021q: {
+        vlanTag8021q: {
           name: "Vlan Tag8021q",
           description:
             "The IEEE 802.1Q VLAN tag for this attachment, in the range 2-4093. Only specified at creation time.",
@@ -623,7 +623,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -632,7 +632,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description: "If true, the request will not be committed.",
           type: {
@@ -648,140 +648,129 @@ const insert: AppBlock = {
           pathParams["region"] = String(input.event.inputConfig.region);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
-        if (input.event.inputConfig.validate_only !== undefined)
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
+        if (input.event.inputConfig.validateOnly !== undefined)
           queryParams["validateOnly"] = String(
-            input.event.inputConfig.validate_only,
+            input.event.inputConfig.validateOnly,
           );
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.admin_enabled !== undefined)
-          body.admin_enabled = input.event.inputConfig.admin_enabled;
-        if (input.event.inputConfig.attachment_group !== undefined)
-          body.attachment_group = input.event.inputConfig.attachment_group;
+        if (input.event.inputConfig.adminEnabled !== undefined)
+          body.adminEnabled = input.event.inputConfig.adminEnabled;
+        if (input.event.inputConfig.attachmentGroup !== undefined)
+          body.attachmentGroup = input.event.inputConfig.attachmentGroup;
         if (input.event.inputConfig.bandwidth !== undefined)
           body.bandwidth = input.event.inputConfig.bandwidth;
+        if (input.event.inputConfig.candidateCloudRouterIpAddress !== undefined)
+          body.candidateCloudRouterIpAddress =
+            input.event.inputConfig.candidateCloudRouterIpAddress;
         if (
-          input.event.inputConfig.candidate_cloud_router_ip_address !==
+          input.event.inputConfig.candidateCloudRouterIpv6Address !== undefined
+        )
+          body.candidateCloudRouterIpv6Address =
+            input.event.inputConfig.candidateCloudRouterIpv6Address;
+        if (
+          input.event.inputConfig.candidateCustomerRouterIpAddress !== undefined
+        )
+          body.candidateCustomerRouterIpAddress =
+            input.event.inputConfig.candidateCustomerRouterIpAddress;
+        if (
+          input.event.inputConfig.candidateCustomerRouterIpv6Address !==
           undefined
         )
-          body.candidate_cloud_router_ip_address =
-            input.event.inputConfig.candidate_cloud_router_ip_address;
-        if (
-          input.event.inputConfig.candidate_cloud_router_ipv6_address !==
-          undefined
-        )
-          body.candidate_cloud_router_ipv6_address =
-            input.event.inputConfig.candidate_cloud_router_ipv6_address;
-        if (
-          input.event.inputConfig.candidate_customer_router_ip_address !==
-          undefined
-        )
-          body.candidate_customer_router_ip_address =
-            input.event.inputConfig.candidate_customer_router_ip_address;
-        if (
-          input.event.inputConfig.candidate_customer_router_ipv6_address !==
-          undefined
-        )
-          body.candidate_customer_router_ipv6_address =
-            input.event.inputConfig.candidate_customer_router_ipv6_address;
-        if (input.event.inputConfig.candidate_ipv6_subnets !== undefined)
-          body.candidate_ipv6_subnets =
-            input.event.inputConfig.candidate_ipv6_subnets;
-        if (input.event.inputConfig.candidate_subnets !== undefined)
-          body.candidate_subnets = input.event.inputConfig.candidate_subnets;
-        if (input.event.inputConfig.cloud_router_ip_address !== undefined)
-          body.cloud_router_ip_address =
-            input.event.inputConfig.cloud_router_ip_address;
-        if (input.event.inputConfig.cloud_router_ipv6_address !== undefined)
-          body.cloud_router_ipv6_address =
-            input.event.inputConfig.cloud_router_ipv6_address;
-        if (
-          input.event.inputConfig.cloud_router_ipv6_interface_id !== undefined
-        )
-          body.cloud_router_ipv6_interface_id =
-            input.event.inputConfig.cloud_router_ipv6_interface_id;
-        if (input.event.inputConfig.configuration_constraints !== undefined)
-          body.configuration_constraints =
-            input.event.inputConfig.configuration_constraints;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
-        if (input.event.inputConfig.customer_router_ip_address !== undefined)
-          body.customer_router_ip_address =
-            input.event.inputConfig.customer_router_ip_address;
-        if (input.event.inputConfig.customer_router_ipv6_address !== undefined)
-          body.customer_router_ipv6_address =
-            input.event.inputConfig.customer_router_ipv6_address;
-        if (
-          input.event.inputConfig.customer_router_ipv6_interface_id !==
-          undefined
-        )
-          body.customer_router_ipv6_interface_id =
-            input.event.inputConfig.customer_router_ipv6_interface_id;
-        if (input.event.inputConfig.dataplane_version !== undefined)
-          body.dataplane_version = input.event.inputConfig.dataplane_version;
+          body.candidateCustomerRouterIpv6Address =
+            input.event.inputConfig.candidateCustomerRouterIpv6Address;
+        if (input.event.inputConfig.candidateIpv6Subnets !== undefined)
+          body.candidateIpv6Subnets =
+            input.event.inputConfig.candidateIpv6Subnets;
+        if (input.event.inputConfig.candidateSubnets !== undefined)
+          body.candidateSubnets = input.event.inputConfig.candidateSubnets;
+        if (input.event.inputConfig.cloudRouterIpAddress !== undefined)
+          body.cloudRouterIpAddress =
+            input.event.inputConfig.cloudRouterIpAddress;
+        if (input.event.inputConfig.cloudRouterIpv6Address !== undefined)
+          body.cloudRouterIpv6Address =
+            input.event.inputConfig.cloudRouterIpv6Address;
+        if (input.event.inputConfig.cloudRouterIpv6InterfaceId !== undefined)
+          body.cloudRouterIpv6InterfaceId =
+            input.event.inputConfig.cloudRouterIpv6InterfaceId;
+        if (input.event.inputConfig.configurationConstraints !== undefined)
+          body.configurationConstraints =
+            input.event.inputConfig.configurationConstraints;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.customerRouterIpAddress !== undefined)
+          body.customerRouterIpAddress =
+            input.event.inputConfig.customerRouterIpAddress;
+        if (input.event.inputConfig.customerRouterIpv6Address !== undefined)
+          body.customerRouterIpv6Address =
+            input.event.inputConfig.customerRouterIpv6Address;
+        if (input.event.inputConfig.customerRouterIpv6InterfaceId !== undefined)
+          body.customerRouterIpv6InterfaceId =
+            input.event.inputConfig.customerRouterIpv6InterfaceId;
+        if (input.event.inputConfig.dataplaneVersion !== undefined)
+          body.dataplaneVersion = input.event.inputConfig.dataplaneVersion;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.edge_availability_domain !== undefined)
-          body.edge_availability_domain =
-            input.event.inputConfig.edge_availability_domain;
+        if (input.event.inputConfig.edgeAvailabilityDomain !== undefined)
+          body.edgeAvailabilityDomain =
+            input.event.inputConfig.edgeAvailabilityDomain;
         if (input.event.inputConfig.encryption !== undefined)
           body.encryption = input.event.inputConfig.encryption;
-        if (input.event.inputConfig.google_reference_id !== undefined)
-          body.google_reference_id =
-            input.event.inputConfig.google_reference_id;
+        if (input.event.inputConfig.googleReferenceId !== undefined)
+          body.googleReferenceId = input.event.inputConfig.googleReferenceId;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
         if (input.event.inputConfig.interconnect !== undefined)
           body.interconnect = input.event.inputConfig.interconnect;
-        if (input.event.inputConfig.ipsec_internal_addresses !== undefined)
-          body.ipsec_internal_addresses =
-            input.event.inputConfig.ipsec_internal_addresses;
+        if (input.event.inputConfig.ipsecInternalAddresses !== undefined)
+          body.ipsecInternalAddresses =
+            input.event.inputConfig.ipsecInternalAddresses;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.l2_forwarding !== undefined)
-          body.l2_forwarding = input.event.inputConfig.l2_forwarding;
-        if (input.event.inputConfig.label_fingerprint !== undefined)
-          body.label_fingerprint = input.event.inputConfig.label_fingerprint;
+        if (input.event.inputConfig.l2Forwarding !== undefined)
+          body.l2Forwarding = input.event.inputConfig.l2Forwarding;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
         if (input.event.inputConfig.labels !== undefined)
           body.labels = input.event.inputConfig.labels;
         if (input.event.inputConfig.mtu !== undefined)
           body.mtu = input.event.inputConfig.mtu;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.operational_status !== undefined)
-          body.operational_status = input.event.inputConfig.operational_status;
-        if (input.event.inputConfig.pairing_key !== undefined)
-          body.pairing_key = input.event.inputConfig.pairing_key;
+        if (input.event.inputConfig.operationalStatus !== undefined)
+          body.operationalStatus = input.event.inputConfig.operationalStatus;
+        if (input.event.inputConfig.pairingKey !== undefined)
+          body.pairingKey = input.event.inputConfig.pairingKey;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
-        if (input.event.inputConfig.partner_asn !== undefined)
-          body.partner_asn = input.event.inputConfig.partner_asn;
-        if (input.event.inputConfig.partner_metadata !== undefined)
-          body.partner_metadata = input.event.inputConfig.partner_metadata;
-        if (input.event.inputConfig.private_interconnect_info !== undefined)
-          body.private_interconnect_info =
-            input.event.inputConfig.private_interconnect_info;
+        if (input.event.inputConfig.partnerAsn !== undefined)
+          body.partnerAsn = input.event.inputConfig.partnerAsn;
+        if (input.event.inputConfig.partnerMetadata !== undefined)
+          body.partnerMetadata = input.event.inputConfig.partnerMetadata;
+        if (input.event.inputConfig.privateInterconnectInfo !== undefined)
+          body.privateInterconnectInfo =
+            input.event.inputConfig.privateInterconnectInfo;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.remote_service !== undefined)
-          body.remote_service = input.event.inputConfig.remote_service;
+        if (input.event.inputConfig.remoteService !== undefined)
+          body.remoteService = input.event.inputConfig.remoteService;
         if (input.event.inputConfig.router !== undefined)
           body.router = input.event.inputConfig.router;
-        if (input.event.inputConfig.satisfies_pzs !== undefined)
-          body.satisfies_pzs = input.event.inputConfig.satisfies_pzs;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.stack_type !== undefined)
-          body.stack_type = input.event.inputConfig.stack_type;
+        if (input.event.inputConfig.satisfiesPzs !== undefined)
+          body.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.stackType !== undefined)
+          body.stackType = input.event.inputConfig.stackType;
         if (input.event.inputConfig.state !== undefined)
           body.state = input.event.inputConfig.state;
-        if (input.event.inputConfig.subnet_length !== undefined)
-          body.subnet_length = input.event.inputConfig.subnet_length;
+        if (input.event.inputConfig.subnetLength !== undefined)
+          body.subnetLength = input.event.inputConfig.subnetLength;
         if (input.event.inputConfig.type !== undefined)
           body.type = input.event.inputConfig.type;
-        if (input.event.inputConfig.vlan_tag8021q !== undefined)
-          body.vlan_tag8021q = input.event.inputConfig.vlan_tag8021q;
+        if (input.event.inputConfig.vlanTag8021q !== undefined)
+          body.vlanTag8021q = input.event.inputConfig.vlanTag8021q;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -803,12 +792,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -817,7 +806,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -835,12 +824,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -895,7 +884,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -913,7 +902,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -924,7 +913,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -934,16 +923,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -980,12 +969,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -994,15 +983,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -1022,12 +1011,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -1042,18 +1031,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -1066,7 +1055,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -1077,16 +1066,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

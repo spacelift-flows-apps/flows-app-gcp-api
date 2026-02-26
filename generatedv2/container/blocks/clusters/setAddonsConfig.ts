@@ -1,5 +1,93 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  clusterId: "cluster_id",
+  addonsConfig: {
+    name: "addons_config",
+    fields: {
+      httpLoadBalancing: "http_load_balancing",
+      horizontalPodAutoscaling: "horizontal_pod_autoscaling",
+      kubernetesDashboard: "kubernetes_dashboard",
+      networkPolicyConfig: "network_policy_config",
+      cloudRunConfig: {
+        name: "cloud_run_config",
+        fields: {
+          loadBalancerType: "load_balancer_type",
+        },
+      },
+      dnsCacheConfig: "dns_cache_config",
+      configConnectorConfig: "config_connector_config",
+      gcePersistentDiskCsiDriverConfig: "gce_persistent_disk_csi_driver_config",
+      gcpFilestoreCsiDriverConfig: "gcp_filestore_csi_driver_config",
+      gkeBackupAgentConfig: "gke_backup_agent_config",
+      gcsFuseCsiDriverConfig: "gcs_fuse_csi_driver_config",
+      statefulHaConfig: "stateful_ha_config",
+      parallelstoreCsiDriverConfig: "parallelstore_csi_driver_config",
+      rayOperatorConfig: {
+        name: "ray_operator_config",
+        fields: {
+          rayClusterLoggingConfig: "ray_cluster_logging_config",
+          rayClusterMonitoringConfig: "ray_cluster_monitoring_config",
+        },
+      },
+      highScaleCheckpointingConfig: "high_scale_checkpointing_config",
+      lustreCsiDriverConfig: {
+        name: "lustre_csi_driver_config",
+        fields: {
+          enableLegacyLustrePort: "enable_legacy_lustre_port",
+        },
+      },
+      sliceControllerConfig: "slice_controller_config",
+    },
+  },
+};
+
+const outputMapping = {
+  operation_type: "operationType",
+  status_message: "statusMessage",
+  self_link: "selfLink",
+  target_link: "targetLink",
+  start_time: "startTime",
+  end_time: "endTime",
+  progress: {
+    name: "progress",
+    fields: {
+      metrics: {
+        name: "metrics",
+        fields: {
+          int_value: "intValue",
+          double_value: "doubleValue",
+          string_value: "stringValue",
+        },
+      },
+    },
+  },
+  cluster_conditions: {
+    name: "clusterConditions",
+    fields: {
+      canonical_code: "canonicalCode",
+    },
+  },
+  nodepool_conditions: {
+    name: "nodepoolConditions",
+    fields: {
+      canonical_code: "canonicalCode",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+};
 
 const setAddonsConfig: AppBlock = {
   name: "Set Addons Config",
@@ -8,7 +96,7 @@ const setAddonsConfig: AppBlock = {
   inputs: {
     default: {
       config: {
-        project_id: {
+        projectId: {
           name: "Project Id",
           description:
             "Deprecated. The Google Developers Console [project ID or project number](https://cloud.google.com/resource-manager/docs/creating-managing-projects). This field has been deprecated and replaced by the name field.",
@@ -30,7 +118,7 @@ const setAddonsConfig: AppBlock = {
           },
           required: false,
         },
-        cluster_id: {
+        clusterId: {
           name: "Cluster Id",
           description:
             "Deprecated. The name of the cluster to upgrade. This field has been deprecated and replaced by the name field.",
@@ -41,14 +129,14 @@ const setAddonsConfig: AppBlock = {
           },
           required: false,
         },
-        addons_config: {
+        addonsConfig: {
           name: "Addons Config",
           description:
             "Required. The desired configurations for the various addons available to run in the cluster.",
           type: {
             type: "object",
             properties: {
-              http_load_balancing: {
+              httpLoadBalancing: {
                 type: "object",
                 properties: {
                   disabled: {
@@ -61,7 +149,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration options for the HTTP (L7) load balancing controller addon, which makes it easy to set up HTTP load balancers for services in a cluster.",
                 additionalProperties: true,
               },
-              horizontal_pod_autoscaling: {
+              horizontalPodAutoscaling: {
                 type: "object",
                 properties: {
                   disabled: {
@@ -74,7 +162,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration options for the horizontal pod autoscaling feature, which increases or decreases the number of replica pods a replication controller has based on the resource usage of the existing pods.",
                 additionalProperties: true,
               },
-              kubernetes_dashboard: {
+              kubernetesDashboard: {
                 type: "object",
                 properties: {
                   disabled: {
@@ -86,7 +174,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for the Kubernetes Dashboard.",
                 additionalProperties: true,
               },
-              network_policy_config: {
+              networkPolicyConfig: {
                 type: "object",
                 properties: {
                   disabled: {
@@ -99,7 +187,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes.",
                 additionalProperties: true,
               },
-              cloud_run_config: {
+              cloudRunConfig: {
                 type: "object",
                 properties: {
                   disabled: {
@@ -107,7 +195,7 @@ const setAddonsConfig: AppBlock = {
                     description:
                       "Whether Cloud Run addon is enabled for this cluster.",
                   },
-                  load_balancer_type: {
+                  loadBalancerType: {
                     type: "string",
                     enum: [
                       "LOAD_BALANCER_TYPE_UNSPECIFIED",
@@ -121,7 +209,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration options for the Cloud Run feature.",
                 additionalProperties: true,
               },
-              dns_cache_config: {
+              dnsCacheConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -133,7 +221,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for NodeLocal DNSCache",
                 additionalProperties: true,
               },
-              config_connector_config: {
+              configConnectorConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -146,7 +234,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration options for the Config Connector add-on.",
                 additionalProperties: true,
               },
-              gce_persistent_disk_csi_driver_config: {
+              gcePersistentDiskCsiDriverConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -159,7 +247,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration for the Compute Engine PD CSI driver.",
                 additionalProperties: true,
               },
-              gcp_filestore_csi_driver_config: {
+              gcpFilestoreCsiDriverConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -171,7 +259,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for the Filestore CSI driver.",
                 additionalProperties: true,
               },
-              gke_backup_agent_config: {
+              gkeBackupAgentConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -183,7 +271,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for the Backup for GKE Agent.",
                 additionalProperties: true,
               },
-              gcs_fuse_csi_driver_config: {
+              gcsFuseCsiDriverConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -196,7 +284,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration for the Cloud Storage Fuse CSI driver.",
                 additionalProperties: true,
               },
-              stateful_ha_config: {
+              statefulHaConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -208,7 +296,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for the Stateful HA add-on.",
                 additionalProperties: true,
               },
-              parallelstore_csi_driver_config: {
+              parallelstoreCsiDriverConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -221,7 +309,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration for the Cloud Storage Parallelstore CSI driver.",
                 additionalProperties: true,
               },
-              ray_operator_config: {
+              rayOperatorConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -229,7 +317,7 @@ const setAddonsConfig: AppBlock = {
                     description:
                       "Whether the Ray Operator addon is enabled for this cluster.",
                   },
-                  ray_cluster_logging_config: {
+                  rayClusterLoggingConfig: {
                     type: "object",
                     properties: {
                       enabled: {
@@ -241,7 +329,7 @@ const setAddonsConfig: AppBlock = {
                       "RayClusterLoggingConfig specifies configuration of Ray logging.",
                     additionalProperties: true,
                   },
-                  ray_cluster_monitoring_config: {
+                  rayClusterMonitoringConfig: {
                     type: "object",
                     properties: {
                       enabled: {
@@ -259,7 +347,7 @@ const setAddonsConfig: AppBlock = {
                   "Configuration options for the Ray Operator add-on.",
                 additionalProperties: true,
               },
-              high_scale_checkpointing_config: {
+              highScaleCheckpointingConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -271,7 +359,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for the High Scale Checkpointing.",
                 additionalProperties: true,
               },
-              lustre_csi_driver_config: {
+              lustreCsiDriverConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -279,7 +367,7 @@ const setAddonsConfig: AppBlock = {
                     description:
                       "Whether the Lustre CSI driver is enabled for this cluster.",
                   },
-                  enable_legacy_lustre_port: {
+                  enableLegacyLustrePort: {
                     type: "boolean",
                     description:
                       "If set to true, the Lustre CSI driver will install Lustre kernel modules using port 6988. This serves as a workaround for a port conflict with the gke-metadata-server. This field is required ONLY under the following conditions: 1. The GKE node version is older than 1.33.2-gke.4655000. 2. You're connecting to a Lustre instance that has the 'gke-support-enabled' flag. Deprecated: This flag is no longer required as of GKE node version 1.33.2-gke.4655000, unless you are connecting to a Lustre instance that has the `gke-support-enabled` flag.",
@@ -288,7 +376,7 @@ const setAddonsConfig: AppBlock = {
                 description: "Configuration for the Lustre CSI driver.",
                 additionalProperties: true,
               },
-              slice_controller_config: {
+              sliceControllerConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -322,17 +410,7 @@ const setAddonsConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.zone !== undefined)
-          request.zone = input.event.inputConfig.zone;
-        if (input.event.inputConfig.cluster_id !== undefined)
-          request.cluster_id = input.event.inputConfig.cluster_id;
-        if (input.event.inputConfig.addons_config !== undefined)
-          request.addons_config = input.event.inputConfig.addons_config;
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.setAddonsConfig(request, (err: any, response: any) => {
@@ -346,7 +424,8 @@ const setAddonsConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -366,7 +445,7 @@ const setAddonsConfig: AppBlock = {
             description:
               "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/zones#available) in which the operation is taking place. This field is deprecated, use location instead.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             enum: [
               "TYPE_UNSPECIFIED",
@@ -407,17 +486,17 @@ const setAddonsConfig: AppBlock = {
             description:
               "Output only. Detailed operation progress, if available.",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "Output only. If an error has occurred, a textual description of the error. Deprecated. Use the field error instead.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. Server-defined URI for the operation. Example: `https://container.googleapis.com/v1alpha1/projects/123/locations/us-central1/operations/operation-123`.",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "Output only. Server-defined URI for the target of the operation. The format of this is a URI to the resource being modified (such as a cluster, node pool, or node). For node pool repairs, there may be multiple nodes being repaired, but only one will be the target.  Examples:  - ## `https://container.googleapis.com/v1/projects/123/locations/us-central1/clusters/my-cluster`  ## `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np`  `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np/node/my-node`",
@@ -427,12 +506,12 @@ const setAddonsConfig: AppBlock = {
             description:
               "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) or [region](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) in which the cluster resides.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "Output only. The time the operation started, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "Output only. The time the operation completed, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
@@ -467,17 +546,17 @@ const setAddonsConfig: AppBlock = {
                       description:
                         'Required. Metric name, e.g., "nodes total", "percent done".',
                     },
-                    int_value: {
+                    intValue: {
                       type: "string",
                       description:
                         "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                     },
-                    double_value: {
+                    doubleValue: {
                       type: "number",
                       description:
                         "For metrics with floating point value. (Part of 'value' - only one field in this group can be set)",
                     },
-                    string_value: {
+                    stringValue: {
                       type: "string",
                       description:
                         "For metrics with custom values (ratios, visual progress, etc.). (Part of 'value' - only one field in this group can be set)",
@@ -504,7 +583,7 @@ const setAddonsConfig: AppBlock = {
               "Information about operation (or operation stage) progress.",
             additionalProperties: true,
           },
-          cluster_conditions: {
+          clusterConditions: {
             type: "array",
             items: {
               type: "object",
@@ -529,7 +608,7 @@ const setAddonsConfig: AppBlock = {
                   type: "string",
                   description: "Human-friendly representation of the condition",
                 },
-                canonical_code: {
+                canonicalCode: {
                   type: "string",
                   enum: [
                     "OK",
@@ -560,7 +639,7 @@ const setAddonsConfig: AppBlock = {
             description:
               "Which conditions caused the current cluster state. Deprecated. Use field error instead.",
           },
-          nodepool_conditions: {
+          nodepoolConditions: {
             type: "array",
             items: {
               type: "object",
@@ -585,7 +664,7 @@ const setAddonsConfig: AppBlock = {
                   type: "string",
                   description: "Human-friendly representation of the condition",
                 },
-                canonical_code: {
+                canonicalCode: {
                   type: "string",
                   enum: [
                     "OK",
@@ -630,7 +709,7 @@ const setAddonsConfig: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {

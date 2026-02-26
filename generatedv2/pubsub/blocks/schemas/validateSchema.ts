@@ -51,11 +51,7 @@ const validateSchema: AppBlock = {
       onEvent: async (input) => {
         const client = await getSchemaServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.schema !== undefined)
-          request.schema = input.event.inputConfig.schema;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.validateSchema(request, (err: any, response: any) => {

@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        ssl_policy: {
+        sslPolicy: {
           name: "Ssl Policy",
           description:
             "Name of the SSL policy to update. The name must be 1-63 characters long, and comply with RFC1035.",
@@ -31,8 +31,8 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.ssl_policy !== undefined)
-          pathParams["ssl_policy"] = String(input.event.inputConfig.ssl_policy);
+        if (input.event.inputConfig.sslPolicy !== undefined)
+          pathParams["ssl_policy"] = String(input.event.inputConfig.sslPolicy);
 
         const result = await computeFetch({
           config: input.app.config,
@@ -52,12 +52,12 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
-          custom_features: {
+          customFeatures: {
             type: "array",
             items: {
               type: "string",
@@ -70,7 +70,7 @@ const get: AppBlock = {
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
           },
-          enabled_features: {
+          enabledFeatures: {
             type: "array",
             items: {
               type: "string",
@@ -92,7 +92,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output only] Type of the resource. Alwayscompute#sslPolicyfor SSL policies.",
           },
-          min_tls_version: {
+          minTlsVersion: {
             type: "string",
             description:
               "The minimum version of SSL protocol that can be used by the clients to establish a connection with the load balancer. This can be one ofTLS_1_0, TLS_1_1, TLS_1_2,TLS_1_3. When set to TLS_1_3, the profile field must be set to RESTRICTED. Check the MinTlsVersion enum for the list of possible values.",
@@ -112,7 +112,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] URL of the region where the regional SSL policy resides. This field is not applicable to global SSL policies.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",

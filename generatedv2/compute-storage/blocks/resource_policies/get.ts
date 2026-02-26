@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        resource_policy: {
+        resourcePolicy: {
           name: "Resource Policy",
           description: "Name of the resource policy to retrieve.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.resource_policy !== undefined)
+        if (input.event.inputConfig.resourcePolicy !== undefined)
           pathParams["resource_policy"] = String(
-            input.event.inputConfig.resource_policy,
+            input.event.inputConfig.resourcePolicy,
           );
 
         const result = await computeFetch({
@@ -53,7 +53,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -61,16 +61,16 @@ const get: AppBlock = {
           description: {
             type: "string",
           },
-          disk_consistency_group_policy: {
+          diskConsistencyGroupPolicy: {
             type: "object",
             properties: {},
             description: "Resource policy for disk consistency groups.",
             additionalProperties: true,
           },
-          group_placement_policy: {
+          groupPlacementPolicy: {
             type: "object",
             properties: {
-              availability_domain_count: {
+              availabilityDomainCount: {
                 type: "integer",
                 description:
                   "The number of availability domains to spread instances across. If two instances are in different availability domain, they are not in the same low latency network.",
@@ -80,12 +80,12 @@ const get: AppBlock = {
                 description:
                   "Specifies network collocation Check the Collocation enum for the list of possible values.",
               },
-              gpu_topology: {
+              gpuTopology: {
                 type: "string",
                 description:
                   "Specifies the shape of the GPU slice, in slice based GPU families eg. A4X.",
               },
-              vm_count: {
+              vmCount: {
                 type: "integer",
                 description:
                   "Number of VMs in this placement group. Google does not recommend that you use this field unless you use a compact policy and you want your policy to work only if it contains this exact number of VMs.",
@@ -99,25 +99,25 @@ const get: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          instance_schedule_policy: {
+          instanceSchedulePolicy: {
             type: "object",
             properties: {
-              expiration_time: {
+              expirationTime: {
                 type: "string",
                 description:
                   "The expiration time of the schedule. The timestamp is an RFC3339 string.",
               },
-              start_time: {
+              startTime: {
                 type: "string",
                 description:
                   "The start time of the schedule. The timestamp is an RFC3339 string.",
               },
-              time_zone: {
+              timeZone: {
                 type: "string",
                 description:
                   "Specifies the time zone to be used in interpreting Schedule.schedule. The value of this field must be a time zone name from the tz database: https://wikipedia.org/wiki/Tz_database.",
               },
-              vm_start_schedule: {
+              vmStartSchedule: {
                 type: "object",
                 properties: {
                   schedule: {
@@ -129,7 +129,7 @@ const get: AppBlock = {
                 description: "Schedule for an instance operation.",
                 additionalProperties: true,
               },
-              vm_stop_schedule: {
+              vmStopSchedule: {
                 type: "object",
                 properties: {
                   schedule: {
@@ -159,18 +159,18 @@ const get: AppBlock = {
           region: {
             type: "string",
           },
-          resource_status: {
+          resourceStatus: {
             type: "object",
             properties: {
-              instance_schedule_policy: {
+              instanceSchedulePolicy: {
                 type: "object",
                 properties: {
-                  last_run_start_time: {
+                  lastRunStartTime: {
                     type: "string",
                     description:
                       "Output only. [Output Only] The last time the schedule successfully ran. The timestamp is an RFC3339 string.",
                   },
-                  next_run_start_time: {
+                  nextRunStartTime: {
                     type: "string",
                     description:
                       "Output only. [Output Only] The next time the schedule is planned to run. The actual time might be slightly different. The timestamp is an RFC3339 string.",
@@ -185,23 +185,23 @@ const get: AppBlock = {
               'Contains output only fields. Use this sub-message for all output fields set on ResourcePolicy. The internal structure of this "status" field should mimic the structure of ResourcePolicy proto specification.',
             additionalProperties: true,
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
           },
-          snapshot_schedule_policy: {
+          snapshotSchedulePolicy: {
             type: "object",
             properties: {
-              retention_policy: {
+              retentionPolicy: {
                 type: "object",
                 properties: {
-                  max_retention_days: {
+                  maxRetentionDays: {
                     type: "integer",
                     description:
                       "Maximum age of the snapshot that is allowed to be kept.",
                   },
-                  on_source_disk_delete: {
+                  onSourceDiskDelete: {
                     type: "string",
                     description:
                       "Specifies the behavior to apply to scheduled snapshots when the source disk is deleted. Check the OnSourceDiskDelete enum for the list of possible values.",
@@ -213,10 +213,10 @@ const get: AppBlock = {
               schedule: {
                 type: "object",
                 properties: {
-                  daily_schedule: {
+                  dailySchedule: {
                     type: "object",
                     properties: {
-                      days_in_cycle: {
+                      daysInCycle: {
                         type: "integer",
                         description:
                           "Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle.",
@@ -226,7 +226,7 @@ const get: AppBlock = {
                         description:
                           "Output only. [Output only] A predetermined duration for the window, automatically chosen to be the smallest possible in the given scenario.",
                       },
-                      start_time: {
+                      startTime: {
                         type: "string",
                         description:
                           "Start time of the window. This must be in UTC format that resolves to one of 00:00, 04:00, 08:00,12:00, 16:00, or 20:00. For example, both 13:00-5 and 08:00 are valid.",
@@ -235,7 +235,7 @@ const get: AppBlock = {
                     description: "Time window specified for daily operations.",
                     additionalProperties: true,
                   },
-                  hourly_schedule: {
+                  hourlySchedule: {
                     type: "object",
                     properties: {
                       duration: {
@@ -243,12 +243,12 @@ const get: AppBlock = {
                         description:
                           "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                       },
-                      hours_in_cycle: {
+                      hoursInCycle: {
                         type: "integer",
                         description:
                           "Defines a schedule with units measured in hours. The value determines how many hours pass between the start of each cycle.",
                       },
-                      start_time: {
+                      startTime: {
                         type: "string",
                         description:
                           'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
@@ -257,10 +257,10 @@ const get: AppBlock = {
                     description: "Time window specified for hourly operations.",
                     additionalProperties: true,
                   },
-                  weekly_schedule: {
+                  weeklySchedule: {
                     type: "object",
                     properties: {
-                      day_of_weeks: {
+                      dayOfWeeks: {
                         type: "array",
                         items: {
                           type: "object",
@@ -275,7 +275,7 @@ const get: AppBlock = {
                               description:
                                 "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                             },
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
@@ -295,14 +295,14 @@ const get: AppBlock = {
                   "A schedule for disks where the schedueled operations are performed.",
                 additionalProperties: true,
               },
-              snapshot_properties: {
+              snapshotProperties: {
                 type: "object",
                 properties: {
-                  chain_name: {
+                  chainName: {
                     type: "string",
                     description: "Chain name that the snapshot is created in.",
                   },
-                  guest_flush: {
+                  guestFlush: {
                     type: "boolean",
                     description:
                       "Indication to perform a 'guest aware' snapshot.",
@@ -315,7 +315,7 @@ const get: AppBlock = {
                     description:
                       "Labels to apply to scheduled snapshots. These can be later modified by the setLabels method. Label values may be empty.",
                   },
-                  storage_locations: {
+                  storageLocations: {
                     type: "array",
                     items: {
                       type: "string",
@@ -338,15 +338,15 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The status of resource policy creation. Check the Status enum for the list of possible values.",
           },
-          workload_policy: {
+          workloadPolicy: {
             type: "object",
             properties: {
-              accelerator_topology: {
+              acceleratorTopology: {
                 type: "string",
                 description:
                   "Specifies the topology required to create a partition for VMs that have interconnected GPUs.",
               },
-              max_topology_distance: {
+              maxTopologyDistance: {
                 type: "string",
                 description:
                   "Specifies the maximum distance between instances. Check the MaxTopologyDistance enum for the list of possible values.",

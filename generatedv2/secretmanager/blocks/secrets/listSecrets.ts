@@ -1,5 +1,71 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSecretManagerServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSecretManagerServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  secrets: {
+    name: "secrets",
+    fields: {
+      replication: {
+        name: "replication",
+        fields: {
+          automatic: {
+            name: "automatic",
+            fields: {
+              customer_managed_encryption: {
+                name: "customerManagedEncryption",
+                fields: {
+                  kms_key_name: "kmsKeyName",
+                },
+              },
+            },
+          },
+          user_managed: {
+            name: "userManaged",
+            fields: {
+              replicas: {
+                name: "replicas",
+                fields: {
+                  customer_managed_encryption: {
+                    name: "customerManagedEncryption",
+                    fields: {
+                      kms_key_name: "kmsKeyName",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      create_time: "createTime",
+      expire_time: "expireTime",
+      rotation: {
+        name: "rotation",
+        fields: {
+          next_rotation_time: "nextRotationTime",
+        },
+      },
+      version_aliases: "versionAliases",
+      version_destroy_ttl: "versionDestroyTtl",
+      customer_managed_encryption: {
+        name: "customerManagedEncryption",
+        fields: {
+          kms_key_name: "kmsKeyName",
+        },
+      },
+    },
+  },
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listSecrets: AppBlock = {
   name: "List Secrets",
@@ -19,7 +85,7 @@ const listSecrets: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of results to be returned in a single page. If set to 0, the server decides the number of results to return. If the number is greater than 25000, it is capped at 25000.",
@@ -30,7 +96,7 @@ const listSecrets: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. Pagination token, returned earlier via [ListSecretsResponse.next_page_token][google.cloud.secretmanager.v1.ListSecretsResponse.next_page_token].",
@@ -56,15 +122,7 @@ const listSecrets: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listSecrets(request, (err: any, response: any) => {
@@ -78,7 +136,8 @@ const listSecrets: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -104,16 +163,16 @@ const listSecrets: AppBlock = {
                     automatic: {
                       type: "object",
                       properties: {
-                        customer_managed_encryption: {
+                        customerManagedEncryption: {
                           type: "object",
                           properties: {
-                            kms_key_name: {
+                            kmsKeyName: {
                               type: "string",
                               description:
                                 "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                             },
                           },
-                          required: ["kms_key_name"],
+                          required: ["kmsKeyName"],
                           description:
                             "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                           additionalProperties: true,
@@ -123,7 +182,7 @@ const listSecrets: AppBlock = {
                         "A replication policy that replicates the [Secret][google.cloud.secretmanager.v1.Secret] payload without any restrictions. (Part of 'replication' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    user_managed: {
+                    userManaged: {
                       type: "object",
                       properties: {
                         replicas: {
@@ -136,16 +195,16 @@ const listSecrets: AppBlock = {
                                 description:
                                   'The canonical IDs of the location to replicate data. For example: `"us-east1"`.',
                               },
-                              customer_managed_encryption: {
+                              customerManagedEncryption: {
                                 type: "object",
                                 properties: {
-                                  kms_key_name: {
+                                  kmsKeyName: {
                                     type: "string",
                                     description:
                                       "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                                   },
                                 },
-                                required: ["kms_key_name"],
+                                required: ["kmsKeyName"],
                                 description:
                                   "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                                 additionalProperties: true,
@@ -169,7 +228,7 @@ const listSecrets: AppBlock = {
                     "A policy that defines the replication and encryption configuration of data.",
                   additionalProperties: true,
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -200,7 +259,7 @@ const listSecrets: AppBlock = {
                   description:
                     "Optional. A list of up to 10 Pub/Sub topics to which messages are published when control plane operations are called on the secret or its versions.",
                 },
-                expire_time: {
+                expireTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z') (Part of 'expiration' - only one field in this group can be set)",
@@ -213,7 +272,7 @@ const listSecrets: AppBlock = {
                 rotation: {
                   type: "object",
                   properties: {
-                    next_rotation_time: {
+                    nextRotationTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -223,7 +282,7 @@ const listSecrets: AppBlock = {
                     "The rotation time and period for a [Secret][google.cloud.secretmanager.v1.Secret]. At next_rotation_time, Secret Manager will send a Pub/Sub notification to the topics configured on the Secret. [Secret.topics][google.cloud.secretmanager.v1.Secret.topics] must be set to configure rotation.",
                   additionalProperties: true,
                 },
-                version_aliases: {
+                versionAliases: {
                   type: "object",
                   additionalProperties: {
                     type: "string",
@@ -239,20 +298,20 @@ const listSecrets: AppBlock = {
                   description:
                     "Optional. Custom metadata about the secret.  Annotations are distinct from various forms of labels. Annotations exist to allow client tools to store their own state information without requiring a database.  Annotation keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes, begin and end with an alphanumeric character ([a-z0-9A-Z]), and may have dashes (-), underscores (_), dots (.), and alphanumerics in between these symbols.  The total size of annotation keys and values must be less than 16KiB.",
                 },
-                version_destroy_ttl: {
+                versionDestroyTtl: {
                   type: "string",
                   description: "Duration string (e.g., '1.5s', '300s')",
                 },
-                customer_managed_encryption: {
+                customerManagedEncryption: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                     },
                   },
-                  required: ["kms_key_name"],
+                  required: ["kmsKeyName"],
                   description:
                     "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                   additionalProperties: true,
@@ -265,12 +324,12 @@ const listSecrets: AppBlock = {
             description:
               "The list of [Secrets][google.cloud.secretmanager.v1.Secret] sorted in reverse by create_time (newest first).",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token to retrieve the next page of results. Pass this value in [ListSecretsRequest.page_token][google.cloud.secretmanager.v1.ListSecretsRequest.page_token] to retrieve the next page.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description:
               "The total number of [Secrets][google.cloud.secretmanager.v1.Secret] but 0 when the [ListSecretsRequest.filter][google.cloud.secretmanager.v1.ListSecretsRequest.filter] field is set.",

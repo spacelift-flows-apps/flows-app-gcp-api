@@ -1,5 +1,13 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  bytesToSign: "bytes_to_sign",
+};
+
+const outputMapping = {
+  key_id: "keyId",
+};
 
 const signBlob: AppBlock = {
   name: "Sign Blob",
@@ -19,7 +27,7 @@ const signBlob: AppBlock = {
           },
           required: true,
         },
-        bytes_to_sign: {
+        bytesToSign: {
           name: "Bytes To Sign",
           description:
             "Required. Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The bytes to sign.",
@@ -33,11 +41,7 @@ const signBlob: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.bytes_to_sign !== undefined)
-          request.bytes_to_sign = input.event.inputConfig.bytes_to_sign;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.signBlob(request, (err: any, response: any) => {
@@ -51,7 +55,8 @@ const signBlob: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -61,7 +66,7 @@ const signBlob: AppBlock = {
       type: {
         type: "object",
         properties: {
-          key_id: {
+          keyId: {
             type: "string",
             description:
               "Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The id of the key used to sign the blob.",

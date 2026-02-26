@@ -2,7 +2,13 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  triggerId: "trigger_id",
+};
 
 const deleteBuildTrigger: AppBlock = {
   name: "Delete Build Trigger",
@@ -22,7 +28,7 @@ const deleteBuildTrigger: AppBlock = {
           },
           required: false,
         },
-        project_id: {
+        projectId: {
           name: "Project Id",
           description: "Required. ID of the project that owns the trigger.",
           type: {
@@ -31,7 +37,7 @@ const deleteBuildTrigger: AppBlock = {
           },
           required: true,
         },
-        trigger_id: {
+        triggerId: {
           name: "Trigger Id",
           description: "Required. ID of the `BuildTrigger` to delete.",
           type: {
@@ -44,13 +50,7 @@ const deleteBuildTrigger: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.trigger_id !== undefined)
-          request.trigger_id = input.event.inputConfig.trigger_id;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined) {

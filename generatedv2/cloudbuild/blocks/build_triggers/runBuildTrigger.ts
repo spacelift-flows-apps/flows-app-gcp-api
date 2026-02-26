@@ -2,7 +2,50 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  triggerId: "trigger_id",
+  source: {
+    name: "source",
+    fields: {
+      projectId: "project_id",
+      repoName: "repo_name",
+      branchName: "branch_name",
+      tagName: "tag_name",
+      commitSha: "commit_sha",
+      invertRegex: "invert_regex",
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const runBuildTrigger: AppBlock = {
   name: "Run Build Trigger",
@@ -22,7 +65,7 @@ const runBuildTrigger: AppBlock = {
           },
           required: false,
         },
-        project_id: {
+        projectId: {
           name: "Project Id",
           description: "Required. ID of the project.",
           type: {
@@ -31,7 +74,7 @@ const runBuildTrigger: AppBlock = {
           },
           required: true,
         },
-        trigger_id: {
+        triggerId: {
           name: "Trigger Id",
           description: "Required. ID of the trigger.",
           type: {
@@ -47,26 +90,26 @@ const runBuildTrigger: AppBlock = {
           type: {
             type: "object",
             properties: {
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
               },
-              repo_name: {
+              repoName: {
                 type: "string",
                 description: "Required. Name of the Cloud Source Repository.",
               },
-              branch_name: {
+              branchName: {
                 type: "string",
                 description:
                   "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
               },
-              tag_name: {
+              tagName: {
                 type: "string",
                 description:
                   "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
               },
-              commit_sha: {
+              commitSha: {
                 type: "string",
                 description:
                   "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -76,7 +119,7 @@ const runBuildTrigger: AppBlock = {
                 description:
                   "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
               },
-              invert_regex: {
+              invertRegex: {
                 type: "boolean",
                 description:
                   "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -90,7 +133,7 @@ const runBuildTrigger: AppBlock = {
                   "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
               },
             },
-            required: ["repo_name"],
+            required: ["repoName"],
             description:
               "Location of the source in a Google Cloud Source Repository.",
             additionalProperties: true,
@@ -101,15 +144,7 @@ const runBuildTrigger: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.trigger_id !== undefined)
-          request.trigger_id = input.event.inputConfig.trigger_id;
-        if (input.event.inputConfig.source !== undefined)
-          request.source = input.event.inputConfig.source;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined) {
@@ -133,7 +168,8 @@ const runBuildTrigger: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -149,7 +185,7 @@ const runBuildTrigger: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -176,7 +212,7 @@ const runBuildTrigger: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -195,7 +231,7 @@ const runBuildTrigger: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

@@ -1,5 +1,34 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getHsmManagementClient } from "../../lib/grpcClient.ts";
+import { getHsmManagementClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  orderBy: "order_by",
+  showDeleted: "show_deleted",
+};
+
+const outputMapping = {
+  single_tenant_hsm_instances: {
+    name: "singleTenantHsmInstances",
+    fields: {
+      create_time: "createTime",
+      quorum_auth: {
+        name: "quorumAuth",
+        fields: {
+          total_approver_count: "totalApproverCount",
+          required_approver_count: "requiredApproverCount",
+          two_factor_public_key_pems: "twoFactorPublicKeyPems",
+        },
+      },
+      delete_time: "deleteTime",
+      unrefreshed_duration_until_disable: "unrefreshedDurationUntilDisable",
+      disable_time: "disableTime",
+    },
+  },
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listSingleTenantHsmInstances: AppBlock = {
   name: "List Single Tenant Hsm Instances",
@@ -19,7 +48,7 @@ const listSingleTenantHsmInstances: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. Optional limit on the number of [SingleTenantHsmInstances][google.cloud.kms.v1.SingleTenantHsmInstance] to include in the response. Further [SingleTenantHsmInstances][google.cloud.kms.v1.SingleTenantHsmInstance] can subsequently be obtained by including the [ListSingleTenantHsmInstancesResponse.next_page_token][google.cloud.kms.v1.ListSingleTenantHsmInstancesResponse.next_page_token] in a subsequent request. If unspecified, the server will pick an appropriate default.",
@@ -30,7 +59,7 @@ const listSingleTenantHsmInstances: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. Optional pagination token, returned earlier via [ListSingleTenantHsmInstancesResponse.next_page_token][google.cloud.kms.v1.ListSingleTenantHsmInstancesResponse.next_page_token].",
@@ -52,7 +81,7 @@ const listSingleTenantHsmInstances: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order.  For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
@@ -63,7 +92,7 @@ const listSingleTenantHsmInstances: AppBlock = {
           },
           required: false,
         },
-        show_deleted: {
+        showDeleted: {
           name: "Show Deleted",
           description:
             "Optional. If set to true, [HsmManagement.ListSingleTenantHsmInstances][google.cloud.kms.v1.HsmManagement.ListSingleTenantHsmInstances] will also return [SingleTenantHsmInstances][google.cloud.kms.v1.SingleTenantHsmInstance] in DELETED state.",
@@ -78,19 +107,7 @@ const listSingleTenantHsmInstances: AppBlock = {
       onEvent: async (input) => {
         const client = await getHsmManagementClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.order_by !== undefined)
-          request.order_by = input.event.inputConfig.order_by;
-        if (input.event.inputConfig.show_deleted !== undefined)
-          request.show_deleted = input.event.inputConfig.show_deleted;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listSingleTenantHsmInstances(
@@ -107,7 +124,8 @@ const listSingleTenantHsmInstances: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -117,7 +135,7 @@ const listSingleTenantHsmInstances: AppBlock = {
       type: {
         type: "object",
         properties: {
-          single_tenant_hsm_instances: {
+          singleTenantHsmInstances: {
             type: "array",
             items: {
               type: "object",
@@ -127,7 +145,7 @@ const listSingleTenantHsmInstances: AppBlock = {
                   description:
                     "Identifier. The resource name for this [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] in the format `projects/*/locations/*/singleTenantHsmInstances/*`.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -148,20 +166,20 @@ const listSingleTenantHsmInstances: AppBlock = {
                   description:
                     "Output only. The state of the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance].",
                 },
-                quorum_auth: {
+                quorumAuth: {
                   type: "object",
                   properties: {
-                    total_approver_count: {
+                    totalApproverCount: {
                       type: "integer",
                       description:
                         "Required. The total number of approvers. This is the N value used for M of N quorum auth. Must be greater than or equal to 3 and less than or equal to 16.",
                     },
-                    required_approver_count: {
+                    requiredApproverCount: {
                       type: "integer",
                       description:
                         "Output only. The required numbers of approvers. The M value used for M of N quorum auth. Must be greater than or equal to 2 and less than or equal to [total_approver_count][google.cloud.kms.v1.SingleTenantHsmInstance.QuorumAuth.total_approver_count] - 1.",
                     },
-                    two_factor_public_key_pems: {
+                    twoFactorPublicKeyPems: {
                       type: "array",
                       items: {
                         type: "string",
@@ -170,26 +188,26 @@ const listSingleTenantHsmInstances: AppBlock = {
                         "Output only. The public keys associated with the 2FA keys for M of N quorum auth.",
                     },
                   },
-                  required: ["total_approver_count"],
+                  required: ["totalApproverCount"],
                   description: "Configuration for M of N quorum auth.",
                   additionalProperties: true,
                 },
-                delete_time: {
+                deleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                unrefreshed_duration_until_disable: {
+                unrefreshedDurationUntilDisable: {
                   type: "string",
                   description: "Duration string (e.g., '1.5s', '300s')",
                 },
-                disable_time: {
+                disableTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
               },
-              required: ["quorum_auth"],
+              required: ["quorumAuth"],
               description:
                 "A [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] represents a single-tenant HSM instance. It can be used for creating [CryptoKeys][google.cloud.kms.v1.CryptoKey] with a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [HSM_SINGLE_TENANT][CryptoKeyVersion.ProtectionLevel.HSM_SINGLE_TENANT], as well as performing cryptographic operations using keys created within the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance].",
               additionalProperties: true,
@@ -197,12 +215,12 @@ const listSingleTenantHsmInstances: AppBlock = {
             description:
               "The list of [SingleTenantHsmInstances][google.cloud.kms.v1.SingleTenantHsmInstance].",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token to retrieve next page of results. Pass this value in [ListSingleTenantHsmInstancesRequest.page_token][google.cloud.kms.v1.ListSingleTenantHsmInstancesRequest.page_token] to retrieve the next page of results.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description:
               "The total number of [SingleTenantHsmInstances][google.cloud.kms.v1.SingleTenantHsmInstance] that matched the query.  This field is not populated if [ListSingleTenantHsmInstancesRequest.filter][google.cloud.kms.v1.ListSingleTenantHsmInstancesRequest.filter] is applied.",

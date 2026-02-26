@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        packet_mirroring: {
+        packetMirroring: {
           name: "Packet Mirroring",
           description: "Name of the PacketMirroring resource to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.packet_mirroring !== undefined)
+        if (input.event.inputConfig.packetMirroring !== undefined)
           pathParams["packet_mirroring"] = String(
-            input.event.inputConfig.packet_mirroring,
+            input.event.inputConfig.packetMirroring,
           );
 
         const result = await computeFetch({
@@ -53,10 +53,10 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          collector_ilb: {
+          collectorIlb: {
             type: "object",
             properties: {
-              canonical_url: {
+              canonicalUrl: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Unique identifier for the forwarding rule; defined by the server.",
@@ -71,7 +71,7 @@ const get: AppBlock = {
             description:
               "The Forwarding Rule resource of typeloadBalancingScheme=INTERNAL that will be used as collector for mirrored traffic. The specified forwarding rule must have isMirroringCollector set to true.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -89,7 +89,7 @@ const get: AppBlock = {
           filter: {
             type: "object",
             properties: {
-              I_p_protocols: {
+              IPProtocols: {
                 type: "array",
                 items: {
                   type: "string",
@@ -97,7 +97,7 @@ const get: AppBlock = {
                 description:
                   "Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored.",
               },
-              cidr_ranges: {
+              cidrRanges: {
                 type: "array",
                 items: {
                   type: "string",
@@ -124,7 +124,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#packetMirroring for packet mirrorings.",
           },
-          mirrored_resources: {
+          mirroredResources: {
             type: "object",
             properties: {
               instances: {
@@ -132,7 +132,7 @@ const get: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    canonical_url: {
+                    canonicalUrl: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Unique identifier for the instance; defined by the server.",
@@ -153,7 +153,7 @@ const get: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    canonical_url: {
+                    canonicalUrl: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Unique identifier for the subnetwork; defined by the server.",
@@ -190,7 +190,7 @@ const get: AppBlock = {
           network: {
             type: "object",
             properties: {
-              canonical_url: {
+              canonicalUrl: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Unique identifier for the network; defined by the server.",
@@ -214,7 +214,7 @@ const get: AppBlock = {
             description:
               "[Output Only] URI of the region where the packetMirroring resides.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",

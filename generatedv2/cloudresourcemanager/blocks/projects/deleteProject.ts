@@ -1,5 +1,31 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getProjectsClient } from "../../lib/grpcClient.ts";
+import { getProjectsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const deleteProject: AppBlock = {
   name: "Delete Project",
@@ -23,9 +49,7 @@ const deleteProject: AppBlock = {
       onEvent: async (input) => {
         const client = await getProjectsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteProject(request, (err: any, response: any) => {
@@ -39,7 +63,8 @@ const deleteProject: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -55,7 +80,7 @@ const deleteProject: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -82,7 +107,7 @@ const deleteProject: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -101,7 +126,7 @@ const deleteProject: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

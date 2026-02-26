@@ -8,7 +8,7 @@ const get: AppBlock = {
   inputs: {
     default: {
       config: {
-        target_ssl_proxy: {
+        targetSslProxy: {
           name: "Target Ssl Proxy",
           description: "Name of the TargetSslProxy resource to return.",
           type: {
@@ -20,9 +20,9 @@ const get: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.target_ssl_proxy !== undefined)
+        if (input.event.inputConfig.targetSslProxy !== undefined)
           pathParams["target_ssl_proxy"] = String(
-            input.event.inputConfig.target_ssl_proxy,
+            input.event.inputConfig.targetSslProxy,
           );
 
         const result = await computeFetch({
@@ -43,12 +43,12 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          certificate_map: {
+          certificateMap: {
             type: "string",
             description:
               "URL of a certificate map that identifies a certificate map associated with the given target proxy. This field can only be set for global target proxies. If set, sslCertificates will be ignored.   Accepted format is//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificateMaps/{resourceName}.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -72,12 +72,12 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          proxy_header: {
+          proxyHeader: {
             type: "string",
             description:
               "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
@@ -85,7 +85,7 @@ const get: AppBlock = {
             type: "string",
             description: "URL to the BackendService resource.",
           },
-          ssl_certificates: {
+          sslCertificates: {
             type: "array",
             items: {
               type: "string",
@@ -93,7 +93,7 @@ const get: AppBlock = {
             description:
               "URLs to SslCertificate resources that are used to authenticate connections to Backends. At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates. sslCertificates do not apply when the load balancing scheme is set to INTERNAL_SELF_MANAGED.",
           },
-          ssl_policy: {
+          sslPolicy: {
             type: "string",
             description:
               "URL of SslPolicy resource that will be associated with the TargetSslProxy resource. If not set, the TargetSslProxy resource will not have any SSL policy configured.",

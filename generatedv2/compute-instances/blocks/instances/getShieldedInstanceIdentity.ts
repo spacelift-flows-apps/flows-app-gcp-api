@@ -51,15 +51,15 @@ const getShieldedInstanceIdentity: AppBlock = {
       type: {
         type: "object",
         properties: {
-          ecc_p256_encryption_key: {
+          eccP256EncryptionKey: {
             type: "object",
             properties: {
-              ek_cert: {
+              ekCert: {
                 type: "string",
                 description:
                   "A PEM-encoded X.509 certificate. This field can be empty.",
               },
-              ek_pub: {
+              ekPub: {
                 type: "string",
                 description: "A PEM-encoded public key.",
               },
@@ -67,15 +67,15 @@ const getShieldedInstanceIdentity: AppBlock = {
             description: "A Shielded Instance Identity Entry.",
             additionalProperties: true,
           },
-          ecc_p256_signing_key: {
+          eccP256SigningKey: {
             type: "object",
             properties: {
-              ek_cert: {
+              ekCert: {
                 type: "string",
                 description:
                   "A PEM-encoded X.509 certificate. This field can be empty.",
               },
-              ek_pub: {
+              ekPub: {
                 type: "string",
                 description: "A PEM-encoded public key.",
               },
@@ -83,15 +83,15 @@ const getShieldedInstanceIdentity: AppBlock = {
             description: "A Shielded Instance Identity Entry.",
             additionalProperties: true,
           },
-          encryption_key: {
+          encryptionKey: {
             type: "object",
             properties: {
-              ek_cert: {
+              ekCert: {
                 type: "string",
                 description:
                   "A PEM-encoded X.509 certificate. This field can be empty.",
               },
-              ek_pub: {
+              ekPub: {
                 type: "string",
                 description: "A PEM-encoded public key.",
               },
@@ -104,15 +104,15 @@ const getShieldedInstanceIdentity: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#shieldedInstanceIdentity for shielded Instance identity entry.",
           },
-          signing_key: {
+          signingKey: {
             type: "object",
             properties: {
-              ek_cert: {
+              ekCert: {
                 type: "string",
                 description:
                   "A PEM-encoded X.509 certificate. This field can be empty.",
               },
-              ek_pub: {
+              ekPub: {
                 type: "string",
                 description: "A PEM-encoded public key.",
               },

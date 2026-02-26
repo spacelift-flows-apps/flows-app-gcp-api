@@ -1,5 +1,55 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  orderBy: "order_by",
+};
+
+const outputMapping = {
+  crypto_key_versions: {
+    name: "cryptoKeyVersions",
+    fields: {
+      protection_level: "protectionLevel",
+      attestation: {
+        name: "attestation",
+        fields: {
+          cert_chains: {
+            name: "certChains",
+            fields: {
+              cavium_certs: "caviumCerts",
+              google_card_certs: "googleCardCerts",
+              google_partition_certs: "googlePartitionCerts",
+            },
+          },
+        },
+      },
+      create_time: "createTime",
+      generate_time: "generateTime",
+      destroy_time: "destroyTime",
+      destroy_event_time: "destroyEventTime",
+      import_job: "importJob",
+      import_time: "importTime",
+      import_failure_reason: "importFailureReason",
+      generation_failure_reason: "generationFailureReason",
+      external_destruction_failure_reason: "externalDestructionFailureReason",
+      external_protection_level_options: {
+        name: "externalProtectionLevelOptions",
+        fields: {
+          external_key_uri: "externalKeyUri",
+          ekm_connection_key_path: "ekmConnectionKeyPath",
+        },
+      },
+      reimport_eligible: "reimportEligible",
+    },
+  },
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listCryptoKeyVersions: AppBlock = {
   name: "List Crypto Key Versions",
@@ -19,7 +69,7 @@ const listCryptoKeyVersions: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. Optional limit on the number of [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] to include in the response. Further [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] can subsequently be obtained by including the [ListCryptoKeyVersionsResponse.next_page_token][google.cloud.kms.v1.ListCryptoKeyVersionsResponse.next_page_token] in a subsequent request. If unspecified, the server will pick an appropriate default.",
@@ -30,7 +80,7 @@ const listCryptoKeyVersions: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. Optional pagination token, returned earlier via [ListCryptoKeyVersionsResponse.next_page_token][google.cloud.kms.v1.ListCryptoKeyVersionsResponse.next_page_token].",
@@ -62,7 +112,7 @@ const listCryptoKeyVersions: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
@@ -77,19 +127,7 @@ const listCryptoKeyVersions: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.view !== undefined)
-          request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.order_by !== undefined)
-          request.order_by = input.event.inputConfig.order_by;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listCryptoKeyVersions(request, (err: any, response: any) => {
@@ -103,7 +141,8 @@ const listCryptoKeyVersions: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -113,7 +152,7 @@ const listCryptoKeyVersions: AppBlock = {
       type: {
         type: "object",
         properties: {
-          crypto_key_versions: {
+          cryptoKeyVersions: {
             type: "array",
             items: {
               type: "object",
@@ -141,7 +180,7 @@ const listCryptoKeyVersions: AppBlock = {
                   description:
                     "The current state of the [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion].",
                 },
-                protection_level: {
+                protectionLevel: {
                   type: "string",
                   enum: [
                     "PROTECTION_LEVEL_UNSPECIFIED",
@@ -225,10 +264,10 @@ const listCryptoKeyVersions: AppBlock = {
                       type: "string",
                       description: "Base64-encoded bytes",
                     },
-                    cert_chains: {
+                    certChains: {
                       type: "object",
                       properties: {
-                        cavium_certs: {
+                        caviumCerts: {
                           type: "array",
                           items: {
                             type: "string",
@@ -236,7 +275,7 @@ const listCryptoKeyVersions: AppBlock = {
                           description:
                             "Cavium certificate chain corresponding to the attestation.",
                         },
-                        google_card_certs: {
+                        googleCardCerts: {
                           type: "array",
                           items: {
                             type: "string",
@@ -244,7 +283,7 @@ const listCryptoKeyVersions: AppBlock = {
                           description:
                             "Google card certificate chain corresponding to the attestation.",
                         },
-                        google_partition_certs: {
+                        googlePartitionCerts: {
                           type: "array",
                           items: {
                             type: "string",
@@ -262,60 +301,60 @@ const listCryptoKeyVersions: AppBlock = {
                     "Contains an HSM-generated attestation about a key operation. For more information, see [Verifying attestations] (https://cloud.google.com/kms/docs/attest-key).",
                   additionalProperties: true,
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                generate_time: {
+                generateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                destroy_time: {
+                destroyTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                destroy_event_time: {
+                destroyEventTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                import_job: {
+                importJob: {
                   type: "string",
                   description:
                     "Output only. The name of the [ImportJob][google.cloud.kms.v1.ImportJob] used in the most recent import of this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion]. Only present if the underlying key material was imported.",
                 },
-                import_time: {
+                importTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                import_failure_reason: {
+                importFailureReason: {
                   type: "string",
                   description:
                     "Output only. The root cause of the most recent import failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [IMPORT_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.IMPORT_FAILED].",
                 },
-                generation_failure_reason: {
+                generationFailureReason: {
                   type: "string",
                   description:
                     "Output only. The root cause of the most recent generation failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [GENERATION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.GENERATION_FAILED].",
                 },
-                external_destruction_failure_reason: {
+                externalDestructionFailureReason: {
                   type: "string",
                   description:
                     "Output only. The root cause of the most recent external destruction failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [EXTERNAL_DESTRUCTION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.EXTERNAL_DESTRUCTION_FAILED].",
                 },
-                external_protection_level_options: {
+                externalProtectionLevelOptions: {
                   type: "object",
                   properties: {
-                    external_key_uri: {
+                    externalKeyUri: {
                       type: "string",
                       description:
                         "The URI for an external resource that this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] represents.",
                     },
-                    ekm_connection_key_path: {
+                    ekmConnectionKeyPath: {
                       type: "string",
                       description:
                         'The path to the external key material on the EKM when using [EkmConnection][google.cloud.kms.v1.EkmConnection] e.g., "v0/my/key". Set this field instead of external_key_uri when using an [EkmConnection][google.cloud.kms.v1.EkmConnection].',
@@ -325,7 +364,7 @@ const listCryptoKeyVersions: AppBlock = {
                     "ExternalProtectionLevelOptions stores a group of additional fields for configuring a [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] that are specific to the [EXTERNAL][google.cloud.kms.v1.ProtectionLevel.EXTERNAL] protection level and [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC] protection levels.",
                   additionalProperties: true,
                 },
-                reimport_eligible: {
+                reimportEligible: {
                   type: "boolean",
                   description:
                     "Output only. Whether or not this key version is eligible for reimport, by being specified as a target in [ImportCryptoKeyVersionRequest.crypto_key_version][google.cloud.kms.v1.ImportCryptoKeyVersionRequest.crypto_key_version].",
@@ -338,12 +377,12 @@ const listCryptoKeyVersions: AppBlock = {
             description:
               "The list of [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion].",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token to retrieve next page of results. Pass this value in [ListCryptoKeyVersionsRequest.page_token][google.cloud.kms.v1.ListCryptoKeyVersionsRequest.page_token] to retrieve the next page of results.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description:
               "The total number of [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] that matched the query.  This field is not populated if [ListCryptoKeyVersionsRequest.filter][google.cloud.kms.v1.ListCryptoKeyVersionsRequest.filter] is applied.",

@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        machine_type: {
+        machineType: {
           name: "Machine Type",
           description: "Name of the machine type to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.machine_type !== undefined)
+        if (input.event.inputConfig.machineType !== undefined)
           pathParams["machine_type"] = String(
-            input.event.inputConfig.machine_type,
+            input.event.inputConfig.machineType,
           );
 
         const result = await computeFetch({
@@ -58,12 +58,12 @@ const get: AppBlock = {
             items: {
               type: "object",
               properties: {
-                guest_accelerator_count: {
+                guestAcceleratorCount: {
                   type: "integer",
                   description:
                     "Number of accelerator cards exposed to the guest.",
                 },
-                guest_accelerator_type: {
+                guestAcceleratorType: {
                   type: "string",
                   description:
                     "The accelerator type resource name, not a full URL, e.g.nvidia-tesla-t4.",
@@ -79,7 +79,7 @@ const get: AppBlock = {
             description:
               "[Output Only] The architecture of the machine type. Check the Architecture enum for the list of possible values.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "[Output Only] Creation timestamp inRFC3339 text format.",
@@ -121,7 +121,7 @@ const get: AppBlock = {
             description:
               "[Output Only] An optional textual description of the resource.",
           },
-          guest_cpus: {
+          guestCpus: {
             type: "integer",
             description:
               "[Output Only] The number of virtual CPUs that are available to the instance.",
@@ -130,12 +130,12 @@ const get: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          image_space_gb: {
+          imageSpaceGb: {
             type: "integer",
             description:
               "[Deprecated] This property is deprecated and will never be populated with any relevant values.",
           },
-          is_shared_cpu: {
+          isSharedCpu: {
             type: "boolean",
             description:
               "[Output Only] Whether this machine type has a shared CPU. SeeShared-core machine types for more information.",
@@ -145,15 +145,15 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The type of the resource. Alwayscompute#machineType for machine types.",
           },
-          maximum_persistent_disks: {
+          maximumPersistentDisks: {
             type: "integer",
             description: "[Output Only] Maximum persistent disks allowed.",
           },
-          maximum_persistent_disks_size_gb: {
+          maximumPersistentDisksSizeGb: {
             type: "string",
             description: "64-bit integer as string",
           },
-          memory_mb: {
+          memoryMb: {
             type: "integer",
             description:
               "[Output Only] The amount of physical memory available to the instance, defined in MB.",
@@ -162,7 +162,7 @@ const get: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the resource.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },

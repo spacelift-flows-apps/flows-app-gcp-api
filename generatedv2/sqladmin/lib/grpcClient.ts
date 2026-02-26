@@ -73,6 +73,41 @@ export function createRoutingMetadata(
   return metadata;
 }
 
+/** Mapping between field name conventions. String = simple rename; Object = rename + recurse. */
+export type FieldNameMapping = Record<
+  string,
+  string | { name: string; fields: FieldNameMapping }
+>;
+
+/** Recursively convert object keys using a field name mapping. */
+export function convertKeys(obj: any, mapping: FieldNameMapping): any {
+  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map((item) => convertKeys(item, mapping));
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
+    const fieldDef = mapping[key];
+    if (!fieldDef) {
+      result[key] = value;
+      continue;
+    }
+    if (typeof fieldDef === "string") {
+      result[fieldDef] = value;
+    } else {
+      result[fieldDef.name] = convertKeys(value, fieldDef.fields);
+    }
+  }
+  return result;
+}
+
+export async function getSqlBackupsServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.cloud.sql.v1", "SqlBackupsService");
+  return new Service("sqladmin.googleapis.com:443", credentials);
+}
+
 export async function getSqlBackupRunsServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -81,11 +116,11 @@ export async function getSqlBackupRunsServiceClient(
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 
-export async function getSqlBackupsServiceClient(
+export async function getSqlConnectServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.sql.v1", "SqlBackupsService");
+  const Service = getService("google.cloud.sql.v1", "SqlConnectService");
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 
@@ -121,14 +156,6 @@ export async function getSqlOperationsServiceClient(
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 
-export async function getSqlTiersServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.sql.v1", "SqlTiersService");
-  return new Service("sqladmin.googleapis.com:443", credentials);
-}
-
 export async function getSqlSslCertsServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -137,11 +164,11 @@ export async function getSqlSslCertsServiceClient(
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 
-export async function getSqlConnectServiceClient(
+export async function getSqlTiersServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.sql.v1", "SqlConnectService");
+  const Service = getService("google.cloud.sql.v1", "SqlTiersService");
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 

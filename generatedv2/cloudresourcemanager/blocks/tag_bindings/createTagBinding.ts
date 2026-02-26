@@ -1,5 +1,42 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagBindingsClient } from "../../lib/grpcClient.ts";
+import { getTagBindingsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  tagBinding: {
+    name: "tag_binding",
+    fields: {
+      tagValue: "tag_value",
+      tagValueNamespacedName: "tag_value_namespaced_name",
+    },
+  },
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createTagBinding: AppBlock = {
   name: "Create Tag Binding",
@@ -8,7 +45,7 @@ const createTagBinding: AppBlock = {
   inputs: {
     default: {
       config: {
-        tag_binding: {
+        tagBinding: {
           name: "Tag Binding",
           description: "Required. The TagBinding to be created.",
           type: {
@@ -19,12 +56,12 @@ const createTagBinding: AppBlock = {
                 description:
                   "The full resource name of the resource the TagValue is bound to. E.g. `//cloudresourcemanager.googleapis.com/projects/123`",
               },
-              tag_value: {
+              tagValue: {
                 type: "string",
                 description:
                   "The TagValue of the TagBinding. Must be of the form `tagValues/456`.",
               },
-              tag_value_namespaced_name: {
+              tagValueNamespacedName: {
                 type: "string",
                 description:
                   "The namespaced name for the TagValue of the TagBinding. Must be in the format `{parent_id}/{tag_key_short_name}/{short_name}`.  For methods that support TagValue namespaced name, only one of tag_value_namespaced_name or tag_value may be filled. Requests with both fields will be rejected.",
@@ -36,7 +73,7 @@ const createTagBinding: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Optional. Set to true to perform the validations necessary for creating the resource, but not actually perform the action.",
@@ -51,11 +88,7 @@ const createTagBinding: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagBindingsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.tag_binding !== undefined)
-          request.tag_binding = input.event.inputConfig.tag_binding;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createTagBinding(request, (err: any, response: any) => {
@@ -69,7 +102,8 @@ const createTagBinding: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -85,7 +119,7 @@ const createTagBinding: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -112,7 +146,7 @@ const createTagBinding: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -131,7 +165,7 @@ const createTagBinding: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

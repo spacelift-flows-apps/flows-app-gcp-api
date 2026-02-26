@@ -1,5 +1,31 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagBindingsClient } from "../../lib/grpcClient.ts";
+import { getTagBindingsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const deleteTagBinding: AppBlock = {
   name: "Delete Tag Binding",
@@ -23,9 +49,7 @@ const deleteTagBinding: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagBindingsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteTagBinding(request, (err: any, response: any) => {
@@ -39,7 +63,8 @@ const deleteTagBinding: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -55,7 +80,7 @@ const deleteTagBinding: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -82,7 +107,7 @@ const deleteTagBinding: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -101,7 +126,7 @@ const deleteTagBinding: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

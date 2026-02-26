@@ -16,7 +16,7 @@ const addRule: AppBlock = {
           },
           required: true,
         },
-        firewall_policy: {
+        firewallPolicy: {
           name: "Firewall Policy",
           description: "Name of the firewall policy to update.",
           type: {
@@ -66,7 +66,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        enable_logging: {
+        enableLogging: {
           name: "Enable Logging",
           description:
             'Denotes whether to enable logging for a particular rule. If logging is enabled, logs will be exported to the configured export destination in Stackdriver. Logs may be exported to BigQuery or Pub/Sub. Note: you cannot enable logging on "goto_next" rules.',
@@ -95,7 +95,7 @@ const addRule: AppBlock = {
           type: {
             type: "object",
             properties: {
-              dest_address_groups: {
+              destAddressGroups: {
                 type: "array",
                 items: {
                   type: "string",
@@ -103,7 +103,7 @@ const addRule: AppBlock = {
                 description:
                   "Address groups which should be matched against the traffic destination. Maximum number of destination address groups is 10.",
               },
-              dest_fqdns: {
+              destFqdns: {
                 type: "array",
                 items: {
                   type: "string",
@@ -111,7 +111,7 @@ const addRule: AppBlock = {
                 description:
                   "Fully Qualified Domain Name (FQDN) which should be matched against traffic destination. Maximum number of destination fqdn allowed is 100.",
               },
-              dest_ip_ranges: {
+              destIpRanges: {
                 type: "array",
                 items: {
                   type: "string",
@@ -119,17 +119,17 @@ const addRule: AppBlock = {
                 description:
                   "CIDR IP address range. Maximum number of destination CIDR IP ranges allowed is 5000.",
               },
-              dest_network_context: {
+              destNetworkContext: {
                 type: "string",
                 description:
                   "Network context of the traffic destination. Allowed values are:        - UNSPECIFIED      - INTERNET      - NON_INTERNET Check the DestNetworkContext enum for the list of possible values.",
               },
-              dest_network_type: {
+              destNetworkType: {
                 type: "string",
                 description:
                   "Network type of the traffic destination. Allowed values are:        - UNSPECIFIED      - INTERNET      - NON_INTERNET Check the DestNetworkType enum for the list of possible values.",
               },
-              dest_region_codes: {
+              destRegionCodes: {
                 type: "array",
                 items: {
                   type: "string",
@@ -137,7 +137,7 @@ const addRule: AppBlock = {
                 description:
                   'Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex."US" Maximum number of dest region codes allowed is 5000.',
               },
-              dest_threat_intelligences: {
+              destThreatIntelligences: {
                 type: "array",
                 items: {
                   type: "string",
@@ -145,12 +145,12 @@ const addRule: AppBlock = {
                 description:
                   "Names of Network Threat Intelligence lists. The IPs in these lists will be matched against traffic destination.",
               },
-              layer4_configs: {
+              layer4Configs: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    ip_protocol: {
+                    ipProtocol: {
                       type: "string",
                       description:
                         "The IP protocol to which this rule applies. The protocol type is required when creating a firewall rule. This value can either be one of the following well known protocol strings (tcp,udp, icmp, esp,ah, ipip, sctp), or the IP protocol number.",
@@ -169,7 +169,7 @@ const addRule: AppBlock = {
                 description:
                   "Pairs of IP protocols and ports that the rule should match.",
               },
-              src_address_groups: {
+              srcAddressGroups: {
                 type: "array",
                 items: {
                   type: "string",
@@ -177,7 +177,7 @@ const addRule: AppBlock = {
                 description:
                   "Address groups which should be matched against the traffic source. Maximum number of source address groups is 10.",
               },
-              src_fqdns: {
+              srcFqdns: {
                 type: "array",
                 items: {
                   type: "string",
@@ -185,7 +185,7 @@ const addRule: AppBlock = {
                 description:
                   "Fully Qualified Domain Name (FQDN) which should be matched against traffic source. Maximum number of source fqdn allowed is 100.",
               },
-              src_ip_ranges: {
+              srcIpRanges: {
                 type: "array",
                 items: {
                   type: "string",
@@ -193,17 +193,17 @@ const addRule: AppBlock = {
                 description:
                   "CIDR IP address range. Maximum number of source CIDR IP ranges allowed is 5000.",
               },
-              src_network_context: {
+              srcNetworkContext: {
                 type: "string",
                 description:
                   "Network context of the traffic source. Allowed values are:        - UNSPECIFIED      - INTERNET      - INTRA_VPC      - NON_INTERNET      - VPC_NETWORKS Check the SrcNetworkContext enum for the list of possible values.",
               },
-              src_network_type: {
+              srcNetworkType: {
                 type: "string",
                 description:
                   "Network type of the traffic source. Allowed values are:        - UNSPECIFIED      - INTERNET      - INTRA_VPC      - NON_INTERNET      - VPC_NETWORKS Check the SrcNetworkType enum for the list of possible values.",
               },
-              src_networks: {
+              srcNetworks: {
                 type: "array",
                 items: {
                   type: "string",
@@ -211,7 +211,7 @@ const addRule: AppBlock = {
                 description:
                   "Networks of the traffic source. It can be either a full or partial url.",
               },
-              src_region_codes: {
+              srcRegionCodes: {
                 type: "array",
                 items: {
                   type: "string",
@@ -219,7 +219,7 @@ const addRule: AppBlock = {
                 description:
                   'Region codes whose IP addresses will be used to match for source of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex."US" Maximum number of source region codes allowed is 5000.',
               },
-              src_secure_tags: {
+              srcSecureTags: {
                 type: "array",
                 items: {
                   type: "object",
@@ -240,7 +240,7 @@ const addRule: AppBlock = {
                 description:
                   "List of secure tag values, which should be matched at the source of the traffic. For INGRESS rule, if all the srcSecureTag are INEFFECTIVE, and there is no srcIpRange, this rule will be ignored. Maximum number of source tag values allowed is 256.",
               },
-              src_threat_intelligences: {
+              srcThreatIntelligences: {
                 type: "array",
                 items: {
                   type: "string",
@@ -266,7 +266,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        rule_name: {
+        ruleName: {
           name: "Rule Name",
           description:
             "An optional name for the rule. This field is not a unique identifier and can be updated.",
@@ -277,7 +277,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        rule_tuple_count: {
+        ruleTupleCount: {
           name: "Rule Tuple Count",
           description:
             "Output only. [Output Only] Calculation of the complexity of a single firewall policy rule.",
@@ -288,7 +288,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        security_profile_group: {
+        securityProfileGroup: {
           name: "Security Profile Group",
           description:
             "A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of 'apply_security_profile_group' or 'mirror'. Cannot be specified for other actions.",
@@ -299,7 +299,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        target_resources: {
+        targetResources: {
           name: "Target Resources",
           description:
             "A list of network resource URLs to which this rule applies.  This field allows you to control which network's VMs get this rule.  If this field is left blank, all VMs within the organization will receive the rule.",
@@ -313,7 +313,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        target_secure_tags: {
+        targetSecureTags: {
           name: "Target Secure Tags",
           description:
             "A list of secure tags that controls which instances the firewall rule applies to. If targetSecureTag are specified, then the firewall rule applies only to instances in the VPC network that have one of those EFFECTIVE secure tags, if all the target_secure_tag are in INEFFECTIVE state, then this rule will be ignored.targetSecureTag may not be set at the same time astargetServiceAccounts. If neither targetServiceAccounts nortargetSecureTag are specified, the firewall rule applies to all instances on the specified network. Maximum number of target label tags allowed is 256.",
@@ -340,7 +340,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        target_service_accounts: {
+        targetServiceAccounts: {
           name: "Target Service Accounts",
           description:
             "A list of service accounts indicating the sets of instances that are applied with this rule.",
@@ -354,7 +354,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        tls_inspect: {
+        tlsInspect: {
           name: "Tls Inspect",
           description:
             "Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = 'apply_security_profile_group' and cannot be set for other actions.",
@@ -365,7 +365,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        max_priority: {
+        maxPriority: {
           name: "Max Priority",
           description:
             "When rule.priority is not specified, auto choose a unused priority betweenminPriority and maxPriority>. This field is exclusive with rule.priority.",
@@ -374,7 +374,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        min_priority: {
+        minPriority: {
           name: "Min Priority",
           description:
             "When rule.priority is not specified, auto choose a unused priority betweenminPriority and maxPriority>. This field is exclusive with rule.priority.",
@@ -383,7 +383,7 @@ const addRule: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -398,22 +398,22 @@ const addRule: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.firewall_policy !== undefined)
+        if (input.event.inputConfig.firewallPolicy !== undefined)
           pathParams["firewall_policy"] = String(
-            input.event.inputConfig.firewall_policy,
+            input.event.inputConfig.firewallPolicy,
           );
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.max_priority !== undefined)
+        if (input.event.inputConfig.maxPriority !== undefined)
           queryParams["maxPriority"] = String(
-            input.event.inputConfig.max_priority,
+            input.event.inputConfig.maxPriority,
           );
-        if (input.event.inputConfig.min_priority !== undefined)
+        if (input.event.inputConfig.minPriority !== undefined)
           queryParams["minPriority"] = String(
-            input.event.inputConfig.min_priority,
+            input.event.inputConfig.minPriority,
           );
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
         if (input.event.inputConfig.action !== undefined)
           body.action = input.event.inputConfig.action;
@@ -423,30 +423,30 @@ const addRule: AppBlock = {
           body.direction = input.event.inputConfig.direction;
         if (input.event.inputConfig.disabled !== undefined)
           body.disabled = input.event.inputConfig.disabled;
-        if (input.event.inputConfig.enable_logging !== undefined)
-          body.enable_logging = input.event.inputConfig.enable_logging;
+        if (input.event.inputConfig.enableLogging !== undefined)
+          body.enableLogging = input.event.inputConfig.enableLogging;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.match !== undefined)
           body.match = input.event.inputConfig.match;
         if (input.event.inputConfig.priority !== undefined)
           body.priority = input.event.inputConfig.priority;
-        if (input.event.inputConfig.rule_name !== undefined)
-          body.rule_name = input.event.inputConfig.rule_name;
-        if (input.event.inputConfig.rule_tuple_count !== undefined)
-          body.rule_tuple_count = input.event.inputConfig.rule_tuple_count;
-        if (input.event.inputConfig.security_profile_group !== undefined)
-          body.security_profile_group =
-            input.event.inputConfig.security_profile_group;
-        if (input.event.inputConfig.target_resources !== undefined)
-          body.target_resources = input.event.inputConfig.target_resources;
-        if (input.event.inputConfig.target_secure_tags !== undefined)
-          body.target_secure_tags = input.event.inputConfig.target_secure_tags;
-        if (input.event.inputConfig.target_service_accounts !== undefined)
-          body.target_service_accounts =
-            input.event.inputConfig.target_service_accounts;
-        if (input.event.inputConfig.tls_inspect !== undefined)
-          body.tls_inspect = input.event.inputConfig.tls_inspect;
+        if (input.event.inputConfig.ruleName !== undefined)
+          body.ruleName = input.event.inputConfig.ruleName;
+        if (input.event.inputConfig.ruleTupleCount !== undefined)
+          body.ruleTupleCount = input.event.inputConfig.ruleTupleCount;
+        if (input.event.inputConfig.securityProfileGroup !== undefined)
+          body.securityProfileGroup =
+            input.event.inputConfig.securityProfileGroup;
+        if (input.event.inputConfig.targetResources !== undefined)
+          body.targetResources = input.event.inputConfig.targetResources;
+        if (input.event.inputConfig.targetSecureTags !== undefined)
+          body.targetSecureTags = input.event.inputConfig.targetSecureTags;
+        if (input.event.inputConfig.targetServiceAccounts !== undefined)
+          body.targetServiceAccounts =
+            input.event.inputConfig.targetServiceAccounts;
+        if (input.event.inputConfig.tlsInspect !== undefined)
+          body.tlsInspect = input.event.inputConfig.tlsInspect;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -468,12 +468,12 @@ const addRule: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -482,7 +482,7 @@ const addRule: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -500,12 +500,12 @@ const addRule: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -560,7 +560,7 @@ const addRule: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -578,7 +578,7 @@ const addRule: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -589,7 +589,7 @@ const addRule: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -599,16 +599,16 @@ const addRule: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -645,12 +645,12 @@ const addRule: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -659,15 +659,15 @@ const addRule: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -687,12 +687,12 @@ const addRule: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -707,18 +707,18 @@ const addRule: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -731,7 +731,7 @@ const addRule: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -742,16 +742,16 @@ const addRule: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

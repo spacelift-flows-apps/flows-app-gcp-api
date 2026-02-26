@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -102,12 +102,12 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                check_interval_sec: {
+                checkIntervalSec: {
                   type: "integer",
                   description:
                     "How often (in seconds) to send a health check. The default value is 5 seconds.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp in3339 text format.",
@@ -117,10 +117,10 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                grpc_health_check: {
+                grpcHealthCheck: {
                   type: "object",
                   properties: {
-                    grpc_service_name: {
+                    grpcServiceName: {
                       type: "string",
                       description:
                         "The gRPC service name for the health check. This field is optional. The value of grpc_service_name has the following meanings by convention:  - Empty service_name means the overall status of all services at the backend.  - Non-empty service_name means the health of that gRPC service, as defined by the owner of the service.  The grpc_service_name can only be ASCII.",
@@ -130,11 +130,11 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. Valid values are 1 through 65535.",
                     },
-                    port_name: {
+                    portName: {
                       type: "string",
                       description: "Not supported.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
@@ -142,10 +142,10 @@ const list: AppBlock = {
                   },
                   additionalProperties: true,
                 },
-                grpc_tls_health_check: {
+                grpcTlsHealthCheck: {
                   type: "object",
                   properties: {
-                    grpc_service_name: {
+                    grpcServiceName: {
                       type: "string",
                       description:
                         "The gRPC service name for the health check. This field is optional. The value of grpc_service_name has the following meanings by convention:  - Empty service_name means the overall status of all services at the backend.  - Non-empty service_name means the health of that gRPC service, as defined by the owner of the service.  The grpc_service_name can only be ASCII.",
@@ -155,7 +155,7 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. Valid values are 1 through 65535.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
@@ -163,12 +163,12 @@ const list: AppBlock = {
                   },
                   additionalProperties: true,
                 },
-                healthy_threshold: {
+                healthyThreshold: {
                   type: "integer",
                   description:
                     "A so-far unhealthy instance will be marked healthy after this many consecutive successes. The default value is 2.",
                 },
-                http2_health_check: {
+                http2HealthCheck: {
                   type: "object",
                   properties: {
                     host: {
@@ -181,21 +181,21 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. The default value is 443. Valid values are 1 through65535.",
                     },
-                    port_name: {
+                    portName: {
                       type: "string",
                       description: "Not supported.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
                     },
-                    proxy_header: {
+                    proxyHeader: {
                       type: "string",
                       description:
                         "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
                     },
-                    request_path: {
+                    requestPath: {
                       type: "string",
                       description:
                         "The request path of the HTTP/2 health check request. The default value is/. Must comply withRFC3986.",
@@ -208,7 +208,7 @@ const list: AppBlock = {
                   },
                   additionalProperties: true,
                 },
-                http_health_check: {
+                httpHealthCheck: {
                   type: "object",
                   properties: {
                     host: {
@@ -221,21 +221,21 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. The default value is 80. Valid values are 1 through65535.",
                     },
-                    port_name: {
+                    portName: {
                       type: "string",
                       description: "Not supported.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Also supported in legacy HTTP health checks for target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example,GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends. USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for pass-through load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
                     },
-                    proxy_header: {
+                    proxyHeader: {
                       type: "string",
                       description:
                         "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
                     },
-                    request_path: {
+                    requestPath: {
                       type: "string",
                       description:
                         "The request path of the HTTP health check request. The default value is/. Must comply withRFC3986.",
@@ -248,7 +248,7 @@ const list: AppBlock = {
                   },
                   additionalProperties: true,
                 },
-                https_health_check: {
+                httpsHealthCheck: {
                   type: "object",
                   properties: {
                     host: {
@@ -261,21 +261,21 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. The default value is 443. Valid values are 1 through65535.",
                     },
-                    port_name: {
+                    portName: {
                       type: "string",
                       description: "Not supported.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
                     },
-                    proxy_header: {
+                    proxyHeader: {
                       type: "string",
                       description:
                         "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
                     },
-                    request_path: {
+                    requestPath: {
                       type: "string",
                       description:
                         "The request path of the HTTPS health check request. The default value is/. Must comply withRFC3986.",
@@ -296,7 +296,7 @@ const list: AppBlock = {
                   type: "string",
                   description: "Output only. Type of the resource.",
                 },
-                log_config: {
+                logConfig: {
                   type: "object",
                   properties: {
                     enable: {
@@ -319,12 +319,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Region where the health check resides.  Not applicable to global health checks.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined URL for the resource.",
                 },
-                source_regions: {
+                sourceRegions: {
                   type: "array",
                   items: {
                     type: "string",
@@ -332,7 +332,7 @@ const list: AppBlock = {
                   description:
                     "The list of cloud regions from which health checks are performed. If any regions are specified, then exactly 3 regions should be specified. The region names must be valid names of Google Cloud regions. This can only be set for global health check. If this list is non-empty, then there are restrictions on what other health check fields are supported and what other resources can use this health check:     - SSL, HTTP2, and GRPC protocols are not supported.    - The TCP request field is not supported.    - The proxyHeader field for HTTP, HTTPS, and TCP is not    supported.    - The checkIntervalSec field must be at least 30.    - The health check cannot be used with BackendService nor with managed    instance group auto-healing.",
                 },
-                ssl_health_check: {
+                sslHealthCheck: {
                   type: "object",
                   properties: {
                     port: {
@@ -340,16 +340,16 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. The default value is 443. Valid values are 1 through65535.",
                     },
-                    port_name: {
+                    portName: {
                       type: "string",
                       description: "Not supported.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
                     },
-                    proxy_header: {
+                    proxyHeader: {
                       type: "string",
                       description:
                         "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
@@ -367,7 +367,7 @@ const list: AppBlock = {
                   },
                   additionalProperties: true,
                 },
-                tcp_health_check: {
+                tcpHealthCheck: {
                   type: "object",
                   properties: {
                     port: {
@@ -375,16 +375,16 @@ const list: AppBlock = {
                       description:
                         "The TCP port number to which the health check prober sends packets. The default value is 80. Valid values are 1 through65535.",
                     },
-                    port_name: {
+                    portName: {
                       type: "string",
                       description: "Not supported.",
                     },
-                    port_specification: {
+                    portSpecification: {
                       type: "string",
                       description:
                         "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends. USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
                     },
-                    proxy_header: {
+                    proxyHeader: {
                       type: "string",
                       description:
                         "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
@@ -402,7 +402,7 @@ const list: AppBlock = {
                   },
                   additionalProperties: true,
                 },
-                timeout_sec: {
+                timeoutSec: {
                   type: "integer",
                   description:
                     "How long (in seconds) to wait before claiming failure. The default value is 5 seconds. It is invalid for timeoutSec to have greater value than checkIntervalSec.",
@@ -412,7 +412,7 @@ const list: AppBlock = {
                   description:
                     "Specifies the type of the healthCheck, either TCP,SSL, HTTP, HTTPS,HTTP2 or GRPC. Exactly one of the protocol-specific health check fields must be specified, which must matchtype field. Check the Type enum for the list of possible values.",
                 },
-                unhealthy_threshold: {
+                unhealthyThreshold: {
                   type: "integer",
                   description:
                     "A so-far healthy instance will be marked unhealthy after this many consecutive failures. The default value is 2.",
@@ -428,12 +428,12 @@ const list: AppBlock = {
             type: "string",
             description: "Output only. Type of resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

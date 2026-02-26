@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -108,12 +108,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The postal address of the Point of Presence, each line in the address is separated by a newline character.",
                 },
-                availability_zone: {
+                availabilityZone: {
                   type: "string",
                   description:
                     '[Output Only] Availability zone for this InterconnectLocation. Within a metropolitan area (metro), maintenance will not be simultaneously scheduled in more than one availability zone.  Example: "zone1" or "zone2".',
                 },
-                available_features: {
+                availableFeatures: {
                   type: "array",
                   items: {
                     type: "string",
@@ -121,7 +121,7 @@ const list: AppBlock = {
                   description:
                     "[Output only] List of features available at this InterconnectLocation, which can take one of the following values:     - IF_MACSEC    - IF_CROSS_SITE_NETWORK Check the AvailableFeatures enum for the list of possible values.",
                 },
-                available_link_types: {
+                availableLinkTypes: {
                   type: "array",
                   items: {
                     type: "string",
@@ -139,12 +139,12 @@ const list: AppBlock = {
                   description:
                     "[Output Only] Continent for this location, which can take one of the following values:     - AFRICA    - ASIA_PAC    - EUROPE    - NORTH_AMERICA    - SOUTH_AMERICA Check the Continent enum for the list of possible values.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
                 },
-                cross_site_interconnect_infos: {
+                crossSiteInterconnectInfos: {
                   type: "array",
                   items: {
                     type: "object",
@@ -167,12 +167,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] An optional description of the resource.",
                 },
-                facility_provider: {
+                facilityProvider: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The name of the provider for this facility (e.g., EQUINIX).",
                 },
-                facility_provider_facility_id: {
+                facilityProviderFacilityId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] A provider-assigned Identifier for this facility (e.g., Ashburn-DC1).",
@@ -191,26 +191,26 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Name of the resource.",
                 },
-                peeringdb_facility_id: {
+                peeringdbFacilityId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The peeringdb identifier for this facility (corresponding with a netfac type in peeringdb).",
                 },
-                region_infos: {
+                regionInfos: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      expected_rtt_ms: {
+                      expectedRttMs: {
                         type: "string",
                         description: "64-bit integer as string",
                       },
-                      l2_forwarding_enabled: {
+                      l2ForwardingEnabled: {
                         type: "boolean",
                         description:
                           "Output only. Identifies whether L2 Interconnect Attachments can be created in this region for interconnects that are in this location.",
                       },
-                      location_presence: {
+                      locationPresence: {
                         type: "string",
                         description:
                           "Output only. Identifies the network presence of this location. Check the LocationPresence enum for the list of possible values.",
@@ -228,12 +228,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] A list of InterconnectLocation.RegionInfo objects, that describe parameters pertaining to the relation between this InterconnectLocation and various Google Cloud regions.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for the resource.",
                 },
-                single_region_production_critical_peer_locations: {
+                singleRegionProductionCriticalPeerLocations: {
                   type: "array",
                   items: {
                     type: "string",
@@ -246,7 +246,7 @@ const list: AppBlock = {
                   description:
                     "[Output Only] The status of this InterconnectLocation, which can take one of the following values:     - CLOSED: The InterconnectLocation is closed and is unavailable for    provisioning new Interconnects.    - AVAILABLE: The InterconnectLocation is available for provisioning new    Interconnects. Check the Status enum for the list of possible values.",
                 },
-                supports_pzs: {
+                supportsPzs: {
                   type: "boolean",
                   description:
                     "Output only. [Output Only] Reserved for future use.",
@@ -263,12 +263,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Alwayscompute#interconnectLocationList for lists of interconnect locations.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

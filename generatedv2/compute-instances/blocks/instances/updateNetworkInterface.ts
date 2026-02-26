@@ -24,7 +24,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: true,
         },
-        access_configs: {
+        accessConfigs: {
           name: "Access Configs",
           description:
             "An array of configurations for this interface. Currently, only one access config, ONE_TO_ONE_NAT, is supported. If there are noaccessConfigs specified, then this instance will have no external internet access.",
@@ -33,12 +33,12 @@ const updateNetworkInterface: AppBlock = {
             items: {
               type: "object",
               properties: {
-                external_ipv6: {
+                externalIpv6: {
                   type: "string",
                   description:
                     "Applies to ipv6AccessConfigs only. The first IPv6 address of the external IPv6 range associated with this instance, prefix length is stored inexternalIpv6PrefixLength in ipv6AccessConfig. To use a static external IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an external IPv6 address from the instance's subnetwork.",
                 },
-                external_ipv6_prefix_length: {
+                externalIpv6PrefixLength: {
                   type: "integer",
                   description:
                     "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
@@ -53,27 +53,27 @@ const updateNetworkInterface: AppBlock = {
                   description:
                     "The name of this access configuration. In accessConfigs (IPv4), the default and recommended name is External NAT, but you can use any arbitrary string, such as My external IP orNetwork Access. In ipv6AccessConfigs, the recommend name is External IPv6.",
                 },
-                nat_i_p: {
+                natIP: {
                   type: "string",
                   description:
                     "Applies to accessConfigs (IPv4) only. Anexternal IP address associated with this instance. Specify an unused static external IP address available to the project or leave this field undefined to use an IP from a shared ephemeral IP address pool. If you specify a static external IP address, it must live in the same region as the zone of the instance.",
                 },
-                network_tier: {
+                networkTier: {
                   type: "string",
                   description:
                     "This signifies the networking tier used for configuring this access configuration and can only take the following values: PREMIUM,STANDARD.  If an AccessConfig is specified without a valid external IP address, an ephemeral IP will be created with this networkTier.  If an AccessConfig with a valid external IP address is specified, it must match that of the networkTier associated with the Address resource owning that IP. Check the NetworkTier enum for the list of possible values.",
                 },
-                public_ptr_domain_name: {
+                publicPtrDomainName: {
                   type: "string",
                   description:
                     "The DNS domain name for the public PTR record.  You can set this field only if the `setPublicPtr` field is enabled inaccessConfig. If this field is unspecified inipv6AccessConfig, a default PTR record will be created for first IP in associated external IPv6 range.",
                 },
-                security_policy: {
+                securityPolicy: {
                   type: "string",
                   description:
                     "The resource URL for the security policy associated with this access config.",
                 },
-                set_public_ptr: {
+                setPublicPtr: {
                   type: "boolean",
                   description:
                     "Specifies whether a public DNS 'PTR' record should be created to map the external IP address of the instance to a DNS domain name.  This field is not used in ipv6AccessConfig. A default PTR record will be created if the VM has external IPv6 range associated.",
@@ -93,7 +93,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        alias_ip_ranges: {
+        aliasIpRanges: {
           name: "Alias Ip Ranges",
           description:
             "An array of alias IP ranges for this network interface. You can only specify this field for network interfaces in VPC networks.",
@@ -102,12 +102,12 @@ const updateNetworkInterface: AppBlock = {
             items: {
               type: "object",
               properties: {
-                ip_cidr_range: {
+                ipCidrRange: {
                   type: "string",
                   description:
                     "The IP alias ranges to allocate for this interface. This IP CIDR range must belong to the specified subnetwork and cannot contain IP addresses reserved by system or used by other network interfaces. This range may be a single IP address (such as 10.2.3.4), a netmask (such as/24) or a CIDR-formatted string (such as10.1.2.0/24).",
                 },
-                subnetwork_range_name: {
+                subnetworkRangeName: {
                   type: "string",
                   description:
                     "The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.",
@@ -133,7 +133,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        igmp_query: {
+        igmpQuery: {
           name: "Igmp Query",
           description:
             "Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported. Check the IgmpQuery enum for the list of possible values.",
@@ -144,7 +144,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        internal_ipv6_prefix_length: {
+        internalIpv6PrefixLength: {
           name: "Internal Ipv6 Prefix Length",
           description: "The prefix length of the primary internal IPv6 range.",
           type: {
@@ -154,7 +154,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        ipv6_access_configs: {
+        ipv6AccessConfigs: {
           name: "Ipv6 Access Configs",
           description:
             "An array of IPv6 access configurations for this interface. Currently, only one IPv6 access config, DIRECT_IPV6, is supported. If there is no ipv6AccessConfig specified, then this instance will have no external IPv6 Internet access.",
@@ -163,12 +163,12 @@ const updateNetworkInterface: AppBlock = {
             items: {
               type: "object",
               properties: {
-                external_ipv6: {
+                externalIpv6: {
                   type: "string",
                   description:
                     "Applies to ipv6AccessConfigs only. The first IPv6 address of the external IPv6 range associated with this instance, prefix length is stored inexternalIpv6PrefixLength in ipv6AccessConfig. To use a static external IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an external IPv6 address from the instance's subnetwork.",
                 },
-                external_ipv6_prefix_length: {
+                externalIpv6PrefixLength: {
                   type: "integer",
                   description:
                     "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
@@ -183,27 +183,27 @@ const updateNetworkInterface: AppBlock = {
                   description:
                     "The name of this access configuration. In accessConfigs (IPv4), the default and recommended name is External NAT, but you can use any arbitrary string, such as My external IP orNetwork Access. In ipv6AccessConfigs, the recommend name is External IPv6.",
                 },
-                nat_i_p: {
+                natIP: {
                   type: "string",
                   description:
                     "Applies to accessConfigs (IPv4) only. Anexternal IP address associated with this instance. Specify an unused static external IP address available to the project or leave this field undefined to use an IP from a shared ephemeral IP address pool. If you specify a static external IP address, it must live in the same region as the zone of the instance.",
                 },
-                network_tier: {
+                networkTier: {
                   type: "string",
                   description:
                     "This signifies the networking tier used for configuring this access configuration and can only take the following values: PREMIUM,STANDARD.  If an AccessConfig is specified without a valid external IP address, an ephemeral IP will be created with this networkTier.  If an AccessConfig with a valid external IP address is specified, it must match that of the networkTier associated with the Address resource owning that IP. Check the NetworkTier enum for the list of possible values.",
                 },
-                public_ptr_domain_name: {
+                publicPtrDomainName: {
                   type: "string",
                   description:
                     "The DNS domain name for the public PTR record.  You can set this field only if the `setPublicPtr` field is enabled inaccessConfig. If this field is unspecified inipv6AccessConfig, a default PTR record will be created for first IP in associated external IPv6 range.",
                 },
-                security_policy: {
+                securityPolicy: {
                   type: "string",
                   description:
                     "The resource URL for the security policy associated with this access config.",
                 },
-                set_public_ptr: {
+                setPublicPtr: {
                   type: "boolean",
                   description:
                     "Specifies whether a public DNS 'PTR' record should be created to map the external IP address of the instance to a DNS domain name.  This field is not used in ipv6AccessConfig. A default PTR record will be created if the VM has external IPv6 range associated.",
@@ -223,7 +223,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        ipv6_access_type: {
+        ipv6AccessType: {
           name: "Ipv6 Access Type",
           description:
             "Output only. [Output Only] One of EXTERNAL, INTERNAL to indicate whether the IP can be accessed from the Internet. This field is always inherited from its subnetwork.  Valid only if stackType is IPV4_IPV6. Check the Ipv6AccessType enum for the list of possible values.",
@@ -234,7 +234,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        ipv6_address: {
+        ipv6Address: {
           name: "Ipv6 Address",
           description:
             "An IPv6 internal network address for this network interface. To use a static internal IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.",
@@ -278,7 +278,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        network_attachment: {
+        networkAttachment: {
           name: "Network Attachment",
           description:
             "The URL of the network attachment that this interface should connect to in the following format: projects/{project_number}/regions/{region_name}/networkAttachments/{network_attachment_name}.",
@@ -289,7 +289,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        network_i_p: {
+        networkIP: {
           name: "Network I P",
           description:
             "An IPv4 internal IP address to assign to the instance for this network interface. If not specified by the user, an unused internal IP is assigned by the system.",
@@ -300,7 +300,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        nic_type: {
+        nicType: {
           name: "Nic Type",
           description:
             "The type of vNIC to be used on this interface. This may be gVNIC or VirtioNet. Check the NicType enum for the list of possible values.",
@@ -311,7 +311,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        parent_nic_name: {
+        parentNicName: {
           name: "Parent Nic Name",
           description:
             "Name of the parent network interface of a dynamic network interface.",
@@ -322,7 +322,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        queue_count: {
+        queueCount: {
           name: "Queue Count",
           description:
             "The networking queue count that's specified by users for the network interface. Both Rx and Tx queues will be set to this number. It'll be empty if not specified by the users.",
@@ -333,7 +333,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        stack_type: {
+        stackType: {
           name: "Stack Type",
           description:
             "The stack type for this network interface. To assign only IPv4 addresses, use IPV4_ONLY. To assign both IPv4 and IPv6 addresses, useIPV4_IPV6. If not specified, IPV4_ONLY is used.  This field can be both set at instance creation and update network interface operations. Check the StackType enum for the list of possible values.",
@@ -366,7 +366,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        network_interface: {
+        networkInterface: {
           name: "Network Interface",
           description: "The name of the network interface to update.",
           type: {
@@ -374,7 +374,7 @@ const updateNetworkInterface: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -393,49 +393,48 @@ const updateNetworkInterface: AppBlock = {
           pathParams["instance"] = String(input.event.inputConfig.instance);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.network_interface !== undefined)
+        if (input.event.inputConfig.networkInterface !== undefined)
           queryParams["networkInterface"] = String(
-            input.event.inputConfig.network_interface,
+            input.event.inputConfig.networkInterface,
           );
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.access_configs !== undefined)
-          body.access_configs = input.event.inputConfig.access_configs;
-        if (input.event.inputConfig.alias_ip_ranges !== undefined)
-          body.alias_ip_ranges = input.event.inputConfig.alias_ip_ranges;
+        if (input.event.inputConfig.accessConfigs !== undefined)
+          body.accessConfigs = input.event.inputConfig.accessConfigs;
+        if (input.event.inputConfig.aliasIpRanges !== undefined)
+          body.aliasIpRanges = input.event.inputConfig.aliasIpRanges;
         if (input.event.inputConfig.fingerprint !== undefined)
           body.fingerprint = input.event.inputConfig.fingerprint;
-        if (input.event.inputConfig.igmp_query !== undefined)
-          body.igmp_query = input.event.inputConfig.igmp_query;
-        if (input.event.inputConfig.internal_ipv6_prefix_length !== undefined)
-          body.internal_ipv6_prefix_length =
-            input.event.inputConfig.internal_ipv6_prefix_length;
-        if (input.event.inputConfig.ipv6_access_configs !== undefined)
-          body.ipv6_access_configs =
-            input.event.inputConfig.ipv6_access_configs;
-        if (input.event.inputConfig.ipv6_access_type !== undefined)
-          body.ipv6_access_type = input.event.inputConfig.ipv6_access_type;
-        if (input.event.inputConfig.ipv6_address !== undefined)
-          body.ipv6_address = input.event.inputConfig.ipv6_address;
+        if (input.event.inputConfig.igmpQuery !== undefined)
+          body.igmpQuery = input.event.inputConfig.igmpQuery;
+        if (input.event.inputConfig.internalIpv6PrefixLength !== undefined)
+          body.internalIpv6PrefixLength =
+            input.event.inputConfig.internalIpv6PrefixLength;
+        if (input.event.inputConfig.ipv6AccessConfigs !== undefined)
+          body.ipv6AccessConfigs = input.event.inputConfig.ipv6AccessConfigs;
+        if (input.event.inputConfig.ipv6AccessType !== undefined)
+          body.ipv6AccessType = input.event.inputConfig.ipv6AccessType;
+        if (input.event.inputConfig.ipv6Address !== undefined)
+          body.ipv6Address = input.event.inputConfig.ipv6Address;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.network !== undefined)
           body.network = input.event.inputConfig.network;
-        if (input.event.inputConfig.network_attachment !== undefined)
-          body.network_attachment = input.event.inputConfig.network_attachment;
-        if (input.event.inputConfig.network_i_p !== undefined)
-          body.network_i_p = input.event.inputConfig.network_i_p;
-        if (input.event.inputConfig.nic_type !== undefined)
-          body.nic_type = input.event.inputConfig.nic_type;
-        if (input.event.inputConfig.parent_nic_name !== undefined)
-          body.parent_nic_name = input.event.inputConfig.parent_nic_name;
-        if (input.event.inputConfig.queue_count !== undefined)
-          body.queue_count = input.event.inputConfig.queue_count;
-        if (input.event.inputConfig.stack_type !== undefined)
-          body.stack_type = input.event.inputConfig.stack_type;
+        if (input.event.inputConfig.networkAttachment !== undefined)
+          body.networkAttachment = input.event.inputConfig.networkAttachment;
+        if (input.event.inputConfig.networkIP !== undefined)
+          body.networkIP = input.event.inputConfig.networkIP;
+        if (input.event.inputConfig.nicType !== undefined)
+          body.nicType = input.event.inputConfig.nicType;
+        if (input.event.inputConfig.parentNicName !== undefined)
+          body.parentNicName = input.event.inputConfig.parentNicName;
+        if (input.event.inputConfig.queueCount !== undefined)
+          body.queueCount = input.event.inputConfig.queueCount;
+        if (input.event.inputConfig.stackType !== undefined)
+          body.stackType = input.event.inputConfig.stackType;
         if (input.event.inputConfig.subnetwork !== undefined)
           body.subnetwork = input.event.inputConfig.subnetwork;
         if (input.event.inputConfig.vlan !== undefined)
@@ -461,12 +460,12 @@ const updateNetworkInterface: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -475,7 +474,7 @@ const updateNetworkInterface: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -493,12 +492,12 @@ const updateNetworkInterface: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -553,7 +552,7 @@ const updateNetworkInterface: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -571,7 +570,7 @@ const updateNetworkInterface: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -582,7 +581,7 @@ const updateNetworkInterface: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -592,16 +591,16 @@ const updateNetworkInterface: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -638,12 +637,12 @@ const updateNetworkInterface: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -652,15 +651,15 @@ const updateNetworkInterface: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -680,12 +679,12 @@ const updateNetworkInterface: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -700,18 +699,18 @@ const updateNetworkInterface: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -724,7 +723,7 @@ const updateNetworkInterface: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -735,16 +734,16 @@ const updateNetworkInterface: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

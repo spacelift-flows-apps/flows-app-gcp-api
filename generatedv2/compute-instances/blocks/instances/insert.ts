@@ -19,39 +19,39 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        advanced_machine_features: {
+        advancedMachineFeatures: {
           name: "Advanced Machine Features",
           description:
             "Controls for advanced machine-related behavior features.",
           type: {
             type: "object",
             properties: {
-              enable_nested_virtualization: {
+              enableNestedVirtualization: {
                 type: "boolean",
                 description:
                   "Whether to enable nested virtualization or not (default is false).",
               },
-              enable_uefi_networking: {
+              enableUefiNetworking: {
                 type: "boolean",
                 description:
                   "Whether to enable UEFI networking for instance creation.",
               },
-              performance_monitoring_unit: {
+              performanceMonitoringUnit: {
                 type: "string",
                 description:
                   "Type of Performance Monitoring Unit requested on instance. Check the PerformanceMonitoringUnit enum for the list of possible values.",
               },
-              threads_per_core: {
+              threadsPerCore: {
                 type: "integer",
                 description:
                   "The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.",
               },
-              turbo_mode: {
+              turboMode: {
                 type: "string",
                 description:
                   "Turbo frequency mode to use for the instance. Supported modes include: * ALL_CORE_MAX  Using empty string or not setting this field will use the platform-specific default turbo mode.",
               },
-              visible_core_count: {
+              visibleCoreCount: {
                 type: "integer",
                 description:
                   "The number of physical cores to expose to an instance. Multiply by the number of threads per core to compute the total number of virtual CPUs to expose to the instance. If unset, the number of cores is inferred from the instance's nominal CPU count and the underlying platform's SMT width.",
@@ -63,7 +63,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        can_ip_forward: {
+        canIpForward: {
           name: "Can Ip Forward",
           description:
             "Allows this instance to send and receive packets with non-matching destination or source IPs. This is required if you plan to use this instance to forward routes. For more information, seeEnabling IP Forwarding.",
@@ -74,18 +74,18 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        confidential_instance_config: {
+        confidentialInstanceConfig: {
           name: "Confidential Instance Config",
           description: "Confidential Instance Config field",
           type: {
             type: "object",
             properties: {
-              confidential_instance_type: {
+              confidentialInstanceType: {
                 type: "string",
                 description:
                   "Defines the type of technology used by the confidential instance. Check the ConfidentialInstanceType enum for the list of possible values.",
               },
-              enable_confidential_compute: {
+              enableConfidentialCompute: {
                 type: "boolean",
                 description:
                   "Defines whether the instance should have confidential compute enabled.",
@@ -96,7 +96,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        cpu_platform: {
+        cpuPlatform: {
           name: "Cpu Platform",
           description:
             "Output only. [Output Only] The CPU platform used by this instance.",
@@ -107,7 +107,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -118,7 +118,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        deletion_protection: {
+        deletionProtection: {
           name: "Deletion Protection",
           description:
             "Whether the resource should be protected against deletion.",
@@ -154,7 +154,7 @@ const insert: AppBlock = {
                   description:
                     "Output only. [Output Only] The architecture of the attached disk. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
                 },
-                auto_delete: {
+                autoDelete: {
                   type: "boolean",
                   description:
                     "Specifies whether the disk will be auto-deleted when the instance is deleted (but not when the disk is detached from the instance).",
@@ -164,30 +164,30 @@ const insert: AppBlock = {
                   description:
                     "Indicates that this is a boot disk. The virtual machine will use the first partition of the disk for its root filesystem.",
                 },
-                device_name: {
+                deviceName: {
                   type: "string",
                   description:
                     "Specifies a unique device name of your choice that is reflected into the/dev/disk/by-id/google-* tree of a Linux operating system running within the instance. This name can be used to reference the device for mounting, resizing, and so on, from within the instance.  If not specified, the server chooses a default device name to apply to this disk, in the form persistent-disk-x, where x is a number assigned by Google Compute Engine. This field is only applicable for persistent disks.",
                 },
-                disk_encryption_key: {
+                diskEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -202,16 +202,16 @@ const insert: AppBlock = {
                   description:
                     "Encrypts or decrypts a disk using acustomer-supplied encryption key.  If you are creating a new disk, this field encrypts the new disk using an encryption key that you provide. If you are attaching an existing disk that is already encrypted, this field decrypts the disk using the customer-supplied encryption key.  If you encrypt a disk using a customer-supplied key, you must provide the same key again when you attempt to use this resource at a later time. For example, you must provide the key when you create a snapshot or an image from the disk or when you attach the disk to a virtual machine instance.  If you do not provide an encryption key, then the disk will be encrypted using an automatically generated key and you do not need to provide a key to use the disk later.  Note:  Instance templates do not storecustomer-supplied encryption keys, so you cannot use your own keys to encrypt disks in amanaged instance group.  You cannot create VMs that have disks with customer-supplied keys using the bulk insert method.",
                 },
-                disk_size_gb: {
+                diskSizeGb: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                force_attach: {
+                forceAttach: {
                   type: "boolean",
                   description:
                     "[Input Only] Whether to force attach the regional disk even if it's currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.",
                 },
-                guest_os_features: {
+                guestOsFeatures: {
                   type: "array",
                   items: {
                     type: "object",
@@ -233,7 +233,7 @@ const insert: AppBlock = {
                   description:
                     "Output only. [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.",
                 },
-                initialize_params: {
+                initializeParams: {
                   type: "object",
                   properties: {
                     architecture: {
@@ -246,21 +246,21 @@ const insert: AppBlock = {
                       description:
                         "An optional description. Provide this property when creating the disk.",
                     },
-                    disk_name: {
+                    diskName: {
                       type: "string",
                       description:
                         "Specifies the disk name. If not specified, the default is to use the name of the instance. If a disk with the same name already exists in the given region, the existing disk is attached to the new instance and the new disk is not created.",
                     },
-                    disk_size_gb: {
+                    diskSizeGb: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
-                    disk_type: {
+                    diskType: {
                       type: "string",
                       description:
                         "Specifies the disk type to use to create the instance. If not specified, the default is pd-standard, specified using the full URL. For example:  https://www.googleapis.com/compute/v1/projects/project/zones/zone/diskTypes/pd-standard   For a full list of acceptable values, seePersistent disk types. If you specify this field when creating a VM, you can provide either the full or partial URL. For example, the following values are valid:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/diskTypes/diskType    - projects/project/zones/zone/diskTypes/diskType    - zones/zone/diskTypes/diskType   If you specify this field when creating or updating an instance template or all-instances configuration, specify the type of the disk, not the URL. For example: pd-standard.",
                     },
-                    enable_confidential_compute: {
+                    enableConfidentialCompute: {
                       type: "boolean",
                       description:
                         "Whether this disk is using confidential compute mode.",
@@ -281,20 +281,20 @@ const insert: AppBlock = {
                       description:
                         "A list of publicly visible licenses. Reserved for Google's use.",
                     },
-                    on_update_action: {
+                    onUpdateAction: {
                       type: "string",
                       description:
                         "Specifies which action to take on instance update with this disk. Default is to use the existing disk. Check the OnUpdateAction enum for the list of possible values.",
                     },
-                    provisioned_iops: {
+                    provisionedIops: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
-                    provisioned_throughput: {
+                    provisionedThroughput: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
-                    replica_zones: {
+                    replicaZones: {
                       type: "array",
                       items: {
                         type: "string",
@@ -302,7 +302,7 @@ const insert: AppBlock = {
                       description:
                         "Required for each regional disk associated with the instance. Specify the URLs of the zones where the disk should be replicated to. You must provide exactly two replica zones, and one zone must be the same as the instance zone.",
                     },
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -310,7 +310,7 @@ const insert: AppBlock = {
                       description:
                         "Resource manager tags to be bound to the disk. Tag keys and values have the same definition as resource manager tags. Keys and values can be either in numeric format, such as `tagKeys/{tag_key_id}` and `tagValues/456` or in namespaced format such as `{org_id|project_id}/{tag_key_short_name}` and `{tag_value_short_name}`. The field is ignored (both PUT & PATCH) when empty.",
                     },
-                    resource_policies: {
+                    resourcePolicies: {
                       type: "array",
                       items: {
                         type: "string",
@@ -318,30 +318,30 @@ const insert: AppBlock = {
                       description:
                         "Resource policies applied to this disk for automatic snapshot creations. Specified using the full or partial URL. For instance template, specify only the resource policy name.",
                     },
-                    source_image: {
+                    sourceImage: {
                       type: "string",
                       description:
                         "The source image to create this disk. When creating a new instance boot disk, one of initializeParams.sourceImage orinitializeParams.sourceSnapshot or disks.source is required.  To create a disk with one of the public operating system images, specify the image by its family name. For example, specifyfamily/debian-9 to use the latest Debian 9 image:  projects/debian-cloud/global/images/family/debian-9   Alternatively, use a specific version of a public operating system image:  projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD   To create a disk with a custom image that you created, specify the image name in the following format:  global/images/my-custom-image   You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name:  global/images/family/my-image-family   If the source image is deleted later, this field will not be set.",
                     },
-                    source_image_encryption_key: {
+                    sourceImageEncryptionKey: {
                       type: "object",
                       properties: {
-                        kms_key_name: {
+                        kmsKeyName: {
                           type: "string",
                           description:
                             'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                         },
-                        kms_key_service_account: {
+                        kmsKeyServiceAccount: {
                           type: "string",
                           description:
                             'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                         },
-                        raw_key: {
+                        rawKey: {
                           type: "string",
                           description:
                             'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                         },
-                        rsa_encrypted_key: {
+                        rsaEncryptedKey: {
                           type: "string",
                           description:
                             'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -356,30 +356,30 @@ const insert: AppBlock = {
                       description:
                         "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.  InstanceTemplate and InstancePropertiesPatch do not storecustomer-supplied encryption keys, so you cannot create disks for instances in a managed instance group if the source images are encrypted with your own keys.",
                     },
-                    source_snapshot: {
+                    sourceSnapshot: {
                       type: "string",
                       description:
                         "The source snapshot to create this disk. When creating a new instance boot disk, one of initializeParams.sourceSnapshot orinitializeParams.sourceImage or disks.source is required.  To create a disk with a snapshot that you created, specify the snapshot name in the following format:  global/snapshots/my-backup   If the source snapshot is deleted later, this field will not be set.  Note: You cannot create VMs in bulk using a snapshot as the source. Use an image instead when you create VMs using the bulk insert method.",
                     },
-                    source_snapshot_encryption_key: {
+                    sourceSnapshotEncryptionKey: {
                       type: "object",
                       properties: {
-                        kms_key_name: {
+                        kmsKeyName: {
                           type: "string",
                           description:
                             'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                         },
-                        kms_key_service_account: {
+                        kmsKeyServiceAccount: {
                           type: "string",
                           description:
                             'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                         },
-                        raw_key: {
+                        rawKey: {
                           type: "string",
                           description:
                             'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                         },
-                        rsa_encrypted_key: {
+                        rsaEncryptedKey: {
                           type: "string",
                           description:
                             'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -394,7 +394,7 @@ const insert: AppBlock = {
                       description:
                         "Thecustomer-supplied encryption key of the source snapshot.",
                     },
-                    storage_pool: {
+                    storagePool: {
                       type: "string",
                       description:
                         "The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/storagePools/storagePool      - projects/project/zones/zone/storagePools/storagePool    - zones/zone/storagePools/storagePool",
@@ -427,12 +427,12 @@ const insert: AppBlock = {
                   description:
                     "The mode in which to attach this disk, either READ_WRITE orREAD_ONLY. If not specified, the default is to attach the disk in READ_WRITE mode. Check the Mode enum for the list of possible values.",
                 },
-                saved_state: {
+                savedState: {
                   type: "string",
                   description:
                     "Output only. For LocalSSD disks on VM Instances in STOPPED or SUSPENDED state, this field is set to PRESERVED if the LocalSSD data has been saved to a persistent location by customer request.  (see the discard_local_ssd option on Stop/Suspend). Read-only in the api. Check the SavedState enum for the list of possible values.",
                 },
-                shielded_instance_initial_state: {
+                shieldedInstanceInitialState: {
                   type: "object",
                   properties: {
                     dbs: {
@@ -445,7 +445,7 @@ const insert: AppBlock = {
                             description:
                               "The raw content in the secure keys file.",
                           },
-                          file_type: {
+                          fileType: {
                             type: "string",
                             description:
                               "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -465,7 +465,7 @@ const insert: AppBlock = {
                             description:
                               "The raw content in the secure keys file.",
                           },
-                          file_type: {
+                          fileType: {
                             type: "string",
                             description:
                               "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -485,7 +485,7 @@ const insert: AppBlock = {
                             description:
                               "The raw content in the secure keys file.",
                           },
-                          file_type: {
+                          fileType: {
                             type: "string",
                             description:
                               "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -503,7 +503,7 @@ const insert: AppBlock = {
                           description:
                             "The raw content in the secure keys file.",
                         },
-                        file_type: {
+                        fileType: {
                           type: "string",
                           description:
                             "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -536,13 +536,13 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        display_device: {
+        displayDevice: {
           name: "Display Device",
           description: "Enables display device for the instance.",
           type: {
             type: "object",
             properties: {
-              enable_display: {
+              enableDisplay: {
                 type: "boolean",
                 description:
                   "Defines whether the instance has Display enabled.",
@@ -564,7 +564,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        guest_accelerators: {
+        guestAccelerators: {
           name: "Guest Accelerators",
           description:
             "A list of the type and count of accelerator cards attached to the instance.",
@@ -573,12 +573,12 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                accelerator_count: {
+                acceleratorCount: {
                   type: "integer",
                   description:
                     "The number of the guest accelerator cards exposed to this instance.",
                 },
-                accelerator_type: {
+                acceleratorType: {
                   type: "string",
                   description:
                     "Full or partial URL of the accelerator type resource to attach to this instance. For example:projects/my-project/zones/us-central1-c/acceleratorTypes/nvidia-tesla-p100 If you are creating an instance template, specify only the accelerator name. See GPUs on Compute Engine for a full list of accelerator types.",
@@ -614,29 +614,29 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        instance_encryption_key: {
+        instanceEncryptionKey: {
           name: "Instance Encryption Key",
           description:
             "Encrypts suspended data for an instance with acustomer-managed encryption key.  If you are creating a new instance, this field will encrypt the local SSD and in-memory contents of the instance during the suspend operation.  If you do not provide an encryption key when creating the instance, then the local SSD and in-memory contents will be encrypted using an automatically generated key during the suspend operation.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -653,7 +653,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        key_revocation_action_type: {
+        keyRevocationActionType: {
           name: "Key Revocation Action Type",
           description:
             'KeyRevocationActionType of the instance. Supported options are "STOP" and "NONE". The default value is "NONE" if it is not specified. Check the KeyRevocationActionType enum for the list of possible values.',
@@ -675,7 +675,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        label_fingerprint: {
+        labelFingerprint: {
           name: "Label Fingerprint",
           description:
             "A fingerprint for this request, which is essentially a hash of the label's contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels.  To see the latest fingerprint, make get() request to the instance.",
@@ -700,7 +700,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        last_start_timestamp: {
+        lastStartTimestamp: {
           name: "Last Start Timestamp",
           description:
             "Output only. [Output Only] Last start timestamp inRFC3339 text format.",
@@ -711,7 +711,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        last_stop_timestamp: {
+        lastStopTimestamp: {
           name: "Last Stop Timestamp",
           description:
             "Output only. [Output Only] Last stop timestamp inRFC3339 text format.",
@@ -722,7 +722,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        last_suspended_timestamp: {
+        lastSuspendedTimestamp: {
           name: "Last Suspended Timestamp",
           description:
             "Output only. [Output Only] Last suspended timestamp inRFC3339 text format.",
@@ -733,7 +733,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        machine_type: {
+        machineType: {
           name: "Machine Type",
           description:
             "Full or partial URL of the machine type resource to use for this instance, in the format:zones/zone/machineTypes/machine-type. This is provided by the client when the instance is created. For example, the following is a valid partial url to a predefined machine type:  zones/us-central1-f/machineTypes/n1-standard-1   To create acustom machine type, provide a URL to a machine type in the following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ... 24, etc), and MEMORY is the total memory for this instance. Memory must be a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is 5120 MB):  zones/zone/machineTypes/custom-CPUS-MEMORY   For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list of restrictions, read theSpecifications for custom machine types.",
@@ -789,7 +789,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        min_cpu_platform: {
+        minCpuPlatform: {
           name: "Min Cpu Platform",
           description:
             'Specifies aminimum CPU platform for the VM instance. Applicable values are the friendly names of CPU platforms, such as minCpuPlatform: "Intel Haswell" or minCpuPlatform: "Intel Sandy Bridge".',
@@ -811,7 +811,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        network_interfaces: {
+        networkInterfaces: {
           name: "Network Interfaces",
           description:
             "An array of network configurations for this instance. These specify how interfaces are configured to interact with other network services, such as connecting to the internet. Multiple interfaces are supported per instance.",
@@ -820,17 +820,17 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                access_configs: {
+                accessConfigs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      external_ipv6: {
+                      externalIpv6: {
                         type: "string",
                         description:
                           "Applies to ipv6AccessConfigs only. The first IPv6 address of the external IPv6 range associated with this instance, prefix length is stored inexternalIpv6PrefixLength in ipv6AccessConfig. To use a static external IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an external IPv6 address from the instance's subnetwork.",
                       },
-                      external_ipv6_prefix_length: {
+                      externalIpv6PrefixLength: {
                         type: "integer",
                         description:
                           "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
@@ -845,27 +845,27 @@ const insert: AppBlock = {
                         description:
                           "The name of this access configuration. In accessConfigs (IPv4), the default and recommended name is External NAT, but you can use any arbitrary string, such as My external IP orNetwork Access. In ipv6AccessConfigs, the recommend name is External IPv6.",
                       },
-                      nat_i_p: {
+                      natIP: {
                         type: "string",
                         description:
                           "Applies to accessConfigs (IPv4) only. Anexternal IP address associated with this instance. Specify an unused static external IP address available to the project or leave this field undefined to use an IP from a shared ephemeral IP address pool. If you specify a static external IP address, it must live in the same region as the zone of the instance.",
                       },
-                      network_tier: {
+                      networkTier: {
                         type: "string",
                         description:
                           "This signifies the networking tier used for configuring this access configuration and can only take the following values: PREMIUM,STANDARD.  If an AccessConfig is specified without a valid external IP address, an ephemeral IP will be created with this networkTier.  If an AccessConfig with a valid external IP address is specified, it must match that of the networkTier associated with the Address resource owning that IP. Check the NetworkTier enum for the list of possible values.",
                       },
-                      public_ptr_domain_name: {
+                      publicPtrDomainName: {
                         type: "string",
                         description:
                           "The DNS domain name for the public PTR record.  You can set this field only if the `setPublicPtr` field is enabled inaccessConfig. If this field is unspecified inipv6AccessConfig, a default PTR record will be created for first IP in associated external IPv6 range.",
                       },
-                      security_policy: {
+                      securityPolicy: {
                         type: "string",
                         description:
                           "The resource URL for the security policy associated with this access config.",
                       },
-                      set_public_ptr: {
+                      setPublicPtr: {
                         type: "boolean",
                         description:
                           "Specifies whether a public DNS 'PTR' record should be created to map the external IP address of the instance to a DNS domain name.  This field is not used in ipv6AccessConfig. A default PTR record will be created if the VM has external IPv6 range associated.",
@@ -883,17 +883,17 @@ const insert: AppBlock = {
                   description:
                     "An array of configurations for this interface. Currently, only one access config, ONE_TO_ONE_NAT, is supported. If there are noaccessConfigs specified, then this instance will have no external internet access.",
                 },
-                alias_ip_ranges: {
+                aliasIpRanges: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      ip_cidr_range: {
+                      ipCidrRange: {
                         type: "string",
                         description:
                           "The IP alias ranges to allocate for this interface. This IP CIDR range must belong to the specified subnetwork and cannot contain IP addresses reserved by system or used by other network interfaces. This range may be a single IP address (such as 10.2.3.4), a netmask (such as/24) or a CIDR-formatted string (such as10.1.2.0/24).",
                       },
-                      subnetwork_range_name: {
+                      subnetworkRangeName: {
                         type: "string",
                         description:
                           "The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.",
@@ -911,27 +911,27 @@ const insert: AppBlock = {
                   description:
                     "Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update theNetworkInterface. The request will fail with error400 Bad Request if the fingerprint is not provided, or412 Precondition Failed if the fingerprint is out of date.",
                 },
-                igmp_query: {
+                igmpQuery: {
                   type: "string",
                   description:
                     "Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported. Check the IgmpQuery enum for the list of possible values.",
                 },
-                internal_ipv6_prefix_length: {
+                internalIpv6PrefixLength: {
                   type: "integer",
                   description:
                     "The prefix length of the primary internal IPv6 range.",
                 },
-                ipv6_access_configs: {
+                ipv6AccessConfigs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      external_ipv6: {
+                      externalIpv6: {
                         type: "string",
                         description:
                           "Applies to ipv6AccessConfigs only. The first IPv6 address of the external IPv6 range associated with this instance, prefix length is stored inexternalIpv6PrefixLength in ipv6AccessConfig. To use a static external IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an external IPv6 address from the instance's subnetwork.",
                       },
-                      external_ipv6_prefix_length: {
+                      externalIpv6PrefixLength: {
                         type: "integer",
                         description:
                           "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
@@ -946,27 +946,27 @@ const insert: AppBlock = {
                         description:
                           "The name of this access configuration. In accessConfigs (IPv4), the default and recommended name is External NAT, but you can use any arbitrary string, such as My external IP orNetwork Access. In ipv6AccessConfigs, the recommend name is External IPv6.",
                       },
-                      nat_i_p: {
+                      natIP: {
                         type: "string",
                         description:
                           "Applies to accessConfigs (IPv4) only. Anexternal IP address associated with this instance. Specify an unused static external IP address available to the project or leave this field undefined to use an IP from a shared ephemeral IP address pool. If you specify a static external IP address, it must live in the same region as the zone of the instance.",
                       },
-                      network_tier: {
+                      networkTier: {
                         type: "string",
                         description:
                           "This signifies the networking tier used for configuring this access configuration and can only take the following values: PREMIUM,STANDARD.  If an AccessConfig is specified without a valid external IP address, an ephemeral IP will be created with this networkTier.  If an AccessConfig with a valid external IP address is specified, it must match that of the networkTier associated with the Address resource owning that IP. Check the NetworkTier enum for the list of possible values.",
                       },
-                      public_ptr_domain_name: {
+                      publicPtrDomainName: {
                         type: "string",
                         description:
                           "The DNS domain name for the public PTR record.  You can set this field only if the `setPublicPtr` field is enabled inaccessConfig. If this field is unspecified inipv6AccessConfig, a default PTR record will be created for first IP in associated external IPv6 range.",
                       },
-                      security_policy: {
+                      securityPolicy: {
                         type: "string",
                         description:
                           "The resource URL for the security policy associated with this access config.",
                       },
-                      set_public_ptr: {
+                      setPublicPtr: {
                         type: "boolean",
                         description:
                           "Specifies whether a public DNS 'PTR' record should be created to map the external IP address of the instance to a DNS domain name.  This field is not used in ipv6AccessConfig. A default PTR record will be created if the VM has external IPv6 range associated.",
@@ -984,12 +984,12 @@ const insert: AppBlock = {
                   description:
                     "An array of IPv6 access configurations for this interface. Currently, only one IPv6 access config, DIRECT_IPV6, is supported. If there is no ipv6AccessConfig specified, then this instance will have no external IPv6 Internet access.",
                 },
-                ipv6_access_type: {
+                ipv6AccessType: {
                   type: "string",
                   description:
                     "Output only. [Output Only] One of EXTERNAL, INTERNAL to indicate whether the IP can be accessed from the Internet. This field is always inherited from its subnetwork.  Valid only if stackType is IPV4_IPV6. Check the Ipv6AccessType enum for the list of possible values.",
                 },
-                ipv6_address: {
+                ipv6Address: {
                   type: "string",
                   description:
                     "An IPv6 internal network address for this network interface. To use a static internal IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.",
@@ -1009,32 +1009,32 @@ const insert: AppBlock = {
                   description:
                     "URL of the VPC network resource for this instance. When creating an instance, if neither the network nor the subnetwork is specified, the default network global/networks/default is used. If the selected project doesn't have the default network, you must specify a network or subnet. If the network is not specified but the subnetwork is specified, the network is inferred.  If you specify this property, you can specify the network as a full or partial URL. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/global/networks/network       - projects/project/global/networks/network       - global/networks/default",
                 },
-                network_attachment: {
+                networkAttachment: {
                   type: "string",
                   description:
                     "The URL of the network attachment that this interface should connect to in the following format: projects/{project_number}/regions/{region_name}/networkAttachments/{network_attachment_name}.",
                 },
-                network_i_p: {
+                networkIP: {
                   type: "string",
                   description:
                     "An IPv4 internal IP address to assign to the instance for this network interface. If not specified by the user, an unused internal IP is assigned by the system.",
                 },
-                nic_type: {
+                nicType: {
                   type: "string",
                   description:
                     "The type of vNIC to be used on this interface. This may be gVNIC or VirtioNet. Check the NicType enum for the list of possible values.",
                 },
-                parent_nic_name: {
+                parentNicName: {
                   type: "string",
                   description:
                     "Name of the parent network interface of a dynamic network interface.",
                 },
-                queue_count: {
+                queueCount: {
                   type: "integer",
                   description:
                     "The networking queue count that's specified by users for the network interface. Both Rx and Tx queues will be set to this number. It'll be empty if not specified by the users.",
                 },
-                stack_type: {
+                stackType: {
                   type: "string",
                   description:
                     "The stack type for this network interface. To assign only IPv4 addresses, use IPV4_ONLY. To assign both IPv4 and IPv6 addresses, useIPV4_IPV6. If not specified, IPV4_ONLY is used.  This field can be both set at instance creation and update network interface operations. Check the StackType enum for the list of possible values.",
@@ -1059,13 +1059,13 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        network_performance_config: {
+        networkPerformanceConfig: {
           name: "Network Performance Config",
           description: "Network Performance Config field",
           type: {
             type: "object",
             properties: {
-              total_egress_bandwidth_tier: {
+              totalEgressBandwidthTier: {
                 type: "string",
                 description:
                   "Check the TotalEgressBandwidthTier enum for the list of possible values.",
@@ -1082,7 +1082,7 @@ const insert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              request_valid_for_duration: {
+              requestValidForDuration: {
                 type: "object",
                 properties: {
                   nanos: {
@@ -1099,7 +1099,7 @@ const insert: AppBlock = {
                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                 additionalProperties: true,
               },
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -1113,7 +1113,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        private_ipv6_google_access: {
+        privateIpv6GoogleAccess: {
           name: "Private Ipv6 Google Access",
           description:
             "The private IPv6 google access type for the VM. If not specified, use  INHERIT_FROM_SUBNETWORK as default. Check the PrivateIpv6GoogleAccess enum for the list of possible values.",
@@ -1124,14 +1124,14 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        reservation_affinity: {
+        reservationAffinity: {
           name: "Reservation Affinity",
           description:
             "Specifies the reservations that this instance can consume from.",
           type: {
             type: "object",
             properties: {
-              consume_reservation_type: {
+              consumeReservationType: {
                 type: "string",
                 description:
                   "Specifies the type of reservation from which this instance can consume resources: ANY_RESERVATION (default),SPECIFIC_RESERVATION, or NO_RESERVATION. See Consuming reserved instances for examples. Check the ConsumeReservationType enum for the list of possible values.",
@@ -1156,7 +1156,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        resource_policies: {
+        resourcePolicies: {
           name: "Resource Policies",
           description: "Resource policies applied to this instance.",
           type: {
@@ -1168,52 +1168,52 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        resource_status: {
+        resourceStatus: {
           name: "Resource Status",
           description:
             "Output only. [Output Only] Specifies values set for instance attributes as compared to the values requested by user in the corresponding input only field.",
           type: {
             type: "object",
             properties: {
-              effective_instance_metadata: {
+              effectiveInstanceMetadata: {
                 type: "object",
                 properties: {
-                  block_project_ssh_keys_metadata_value: {
+                  blockProjectSshKeysMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective block-project-ssh-keys value at Instance level.",
                   },
-                  enable_guest_attributes_metadata_value: {
+                  enableGuestAttributesMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective enable-guest-attributes value at Instance level.",
                   },
-                  enable_os_inventory_metadata_value: {
+                  enableOsInventoryMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective enable-os-inventory value at Instance level.",
                   },
-                  enable_osconfig_metadata_value: {
+                  enableOsconfigMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective enable-osconfig value at Instance level.",
                   },
-                  enable_oslogin_metadata_value: {
+                  enableOsloginMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective enable-oslogin value at Instance level.",
                   },
-                  serial_port_enable_metadata_value: {
+                  serialPortEnableMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective serial-port-enable value at Instance level.",
                   },
-                  serial_port_logging_enable_metadata_value: {
+                  serialPortLoggingEnableMetadataValue: {
                     type: "boolean",
                     description:
                       "Effective serial-port-logging-enable value at Instance level.",
                   },
-                  vm_dns_setting_metadata_value: {
+                  vmDnsSettingMetadataValue: {
                     type: "string",
                     description: "Effective VM DNS setting at Instance level.",
                   },
@@ -1222,12 +1222,12 @@ const insert: AppBlock = {
                   "Effective values of predefined metadata keys for an instance.",
                 additionalProperties: true,
               },
-              physical_host: {
+              physicalHost: {
                 type: "string",
                 description:
                   "Output only. [Output Only] The precise location of your instance within the zone's data center, including the block, sub-block, and host. The field is formatted as follows: blockId/subBlockId/hostId.",
               },
-              physical_host_topology: {
+              physicalHostTopology: {
                 type: "object",
                 properties: {
                   block: {
@@ -1255,10 +1255,10 @@ const insert: AppBlock = {
                   "Represents the physical host topology of the host on which the VM is running.",
                 additionalProperties: true,
               },
-              reservation_consumption_info: {
+              reservationConsumptionInfo: {
                 type: "object",
                 properties: {
-                  consumed_reservation: {
+                  consumedReservation: {
                     type: "string",
                     description:
                       "Output only. [Output Only] The full resource name of the reservation that this instance is consuming from.",
@@ -1271,7 +1271,7 @@ const insert: AppBlock = {
               scheduling: {
                 type: "object",
                 properties: {
-                  availability_domain: {
+                  availabilityDomain: {
                     type: "integer",
                     description:
                       "Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.",
@@ -1279,25 +1279,25 @@ const insert: AppBlock = {
                 },
                 additionalProperties: true,
               },
-              upcoming_maintenance: {
+              upcomingMaintenance: {
                 type: "object",
                 properties: {
-                  can_reschedule: {
+                  canReschedule: {
                     type: "boolean",
                     description:
                       "Indicates if the maintenance can be customer triggered.",
                   },
-                  latest_window_start_time: {
+                  latestWindowStartTime: {
                     type: "string",
                     description:
                       "The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.",
                   },
-                  maintenance_on_shutdown: {
+                  maintenanceOnShutdown: {
                     type: "boolean",
                     description:
                       "Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.",
                   },
-                  maintenance_reasons: {
+                  maintenanceReasons: {
                     type: "array",
                     items: {
                       type: "string",
@@ -1305,7 +1305,7 @@ const insert: AppBlock = {
                     description:
                       "The reasons for the maintenance. Only valid for vms. Check the MaintenanceReasons enum for the list of possible values.",
                   },
-                  maintenance_status: {
+                  maintenanceStatus: {
                     type: "string",
                     description:
                       "Check the MaintenanceStatus enum for the list of possible values.",
@@ -1315,12 +1315,12 @@ const insert: AppBlock = {
                     description:
                       "Defines the type of maintenance. Check the Type enum for the list of possible values.",
                   },
-                  window_end_time: {
+                  windowEndTime: {
                     type: "string",
                     description:
                       "The time by which the maintenance disruption will be completed. This timestamp value is in RFC3339 text format.",
                   },
-                  window_start_time: {
+                  windowStartTime: {
                     type: "string",
                     description:
                       "The current start time of the maintenance window. This timestamp value is in RFC3339 text format.",
@@ -1336,7 +1336,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzi: {
+        satisfiesPzi: {
           name: "Satisfies Pzi",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -1345,7 +1345,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzs: {
+        satisfiesPzs: {
           name: "Satisfies Pzs",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -1360,27 +1360,27 @@ const insert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              automatic_restart: {
+              automaticRestart: {
                 type: "boolean",
                 description:
                   "Specifies whether the instance should be automatically restarted if it is terminated by Compute Engine (not terminated by a user). You can only set the automatic restart option for standard instances.Preemptible instances cannot be automatically restarted.  By default, this is set to true so an instance is automatically restarted if it is terminated by Compute Engine.",
               },
-              availability_domain: {
+              availabilityDomain: {
                 type: "integer",
                 description:
                   "Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.",
               },
-              host_error_timeout_seconds: {
+              hostErrorTimeoutSeconds: {
                 type: "integer",
                 description:
                   "Specify the time in seconds for host error detection, the value must be within the range of [90, 330] with the increment of 30, if unset, the default behavior of host error recovery will be used.",
               },
-              instance_termination_action: {
+              instanceTerminationAction: {
                 type: "string",
                 description:
                   "Specifies the termination action for the instance. Check the InstanceTerminationAction enum for the list of possible values.",
               },
-              local_ssd_recovery_timeout: {
+              localSsdRecoveryTimeout: {
                 type: "object",
                 properties: {
                   nanos: {
@@ -1397,12 +1397,12 @@ const insert: AppBlock = {
                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                 additionalProperties: true,
               },
-              location_hint: {
+              locationHint: {
                 type: "string",
                 description:
                   "An opaque location hint used to place the instance close to other resources. This field is for use by internal tools that use the public API.",
               },
-              max_run_duration: {
+              maxRunDuration: {
                 type: "object",
                 properties: {
                   nanos: {
@@ -1419,12 +1419,12 @@ const insert: AppBlock = {
                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                 additionalProperties: true,
               },
-              min_node_cpus: {
+              minNodeCpus: {
                 type: "integer",
                 description:
                   "The minimum number of virtual CPUs this instance will consume when running on a sole-tenant node.",
               },
-              node_affinities: {
+              nodeAffinities: {
                 type: "array",
                 items: {
                   type: "object",
@@ -1455,15 +1455,15 @@ const insert: AppBlock = {
                 description:
                   "A set of node affinity and anti-affinity configurations. Refer toConfiguring node affinity for more information. Overrides reservationAffinity.",
               },
-              on_host_maintenance: {
+              onHostMaintenance: {
                 type: "string",
                 description:
                   "Defines the maintenance behavior for this instance. For standard instances, the default behavior is MIGRATE. Forpreemptible instances, the default and only possible behavior is TERMINATE. For more information, see  Set  VM host maintenance policy. Check the OnHostMaintenance enum for the list of possible values.",
               },
-              on_instance_stop_action: {
+              onInstanceStopAction: {
                 type: "object",
                 properties: {
-                  discard_local_ssd: {
+                  discardLocalSsd: {
                     type: "boolean",
                     description:
                       "If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.",
@@ -1478,17 +1478,17 @@ const insert: AppBlock = {
                 description:
                   "Defines whether the instance is preemptible. This can only be set during instance creation or while the instance isstopped and therefore, in a `TERMINATED` state. SeeInstance Life Cycle for more information on the possible instance states.",
               },
-              provisioning_model: {
+              provisioningModel: {
                 type: "string",
                 description:
                   "Specifies the provisioning model of the instance. Check the ProvisioningModel enum for the list of possible values.",
               },
-              skip_guest_os_shutdown: {
+              skipGuestOsShutdown: {
                 type: "boolean",
                 description:
                   "Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.",
               },
-              termination_time: {
+              terminationTime: {
                 type: "string",
                 description:
                   "Specifies the timestamp, when the instance will be terminated, inRFC3339 text format. If specified, the instance termination action will be performed at the termination time.",
@@ -1499,7 +1499,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] Server-defined URL for this resource.",
@@ -1510,7 +1510,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        service_accounts: {
+        serviceAccounts: {
           name: "Service Accounts",
           description:
             "A list of service accounts, with their specified scopes, authorized for this instance. Only one service account per VM instance is supported.  Service accounts generate access tokens that can be accessed through the metadata server and used to authenticate applications on the instance. SeeService Accounts for more information.",
@@ -1540,23 +1540,23 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        shielded_instance_config: {
+        shieldedInstanceConfig: {
           name: "Shielded Instance Config",
           description: "Shielded Instance Config field",
           type: {
             type: "object",
             properties: {
-              enable_integrity_monitoring: {
+              enableIntegrityMonitoring: {
                 type: "boolean",
                 description:
                   "Defines whether the instance has integrity monitoring enabled.Enabled by default.",
               },
-              enable_secure_boot: {
+              enableSecureBoot: {
                 type: "boolean",
                 description:
                   "Defines whether the instance has Secure Boot enabled.Disabled by default.",
               },
-              enable_vtpm: {
+              enableVtpm: {
                 type: "boolean",
                 description:
                   "Defines whether the instance has the vTPM enabled.Enabled by default.",
@@ -1567,13 +1567,13 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        shielded_instance_integrity_policy: {
+        shieldedInstanceIntegrityPolicy: {
           name: "Shielded Instance Integrity Policy",
           description: "Shielded Instance Integrity Policy field",
           type: {
             type: "object",
             properties: {
-              update_auto_learn_policy: {
+              updateAutoLearnPolicy: {
                 type: "boolean",
                 description:
                   "Updates the integrity policy baseline using the measurements from the VM instance's most recent boot.",
@@ -1585,7 +1585,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        source_machine_image: {
+        sourceMachineImage: {
           name: "Source Machine Image",
           description:
             "Specifies the machine image to use to create the instance.  This field is optional. It can be a full or partial URL. For example, the following are all valid URLs to a machine image:         - https://www.googleapis.com/compute/v1/projects/project/global/global/machineImages/machineImage       - projects/project/global/global/machineImages/machineImage       - global/machineImages/machineImage",
@@ -1594,29 +1594,29 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        source_machine_image_encryption_key: {
+        sourceMachineImageEncryptionKey: {
           name: "Source Machine Image Encryption Key",
           description:
             "Source machine image encryption key when creating an instance from a machine image.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -1633,7 +1633,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        start_restricted: {
+        startRestricted: {
           name: "Start Restricted",
           description:
             "Output only. [Output Only] Whether a VM has been restricted for start because Compute Engine has detected suspicious activity.",
@@ -1655,7 +1655,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        status_message: {
+        statusMessage: {
           name: "Status Message",
           description:
             "Output only. [Output Only] An optional, human-readable explanation of the status.",
@@ -1692,7 +1692,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -1701,7 +1701,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        source_instance_template: {
+        sourceInstanceTemplate: {
           name: "Source Instance Template",
           description:
             "Specifies instance template to create the instance.  This field is optional. It can be a full or partial URL. For example, the following are all valid URLs to an instance template:         - https://www.googleapis.com/compute/v1/projects/project/global/instanceTemplates/instanceTemplate       - projects/project/global/instanceTemplates/instanceTemplate       - global/instanceTemplates/instanceTemplate",
@@ -1718,126 +1718,120 @@ const insert: AppBlock = {
           pathParams["zone"] = String(input.event.inputConfig.zone);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
-        if (input.event.inputConfig.source_instance_template !== undefined)
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
+        if (input.event.inputConfig.sourceInstanceTemplate !== undefined)
           queryParams["sourceInstanceTemplate"] = String(
-            input.event.inputConfig.source_instance_template,
+            input.event.inputConfig.sourceInstanceTemplate,
           );
-        if (input.event.inputConfig.source_machine_image !== undefined)
+        if (input.event.inputConfig.sourceMachineImage !== undefined)
           queryParams["sourceMachineImage"] = String(
-            input.event.inputConfig.source_machine_image,
+            input.event.inputConfig.sourceMachineImage,
           );
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.advanced_machine_features !== undefined)
-          body.advanced_machine_features =
-            input.event.inputConfig.advanced_machine_features;
-        if (input.event.inputConfig.can_ip_forward !== undefined)
-          body.can_ip_forward = input.event.inputConfig.can_ip_forward;
-        if (input.event.inputConfig.confidential_instance_config !== undefined)
-          body.confidential_instance_config =
-            input.event.inputConfig.confidential_instance_config;
-        if (input.event.inputConfig.cpu_platform !== undefined)
-          body.cpu_platform = input.event.inputConfig.cpu_platform;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
-        if (input.event.inputConfig.deletion_protection !== undefined)
-          body.deletion_protection =
-            input.event.inputConfig.deletion_protection;
+        if (input.event.inputConfig.advancedMachineFeatures !== undefined)
+          body.advancedMachineFeatures =
+            input.event.inputConfig.advancedMachineFeatures;
+        if (input.event.inputConfig.canIpForward !== undefined)
+          body.canIpForward = input.event.inputConfig.canIpForward;
+        if (input.event.inputConfig.confidentialInstanceConfig !== undefined)
+          body.confidentialInstanceConfig =
+            input.event.inputConfig.confidentialInstanceConfig;
+        if (input.event.inputConfig.cpuPlatform !== undefined)
+          body.cpuPlatform = input.event.inputConfig.cpuPlatform;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.deletionProtection !== undefined)
+          body.deletionProtection = input.event.inputConfig.deletionProtection;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
         if (input.event.inputConfig.disks !== undefined)
           body.disks = input.event.inputConfig.disks;
-        if (input.event.inputConfig.display_device !== undefined)
-          body.display_device = input.event.inputConfig.display_device;
+        if (input.event.inputConfig.displayDevice !== undefined)
+          body.displayDevice = input.event.inputConfig.displayDevice;
         if (input.event.inputConfig.fingerprint !== undefined)
           body.fingerprint = input.event.inputConfig.fingerprint;
-        if (input.event.inputConfig.guest_accelerators !== undefined)
-          body.guest_accelerators = input.event.inputConfig.guest_accelerators;
+        if (input.event.inputConfig.guestAccelerators !== undefined)
+          body.guestAccelerators = input.event.inputConfig.guestAccelerators;
         if (input.event.inputConfig.hostname !== undefined)
           body.hostname = input.event.inputConfig.hostname;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.instance_encryption_key !== undefined)
-          body.instance_encryption_key =
-            input.event.inputConfig.instance_encryption_key;
-        if (input.event.inputConfig.key_revocation_action_type !== undefined)
-          body.key_revocation_action_type =
-            input.event.inputConfig.key_revocation_action_type;
+        if (input.event.inputConfig.instanceEncryptionKey !== undefined)
+          body.instanceEncryptionKey =
+            input.event.inputConfig.instanceEncryptionKey;
+        if (input.event.inputConfig.keyRevocationActionType !== undefined)
+          body.keyRevocationActionType =
+            input.event.inputConfig.keyRevocationActionType;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.label_fingerprint !== undefined)
-          body.label_fingerprint = input.event.inputConfig.label_fingerprint;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
         if (input.event.inputConfig.labels !== undefined)
           body.labels = input.event.inputConfig.labels;
-        if (input.event.inputConfig.last_start_timestamp !== undefined)
-          body.last_start_timestamp =
-            input.event.inputConfig.last_start_timestamp;
-        if (input.event.inputConfig.last_stop_timestamp !== undefined)
-          body.last_stop_timestamp =
-            input.event.inputConfig.last_stop_timestamp;
-        if (input.event.inputConfig.last_suspended_timestamp !== undefined)
-          body.last_suspended_timestamp =
-            input.event.inputConfig.last_suspended_timestamp;
-        if (input.event.inputConfig.machine_type !== undefined)
-          body.machine_type = input.event.inputConfig.machine_type;
+        if (input.event.inputConfig.lastStartTimestamp !== undefined)
+          body.lastStartTimestamp = input.event.inputConfig.lastStartTimestamp;
+        if (input.event.inputConfig.lastStopTimestamp !== undefined)
+          body.lastStopTimestamp = input.event.inputConfig.lastStopTimestamp;
+        if (input.event.inputConfig.lastSuspendedTimestamp !== undefined)
+          body.lastSuspendedTimestamp =
+            input.event.inputConfig.lastSuspendedTimestamp;
+        if (input.event.inputConfig.machineType !== undefined)
+          body.machineType = input.event.inputConfig.machineType;
         if (input.event.inputConfig.metadata !== undefined)
           body.metadata = input.event.inputConfig.metadata;
-        if (input.event.inputConfig.min_cpu_platform !== undefined)
-          body.min_cpu_platform = input.event.inputConfig.min_cpu_platform;
+        if (input.event.inputConfig.minCpuPlatform !== undefined)
+          body.minCpuPlatform = input.event.inputConfig.minCpuPlatform;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.network_interfaces !== undefined)
-          body.network_interfaces = input.event.inputConfig.network_interfaces;
-        if (input.event.inputConfig.network_performance_config !== undefined)
-          body.network_performance_config =
-            input.event.inputConfig.network_performance_config;
+        if (input.event.inputConfig.networkInterfaces !== undefined)
+          body.networkInterfaces = input.event.inputConfig.networkInterfaces;
+        if (input.event.inputConfig.networkPerformanceConfig !== undefined)
+          body.networkPerformanceConfig =
+            input.event.inputConfig.networkPerformanceConfig;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
-        if (input.event.inputConfig.private_ipv6_google_access !== undefined)
-          body.private_ipv6_google_access =
-            input.event.inputConfig.private_ipv6_google_access;
-        if (input.event.inputConfig.reservation_affinity !== undefined)
-          body.reservation_affinity =
-            input.event.inputConfig.reservation_affinity;
-        if (input.event.inputConfig.resource_policies !== undefined)
-          body.resource_policies = input.event.inputConfig.resource_policies;
-        if (input.event.inputConfig.resource_status !== undefined)
-          body.resource_status = input.event.inputConfig.resource_status;
-        if (input.event.inputConfig.satisfies_pzi !== undefined)
-          body.satisfies_pzi = input.event.inputConfig.satisfies_pzi;
-        if (input.event.inputConfig.satisfies_pzs !== undefined)
-          body.satisfies_pzs = input.event.inputConfig.satisfies_pzs;
+        if (input.event.inputConfig.privateIpv6GoogleAccess !== undefined)
+          body.privateIpv6GoogleAccess =
+            input.event.inputConfig.privateIpv6GoogleAccess;
+        if (input.event.inputConfig.reservationAffinity !== undefined)
+          body.reservationAffinity =
+            input.event.inputConfig.reservationAffinity;
+        if (input.event.inputConfig.resourcePolicies !== undefined)
+          body.resourcePolicies = input.event.inputConfig.resourcePolicies;
+        if (input.event.inputConfig.resourceStatus !== undefined)
+          body.resourceStatus = input.event.inputConfig.resourceStatus;
+        if (input.event.inputConfig.satisfiesPzi !== undefined)
+          body.satisfiesPzi = input.event.inputConfig.satisfiesPzi;
+        if (input.event.inputConfig.satisfiesPzs !== undefined)
+          body.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
         if (input.event.inputConfig.scheduling !== undefined)
           body.scheduling = input.event.inputConfig.scheduling;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.service_accounts !== undefined)
-          body.service_accounts = input.event.inputConfig.service_accounts;
-        if (input.event.inputConfig.shielded_instance_config !== undefined)
-          body.shielded_instance_config =
-            input.event.inputConfig.shielded_instance_config;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.serviceAccounts !== undefined)
+          body.serviceAccounts = input.event.inputConfig.serviceAccounts;
+        if (input.event.inputConfig.shieldedInstanceConfig !== undefined)
+          body.shieldedInstanceConfig =
+            input.event.inputConfig.shieldedInstanceConfig;
         if (
-          input.event.inputConfig.shielded_instance_integrity_policy !==
-          undefined
+          input.event.inputConfig.shieldedInstanceIntegrityPolicy !== undefined
         )
-          body.shielded_instance_integrity_policy =
-            input.event.inputConfig.shielded_instance_integrity_policy;
-        if (input.event.inputConfig.source_machine_image !== undefined)
-          body.source_machine_image =
-            input.event.inputConfig.source_machine_image;
+          body.shieldedInstanceIntegrityPolicy =
+            input.event.inputConfig.shieldedInstanceIntegrityPolicy;
+        if (input.event.inputConfig.sourceMachineImage !== undefined)
+          body.sourceMachineImage = input.event.inputConfig.sourceMachineImage;
         if (
-          input.event.inputConfig.source_machine_image_encryption_key !==
-          undefined
+          input.event.inputConfig.sourceMachineImageEncryptionKey !== undefined
         )
-          body.source_machine_image_encryption_key =
-            input.event.inputConfig.source_machine_image_encryption_key;
-        if (input.event.inputConfig.start_restricted !== undefined)
-          body.start_restricted = input.event.inputConfig.start_restricted;
+          body.sourceMachineImageEncryptionKey =
+            input.event.inputConfig.sourceMachineImageEncryptionKey;
+        if (input.event.inputConfig.startRestricted !== undefined)
+          body.startRestricted = input.event.inputConfig.startRestricted;
         if (input.event.inputConfig.status !== undefined)
           body.status = input.event.inputConfig.status;
-        if (input.event.inputConfig.status_message !== undefined)
-          body.status_message = input.event.inputConfig.status_message;
+        if (input.event.inputConfig.statusMessage !== undefined)
+          body.statusMessage = input.event.inputConfig.statusMessage;
         if (input.event.inputConfig.tags !== undefined)
           body.tags = input.event.inputConfig.tags;
         if (input.event.inputConfig.zone !== undefined)
@@ -1862,12 +1856,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -1876,7 +1870,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -1894,12 +1888,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -1954,7 +1948,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -1972,7 +1966,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -1983,7 +1977,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -1993,16 +1987,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -2039,12 +2033,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -2053,15 +2047,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -2081,12 +2075,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -2101,18 +2095,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -2125,7 +2119,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -2136,16 +2130,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

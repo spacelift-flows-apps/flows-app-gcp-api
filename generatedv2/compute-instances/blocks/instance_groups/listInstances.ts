@@ -17,7 +17,7 @@ const listInstances: AppBlock = {
           },
           required: true,
         },
-        instance_group: {
+        instanceGroup: {
           name: "Instance Group",
           description:
             "The name of the instance group from which you want to generate a list of included instances.",
@@ -26,7 +26,7 @@ const listInstances: AppBlock = {
           },
           required: true,
         },
-        instance_state: {
+        instanceState: {
           name: "Instance State",
           description:
             "A filter for the state of the instances in the instance group. Valid options are ALL or RUNNING. If you do not specify this parameter the list includes all instances regardless of their state. Check the InstanceState enum for the list of possible values.",
@@ -46,7 +46,7 @@ const listInstances: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -55,7 +55,7 @@ const listInstances: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -64,7 +64,7 @@ const listInstances: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -73,7 +73,7 @@ const listInstances: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -88,29 +88,29 @@ const listInstances: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.instance_group !== undefined)
+        if (input.event.inputConfig.instanceGroup !== undefined)
           pathParams["instance_group"] = String(
-            input.event.inputConfig.instance_group,
+            input.event.inputConfig.instanceGroup,
           );
 
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.instance_state !== undefined)
-          body.instance_state = input.event.inputConfig.instance_state;
+        if (input.event.inputConfig.instanceState !== undefined)
+          body.instanceState = input.event.inputConfig.instanceState;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -147,7 +147,7 @@ const listInstances: AppBlock = {
                   description:
                     "Output only. [Output Only] The URL of the instance.",
                 },
-                named_ports: {
+                namedPorts: {
                   type: "array",
                   items: {
                     type: "object",
@@ -184,12 +184,12 @@ const listInstances: AppBlock = {
             description:
               "Output only. [Output Only] The resource type, which is alwayscompute#instanceGroupsListInstances for the list of instances in the specified instance group.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Output only. [Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

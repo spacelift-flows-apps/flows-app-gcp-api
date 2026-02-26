@@ -1,5 +1,16 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getNotificationChannelServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getNotificationChannelServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  expireTime: "expire_time",
+};
+
+const outputMapping = {
+  expire_time: "expireTime",
+};
 
 const getNotificationChannelVerificationCode: AppBlock = {
   name: "Get Notification Channel Verification Code",
@@ -19,7 +30,7 @@ const getNotificationChannelVerificationCode: AppBlock = {
           },
           required: true,
         },
-        expire_time: {
+        expireTime: {
           name: "Expire Time",
           description:
             "The desired expiration time. If specified, the API will guarantee that the returned code will not be valid after the specified timestamp; however, the API cannot guarantee that the returned code will be valid for at least as long as the requested time (the API puts an upper bound on the amount of time for which a code may be valid). If omitted, a default expiration will be used, which may be less than the max permissible expiration (so specifying an expiration may extend the code's lifetime over omitting an expiration, even though the API does impose an upper limit on the maximum expiration that is permitted).",
@@ -35,11 +46,7 @@ const getNotificationChannelVerificationCode: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.expire_time !== undefined)
-          request.expire_time = input.event.inputConfig.expire_time;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getNotificationChannelVerificationCode(
@@ -56,7 +63,8 @@ const getNotificationChannelVerificationCode: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -71,7 +79,7 @@ const getNotificationChannelVerificationCode: AppBlock = {
             description:
               "The verification code, which may be used to verify other channels that have an equivalent identity (i.e. other channels of the same type with the same fingerprint such as other email channels with the same email address or other sms channels with the same number).",
           },
-          expire_time: {
+          expireTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

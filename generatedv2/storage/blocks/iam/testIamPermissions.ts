@@ -34,11 +34,7 @@ const testIamPermissions: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.resource !== undefined)
-          request.resource = input.event.inputConfig.resource;
-        if (input.event.inputConfig.permissions !== undefined)
-          request.permissions = input.event.inputConfig.permissions;
+        const request = { ...input.event.inputConfig };
 
         const routingParams: Record<string, string> = {};
         if (request.resource !== undefined)

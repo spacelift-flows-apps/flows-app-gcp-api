@@ -1,5 +1,44 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  repository: {
+    name: "repository",
+    fields: {
+      remoteUri: "remote_uri",
+    },
+  },
+  repositoryId: "repository_id",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createRepository: AppBlock = {
   name: "Create Repository",
@@ -30,7 +69,7 @@ const createRepository: AppBlock = {
                 description:
                   "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
               },
-              remote_uri: {
+              remoteUri: {
                 type: "string",
                 description: "Required. Git Clone HTTPS URI.",
               },
@@ -48,13 +87,13 @@ const createRepository: AppBlock = {
                   "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
               },
             },
-            required: ["remote_uri"],
+            required: ["remoteUri"],
             description: "A repository associated to a parent connection.",
             additionalProperties: true,
           },
           required: true,
         },
-        repository_id: {
+        repositoryId: {
           name: "Repository Id",
           description:
             "Required. The ID to use for the repository, which will become the final component of the repository's resource name. This ID should be unique in the connection. Allows alphanumeric characters and any of -._~%!$&'()*+,;=@.",
@@ -69,13 +108,7 @@ const createRepository: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.repository !== undefined)
-          request.repository = input.event.inputConfig.repository;
-        if (input.event.inputConfig.repository_id !== undefined)
-          request.repository_id = input.event.inputConfig.repository_id;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createRepository(request, (err: any, response: any) => {
@@ -89,7 +122,8 @@ const createRepository: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -105,7 +139,7 @@ const createRepository: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -132,7 +166,7 @@ const createRepository: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -151,7 +185,7 @@ const createRepository: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

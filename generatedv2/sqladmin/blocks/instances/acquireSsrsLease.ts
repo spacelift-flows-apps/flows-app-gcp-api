@@ -1,5 +1,28 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  body: {
+    name: "body",
+    fields: {
+      acquireSsrsLeaseContext: {
+        name: "acquire_ssrs_lease_context",
+        fields: {
+          setupLogin: "setup_login",
+          serviceLogin: "service_login",
+          reportDatabase: "report_database",
+        },
+      },
+    },
+  },
+};
+
+const outputMapping = {
+  operation_id: "operationId",
+};
 
 const acquireSsrsLease: AppBlock = {
   name: "Acquire Ssrs Lease",
@@ -36,20 +59,20 @@ const acquireSsrsLease: AppBlock = {
           type: {
             type: "object",
             properties: {
-              acquire_ssrs_lease_context: {
+              acquireSsrsLeaseContext: {
                 type: "object",
                 properties: {
-                  setup_login: {
+                  setupLogin: {
                     type: "string",
                     description:
                       "The username to be used as the setup login to connect to the database server for SSRS setup.",
                   },
-                  service_login: {
+                  serviceLogin: {
                     type: "string",
                     description:
                       "The username to be used as the service login to connect to the report database for SSRS setup.",
                   },
-                  report_database: {
+                  reportDatabase: {
                     type: "string",
                     description:
                       "The report database to be used for SSRS setup.",
@@ -72,13 +95,7 @@ const acquireSsrsLease: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.body !== undefined)
-          request.body = input.event.inputConfig.body;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.acquireSsrsLease(request, (err: any, response: any) => {
@@ -92,7 +109,8 @@ const acquireSsrsLease: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -102,7 +120,7 @@ const acquireSsrsLease: AppBlock = {
       type: {
         type: "object",
         properties: {
-          operation_id: {
+          operationId: {
             type: "string",
             description: "The unique identifier for this operation.",
           },

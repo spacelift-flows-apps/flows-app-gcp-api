@@ -31,11 +31,7 @@ const cancel: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlOperationsServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.operation !== undefined)
-          request.operation = input.event.inputConfig.operation;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.cancel(request, (err: any, response: any) => {

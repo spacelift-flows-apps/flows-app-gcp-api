@@ -5,6 +5,17 @@
       "package": "google.protobuf",
       "messageType": [
         {
+          "name": "FieldMask",
+          "field": [
+            {
+              "name": "paths",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
           "name": "Timestamp",
           "field": [
             {
@@ -18,17 +29,6 @@
               "number": 2,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_INT32"
-            }
-          ]
-        },
-        {
-          "name": "FieldMask",
-          "field": [
-            {
-              "name": "paths",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
             }
           ]
         },
@@ -150,23 +150,6 @@
         },
         {
           "name": "Empty"
-        },
-        {
-          "name": "Any",
-          "field": [
-            {
-              "name": "type_url",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "value",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BYTES"
-            }
-          ]
         },
         {
           "name": "FileDescriptorSet",
@@ -1586,21 +1569,21 @@
               }
             },
             {
-              "name": ".google.api.field_behavior",
-              "number": 1052,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "api.FieldBehavior",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.resource_reference",
               "number": 1055,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.ResourceReference",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.field_behavior",
+              "number": 1052,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "api.FieldBehavior",
               "options": {
                 "packed": false
               }
@@ -2746,6 +2729,23 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Any",
+          "field": [
+            {
+              "name": "type_url",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "value",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BYTES"
+            }
+          ]
         }
       ],
       "enumType": [
@@ -2839,267 +2839,6 @@
       "name": "google_cloud_sql_v1.proto",
       "package": "google.cloud.sql.v1",
       "messageType": [
-        {
-          "name": "SqlBackupRunsDeleteRequest",
-          "field": [
-            {
-              "name": "id",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64"
-            },
-            {
-              "name": "instance",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SqlBackupRunsGetRequest",
-          "field": [
-            {
-              "name": "id",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64"
-            },
-            {
-              "name": "instance",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SqlBackupRunsInsertRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "body",
-              "number": 100,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "BackupRun"
-            }
-          ]
-        },
-        {
-          "name": "SqlBackupRunsListRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "max_results",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "page_token",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "BackupRun",
-          "field": [
-            {
-              "name": "kind",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "status",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SqlBackupRunStatus"
-            },
-            {
-              "name": "enqueued_time",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "id",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64"
-            },
-            {
-              "name": "start_time",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "end_time",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "error",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "OperationError"
-            },
-            {
-              "name": "type",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SqlBackupRunType"
-            },
-            {
-              "name": "description",
-              "number": 9,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "window_start_time",
-              "number": 10,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "instance",
-              "number": 11,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "self_link",
-              "number": 12,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "location",
-              "number": 13,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "database_version",
-              "number": 15,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SqlDatabaseVersion",
-              "options": {}
-            },
-            {
-              "name": "disk_encryption_configuration",
-              "number": 16,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "DiskEncryptionConfiguration"
-            },
-            {
-              "name": "disk_encryption_status",
-              "number": 17,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "DiskEncryptionStatus"
-            },
-            {
-              "name": "backup_kind",
-              "number": 19,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SqlBackupKind"
-            },
-            {
-              "name": "time_zone",
-              "number": 23,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "max_chargeable_bytes",
-              "number": 24,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64",
-              "options": {},
-              "oneofIndex": 0
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "_max_chargeable_bytes"
-            }
-          ]
-        },
-        {
-          "name": "BackupRunsListResponse",
-          "field": [
-            {
-              "name": "kind",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "items",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "BackupRun"
-            },
-            {
-              "name": "next_page_token",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
         {
           "name": "CreateBackupRequest",
           "field": [
@@ -3457,6 +3196,541 @@
             },
             {
               "name": "_max_chargeable_bytes"
+            }
+          ]
+        },
+        {
+          "name": "SqlBackupRunsDeleteRequest",
+          "field": [
+            {
+              "name": "id",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64"
+            },
+            {
+              "name": "instance",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "SqlBackupRunsGetRequest",
+          "field": [
+            {
+              "name": "id",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64"
+            },
+            {
+              "name": "instance",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "SqlBackupRunsInsertRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "body",
+              "number": 100,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "BackupRun"
+            }
+          ]
+        },
+        {
+          "name": "SqlBackupRunsListRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "max_results",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            },
+            {
+              "name": "page_token",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "BackupRun",
+          "field": [
+            {
+              "name": "kind",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "status",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SqlBackupRunStatus"
+            },
+            {
+              "name": "enqueued_time",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "id",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64"
+            },
+            {
+              "name": "start_time",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "end_time",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "error",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "OperationError"
+            },
+            {
+              "name": "type",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SqlBackupRunType"
+            },
+            {
+              "name": "description",
+              "number": 9,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "window_start_time",
+              "number": 10,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "instance",
+              "number": 11,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "self_link",
+              "number": 12,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "location",
+              "number": 13,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "database_version",
+              "number": 15,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SqlDatabaseVersion",
+              "options": {}
+            },
+            {
+              "name": "disk_encryption_configuration",
+              "number": 16,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "DiskEncryptionConfiguration"
+            },
+            {
+              "name": "disk_encryption_status",
+              "number": 17,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "DiskEncryptionStatus"
+            },
+            {
+              "name": "backup_kind",
+              "number": 19,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SqlBackupKind"
+            },
+            {
+              "name": "time_zone",
+              "number": 23,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "max_chargeable_bytes",
+              "number": 24,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64",
+              "options": {},
+              "oneofIndex": 0
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "_max_chargeable_bytes"
+            }
+          ]
+        },
+        {
+          "name": "BackupRunsListResponse",
+          "field": [
+            {
+              "name": "kind",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "items",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "BackupRun"
+            },
+            {
+              "name": "next_page_token",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "GetConnectSettingsRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "read_time",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ConnectSettings",
+          "field": [
+            {
+              "name": "kind",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "server_ca_cert",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SslCert"
+            },
+            {
+              "name": "ip_addresses",
+              "number": 3,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "IpMapping"
+            },
+            {
+              "name": "region",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "database_version",
+              "number": 31,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SqlDatabaseVersion"
+            },
+            {
+              "name": "backend_type",
+              "number": 32,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SqlBackendType"
+            },
+            {
+              "name": "psc_enabled",
+              "number": 33,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL"
+            },
+            {
+              "name": "dns_name",
+              "number": 34,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "server_ca_mode",
+              "number": 35,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "CaMode"
+            },
+            {
+              "name": "custom_subject_alternative_names",
+              "number": 37,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "dns_names",
+              "number": 38,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "DnsNameMapping",
+              "options": {}
+            },
+            {
+              "name": "node_count",
+              "number": 63,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "nodes",
+              "number": 64,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "ConnectPoolNodeConfig",
+              "options": {}
+            },
+            {
+              "name": "mdx_protocol_support",
+              "number": 39,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "MdxProtocolSupport",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "ConnectPoolNodeConfig",
+              "field": [
+                {
+                  "name": "name",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {},
+                  "oneofIndex": 0
+                },
+                {
+                  "name": "ip_addresses",
+                  "number": 2,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "IpMapping",
+                  "options": {}
+                },
+                {
+                  "name": "dns_name",
+                  "number": 3,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {},
+                  "oneofIndex": 1
+                },
+                {
+                  "name": "dns_names",
+                  "number": 4,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "DnsNameMapping",
+                  "options": {}
+                }
+              ],
+              "oneofDecl": [
+                {
+                  "name": "_name"
+                },
+                {
+                  "name": "_dns_name"
+                }
+              ]
+            }
+          ],
+          "enumType": [
+            {
+              "name": "CaMode",
+              "value": [
+                {
+                  "name": "CA_MODE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "GOOGLE_MANAGED_INTERNAL_CA",
+                  "number": 1
+                },
+                {
+                  "name": "GOOGLE_MANAGED_CAS_CA",
+                  "number": 2
+                },
+                {
+                  "name": "CUSTOMER_MANAGED_CAS_CA",
+                  "number": 3
+                }
+              ]
+            },
+            {
+              "name": "MdxProtocolSupport",
+              "value": [
+                {
+                  "name": "MDX_PROTOCOL_SUPPORT_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "CLIENT_PROTOCOL_TYPE",
+                  "number": 1
+                }
+              ]
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "_node_count"
+            }
+          ]
+        },
+        {
+          "name": "GenerateEphemeralCertRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "public_key",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "access_token",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "read_time",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "valid_duration",
+              "number": 12,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "GenerateEphemeralCertResponse",
+          "field": [
+            {
+              "name": "ephemeral_cert",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SslCert"
             }
           ]
         },
@@ -7394,6 +7668,154 @@
           ]
         },
         {
+          "name": "SqlSslCertsDeleteRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "sha1_fingerprint",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "SqlSslCertsGetRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "sha1_fingerprint",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "SqlSslCertsInsertRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "body",
+              "number": 100,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SslCertsInsertRequest"
+            }
+          ]
+        },
+        {
+          "name": "SqlSslCertsListRequest",
+          "field": [
+            {
+              "name": "instance",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "SslCertsInsertRequest",
+          "field": [
+            {
+              "name": "common_name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "SslCertsInsertResponse",
+          "field": [
+            {
+              "name": "kind",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "operation",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Operation"
+            },
+            {
+              "name": "server_ca_cert",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SslCert"
+            },
+            {
+              "name": "client_cert",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SslCertDetail"
+            }
+          ]
+        },
+        {
+          "name": "SslCertsListResponse",
+          "field": [
+            {
+              "name": "kind",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "items",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SslCert"
+            }
+          ]
+        },
+        {
           "name": "AclEntry",
           "field": [
             {
@@ -10745,428 +11167,6 @@
           ]
         },
         {
-          "name": "SqlSslCertsDeleteRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "sha1_fingerprint",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SqlSslCertsGetRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "sha1_fingerprint",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SqlSslCertsInsertRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "body",
-              "number": 100,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SslCertsInsertRequest"
-            }
-          ]
-        },
-        {
-          "name": "SqlSslCertsListRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SslCertsInsertRequest",
-          "field": [
-            {
-              "name": "common_name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SslCertsInsertResponse",
-          "field": [
-            {
-              "name": "kind",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "operation",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Operation"
-            },
-            {
-              "name": "server_ca_cert",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SslCert"
-            },
-            {
-              "name": "client_cert",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SslCertDetail"
-            }
-          ]
-        },
-        {
-          "name": "SslCertsListResponse",
-          "field": [
-            {
-              "name": "kind",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "items",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SslCert"
-            }
-          ]
-        },
-        {
-          "name": "GetConnectSettingsRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "read_time",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ConnectSettings",
-          "field": [
-            {
-              "name": "kind",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "server_ca_cert",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SslCert"
-            },
-            {
-              "name": "ip_addresses",
-              "number": 3,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "IpMapping"
-            },
-            {
-              "name": "region",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "database_version",
-              "number": 31,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SqlDatabaseVersion"
-            },
-            {
-              "name": "backend_type",
-              "number": 32,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SqlBackendType"
-            },
-            {
-              "name": "psc_enabled",
-              "number": 33,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            },
-            {
-              "name": "dns_name",
-              "number": 34,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "server_ca_mode",
-              "number": 35,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "CaMode"
-            },
-            {
-              "name": "custom_subject_alternative_names",
-              "number": 37,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "dns_names",
-              "number": 38,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "DnsNameMapping",
-              "options": {}
-            },
-            {
-              "name": "node_count",
-              "number": 63,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "nodes",
-              "number": 64,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "ConnectPoolNodeConfig",
-              "options": {}
-            },
-            {
-              "name": "mdx_protocol_support",
-              "number": 39,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "MdxProtocolSupport",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "ConnectPoolNodeConfig",
-              "field": [
-                {
-                  "name": "name",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {},
-                  "oneofIndex": 0
-                },
-                {
-                  "name": "ip_addresses",
-                  "number": 2,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "IpMapping",
-                  "options": {}
-                },
-                {
-                  "name": "dns_name",
-                  "number": 3,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {},
-                  "oneofIndex": 1
-                },
-                {
-                  "name": "dns_names",
-                  "number": 4,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "DnsNameMapping",
-                  "options": {}
-                }
-              ],
-              "oneofDecl": [
-                {
-                  "name": "_name"
-                },
-                {
-                  "name": "_dns_name"
-                }
-              ]
-            }
-          ],
-          "enumType": [
-            {
-              "name": "CaMode",
-              "value": [
-                {
-                  "name": "CA_MODE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "GOOGLE_MANAGED_INTERNAL_CA",
-                  "number": 1
-                },
-                {
-                  "name": "GOOGLE_MANAGED_CAS_CA",
-                  "number": 2
-                },
-                {
-                  "name": "CUSTOMER_MANAGED_CAS_CA",
-                  "number": 3
-                }
-              ]
-            },
-            {
-              "name": "MdxProtocolSupport",
-              "value": [
-                {
-                  "name": "MDX_PROTOCOL_SUPPORT_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "CLIENT_PROTOCOL_TYPE",
-                  "number": 1
-                }
-              ]
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "_node_count"
-            }
-          ]
-        },
-        {
-          "name": "GenerateEphemeralCertRequest",
-          "field": [
-            {
-              "name": "instance",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "public_key",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "access_token",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "read_time",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "valid_duration",
-              "number": 12,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "GenerateEphemeralCertResponse",
-          "field": [
-            {
-              "name": "ephemeral_cert",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SslCert"
-            }
-          ]
-        },
-        {
           "name": "SqlUsersDeleteRequest",
           "field": [
             {
@@ -12244,36 +12244,6 @@
           "options": {}
         },
         {
-          "name": "SqlBackupRunsService",
-          "method": [
-            {
-              "name": "Delete",
-              "inputType": ".google.cloud.sql.v1.SqlBackupRunsDeleteRequest",
-              "outputType": ".google.cloud.sql.v1.Operation",
-              "options": {}
-            },
-            {
-              "name": "Get",
-              "inputType": ".google.cloud.sql.v1.SqlBackupRunsGetRequest",
-              "outputType": ".google.cloud.sql.v1.BackupRun",
-              "options": {}
-            },
-            {
-              "name": "Insert",
-              "inputType": ".google.cloud.sql.v1.SqlBackupRunsInsertRequest",
-              "outputType": ".google.cloud.sql.v1.Operation",
-              "options": {}
-            },
-            {
-              "name": "List",
-              "inputType": ".google.cloud.sql.v1.SqlBackupRunsListRequest",
-              "outputType": ".google.cloud.sql.v1.BackupRunsListResponse",
-              "options": {}
-            }
-          ],
-          "options": {}
-        },
-        {
           "name": "SqlBackupsService",
           "method": [
             {
@@ -12304,6 +12274,54 @@
               "name": "DeleteBackup",
               "inputType": ".google.cloud.sql.v1.DeleteBackupRequest",
               "outputType": ".google.cloud.sql.v1.Operation",
+              "options": {}
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "SqlBackupRunsService",
+          "method": [
+            {
+              "name": "Delete",
+              "inputType": ".google.cloud.sql.v1.SqlBackupRunsDeleteRequest",
+              "outputType": ".google.cloud.sql.v1.Operation",
+              "options": {}
+            },
+            {
+              "name": "Get",
+              "inputType": ".google.cloud.sql.v1.SqlBackupRunsGetRequest",
+              "outputType": ".google.cloud.sql.v1.BackupRun",
+              "options": {}
+            },
+            {
+              "name": "Insert",
+              "inputType": ".google.cloud.sql.v1.SqlBackupRunsInsertRequest",
+              "outputType": ".google.cloud.sql.v1.Operation",
+              "options": {}
+            },
+            {
+              "name": "List",
+              "inputType": ".google.cloud.sql.v1.SqlBackupRunsListRequest",
+              "outputType": ".google.cloud.sql.v1.BackupRunsListResponse",
+              "options": {}
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "SqlConnectService",
+          "method": [
+            {
+              "name": "GetConnectSettings",
+              "inputType": ".google.cloud.sql.v1.GetConnectSettingsRequest",
+              "outputType": ".google.cloud.sql.v1.ConnectSettings",
+              "options": {}
+            },
+            {
+              "name": "GenerateEphemeralCert",
+              "inputType": ".google.cloud.sql.v1.GenerateEphemeralCertRequest",
+              "outputType": ".google.cloud.sql.v1.GenerateEphemeralCertResponse",
               "options": {}
             }
           ],
@@ -12352,14 +12370,6 @@
           "options": {}
         },
         {
-          "name": "SqlEventsService",
-          "options": {}
-        },
-        {
-          "name": "SqlFeatureEligibilityService",
-          "options": {}
-        },
-        {
           "name": "SqlFlagsService",
           "method": [
             {
@@ -12369,10 +12379,6 @@
               "options": {}
             }
           ],
-          "options": {}
-        },
-        {
-          "name": "SqlInstanceNamesService",
           "options": {}
         },
         {
@@ -12664,19 +12670,15 @@
           "options": {}
         },
         {
-          "name": "SqlRegionsService",
+          "name": "SqlIamPoliciesService",
           "options": {}
         },
         {
-          "name": "SqlTiersService",
-          "method": [
-            {
-              "name": "List",
-              "inputType": ".google.cloud.sql.v1.SqlTiersListRequest",
-              "outputType": ".google.cloud.sql.v1.TiersListResponse",
-              "options": {}
-            }
-          ],
+          "name": "SqlInstanceNamesService",
+          "options": {}
+        },
+        {
+          "name": "SqlFeatureEligibilityService",
           "options": {}
         },
         {
@@ -12710,25 +12712,23 @@
           "options": {}
         },
         {
-          "name": "SqlConnectService",
-          "method": [
-            {
-              "name": "GetConnectSettings",
-              "inputType": ".google.cloud.sql.v1.GetConnectSettingsRequest",
-              "outputType": ".google.cloud.sql.v1.ConnectSettings",
-              "options": {}
-            },
-            {
-              "name": "GenerateEphemeralCert",
-              "inputType": ".google.cloud.sql.v1.GenerateEphemeralCertRequest",
-              "outputType": ".google.cloud.sql.v1.GenerateEphemeralCertResponse",
-              "options": {}
-            }
-          ],
+          "name": "SqlEventsService",
           "options": {}
         },
         {
-          "name": "SqlIamPoliciesService",
+          "name": "SqlRegionsService",
+          "options": {}
+        },
+        {
+          "name": "SqlTiersService",
+          "method": [
+            {
+              "name": "List",
+              "inputType": ".google.cloud.sql.v1.SqlTiersListRequest",
+              "outputType": ".google.cloud.sql.v1.TiersListResponse",
+              "options": {}
+            }
+          ],
           "options": {}
         },
         {
@@ -12780,6 +12780,104 @@
       "name": "google_api.proto",
       "package": "google.api",
       "messageType": [
+        {
+          "name": "ResourceDescriptor",
+          "field": [
+            {
+              "name": "type",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "pattern",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "name_field",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "history",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "History"
+            },
+            {
+              "name": "plural",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "singular",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "style",
+              "number": 10,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "Style"
+            }
+          ],
+          "enumType": [
+            {
+              "name": "History",
+              "value": [
+                {
+                  "name": "HISTORY_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ORIGINALLY_SINGLE_PATTERN",
+                  "number": 1
+                },
+                {
+                  "name": "FUTURE_MULTI_PATTERN",
+                  "number": 2
+                }
+              ]
+            },
+            {
+              "name": "Style",
+              "value": [
+                {
+                  "name": "STYLE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "DECLARATIVE_FRIENDLY",
+                  "number": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ResourceReference",
+          "field": [
+            {
+              "name": "type",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "child_type",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
         {
           "name": "CommonLanguageSettings",
           "field": [
@@ -13304,104 +13402,6 @@
           ]
         },
         {
-          "name": "ResourceDescriptor",
-          "field": [
-            {
-              "name": "type",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "pattern",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "name_field",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "history",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "History"
-            },
-            {
-              "name": "plural",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "singular",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "style",
-              "number": 10,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "Style"
-            }
-          ],
-          "enumType": [
-            {
-              "name": "History",
-              "value": [
-                {
-                  "name": "HISTORY_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "ORIGINALLY_SINGLE_PATTERN",
-                  "number": 1
-                },
-                {
-                  "name": "FUTURE_MULTI_PATTERN",
-                  "number": 2
-                }
-              ]
-            },
-            {
-              "name": "Style",
-              "value": [
-                {
-                  "name": "STYLE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "DECLARATIVE_FRIENDLY",
-                  "number": 1
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "ResourceReference",
-          "field": [
-            {
-              "name": "type",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "child_type",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
           "name": "FieldInfo",
           "field": [
             {
@@ -13708,6 +13708,30 @@
       ],
       "extension": [
         {
+          "name": "resource_reference",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1055,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceReference"
+        },
+        {
+          "name": "resource_definition",
+          "extendee": ".google.protobuf.FileOptions",
+          "number": 1053,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceDescriptor"
+        },
+        {
+          "name": "resource",
+          "extendee": ".google.protobuf.MessageOptions",
+          "number": 1053,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceDescriptor"
+        },
+        {
           "name": "method_signature",
           "extendee": ".google.protobuf.MethodOptions",
           "number": 1051,
@@ -13755,30 +13779,6 @@
           }
         },
         {
-          "name": "resource_reference",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1055,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "ResourceReference"
-        },
-        {
-          "name": "resource_definition",
-          "extendee": ".google.protobuf.FileOptions",
-          "number": 1053,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_MESSAGE",
-          "typeName": "ResourceDescriptor"
-        },
-        {
-          "name": "resource",
-          "extendee": ".google.protobuf.MessageOptions",
-          "number": 1053,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "ResourceDescriptor"
-        },
-        {
           "name": "field_info",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 291403980,
@@ -13789,9 +13789,9 @@
       ],
       "options": {
         "javaPackage": "com.google.api",
-        "javaOuterClassname": "LaunchStageProto",
+        "javaOuterClassname": "HttpProto",
         "javaMultipleFiles": true,
-        "goPackage": "google.golang.org/genproto/googleapis/api;api",
+        "goPackage": "google.golang.org/genproto/googleapis/api/annotations;annotations",
         "objcClassPrefix": "GAPI"
       },
       "syntax": "proto3"

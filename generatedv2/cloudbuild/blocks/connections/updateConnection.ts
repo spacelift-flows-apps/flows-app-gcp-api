@@ -1,5 +1,130 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  connection: {
+    name: "connection",
+    fields: {
+      githubConfig: {
+        name: "github_config",
+        fields: {
+          authorizerCredential: {
+            name: "authorizer_credential",
+            fields: {
+              oauthTokenSecretVersion: "oauth_token_secret_version",
+            },
+          },
+          appInstallationId: "app_installation_id",
+        },
+      },
+      githubEnterpriseConfig: {
+        name: "github_enterprise_config",
+        fields: {
+          hostUri: "host_uri",
+          apiKey: "api_key",
+          appId: "app_id",
+          appSlug: "app_slug",
+          privateKeySecretVersion: "private_key_secret_version",
+          webhookSecretSecretVersion: "webhook_secret_secret_version",
+          appInstallationId: "app_installation_id",
+          serviceDirectoryConfig: "service_directory_config",
+          sslCa: "ssl_ca",
+        },
+      },
+      gitlabConfig: {
+        name: "gitlab_config",
+        fields: {
+          hostUri: "host_uri",
+          webhookSecretSecretVersion: "webhook_secret_secret_version",
+          readAuthorizerCredential: {
+            name: "read_authorizer_credential",
+            fields: {
+              userTokenSecretVersion: "user_token_secret_version",
+            },
+          },
+          authorizerCredential: {
+            name: "authorizer_credential",
+            fields: {
+              userTokenSecretVersion: "user_token_secret_version",
+            },
+          },
+          serviceDirectoryConfig: "service_directory_config",
+          sslCa: "ssl_ca",
+        },
+      },
+      bitbucketDataCenterConfig: {
+        name: "bitbucket_data_center_config",
+        fields: {
+          hostUri: "host_uri",
+          webhookSecretSecretVersion: "webhook_secret_secret_version",
+          readAuthorizerCredential: {
+            name: "read_authorizer_credential",
+            fields: {
+              userTokenSecretVersion: "user_token_secret_version",
+            },
+          },
+          authorizerCredential: {
+            name: "authorizer_credential",
+            fields: {
+              userTokenSecretVersion: "user_token_secret_version",
+            },
+          },
+          serviceDirectoryConfig: "service_directory_config",
+          sslCa: "ssl_ca",
+        },
+      },
+      bitbucketCloudConfig: {
+        name: "bitbucket_cloud_config",
+        fields: {
+          webhookSecretSecretVersion: "webhook_secret_secret_version",
+          readAuthorizerCredential: {
+            name: "read_authorizer_credential",
+            fields: {
+              userTokenSecretVersion: "user_token_secret_version",
+            },
+          },
+          authorizerCredential: {
+            name: "authorizer_credential",
+            fields: {
+              userTokenSecretVersion: "user_token_secret_version",
+            },
+          },
+        },
+      },
+    },
+  },
+  updateMask: "update_mask",
+  allowMissing: "allow_missing",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const updateConnection: AppBlock = {
   name: "Update Connection",
@@ -19,13 +144,13 @@ const updateConnection: AppBlock = {
                 description:
                   "Immutable. The resource name of the connection, in the format `projects/{project}/locations/{location}/connections/{connection_id}`.",
               },
-              github_config: {
+              githubConfig: {
                 type: "object",
                 properties: {
-                  authorizer_credential: {
+                  authorizerCredential: {
                     type: "object",
                     properties: {
-                      oauth_token_secret_version: {
+                      oauthTokenSecretVersion: {
                         type: "string",
                         description:
                           "A SecretManager resource containing the OAuth token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
@@ -35,7 +160,7 @@ const updateConnection: AppBlock = {
                       "Represents an OAuth token of the account that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
                   },
-                  app_installation_id: {
+                  appInstallationId: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
@@ -44,42 +169,42 @@ const updateConnection: AppBlock = {
                   "Configuration for connections to github.com. (Part of 'connection_config' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              github_enterprise_config: {
+              githubEnterpriseConfig: {
                 type: "object",
                 properties: {
-                  host_uri: {
+                  hostUri: {
                     type: "string",
                     description:
                       "Required. The URI of the GitHub Enterprise host this connection is for.",
                   },
-                  api_key: {
+                  apiKey: {
                     type: "string",
                     description:
                       "Required. API Key used for authentication of webhook events.",
                   },
-                  app_id: {
+                  appId: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
-                  app_slug: {
+                  appSlug: {
                     type: "string",
                     description: "The URL-friendly name of the GitHub App.",
                   },
-                  private_key_secret_version: {
+                  privateKeySecretVersion: {
                     type: "string",
                     description:
                       "SecretManager resource containing the private key of the GitHub App, formatted as `projects/*/secrets/*/versions/*`.",
                   },
-                  webhook_secret_secret_version: {
+                  webhookSecretSecretVersion: {
                     type: "string",
                     description:
                       "SecretManager resource containing the webhook secret of the GitHub App, formatted as `projects/*/secrets/*/versions/*`.",
                   },
-                  app_installation_id: {
+                  appInstallationId: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
-                  service_directory_config: {
+                  serviceDirectoryConfig: {
                     type: "object",
                     properties: {
                       service: {
@@ -93,59 +218,59 @@ const updateConnection: AppBlock = {
                       "ServiceDirectoryConfig represents Service Directory configuration for a connection.",
                     additionalProperties: true,
                   },
-                  ssl_ca: {
+                  sslCa: {
                     type: "string",
                     description:
                       "SSL certificate to use for requests to GitHub Enterprise.",
                   },
                 },
-                required: ["host_uri", "api_key", "app_id"],
+                required: ["hostUri", "apiKey", "appId"],
                 description:
                   "Configuration for connections to an instance of GitHub Enterprise. (Part of 'connection_config' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              gitlab_config: {
+              gitlabConfig: {
                 type: "object",
                 properties: {
-                  host_uri: {
+                  hostUri: {
                     type: "string",
                     description:
                       "The URI of the GitLab Enterprise host this connection is for. If not specified, the default value is https://gitlab.com.",
                   },
-                  webhook_secret_secret_version: {
+                  webhookSecretSecretVersion: {
                     type: "string",
                     description:
                       "Required. Immutable. SecretManager resource containing the webhook secret of a GitLab Enterprise project, formatted as `projects/*/secrets/*/versions/*`.",
                   },
-                  read_authorizer_credential: {
+                  readAuthorizerCredential: {
                     type: "object",
                     properties: {
-                      user_token_secret_version: {
+                      userTokenSecretVersion: {
                         type: "string",
                         description:
                           "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
                       },
                     },
-                    required: ["user_token_secret_version"],
+                    required: ["userTokenSecretVersion"],
                     description:
                       "Represents a personal access token that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
                   },
-                  authorizer_credential: {
+                  authorizerCredential: {
                     type: "object",
                     properties: {
-                      user_token_secret_version: {
+                      userTokenSecretVersion: {
                         type: "string",
                         description:
                           "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
                       },
                     },
-                    required: ["user_token_secret_version"],
+                    required: ["userTokenSecretVersion"],
                     description:
                       "Represents a personal access token that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
                   },
-                  service_directory_config: {
+                  serviceDirectoryConfig: {
                     type: "object",
                     properties: {
                       service: {
@@ -159,63 +284,63 @@ const updateConnection: AppBlock = {
                       "ServiceDirectoryConfig represents Service Directory configuration for a connection.",
                     additionalProperties: true,
                   },
-                  ssl_ca: {
+                  sslCa: {
                     type: "string",
                     description:
                       "SSL certificate to use for requests to GitLab Enterprise.",
                   },
                 },
                 required: [
-                  "webhook_secret_secret_version",
-                  "read_authorizer_credential",
-                  "authorizer_credential",
+                  "webhookSecretSecretVersion",
+                  "readAuthorizerCredential",
+                  "authorizerCredential",
                 ],
                 description:
                   "Configuration for connections to gitlab.com or an instance of GitLab Enterprise. (Part of 'connection_config' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              bitbucket_data_center_config: {
+              bitbucketDataCenterConfig: {
                 type: "object",
                 properties: {
-                  host_uri: {
+                  hostUri: {
                     type: "string",
                     description:
                       "Required. The URI of the Bitbucket Data Center instance or cluster this connection is for.",
                   },
-                  webhook_secret_secret_version: {
+                  webhookSecretSecretVersion: {
                     type: "string",
                     description:
                       "Required. Immutable. SecretManager resource containing the webhook secret used to verify webhook events, formatted as `projects/*/secrets/*/versions/*`.",
                   },
-                  read_authorizer_credential: {
+                  readAuthorizerCredential: {
                     type: "object",
                     properties: {
-                      user_token_secret_version: {
+                      userTokenSecretVersion: {
                         type: "string",
                         description:
                           "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
                       },
                     },
-                    required: ["user_token_secret_version"],
+                    required: ["userTokenSecretVersion"],
                     description:
                       "Represents a personal access token that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
                   },
-                  authorizer_credential: {
+                  authorizerCredential: {
                     type: "object",
                     properties: {
-                      user_token_secret_version: {
+                      userTokenSecretVersion: {
                         type: "string",
                         description:
                           "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
                       },
                     },
-                    required: ["user_token_secret_version"],
+                    required: ["userTokenSecretVersion"],
                     description:
                       "Represents a personal access token that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
                   },
-                  service_directory_config: {
+                  serviceDirectoryConfig: {
                     type: "object",
                     properties: {
                       service: {
@@ -229,23 +354,23 @@ const updateConnection: AppBlock = {
                       "ServiceDirectoryConfig represents Service Directory configuration for a connection.",
                     additionalProperties: true,
                   },
-                  ssl_ca: {
+                  sslCa: {
                     type: "string",
                     description:
                       "Optional. SSL certificate to use for requests to the Bitbucket Data Center.",
                   },
                 },
                 required: [
-                  "host_uri",
-                  "webhook_secret_secret_version",
-                  "read_authorizer_credential",
-                  "authorizer_credential",
+                  "hostUri",
+                  "webhookSecretSecretVersion",
+                  "readAuthorizerCredential",
+                  "authorizerCredential",
                 ],
                 description:
                   "Configuration for connections to Bitbucket Data Center. (Part of 'connection_config' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              bitbucket_cloud_config: {
+              bitbucketCloudConfig: {
                 type: "object",
                 properties: {
                   workspace: {
@@ -253,35 +378,35 @@ const updateConnection: AppBlock = {
                     description:
                       "Required. The Bitbucket Cloud Workspace ID to be connected to Google Cloud Platform.",
                   },
-                  webhook_secret_secret_version: {
+                  webhookSecretSecretVersion: {
                     type: "string",
                     description:
                       "Required. SecretManager resource containing the webhook secret used to verify webhook events, formatted as `projects/*/secrets/*/versions/*`.",
                   },
-                  read_authorizer_credential: {
+                  readAuthorizerCredential: {
                     type: "object",
                     properties: {
-                      user_token_secret_version: {
+                      userTokenSecretVersion: {
                         type: "string",
                         description:
                           "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
                       },
                     },
-                    required: ["user_token_secret_version"],
+                    required: ["userTokenSecretVersion"],
                     description:
                       "Represents a personal access token that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
                   },
-                  authorizer_credential: {
+                  authorizerCredential: {
                     type: "object",
                     properties: {
-                      user_token_secret_version: {
+                      userTokenSecretVersion: {
                         type: "string",
                         description:
                           "Required. A SecretManager resource containing the user token that authorizes the Cloud Build connection. Format: `projects/*/secrets/*/versions/*`.",
                       },
                     },
-                    required: ["user_token_secret_version"],
+                    required: ["userTokenSecretVersion"],
                     description:
                       "Represents a personal access token that authorized the Connection, and associated metadata.",
                     additionalProperties: true,
@@ -289,9 +414,9 @@ const updateConnection: AppBlock = {
                 },
                 required: [
                   "workspace",
-                  "webhook_secret_secret_version",
-                  "read_authorizer_credential",
-                  "authorizer_credential",
+                  "webhookSecretSecretVersion",
+                  "readAuthorizerCredential",
+                  "authorizerCredential",
                 ],
                 description:
                   "Configuration for connections to Bitbucket Cloud. (Part of 'connection_config' - only one field in this group can be set)",
@@ -322,7 +447,7 @@ const updateConnection: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description: "The list of fields to be updated.",
           type: {
@@ -332,7 +457,7 @@ const updateConnection: AppBlock = {
           },
           required: false,
         },
-        allow_missing: {
+        allowMissing: {
           name: "Allow Missing",
           description:
             "If set to true, and the connection is not found a new connection will be created. In this situation `update_mask` is ignored. The creation will succeed only if the input connection has all the necessary information (e.g a github_config with both  user_oauth_token and installation_id properties).",
@@ -358,15 +483,7 @@ const updateConnection: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.connection !== undefined)
-          request.connection = input.event.inputConfig.connection;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
-        if (input.event.inputConfig.allow_missing !== undefined)
-          request.allow_missing = input.event.inputConfig.allow_missing;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateConnection(request, (err: any, response: any) => {
@@ -380,7 +497,8 @@ const updateConnection: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -396,7 +514,7 @@ const updateConnection: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -423,7 +541,7 @@ const updateConnection: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -442,7 +560,7 @@ const updateConnection: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

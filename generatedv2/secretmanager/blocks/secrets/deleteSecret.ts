@@ -34,11 +34,7 @@ const deleteSecret: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteSecret(request, (err: any, response: any) => {

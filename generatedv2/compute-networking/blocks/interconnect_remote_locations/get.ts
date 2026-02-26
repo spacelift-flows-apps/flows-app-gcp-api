@@ -8,7 +8,7 @@ const get: AppBlock = {
   inputs: {
     default: {
       config: {
-        interconnect_remote_location: {
+        interconnectRemoteLocation: {
           name: "Interconnect Remote Location",
           description: "Name of the interconnect remote location to return.",
           type: {
@@ -20,9 +20,9 @@ const get: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.interconnect_remote_location !== undefined)
+        if (input.event.inputConfig.interconnectRemoteLocation !== undefined)
           pathParams["interconnect_remote_location"] = String(
-            input.event.inputConfig.interconnect_remote_location,
+            input.event.inputConfig.interconnectRemoteLocation,
           );
 
         const result = await computeFetch({
@@ -48,15 +48,15 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The postal address of the Point of Presence, each line in the address is separated by a newline character.",
           },
-          attachment_configuration_constraints: {
+          attachmentConfigurationConstraints: {
             type: "object",
             properties: {
-              bgp_md5: {
+              bgpMd5: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Whether the attachment's BGP session requires/allows/disallows BGP MD5 authentication. This can take one of the following values: MD5_OPTIONAL, MD5_REQUIRED, MD5_UNSUPPORTED.  For example, a Cross-Cloud Interconnect connection to a remote cloud provider that requires BGP MD5 authentication has the interconnectRemoteLocation attachment_configuration_constraints.bgp_md5 field set to MD5_REQUIRED, and that property is propagated to the attachment. Similarly, if BGP MD5 is MD5_UNSUPPORTED, an error is returned if MD5 is requested. Check the BgpMd5 enum for the list of possible values.",
               },
-              bgp_peer_asn_ranges: {
+              bgpPeerAsnRanges: {
                 type: "array",
                 items: {
                   type: "object",
@@ -86,17 +86,17 @@ const get: AppBlock = {
           constraints: {
             type: "object",
             properties: {
-              port_pair_remote_location: {
+              portPairRemoteLocation: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Port pair remote location constraints, which can take one of the following values: PORT_PAIR_UNCONSTRAINED_REMOTE_LOCATION, PORT_PAIR_MATCHING_REMOTE_LOCATION.  Google Cloud API refers only to individual ports, but the UI uses this field when ordering a pair of ports, to prevent users from accidentally ordering something that is incompatible with their cloud provider. Specifically, when ordering a redundant pair of Cross-Cloud Interconnect ports, and one of them uses a remote location with portPairMatchingRemoteLocation set to matching, the UI requires that both ports use the same remote location. Check the PortPairRemoteLocation enum for the list of possible values.",
               },
-              port_pair_vlan: {
+              portPairVlan: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Port pair VLAN constraints, which can take one of the following values: PORT_PAIR_UNCONSTRAINED_VLAN, PORT_PAIR_MATCHING_VLAN Check the PortPairVlan enum for the list of possible values.",
               },
-              subnet_length_range: {
+              subnetLengthRange: {
                 type: "object",
                 properties: {
                   max: {
@@ -120,7 +120,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] Continent for this location, which can take one of the following values:     - AFRICA    - ASIA_PAC    - EUROPE    - NORTH_AMERICA    - SOUTH_AMERICA Check the Continent enum for the list of possible values.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -130,12 +130,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] An optional description of the resource.",
           },
-          facility_provider: {
+          facilityProvider: {
             type: "string",
             description:
               "Output only. [Output Only] The name of the provider for this facility (e.g., EQUINIX).",
           },
-          facility_provider_facility_id: {
+          facilityProviderFacilityId: {
             type: "string",
             description:
               "Output only. [Output Only] A provider-assigned Identifier for this facility (e.g., Ashburn-DC1).",
@@ -154,17 +154,17 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] Link Aggregation Control Protocol (LACP) constraints, which can take one of the following values: LACP_SUPPORTED, LACP_UNSUPPORTED Check the Lacp enum for the list of possible values.",
           },
-          max_lag_size100_gbps: {
+          maxLagSize100Gbps: {
             type: "integer",
             description:
               "Output only. [Output Only] The maximum number of 100 Gbps ports supported in a link aggregation group (LAG). When linkType is 100 Gbps, requestedLinkCount cannot exceed max_lag_size_100_gbps.",
           },
-          max_lag_size10_gbps: {
+          maxLagSize10Gbps: {
             type: "integer",
             description:
               "Output only. [Output Only] The maximum number of 10 Gbps ports supported in a link aggregation group (LAG). When linkType is 10 Gbps, requestedLinkCount cannot exceed max_lag_size_10_gbps.",
           },
-          max_lag_size400_gbps: {
+          maxLagSize400Gbps: {
             type: "integer",
             description:
               "Output only. [Output Only] The maximum number of 400 Gbps ports supported in a link aggregation group (LAG). When linkType is 400 Gbps, requestedLinkCount cannot exceed max_lag_size_400_gbps.",
@@ -173,17 +173,17 @@ const get: AppBlock = {
             type: "string",
             description: "Output only. [Output Only] Name of the resource.",
           },
-          peeringdb_facility_id: {
+          peeringdbFacilityId: {
             type: "string",
             description:
               "Output only. [Output Only] The peeringdb identifier for this facility (corresponding with a netfac type in peeringdb).",
           },
-          permitted_connections: {
+          permittedConnections: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                interconnect_location: {
+                interconnectLocation: {
                   type: "string",
                   description:
                     "Output only. [Output Only] URL of an Interconnect location that is permitted to connect to this Interconnect remote location.",
@@ -193,12 +193,12 @@ const get: AppBlock = {
             },
             description: "Output only. [Output Only] Permitted connections.",
           },
-          remote_service: {
+          remoteService: {
             type: "string",
             description:
               'Output only. [Output Only] Indicates the service provider present at the remote location. Example values: "Amazon Web Services", "Microsoft Azure".',
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",

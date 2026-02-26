@@ -73,12 +73,31 @@ export function createRoutingMetadata(
   return metadata;
 }
 
-export async function getCloudBuildClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.devtools.cloudbuild.v1", "CloudBuild");
-  return new Service("cloudbuild.googleapis.com:443", credentials);
+/** Mapping between field name conventions. String = simple rename; Object = rename + recurse. */
+export type FieldNameMapping = Record<
+  string,
+  string | { name: string; fields: FieldNameMapping }
+>;
+
+/** Recursively convert object keys using a field name mapping. */
+export function convertKeys(obj: any, mapping: FieldNameMapping): any {
+  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map((item) => convertKeys(item, mapping));
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
+    const fieldDef = mapping[key];
+    if (!fieldDef) {
+      result[key] = value;
+      continue;
+    }
+    if (typeof fieldDef === "string") {
+      result[fieldDef] = value;
+    } else {
+      result[fieldDef.name] = convertKeys(value, fieldDef.fields);
+    }
+  }
+  return result;
 }
 
 export async function getRepositoryManagerClient(
@@ -86,8 +105,16 @@ export async function getRepositoryManagerClient(
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService(
-    "google.devtools.cloudbuild.v1",
+    "google.devtools.cloudbuild.v2",
     "RepositoryManager",
   );
+  return new Service("cloudbuild.googleapis.com:443", credentials);
+}
+
+export async function getCloudBuildClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.devtools.cloudbuild.v2", "CloudBuild");
   return new Service("cloudbuild.googleapis.com:443", credentials);
 }

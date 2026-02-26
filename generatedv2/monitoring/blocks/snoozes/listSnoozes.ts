@@ -1,5 +1,27 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSnoozeServiceClient } from "../../lib/grpcClient.ts";
+import { getSnoozeServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  snoozes: {
+    name: "snoozes",
+    fields: {
+      interval: {
+        name: "interval",
+        fields: {
+          end_time: "endTime",
+          start_time: "startTime",
+        },
+      },
+      display_name: "displayName",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listSnoozes: AppBlock = {
   name: "List Snoozes",
@@ -30,7 +52,7 @@ const listSnoozes: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of results to return for a single query. The server may further constrain the maximum number of results returned in a single page. The value should be in the range [1, 1000]. If the value given is outside this range, the server will decide the number of results to be returned.",
@@ -41,7 +63,7 @@ const listSnoozes: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. The `next_page_token` from a previous call to `ListSnoozesRequest` to get the next page of results.",
@@ -56,15 +78,7 @@ const listSnoozes: AppBlock = {
       onEvent: async (input) => {
         const client = await getSnoozeServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listSnoozes(request, (err: any, response: any) => {
@@ -78,7 +92,8 @@ const listSnoozes: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -122,12 +137,12 @@ const listSnoozes: AppBlock = {
                 interval: {
                   type: "object",
                   properties: {
-                    end_time: {
+                    endTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                     },
-                    start_time: {
+                    startTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -137,20 +152,20 @@ const listSnoozes: AppBlock = {
                     "Describes a time interval:    * Reads: A half-open time interval. It includes the end time but     excludes the start time: `(startTime, endTime]`. The start time     must be specified, must be earlier than the end time, and should be     no older than the data retention period for the metric.   * Writes: A closed time interval. It extends from the start time to the end   time,     and includes both: `[startTime, endTime]`. Valid time intervals     depend on the     [`MetricKind`](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors#MetricKind)     of the metric value. The end time must not be earlier than the start     time, and the end time must not be more than 25 hours in the past or more     than five minutes in the future.     * For `GAUGE` metrics, the `startTime` value is technically optional; if       no value is specified, the start time defaults to the value of the       end time, and the interval represents a single point in time. If both       start and end times are specified, they must be identical. Such an       interval is valid only for `GAUGE` metrics, which are point-in-time       measurements. The end time of a new interval must be at least a       millisecond after the end time of the previous interval.     * For `DELTA` metrics, the start time and end time must specify a       non-zero interval, with subsequent points specifying contiguous and       non-overlapping intervals. For `DELTA` metrics, the start time of       the next interval must be at least a millisecond after the end time       of the previous interval.     * For `CUMULATIVE` metrics, the start time and end time must specify a       non-zero interval, with subsequent points specifying the same       start time and increasing end times, until an event resets the       cumulative value to zero and sets a new start time for the following       points. The new start time must be at least a millisecond after the       end time of the previous interval.     * The start time of a new interval must be at least a millisecond after     the       end time of the previous interval because intervals are closed. If the       start time of a new interval is the same as the end time of the       previous interval, then data written at the new start time could       overwrite data written at the previous end time.",
                   additionalProperties: true,
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "Required. A display name for the `Snooze`. This can be, at most, 512 unicode characters.",
                 },
               },
-              required: ["criteria", "interval", "display_name"],
+              required: ["criteria", "interval", "displayName"],
               description:
                 "A `Snooze` will prevent any alerts from being opened, and close any that are already open. The `Snooze` will work on alerts that match the criteria defined in the `Snooze`. The `Snooze` will be active from `interval.start_time` through `interval.end_time`.",
               additionalProperties: true,
             },
             description: "`Snooze`s matching this list call.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Page token for repeated calls to `ListSnoozes`, to fetch additional pages of results. If this is empty or missing, there are no more pages.",

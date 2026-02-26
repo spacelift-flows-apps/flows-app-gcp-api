@@ -1,5 +1,57 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getMetricServiceClient } from "../../lib/grpcClient.ts";
+import { getMetricServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  metricDescriptor: {
+    name: "metric_descriptor",
+    fields: {
+      labels: {
+        name: "labels",
+        fields: {
+          valueType: "value_type",
+        },
+      },
+      metricKind: "metric_kind",
+      valueType: "value_type",
+      displayName: "display_name",
+      metadata: {
+        name: "metadata",
+        fields: {
+          launchStage: "launch_stage",
+          samplePeriod: "sample_period",
+          ingestDelay: "ingest_delay",
+          timeSeriesResourceHierarchyLevel:
+            "time_series_resource_hierarchy_level",
+        },
+      },
+      launchStage: "launch_stage",
+      monitoredResourceTypes: "monitored_resource_types",
+    },
+  },
+};
+
+const outputMapping = {
+  labels: {
+    name: "labels",
+    fields: {
+      value_type: "valueType",
+    },
+  },
+  metric_kind: "metricKind",
+  value_type: "valueType",
+  display_name: "displayName",
+  metadata: {
+    name: "metadata",
+    fields: {
+      launch_stage: "launchStage",
+      sample_period: "samplePeriod",
+      ingest_delay: "ingestDelay",
+      time_series_resource_hierarchy_level: "timeSeriesResourceHierarchyLevel",
+    },
+  },
+  launch_stage: "launchStage",
+  monitored_resource_types: "monitoredResourceTypes",
+};
 
 const createMetricDescriptor: AppBlock = {
   name: "Create Metric Descriptor",
@@ -19,7 +71,7 @@ const createMetricDescriptor: AppBlock = {
           },
           required: true,
         },
-        metric_descriptor: {
+        metricDescriptor: {
           name: "Metric Descriptor",
           description:
             "Required. The new [custom metric](https://cloud.google.com/monitoring/custom-metrics) descriptor.",
@@ -40,7 +92,7 @@ const createMetricDescriptor: AppBlock = {
                     key: {
                       type: "string",
                     },
-                    value_type: {
+                    valueType: {
                       type: "string",
                       enum: ["STRING", "BOOL", "INT64"],
                     },
@@ -51,7 +103,7 @@ const createMetricDescriptor: AppBlock = {
                   additionalProperties: true,
                 },
               },
-              metric_kind: {
+              metricKind: {
                 type: "string",
                 enum: [
                   "METRIC_KIND_UNSPECIFIED",
@@ -60,7 +112,7 @@ const createMetricDescriptor: AppBlock = {
                   "CUMULATIVE",
                 ],
               },
-              value_type: {
+              valueType: {
                 type: "string",
                 enum: [
                   "VALUE_TYPE_UNSPECIFIED",
@@ -78,13 +130,13 @@ const createMetricDescriptor: AppBlock = {
               description: {
                 type: "string",
               },
-              display_name: {
+              displayName: {
                 type: "string",
               },
               metadata: {
                 type: "object",
                 properties: {
-                  launch_stage: {
+                  launchStage: {
                     type: "string",
                     enum: [
                       "LAUNCH_STAGE_UNSPECIFIED",
@@ -97,15 +149,15 @@ const createMetricDescriptor: AppBlock = {
                       "DEPRECATED",
                     ],
                   },
-                  sample_period: {
+                  samplePeriod: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
-                  ingest_delay: {
+                  ingestDelay: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
-                  time_series_resource_hierarchy_level: {
+                  timeSeriesResourceHierarchyLevel: {
                     type: "array",
                     items: {
                       type: "string",
@@ -120,7 +172,7 @@ const createMetricDescriptor: AppBlock = {
                 },
                 additionalProperties: true,
               },
-              launch_stage: {
+              launchStage: {
                 type: "string",
                 enum: [
                   "LAUNCH_STAGE_UNSPECIFIED",
@@ -133,7 +185,7 @@ const createMetricDescriptor: AppBlock = {
                   "DEPRECATED",
                 ],
               },
-              monitored_resource_types: {
+              monitoredResourceTypes: {
                 type: "array",
                 items: {
                   type: "string",
@@ -150,11 +202,7 @@ const createMetricDescriptor: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.metric_descriptor !== undefined)
-          request.metric_descriptor = input.event.inputConfig.metric_descriptor;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createMetricDescriptor(request, (err: any, response: any) => {
@@ -168,7 +216,8 @@ const createMetricDescriptor: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -192,7 +241,7 @@ const createMetricDescriptor: AppBlock = {
                 key: {
                   type: "string",
                 },
-                value_type: {
+                valueType: {
                   type: "string",
                   enum: ["STRING", "BOOL", "INT64"],
                 },
@@ -203,11 +252,11 @@ const createMetricDescriptor: AppBlock = {
               additionalProperties: true,
             },
           },
-          metric_kind: {
+          metricKind: {
             type: "string",
             enum: ["METRIC_KIND_UNSPECIFIED", "GAUGE", "DELTA", "CUMULATIVE"],
           },
-          value_type: {
+          valueType: {
             type: "string",
             enum: [
               "VALUE_TYPE_UNSPECIFIED",
@@ -225,13 +274,13 @@ const createMetricDescriptor: AppBlock = {
           description: {
             type: "string",
           },
-          display_name: {
+          displayName: {
             type: "string",
           },
           metadata: {
             type: "object",
             properties: {
-              launch_stage: {
+              launchStage: {
                 type: "string",
                 enum: [
                   "LAUNCH_STAGE_UNSPECIFIED",
@@ -244,15 +293,15 @@ const createMetricDescriptor: AppBlock = {
                   "DEPRECATED",
                 ],
               },
-              sample_period: {
+              samplePeriod: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              ingest_delay: {
+              ingestDelay: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              time_series_resource_hierarchy_level: {
+              timeSeriesResourceHierarchyLevel: {
                 type: "array",
                 items: {
                   type: "string",
@@ -267,7 +316,7 @@ const createMetricDescriptor: AppBlock = {
             },
             additionalProperties: true,
           },
-          launch_stage: {
+          launchStage: {
             type: "string",
             enum: [
               "LAUNCH_STAGE_UNSPECIFIED",
@@ -280,7 +329,7 @@ const createMetricDescriptor: AppBlock = {
               "DEPRECATED",
             ],
           },
-          monitored_resource_types: {
+          monitoredResourceTypes: {
             type: "array",
             items: {
               type: "string",

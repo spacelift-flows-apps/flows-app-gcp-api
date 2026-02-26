@@ -2,7 +2,12 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  service_account_email: "serviceAccountEmail",
+};
 
 const getDefaultServiceAccount: AppBlock = {
   name: "Get Default Service Account",
@@ -26,9 +31,7 @@ const getDefaultServiceAccount: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined) {
@@ -52,7 +55,8 @@ const getDefaultServiceAccount: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -67,7 +71,7 @@ const getDefaultServiceAccount: AppBlock = {
             description:
               "Identifier. Format: `projects/{project}/locations/{location}/defaultServiceAccount`",
           },
-          service_account_email: {
+          serviceAccountEmail: {
             type: "string",
             description:
               "Output only. The email address of the service account identity that will be used for a build by default.  This is returned in the format `projects/{project}/serviceAccounts/{service_account}` where `{service_account}` could be the legacy Cloud Build SA, in the format [PROJECT_NUMBER]@cloudbuild.gserviceaccount.com or the Compute SA, in the format [PROJECT_NUMBER]-compute@developer.gserviceaccount.com.  If no service account will be used by default, this will be empty.",

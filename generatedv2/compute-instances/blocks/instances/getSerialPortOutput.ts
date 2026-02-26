@@ -89,7 +89,7 @@ const getSerialPortOutput: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

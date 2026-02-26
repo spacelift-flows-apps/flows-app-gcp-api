@@ -16,7 +16,7 @@ const listManagedInstances: AppBlock = {
           },
           required: true,
         },
-        instance_group_manager: {
+        instanceGroupManager: {
           name: "Instance Group Manager",
           description: "The name of the managed instance group.",
           type: {
@@ -33,7 +33,7 @@ const listManagedInstances: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -42,7 +42,7 @@ const listManagedInstances: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -51,7 +51,7 @@ const listManagedInstances: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -60,7 +60,7 @@ const listManagedInstances: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -75,25 +75,25 @@ const listManagedInstances: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.instance_group_manager !== undefined)
+        if (input.event.inputConfig.instanceGroupManager !== undefined)
           pathParams["instance_group_manager"] = String(
-            input.event.inputConfig.instance_group_manager,
+            input.event.inputConfig.instanceGroupManager,
           );
 
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -115,12 +115,12 @@ const listManagedInstances: AppBlock = {
       type: {
         type: "object",
         properties: {
-          managed_instances: {
+          managedInstances: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                current_action: {
+                currentAction: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The current action that the managed instance group has scheduled for the instance. Possible values:     - NONE The instance is running, and the managed    instance group does not have any scheduled actions for this instance.    - CREATING The managed instance group is creating this    instance. If the group fails to create this instance, it will try again    until it is successful.    - CREATING_WITHOUT_RETRIES The managed instance group    is attempting to create this instance only once. If the group fails    to create this instance, it does not try again and the group'stargetSize value is decreased instead.    - RECREATING The managed instance group is recreating    this instance.    - DELETING The managed instance group is permanently    deleting this instance.    - ABANDONING The managed instance group is abandoning    this instance. The instance will be removed from the instance group    and from any target pools that are associated with this group.    - RESTARTING The managed instance group is restarting    the instance.    - REFRESHING The managed instance group is applying    configuration changes to the instance without stopping it. For example,    the group can update the target pool list for an instance without    stopping that instance.    - VERIFYING The managed instance group has created the    instance and it is in the process of being verified. Check the CurrentAction enum for the list of possible values.",
@@ -134,17 +134,17 @@ const listManagedInstances: AppBlock = {
                   description:
                     "Output only. [Output Only] The URL of the instance. The URL can exist even if the instance has not yet been created.",
                 },
-                instance_health: {
+                instanceHealth: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      detailed_health_state: {
+                      detailedHealthState: {
                         type: "string",
                         description:
                           "Output only. [Output Only] The current detailed instance health state. Check the DetailedHealthState enum for the list of possible values.",
                       },
-                      health_check: {
+                      healthCheck: {
                         type: "string",
                         description:
                           "Output only. [Output Only] The URL for the health check that verifies whether the instance is healthy.",
@@ -155,12 +155,12 @@ const listManagedInstances: AppBlock = {
                   description:
                     "Output only. [Output Only] Health state of the instance per health-check.",
                 },
-                instance_status: {
+                instanceStatus: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The status of the instance. This field is empty when the instance does not exist. Check the InstanceStatus enum for the list of possible values.",
                 },
-                last_attempt: {
+                lastAttempt: {
                   type: "object",
                   properties: {
                     errors: {
@@ -176,12 +176,12 @@ const listManagedInstances: AppBlock = {
                                 description:
                                   "[Output Only] The error type identifier for this error.",
                               },
-                              error_details: {
+                              errorDetails: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    error_info: {
+                                    errorInfo: {
                                       type: "object",
                                       properties: {
                                         domain: {
@@ -238,7 +238,7 @@ const listManagedInstances: AppBlock = {
                                         "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                                       additionalProperties: true,
                                     },
-                                    localized_message: {
+                                    localizedMessage: {
                                       type: "object",
                                       properties: {
                                         locale: {
@@ -256,7 +256,7 @@ const listManagedInstances: AppBlock = {
                                         "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                                       additionalProperties: true,
                                     },
-                                    quota_info: {
+                                    quotaInfo: {
                                       type: "object",
                                       properties: {
                                         dimensions: {
@@ -267,7 +267,7 @@ const listManagedInstances: AppBlock = {
                                           description:
                                             "The map holding related quota dimensions.",
                                         },
-                                        future_limit: {
+                                        futureLimit: {
                                           type: "number",
                                           description:
                                             "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -277,17 +277,17 @@ const listManagedInstances: AppBlock = {
                                           description:
                                             "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                                         },
-                                        limit_name: {
+                                        limitName: {
                                           type: "string",
                                           description:
                                             "The name of the quota limit.",
                                         },
-                                        metric_name: {
+                                        metricName: {
                                           type: "string",
                                           description:
                                             "The Compute Engine quota metric name.",
                                         },
-                                        rollout_status: {
+                                        rolloutStatus: {
                                           type: "string",
                                           description:
                                             "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -334,7 +334,7 @@ const listManagedInstances: AppBlock = {
                   description:
                     "Output only. [Output Only] The name of the instance. The name always exists even if the instance has not yet been created.",
                 },
-                preserved_state_from_config: {
+                preservedStateFromConfig: {
                   type: "object",
                   properties: {
                     disks: {
@@ -345,7 +345,7 @@ const listManagedInstances: AppBlock = {
                       description:
                         "Preserved disks defined for this instance. This map is keyed with the device names of the disks.",
                     },
-                    external_i_ps: {
+                    externalIPs: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -353,7 +353,7 @@ const listManagedInstances: AppBlock = {
                       description:
                         "Preserved external IPs defined for this instance. This map is keyed with the name of the network interface.",
                     },
-                    internal_i_ps: {
+                    internalIPs: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -373,7 +373,7 @@ const listManagedInstances: AppBlock = {
                   description: "Preserved state for a given instance.",
                   additionalProperties: true,
                 },
-                preserved_state_from_policy: {
+                preservedStateFromPolicy: {
                   type: "object",
                   properties: {
                     disks: {
@@ -384,7 +384,7 @@ const listManagedInstances: AppBlock = {
                       description:
                         "Preserved disks defined for this instance. This map is keyed with the device names of the disks.",
                     },
-                    external_i_ps: {
+                    externalIPs: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -392,7 +392,7 @@ const listManagedInstances: AppBlock = {
                       description:
                         "Preserved external IPs defined for this instance. This map is keyed with the name of the network interface.",
                     },
-                    internal_i_ps: {
+                    internalIPs: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -412,10 +412,10 @@ const listManagedInstances: AppBlock = {
                   description: "Preserved state for a given instance.",
                   additionalProperties: true,
                 },
-                properties_from_flexibility_policy: {
+                propertiesFromFlexibilityPolicy: {
                   type: "object",
                   properties: {
-                    machine_type: {
+                    machineType: {
                       type: "string",
                       description:
                         "Output only. The machine type to be used for this instance.",
@@ -428,7 +428,7 @@ const listManagedInstances: AppBlock = {
                 version: {
                   type: "object",
                   properties: {
-                    instance_template: {
+                    instanceTemplate: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The intended template of the instance. This field is empty when current_action is one of { DELETING, ABANDONING }.",
@@ -449,7 +449,7 @@ const listManagedInstances: AppBlock = {
             },
             description: "A list of managed instances.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Output only. [Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",

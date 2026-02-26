@@ -1,5 +1,17 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  keyRingId: "key_ring_id",
+  keyRing: "key_ring",
+};
+
+const outputMapping = {
+  create_time: "createTime",
+};
 
 const createKeyRing: AppBlock = {
   name: "Create Key Ring",
@@ -19,7 +31,7 @@ const createKeyRing: AppBlock = {
           },
           required: true,
         },
-        key_ring_id: {
+        keyRingId: {
           name: "Key Ring Id",
           description:
             "Required. It must be unique within a location and match the regular expression `[a-zA-Z0-9_-]{1,63}`",
@@ -30,7 +42,7 @@ const createKeyRing: AppBlock = {
           },
           required: true,
         },
-        key_ring: {
+        keyRing: {
           name: "Key Ring",
           description:
             "Required. A [KeyRing][google.cloud.kms.v1.KeyRing] with initial field values.",
@@ -47,13 +59,7 @@ const createKeyRing: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.key_ring_id !== undefined)
-          request.key_ring_id = input.event.inputConfig.key_ring_id;
-        if (input.event.inputConfig.key_ring !== undefined)
-          request.key_ring = input.event.inputConfig.key_ring;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createKeyRing(request, (err: any, response: any) => {
@@ -67,7 +73,8 @@ const createKeyRing: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -82,7 +89,7 @@ const createKeyRing: AppBlock = {
             description:
               "Output only. The resource name for the [KeyRing][google.cloud.kms.v1.KeyRing] in the format `projects/*/locations/*/keyRings/*`.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        network_attachment: {
+        networkAttachment: {
           name: "Network Attachment",
           description: "Name of the NetworkAttachment resource to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.network_attachment !== undefined)
+        if (input.event.inputConfig.networkAttachment !== undefined)
           pathParams["network_attachment"] = String(
-            input.event.inputConfig.network_attachment,
+            input.event.inputConfig.networkAttachment,
           );
 
         const result = await computeFetch({
@@ -53,27 +53,27 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          connection_endpoints: {
+          connectionEndpoints: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                ip_address: {
+                ipAddress: {
                   type: "string",
                   description:
                     "The IPv4 address assigned to the producer instance network interface. This value will be a range in case of Serverless.",
                 },
-                ipv6_address: {
+                ipv6Address: {
                   type: "string",
                   description:
                     "The IPv6 address assigned to the producer instance network interface. This is only assigned when the stack types of both the instance network interface and the consumer subnet are IPv4_IPv6.",
                 },
-                project_id_or_num: {
+                projectIdOrNum: {
                   type: "string",
                   description:
                     "The project id or number of the interface to which the IP was assigned.",
                 },
-                secondary_ip_cidr_ranges: {
+                secondaryIpCidrRanges: {
                   type: "array",
                   items: {
                     type: "string",
@@ -90,7 +90,7 @@ const get: AppBlock = {
                   description:
                     "The subnetwork used to assign the IP to the producer instance network interface.",
                 },
-                subnetwork_cidr_range: {
+                subnetworkCidrRange: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The CIDR range of the subnet from which the IPv4 internal IP was allocated from.",
@@ -103,12 +103,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] An array of connections for all the producers connected to this network attachment.",
           },
-          connection_preference: {
+          connectionPreference: {
             type: "string",
             description:
               "Check the ConnectionPreference enum for the list of possible values.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -141,7 +141,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The URL of the network which the Network Attachment belongs to. Practically it is inferred by fetching the network of the first subnetwork associated. Because it is required that all the subnetworks must be from the same network, it is assured that the Network Attachment belongs to the same network as all the subnetworks.",
           },
-          producer_accept_lists: {
+          producerAcceptLists: {
             type: "array",
             items: {
               type: "string",
@@ -149,7 +149,7 @@ const get: AppBlock = {
             description:
               "Projects that are allowed to connect to this network attachment. The project can be specified using its id or number.",
           },
-          producer_reject_lists: {
+          producerRejectLists: {
             type: "array",
             items: {
               type: "string",
@@ -162,12 +162,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] URL of the region where the network attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",
           },
-          self_link_with_id: {
+          selfLinkWithId: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource's resource id.",

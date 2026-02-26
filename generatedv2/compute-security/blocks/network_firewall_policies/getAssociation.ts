@@ -8,7 +8,7 @@ const getAssociation: AppBlock = {
   inputs: {
     default: {
       config: {
-        firewall_policy: {
+        firewallPolicy: {
           name: "Firewall Policy",
           description:
             "Name of the firewall policy to which the queried association belongs.",
@@ -30,9 +30,9 @@ const getAssociation: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.firewall_policy !== undefined)
+        if (input.event.inputConfig.firewallPolicy !== undefined)
           pathParams["firewall_policy"] = String(
-            input.event.inputConfig.firewall_policy,
+            input.event.inputConfig.firewallPolicy,
           );
 
         const queryParams: Record<string, string> = {};
@@ -58,16 +58,16 @@ const getAssociation: AppBlock = {
       type: {
         type: "object",
         properties: {
-          attachment_target: {
+          attachmentTarget: {
             type: "string",
             description: "The target that the firewall policy is attached to.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "[Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.",
           },
-          firewall_policy_id: {
+          firewallPolicyId: {
             type: "string",
             description:
               "Output only. [Output Only] The firewall policy ID of the association.",
@@ -76,7 +76,7 @@ const getAssociation: AppBlock = {
             type: "string",
             description: "The name for an association.",
           },
-          short_name: {
+          shortName: {
             type: "string",
             description:
               "Output only. [Output Only] The short name of the firewall policy of the association.",

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import { getSubscriberClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  expire_time: "expireTime",
+};
 
 const getSnapshot: AppBlock = {
   name: "Get Snapshot",
@@ -23,9 +27,7 @@ const getSnapshot: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.snapshot !== undefined)
-          request.snapshot = input.event.inputConfig.snapshot;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getSnapshot(request, (err: any, response: any) => {
@@ -39,7 +41,8 @@ const getSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -58,7 +61,7 @@ const getSnapshot: AppBlock = {
             description:
               "Optional. The name of the topic from which this snapshot is retaining messages.",
           },
-          expire_time: {
+          expireTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

@@ -25,7 +25,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -34,7 +34,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -43,7 +43,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -52,7 +52,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -71,17 +71,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -116,7 +116,7 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -124,16 +124,16 @@ const list: AppBlock = {
                 description: {
                   type: "string",
                 },
-                disk_consistency_group_policy: {
+                diskConsistencyGroupPolicy: {
                   type: "object",
                   properties: {},
                   description: "Resource policy for disk consistency groups.",
                   additionalProperties: true,
                 },
-                group_placement_policy: {
+                groupPlacementPolicy: {
                   type: "object",
                   properties: {
-                    availability_domain_count: {
+                    availabilityDomainCount: {
                       type: "integer",
                       description:
                         "The number of availability domains to spread instances across. If two instances are in different availability domain, they are not in the same low latency network.",
@@ -143,12 +143,12 @@ const list: AppBlock = {
                       description:
                         "Specifies network collocation Check the Collocation enum for the list of possible values.",
                     },
-                    gpu_topology: {
+                    gpuTopology: {
                       type: "string",
                       description:
                         "Specifies the shape of the GPU slice, in slice based GPU families eg. A4X.",
                     },
-                    vm_count: {
+                    vmCount: {
                       type: "integer",
                       description:
                         "Number of VMs in this placement group. Google does not recommend that you use this field unless you use a compact policy and you want your policy to work only if it contains this exact number of VMs.",
@@ -162,25 +162,25 @@ const list: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                instance_schedule_policy: {
+                instanceSchedulePolicy: {
                   type: "object",
                   properties: {
-                    expiration_time: {
+                    expirationTime: {
                       type: "string",
                       description:
                         "The expiration time of the schedule. The timestamp is an RFC3339 string.",
                     },
-                    start_time: {
+                    startTime: {
                       type: "string",
                       description:
                         "The start time of the schedule. The timestamp is an RFC3339 string.",
                     },
-                    time_zone: {
+                    timeZone: {
                       type: "string",
                       description:
                         "Specifies the time zone to be used in interpreting Schedule.schedule. The value of this field must be a time zone name from the tz database: https://wikipedia.org/wiki/Tz_database.",
                     },
-                    vm_start_schedule: {
+                    vmStartSchedule: {
                       type: "object",
                       properties: {
                         schedule: {
@@ -192,7 +192,7 @@ const list: AppBlock = {
                       description: "Schedule for an instance operation.",
                       additionalProperties: true,
                     },
-                    vm_stop_schedule: {
+                    vmStopSchedule: {
                       type: "object",
                       properties: {
                         schedule: {
@@ -222,18 +222,18 @@ const list: AppBlock = {
                 region: {
                   type: "string",
                 },
-                resource_status: {
+                resourceStatus: {
                   type: "object",
                   properties: {
-                    instance_schedule_policy: {
+                    instanceSchedulePolicy: {
                       type: "object",
                       properties: {
-                        last_run_start_time: {
+                        lastRunStartTime: {
                           type: "string",
                           description:
                             "Output only. [Output Only] The last time the schedule successfully ran. The timestamp is an RFC3339 string.",
                         },
-                        next_run_start_time: {
+                        nextRunStartTime: {
                           type: "string",
                           description:
                             "Output only. [Output Only] The next time the schedule is planned to run. The actual time might be slightly different. The timestamp is an RFC3339 string.",
@@ -248,23 +248,23 @@ const list: AppBlock = {
                     'Contains output only fields. Use this sub-message for all output fields set on ResourcePolicy. The internal structure of this "status" field should mimic the structure of ResourcePolicy proto specification.',
                   additionalProperties: true,
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
                 },
-                snapshot_schedule_policy: {
+                snapshotSchedulePolicy: {
                   type: "object",
                   properties: {
-                    retention_policy: {
+                    retentionPolicy: {
                       type: "object",
                       properties: {
-                        max_retention_days: {
+                        maxRetentionDays: {
                           type: "integer",
                           description:
                             "Maximum age of the snapshot that is allowed to be kept.",
                         },
-                        on_source_disk_delete: {
+                        onSourceDiskDelete: {
                           type: "string",
                           description:
                             "Specifies the behavior to apply to scheduled snapshots when the source disk is deleted. Check the OnSourceDiskDelete enum for the list of possible values.",
@@ -277,10 +277,10 @@ const list: AppBlock = {
                     schedule: {
                       type: "object",
                       properties: {
-                        daily_schedule: {
+                        dailySchedule: {
                           type: "object",
                           properties: {
-                            days_in_cycle: {
+                            daysInCycle: {
                               type: "integer",
                               description:
                                 "Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle.",
@@ -290,7 +290,7 @@ const list: AppBlock = {
                               description:
                                 "Output only. [Output only] A predetermined duration for the window, automatically chosen to be the smallest possible in the given scenario.",
                             },
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 "Start time of the window. This must be in UTC format that resolves to one of 00:00, 04:00, 08:00,12:00, 16:00, or 20:00. For example, both 13:00-5 and 08:00 are valid.",
@@ -300,7 +300,7 @@ const list: AppBlock = {
                             "Time window specified for daily operations.",
                           additionalProperties: true,
                         },
-                        hourly_schedule: {
+                        hourlySchedule: {
                           type: "object",
                           properties: {
                             duration: {
@@ -308,12 +308,12 @@ const list: AppBlock = {
                               description:
                                 "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                             },
-                            hours_in_cycle: {
+                            hoursInCycle: {
                               type: "integer",
                               description:
                                 "Defines a schedule with units measured in hours. The value determines how many hours pass between the start of each cycle.",
                             },
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
@@ -323,10 +323,10 @@ const list: AppBlock = {
                             "Time window specified for hourly operations.",
                           additionalProperties: true,
                         },
-                        weekly_schedule: {
+                        weeklySchedule: {
                           type: "object",
                           properties: {
-                            day_of_weeks: {
+                            dayOfWeeks: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -341,7 +341,7 @@ const list: AppBlock = {
                                     description:
                                       "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                                   },
-                                  start_time: {
+                                  startTime: {
                                     type: "string",
                                     description:
                                       'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
@@ -362,15 +362,15 @@ const list: AppBlock = {
                         "A schedule for disks where the schedueled operations are performed.",
                       additionalProperties: true,
                     },
-                    snapshot_properties: {
+                    snapshotProperties: {
                       type: "object",
                       properties: {
-                        chain_name: {
+                        chainName: {
                           type: "string",
                           description:
                             "Chain name that the snapshot is created in.",
                         },
-                        guest_flush: {
+                        guestFlush: {
                           type: "boolean",
                           description:
                             "Indication to perform a 'guest aware' snapshot.",
@@ -383,7 +383,7 @@ const list: AppBlock = {
                           description:
                             "Labels to apply to scheduled snapshots. These can be later modified by the setLabels method. Label values may be empty.",
                         },
-                        storage_locations: {
+                        storageLocations: {
                           type: "array",
                           items: {
                             type: "string",
@@ -406,15 +406,15 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The status of resource policy creation. Check the Status enum for the list of possible values.",
                 },
-                workload_policy: {
+                workloadPolicy: {
                   type: "object",
                   properties: {
-                    accelerator_topology: {
+                    acceleratorTopology: {
                       type: "string",
                       description:
                         "Specifies the topology required to create a partition for VMs that have interconnected GPUs.",
                     },
-                    max_topology_distance: {
+                    maxTopologyDistance: {
                       type: "string",
                       description:
                         "Specifies the maximum distance between instances. Check the MaxTopologyDistance enum for the list of possible values.",
@@ -440,12 +440,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource.Alwayscompute#resourcePoliciesList for listsof resourcePolicies",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

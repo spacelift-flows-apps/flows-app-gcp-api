@@ -1,5 +1,19 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import { getSubscriberClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  snapshot: {
+    name: "snapshot",
+    fields: {
+      expireTime: "expire_time",
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  expire_time: "expireTime",
+};
 
 const updateSnapshot: AppBlock = {
   name: "Update Snapshot",
@@ -23,7 +37,7 @@ const updateSnapshot: AppBlock = {
                 description:
                   "Optional. The name of the topic from which this snapshot is retaining messages.",
               },
-              expire_time: {
+              expireTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -42,7 +56,7 @@ const updateSnapshot: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Required. Indicates which fields in the provided snapshot to update. Must be specified and non-empty.",
@@ -57,11 +71,7 @@ const updateSnapshot: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.snapshot !== undefined)
-          request.snapshot = input.event.inputConfig.snapshot;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateSnapshot(request, (err: any, response: any) => {
@@ -75,7 +85,8 @@ const updateSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -94,7 +105,7 @@ const updateSnapshot: AppBlock = {
             description:
               "Optional. The name of the topic from which this snapshot is retaining messages.",
           },
-          expire_time: {
+          expireTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

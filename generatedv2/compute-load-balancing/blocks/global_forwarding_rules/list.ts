@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -102,42 +102,42 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                I_p_address: {
+                IPAddress: {
                   type: "string",
                   description:
                     "IP address for which this forwarding rule accepts traffic. When a client sends traffic to this IP address, the forwarding rule directs the traffic to the referenced target or backendService. While creating a forwarding rule, specifying an IPAddress is required under the following circumstances:      - When the target is set to targetGrpcProxy andvalidateForProxyless is set to true, theIPAddress should be set to 0.0.0.0.    - When the target is a Private Service Connect Google APIs    bundle, you must specify an IPAddress.   Otherwise, you can optionally specify an IP address that references an existing static (reserved) IP address resource. When omitted, Google Cloud assigns an ephemeral IP address.  Use one of the following formats to specify an IP address while creating a forwarding rule:  * IP address number, as in `100.1.2.3` * IPv6 address range, as in `2600:1234::/96` * Full resource URL, as inhttps://www.googleapis.com/compute/v1/projects/project_id/regions/region/addresses/address-name * Partial URL or by name, as in:     - projects/project_id/regions/region/addresses/address-name    - regions/region/addresses/address-name    - global/addresses/address-name    - address-name    The forwarding rule's target or backendService, and in most cases, also the loadBalancingScheme, determine the type of IP address that you can use. For detailed information, see [IP address specifications](https://cloud.google.com/load-balancing/docs/forwarding-rule-concepts#ip_address_specifications).  When reading an IPAddress, the API always returns the IP address number.",
                 },
-                I_p_protocol: {
+                IPProtocol: {
                   type: "string",
                   description:
                     "The IP protocol to which this rule applies.  For protocol forwarding, valid options are TCP, UDP, ESP,AH, SCTP, ICMP andL3_DEFAULT.  The valid IP protocols are different for different load balancing products as described in [Load balancing features](https://cloud.google.com/load-balancing/docs/features#protocols_from_the_load_balancer_to_the_backends). Check the IPProtocolEnum enum for the list of possible values.",
                 },
-                all_ports: {
+                allPorts: {
                   type: "boolean",
                   description:
                     "The ports, portRange, and allPorts fields are mutually exclusive. Only packets addressed to ports in the specified range will be forwarded to the backends configured with this forwarding rule.  The allPorts field has the following limitations:     - It requires that the forwarding rule IPProtocol be TCP,    UDP, SCTP, or L3_DEFAULT.    - It's applicable only to the following products: internal passthrough    Network Load Balancers, backend service-based external passthrough Network    Load Balancers, and internal and external protocol forwarding.    - Set this field to true to allow packets addressed to any port or    packets lacking destination port information (for example, UDP fragments    after the first fragment) to be forwarded to the backends configured with    this forwarding rule. The L3_DEFAULT protocol requiresallPorts be set to true.",
                 },
-                allow_global_access: {
+                allowGlobalAccess: {
                   type: "boolean",
                   description:
                     "If set to true, clients can access the internal passthrough Network Load Balancers, the regional internal Application Load Balancer, and the regional internal proxy Network Load Balancer from all regions. If false, only allows access from the local region the load balancer is located at. Note that for INTERNAL_MANAGED forwarding rules, this field cannot be changed after the forwarding rule is created.",
                 },
-                allow_psc_global_access: {
+                allowPscGlobalAccess: {
                   type: "boolean",
                   description:
                     "This is used in PSC consumer ForwardingRule to control whether the PSC endpoint can be accessed from another region.",
                 },
-                backend_service: {
+                backendService: {
                   type: "string",
                   description:
                     "Identifies the backend service to which the forwarding rule sends traffic. Required for internal and external passthrough Network Load Balancers; must be omitted for all other load balancer types.",
                 },
-                base_forwarding_rule: {
+                baseForwardingRule: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The URL for the corresponding base forwarding rule. By base forwarding rule, we mean the forwarding rule that has the same IP address, protocol, and port settings with the current forwarding rule, but without sourceIPRanges specified. Always empty if the current forwarding rule does not have sourceIPRanges specified.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -147,12 +147,12 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                external_managed_backend_bucket_migration_state: {
+                externalManagedBackendBucketMigrationState: {
                   type: "string",
                   description:
                     "Specifies the canary migration state for the backend buckets attached to this forwarding rule. Possible values are PREPARE, TEST_BY_PERCENTAGE, and TEST_ALL_TRAFFIC.  To begin the migration from EXTERNAL to EXTERNAL_MANAGED, the state must be changed to PREPARE. The state must be changed to TEST_ALL_TRAFFIC before the loadBalancingScheme can be changed to EXTERNAL_MANAGED. Optionally, the TEST_BY_PERCENTAGE state can be used to migrate traffic to backend buckets attached to this forwarding rule by percentage using externalManagedBackendBucketMigrationTestingPercentage.  Rolling back a migration requires the states to be set in reverse order. So changing the scheme from EXTERNAL_MANAGED to EXTERNAL requires the state to be set to TEST_ALL_TRAFFIC at the same time. Optionally, the TEST_BY_PERCENTAGE state can be used to migrate some traffic back to EXTERNAL or PREPARE can be used to migrate all traffic back to EXTERNAL. Check the ExternalManagedBackendBucketMigrationState enum for the list of possible values.",
                 },
-                external_managed_backend_bucket_migration_testing_percentage: {
+                externalManagedBackendBucketMigrationTestingPercentage: {
                   type: "number",
                   description:
                     "Determines the fraction of requests to backend buckets that should be processed by the global external Application Load Balancer.  The value of this field must be in the range [0, 100].  This value can only be set if the loadBalancingScheme in the BackendService is set to EXTERNAL (when using the classic Application Load Balancer) and the migration state is TEST_BY_PERCENTAGE.",
@@ -166,17 +166,17 @@ const list: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                ip_collection: {
+                ipCollection: {
                   type: "string",
                   description:
                     "Resource reference of a PublicDelegatedPrefix. The PDP must be a sub-PDP in EXTERNAL_IPV6_FORWARDING_RULE_CREATION mode.  Use one of the following formats to specify a sub-PDP when creating an IPv6 NetLB forwarding rule using BYOIP: Full resource URL, as inhttps://www.googleapis.com/compute/v1/projects/project_id/regions/region/publicDelegatedPrefixes/sub-pdp-name Partial URL, as in:     - projects/project_id/regions/region/publicDelegatedPrefixes/sub-pdp-name    - regions/region/publicDelegatedPrefixes/sub-pdp-name",
                 },
-                ip_version: {
+                ipVersion: {
                   type: "string",
                   description:
                     "The IP Version that will be used by this forwarding rule.  Valid options are IPV4 or IPV6. Check the IpVersion enum for the list of possible values.",
                 },
-                is_mirroring_collector: {
+                isMirroringCollector: {
                   type: "boolean",
                   description:
                     "Indicates whether or not this load balancer can be used as a collector for packet mirroring. To prevent mirroring loops, instances behind this load balancer will not have their traffic mirrored even if aPacketMirroring rule applies to them. This can only be set to true for load balancers that have theirloadBalancingScheme set to INTERNAL.",
@@ -186,7 +186,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of the resource. Alwayscompute#forwardingRule for forwarding rule resources.",
                 },
-                label_fingerprint: {
+                labelFingerprint: {
                   type: "string",
                   description:
                     "A fingerprint for the labels being applied to this resource, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a ForwardingRule.",
@@ -199,17 +199,17 @@ const list: AppBlock = {
                   description:
                     "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
                 },
-                load_balancing_scheme: {
+                loadBalancingScheme: {
                   type: "string",
                   description:
                     "Specifies the forwarding rule type.  For more information about forwarding rules, refer to Forwarding rule concepts. Check the LoadBalancingScheme enum for the list of possible values.",
                 },
-                metadata_filters: {
+                metadataFilters: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      filter_labels: {
+                      filterLabels: {
                         type: "array",
                         items: {
                           type: "object",
@@ -232,7 +232,7 @@ const list: AppBlock = {
                         description:
                           "The list of label value pairs that must match labels in the provided metadata based on filterMatchCriteria  This list must not be empty and can have at the most 64 entries.",
                       },
-                      filter_match_criteria: {
+                      filterMatchCriteria: {
                         type: "string",
                         description:
                           "Specifies how individual filter label matches within the list of filterLabels and contributes toward the overall metadataFilter match.   Supported values are:     - MATCH_ANY: at least one of the filterLabels    must have a matching label in the provided metadata.    - MATCH_ALL: all filterLabels must have    matching labels in the provided metadata. Check the FilterMatchCriteria enum for the list of possible values.",
@@ -255,17 +255,17 @@ const list: AppBlock = {
                   description:
                     "This field is not used for global external load balancing.  For internal passthrough Network Load Balancers, this field identifies the network that the load balanced IP should belong to for this forwarding rule. If the subnetwork is specified, the network of the subnetwork will be used. If neither subnetwork nor this field is specified, the default network will be used.  For Private Service Connect forwarding rules that forward traffic to Google APIs, a network must be provided.",
                 },
-                network_tier: {
+                networkTier: {
                   type: "string",
                   description:
                     "This signifies the networking tier used for configuring this load balancer and can only take the following values:PREMIUM, STANDARD.  For regional ForwardingRule, the valid values are PREMIUM andSTANDARD. For GlobalForwardingRule, the valid value isPREMIUM.  If this field is not specified, it is assumed to be PREMIUM. If IPAddress is specified, this value must be equal to the networkTier of the Address. Check the NetworkTier enum for the list of possible values.",
                 },
-                no_automate_dns_zone: {
+                noAutomateDnsZone: {
                   type: "boolean",
                   description:
                     "This is used in PSC consumer ForwardingRule to control whether it should try to auto-generate a DNS zone or not. Non-PSC forwarding rules do not use this field. Once set, this field is not mutable.",
                 },
-                port_range: {
+                portRange: {
                   type: "string",
                   description:
                     "The ports, portRange, and allPorts fields are mutually exclusive. Only packets addressed to ports in the specified range will be forwarded to the backends configured with this forwarding rule.  The portRange field has the following limitations:     - It requires that the forwarding rule IPProtocol be TCP,    UDP, or SCTP, and    - It's applicable only to the following products: external passthrough    Network Load Balancers, internal and external proxy Network Load Balancers,    internal and external Application Load Balancers, external protocol    forwarding, and Classic VPN.    - Some products have restrictions on what ports can be used. See    port specifications for details.    For external forwarding rules, two or more forwarding rules cannot use the same [IPAddress, IPProtocol] pair, and cannot have overlappingportRanges.  For internal forwarding rules within the same VPC network, two or more forwarding rules cannot use the same [IPAddress, IPProtocol] pair, and cannot have overlapping portRanges.  @pattern: \\\\d+(?:-\\\\d+)?",
@@ -278,11 +278,11 @@ const list: AppBlock = {
                   description:
                     "The ports, portRange, and allPorts fields are mutually exclusive. Only packets addressed to ports in the specified range will be forwarded to the backends configured with this forwarding rule.  The ports field has the following limitations:     - It requires that the forwarding rule IPProtocol be TCP,    UDP, or SCTP, and    - It's applicable only to the following products: internal passthrough    Network Load Balancers, backend service-based external passthrough Network    Load Balancers, and internal protocol forwarding.    - You can specify a list of up to five ports by number, separated by    commas. The ports can be contiguous or discontiguous.    For external forwarding rules, two or more forwarding rules cannot use the same [IPAddress, IPProtocol] pair if they share at least one port number.  For internal forwarding rules within the same VPC network, two or more forwarding rules cannot use the same [IPAddress, IPProtocol] pair if they share at least one port number.  @pattern: \\\\d+(?:-\\\\d+)?",
                 },
-                psc_connection_id: {
+                pscConnectionId: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                psc_connection_status: {
+                pscConnectionStatus: {
                   type: "string",
                   description:
                     "Check the PscConnectionStatus enum for the list of possible values.",
@@ -292,17 +292,17 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] URL of the region where the regional forwarding rule resides. This field is not applicable to global forwarding rules. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined URL for the resource.",
                 },
-                self_link_with_id: {
+                selfLinkWithId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
                 },
-                service_directory_registrations: {
+                serviceDirectoryRegistrations: {
                   type: "array",
                   items: {
                     type: "object",
@@ -317,7 +317,7 @@ const list: AppBlock = {
                         description:
                           "Service Directory service to register the forwarding rule under.",
                       },
-                      service_directory_region: {
+                      serviceDirectoryRegion: {
                         type: "string",
                         description:
                           '[Optional] Service Directory region to register this global forwarding rule under. Default to "us-central1". Only used for PSC for Google APIs. All PSC for Google APIs forwarding rules on the same network should use the same Service Directory region.',
@@ -330,17 +330,17 @@ const list: AppBlock = {
                   description:
                     "Service Directory resources to register this forwarding rule with. Currently, only supports a single Service Directory resource.",
                 },
-                service_label: {
+                serviceLabel: {
                   type: "string",
                   description:
                     "An optional prefix to the service name for this forwarding rule. If specified, the prefix is the first label of the fully qualified service name.  The label must be 1-63 characters long, and comply withRFC1035. Specifically, the label must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.  This field is only used for internal load balancing.",
                 },
-                service_name: {
+                serviceName: {
                   type: "string",
                   description:
                     "[Output Only] The internal fully qualified service name for this forwarding rule.  This field is only used for internal load balancing.",
                 },
-                source_ip_ranges: {
+                sourceIpRanges: {
                   type: "array",
                   items: {
                     type: "string",
@@ -369,12 +369,12 @@ const list: AppBlock = {
             type: "string",
             description: "Output only. Type of resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

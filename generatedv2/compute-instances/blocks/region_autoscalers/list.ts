@@ -25,7 +25,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -34,7 +34,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -43,7 +43,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -52,7 +52,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -71,17 +71,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -113,23 +113,23 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                autoscaling_policy: {
+                autoscalingPolicy: {
                   type: "object",
                   properties: {
-                    cool_down_period_sec: {
+                    coolDownPeriodSec: {
                       type: "integer",
                       description:
                         "The number of seconds that your application takes to initialize on a VM instance. This is referred to as the [initialization period](/compute/docs/autoscaler#cool_down_period). Specifying an accurate initialization period improves autoscaler decisions. For example, when scaling out, the autoscaler ignores data from VMs that are still initializing because those VMs might not yet represent normal usage of your application. The default initialization period is 60 seconds.  Initialization periods might vary because of numerous factors. We recommend that you test how long your application takes to initialize. To do this, create a VM and time your application's startup process.",
                     },
-                    cpu_utilization: {
+                    cpuUtilization: {
                       type: "object",
                       properties: {
-                        predictive_method: {
+                        predictiveMethod: {
                           type: "string",
                           description:
                             "Indicates whether predictive autoscaling based on CPU metric is enabled. Valid values are:  * NONE (default). No predictive method is used. The autoscaler scales the group to meet current demand based on real-time metrics. * OPTIMIZE_AVAILABILITY. Predictive autoscaling improves availability by monitoring daily and weekly load patterns and scaling out ahead of anticipated demand. Check the PredictiveMethod enum for the list of possible values.",
                         },
-                        utilization_target: {
+                        utilizationTarget: {
                           type: "number",
                           description:
                             "The target CPU utilization that the autoscaler maintains. Must be a float value in the range (0, 1]. If not specified, the default is0.6.  If the CPU level is below the target utilization, the autoscaler scales in the number of instances until it reaches the minimum number of instances you specified or until the average CPU of your instances reaches the target utilization.  If the average CPU is above the target utilization, the autoscaler scales out until it reaches the maximum number of instances you specified or until the average utilization reaches the target utilization.",
@@ -138,7 +138,7 @@ const list: AppBlock = {
                       description: "CPU utilization policy.",
                       additionalProperties: true,
                     },
-                    custom_metric_utilizations: {
+                    customMetricUtilizations: {
                       type: "array",
                       items: {
                         type: "object",
@@ -153,17 +153,17 @@ const list: AppBlock = {
                             description:
                               "The identifier (type) of the Stackdriver Monitoring metric. The metric cannot have negative values.  The metric must have a value type of INT64 orDOUBLE.",
                           },
-                          single_instance_assignment: {
+                          singleInstanceAssignment: {
                             type: "number",
                             description:
                               "If scaling is based on a per-group metric value that represents the total amount of work to be done or resource usage, set this value to an amount assigned for a single instance of the scaled group. Autoscaler keeps the number of instances proportional to the value of this metric. The metric itself does not change value due to group resizing.  A good metric to use with the target is for examplepubsub.googleapis.com/subscription/num_undelivered_messages or a custom metric exporting the total number of requests coming to your instances.  A bad example would be a metric exporting an average or median latency, since this value can't include a chunk assignable to a single instance, it could be better used with utilization_target instead.",
                           },
-                          utilization_target: {
+                          utilizationTarget: {
                             type: "number",
                             description:
                               "The target value of the metric that autoscaler maintains. This must be a positive value. A utilization metric scales number of virtual machines handling requests to increase or decrease proportionally to the metric.  For example, a good metric to use as a utilization_target ishttps://www.googleapis.com/compute/v1/instance/network/received_bytes_count. The autoscaler works to keep this value constant for each of the instances.",
                           },
-                          utilization_target_type: {
+                          utilizationTargetType: {
                             type: "string",
                             description:
                               "Defines how target utilization value is expressed for a Stackdriver Monitoring metric. Either GAUGE,DELTA_PER_SECOND, or DELTA_PER_MINUTE. Check the UtilizationTargetType enum for the list of possible values.",
@@ -175,10 +175,10 @@ const list: AppBlock = {
                       description:
                         "Configuration parameters of autoscaling based on a custom metric.",
                     },
-                    load_balancing_utilization: {
+                    loadBalancingUtilization: {
                       type: "object",
                       properties: {
-                        utilization_target: {
+                        utilizationTarget: {
                           type: "number",
                           description:
                             "Fraction of backend capacity utilization (set in HTTP(S) load balancing configuration) that the autoscaler maintains. Must be a positive float value. If not defined, the default is 0.8.",
@@ -188,12 +188,12 @@ const list: AppBlock = {
                         "Configuration parameters of autoscaling based on load balancing.",
                       additionalProperties: true,
                     },
-                    max_num_replicas: {
+                    maxNumReplicas: {
                       type: "integer",
                       description:
                         "The maximum number of instances that the autoscaler can scale out to. This is required when creating or updating an autoscaler. The maximum number of replicas must not be lower than minimal number of replicas.",
                     },
-                    min_num_replicas: {
+                    minNumReplicas: {
                       type: "integer",
                       description:
                         "The minimum number of replicas that the autoscaler can scale in to. This cannot be less than 0. If not provided, autoscaler chooses a default value depending on maximum number of instances allowed.",
@@ -203,10 +203,10 @@ const list: AppBlock = {
                       description:
                         'Defines the operating mode for this policy. The following modes are available:     - OFF: Disables the autoscaler but maintains its    configuration.    - ONLY_SCALE_OUT: Restricts the autoscaler to add    VM instances only.    - ON: Enables all autoscaler activities according to its    policy.   For more information, see "Turning off or restricting an autoscaler" Check the Mode enum for the list of possible values.',
                     },
-                    scale_in_control: {
+                    scaleInControl: {
                       type: "object",
                       properties: {
-                        max_scaled_in_replicas: {
+                        maxScaledInReplicas: {
                           type: "object",
                           properties: {
                             calculated: {
@@ -229,7 +229,7 @@ const list: AppBlock = {
                             "Encapsulates numeric value that can be either absolute or relative.",
                           additionalProperties: true,
                         },
-                        time_window_sec: {
+                        timeWindowSec: {
                           type: "integer",
                           description:
                             "How far back autoscaling looks when computing recommendations to include directives regarding slower scale in, as described above.",
@@ -239,7 +239,7 @@ const list: AppBlock = {
                         "Configuration that allows for slower scale in so that even if Autoscaler recommends an abrupt scale in of a MIG, it will be throttled as specified by the parameters below.",
                       additionalProperties: true,
                     },
-                    scaling_schedules: {
+                    scalingSchedules: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -251,7 +251,7 @@ const list: AppBlock = {
                   description: "Cloud Autoscaler policy.",
                   additionalProperties: true,
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -275,7 +275,7 @@ const list: AppBlock = {
                   description:
                     "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
                 },
-                recommended_size: {
+                recommendedSize: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] Target recommended MIG size (number of instances) computed by autoscaler. Autoscaler calculates the recommended MIG size even when the autoscaling policy mode is different from ON. This field is empty when autoscaler is not connected to an existing managed instance group or autoscaler did not generate its prediction.",
@@ -285,7 +285,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] URL of theregion where the instance group resides (for autoscalers living in regional scope).",
                 },
-                scaling_schedule_status: {
+                scalingScheduleStatus: {
                   type: "object",
                   additionalProperties: {
                     type: "string",
@@ -293,7 +293,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Status information of existing scaling schedules.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined URL for the resource.",
@@ -303,7 +303,7 @@ const list: AppBlock = {
                   description:
                     "[Output Only] The status of the autoscaler configuration. Current set of possible values:     - PENDING:      Autoscaler backend hasn't read new/updated configuration.    - DELETING:      Configuration is being deleted.    - ACTIVE:      Configuration is acknowledged to be effective. Some warnings might      be present in the statusDetails field.    - ERROR:      Configuration has errors. Actionable for users. Details are present in      the statusDetails field.   New values might be added in the future. Check the Status enum for the list of possible values.",
                 },
-                status_details: {
+                statusDetails: {
                   type: "array",
                   items: {
                     type: "object",
@@ -344,12 +344,12 @@ const list: AppBlock = {
             type: "string",
             description: "Output only. Type of resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

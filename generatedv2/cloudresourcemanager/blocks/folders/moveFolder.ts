@@ -1,5 +1,35 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFoldersClient } from "../../lib/grpcClient.ts";
+import { getFoldersClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  destinationParent: "destination_parent",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const moveFolder: AppBlock = {
   name: "Move Folder",
@@ -19,7 +49,7 @@ const moveFolder: AppBlock = {
           },
           required: true,
         },
-        destination_parent: {
+        destinationParent: {
           name: "Destination Parent",
           description:
             "Required. The resource name of the folder or organization which should be the folder's new parent. Must be of the form `folders/{folder_id}` or `organizations/{org_id}`.",
@@ -34,12 +64,7 @@ const moveFolder: AppBlock = {
       onEvent: async (input) => {
         const client = await getFoldersClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.destination_parent !== undefined)
-          request.destination_parent =
-            input.event.inputConfig.destination_parent;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.moveFolder(request, (err: any, response: any) => {
@@ -53,7 +78,8 @@ const moveFolder: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -69,7 +95,7 @@ const moveFolder: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -96,7 +122,7 @@ const moveFolder: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -115,7 +141,7 @@ const moveFolder: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

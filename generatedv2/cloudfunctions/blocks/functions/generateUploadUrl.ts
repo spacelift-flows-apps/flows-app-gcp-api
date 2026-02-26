@@ -1,5 +1,19 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFunctionServiceClient } from "../../lib/grpcClient.ts";
+import { getFunctionServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  kmsKeyName: "kms_key_name",
+};
+
+const outputMapping = {
+  upload_url: "uploadUrl",
+  storage_source: {
+    name: "storageSource",
+    fields: {
+      source_upload_url: "sourceUploadUrl",
+    },
+  },
+};
 
 const generateUploadUrl: AppBlock = {
   name: "Generate Upload Url",
@@ -19,7 +33,7 @@ const generateUploadUrl: AppBlock = {
           },
           required: true,
         },
-        kms_key_name: {
+        kmsKeyName: {
           name: "Kms Key Name",
           description:
             "Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function source code objects in intermediate Cloud Storage buckets. When you generate an upload url and upload your source code, it gets copied to an intermediate Cloud Storage bucket. The source code is then copied to a versioned directory in the sources bucket in the consumer project during the function deployment.  It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.  The Google Cloud Functions service account (service-{project_number}@gcf-admin-robot.iam.gserviceaccount.com) must be granted the role 'Cloud KMS CryptoKey Encrypter/Decrypter (roles/cloudkms.cryptoKeyEncrypterDecrypter)' on the Key/KeyRing/Project/Organization (least access preferred).",
@@ -45,13 +59,7 @@ const generateUploadUrl: AppBlock = {
       onEvent: async (input) => {
         const client = await getFunctionServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.kms_key_name !== undefined)
-          request.kms_key_name = input.event.inputConfig.kms_key_name;
-        if (input.event.inputConfig.environment !== undefined)
-          request.environment = input.event.inputConfig.environment;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.generateUploadUrl(request, (err: any, response: any) => {
@@ -65,7 +73,8 @@ const generateUploadUrl: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -75,12 +84,12 @@ const generateUploadUrl: AppBlock = {
       type: {
         type: "object",
         properties: {
-          upload_url: {
+          uploadUrl: {
             type: "string",
             description:
               "The generated Google Cloud Storage signed URL that should be used for a function source code upload. The uploaded file should be a zip archive which contains a function.",
           },
-          storage_source: {
+          storageSource: {
             type: "object",
             properties: {
               bucket: {
@@ -97,7 +106,7 @@ const generateUploadUrl: AppBlock = {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              source_upload_url: {
+              sourceUploadUrl: {
                 type: "string",
                 description:
                   "When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.",

@@ -2,7 +2,81 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  writeObjectSpec: {
+    name: "write_object_spec",
+    fields: {
+      resource: {
+        name: "resource",
+        fields: {
+          storageClass: "storage_class",
+          contentEncoding: "content_encoding",
+          contentDisposition: "content_disposition",
+          cacheControl: "cache_control",
+          acl: {
+            name: "acl",
+            fields: {
+              entityId: "entity_id",
+              projectTeam: {
+                name: "project_team",
+                fields: {
+                  projectNumber: "project_number",
+                },
+              },
+            },
+          },
+          contentLanguage: "content_language",
+          contentType: "content_type",
+          kmsKey: "kms_key",
+          temporaryHold: "temporary_hold",
+          retentionExpireTime: "retention_expire_time",
+          eventBasedHold: "event_based_hold",
+          customerEncryption: {
+            name: "customer_encryption",
+            fields: {
+              encryptionAlgorithm: "encryption_algorithm",
+              keySha256Bytes: "key_sha256_bytes",
+            },
+          },
+          customTime: "custom_time",
+          retention: {
+            name: "retention",
+            fields: {
+              retainUntilTime: "retain_until_time",
+            },
+          },
+        },
+      },
+      predefinedAcl: "predefined_acl",
+      ifGenerationMatch: "if_generation_match",
+      ifGenerationNotMatch: "if_generation_not_match",
+      ifMetagenerationMatch: "if_metageneration_match",
+      ifMetagenerationNotMatch: "if_metageneration_not_match",
+      objectSize: "object_size",
+    },
+  },
+  commonObjectRequestParams: {
+    name: "common_object_request_params",
+    fields: {
+      encryptionAlgorithm: "encryption_algorithm",
+      encryptionKeyBytes: "encryption_key_bytes",
+      encryptionKeySha256Bytes: "encryption_key_sha256_bytes",
+    },
+  },
+  objectChecksums: {
+    name: "object_checksums",
+    fields: {
+      md5Hash: "md5_hash",
+    },
+  },
+};
+
+const outputMapping = {
+  upload_id: "uploadId",
+};
 
 const startResumableWrite: AppBlock = {
   name: "Start Resumable Write",
@@ -11,7 +85,7 @@ const startResumableWrite: AppBlock = {
   inputs: {
     default: {
       config: {
-        write_object_spec: {
+        writeObjectSpec: {
           name: "Write Object Spec",
           description:
             "Required. Contains the information necessary to start a resumable write.",
@@ -40,21 +114,21 @@ const startResumableWrite: AppBlock = {
                     type: "string",
                     description: "64-bit integer as string",
                   },
-                  storage_class: {
+                  storageClass: {
                     type: "string",
                     description: "Optional. Storage class of the object.",
                   },
-                  content_encoding: {
+                  contentEncoding: {
                     type: "string",
                     description:
                       "Optional. Content-Encoding of the object data, matching [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)",
                   },
-                  content_disposition: {
+                  contentDisposition: {
                     type: "string",
                     description:
                       "Optional. Content-Disposition of the object data, matching [RFC 6266](https://tools.ietf.org/html/rfc6266).",
                   },
-                  cache_control: {
+                  cacheControl: {
                     type: "string",
                     description:
                       "Optional. Cache-Control directive for the object data, matching [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2). If omitted, and the object is accessible to all anonymous users, the default is `public, max-age=3600`.",
@@ -79,7 +153,7 @@ const startResumableWrite: AppBlock = {
                           description:
                             "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                         },
-                        entity_id: {
+                        entityId: {
                           type: "string",
                           description:
                             "Optional. The ID for the entity, if any.",
@@ -99,10 +173,10 @@ const startResumableWrite: AppBlock = {
                           description:
                             "Optional. The domain associated with the entity, if any.",
                         },
-                        project_team: {
+                        projectTeam: {
                           type: "object",
                           properties: {
-                            project_number: {
+                            projectNumber: {
                               type: "string",
                               description: "Optional. The project number.",
                             },
@@ -122,27 +196,27 @@ const startResumableWrite: AppBlock = {
                     description:
                       "Optional. Access controls on the object. If `iam_config.uniform_bucket_level_access` is enabled on the parent bucket, requests to set, read, or modify acl is an error.",
                   },
-                  content_language: {
+                  contentLanguage: {
                     type: "string",
                     description:
                       "Optional. Content-Language of the object data, matching [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).",
                   },
-                  content_type: {
+                  contentType: {
                     type: "string",
                     description:
                       "Optional. Content-Type of the object data, matching [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5). If an object is stored without a Content-Type, it is served as `application/octet-stream`.",
                   },
-                  kms_key: {
+                  kmsKey: {
                     type: "string",
                     description:
                       "Optional. Cloud KMS Key used to encrypt this object, if the object is encrypted by such a key.",
                   },
-                  temporary_hold: {
+                  temporaryHold: {
                     type: "boolean",
                     description:
                       "Optional. Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.  A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
                   },
-                  retention_expire_time: {
+                  retentionExpireTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -170,19 +244,19 @@ const startResumableWrite: AppBlock = {
                     description: "All contexts of an object grouped by type.",
                     additionalProperties: true,
                   },
-                  event_based_hold: {
+                  eventBasedHold: {
                     type: "boolean",
                     description:
                       "Whether an object is under event-based hold. An event-based hold is a way to force the retention of an object until after some event occurs. Once the hold is released by explicitly setting this field to `false`, the object becomes subject to any bucket-level retention policy, except that the retention duration is calculated from the time the event based hold was lifted, rather than the time the object was created.  In a `WriteObject` request, not setting this field implies that the value should be taken from the parent bucket's `default_event_based_hold` field. In a response, this field is always set to `true` or `false`.",
                   },
-                  customer_encryption: {
+                  customerEncryption: {
                     type: "object",
                     properties: {
-                      encryption_algorithm: {
+                      encryptionAlgorithm: {
                         type: "string",
                         description: "Optional. The encryption algorithm.",
                       },
-                      key_sha256_bytes: {
+                      keySha256Bytes: {
                         type: "string",
                         description: "Base64-encoded bytes",
                       },
@@ -191,7 +265,7 @@ const startResumableWrite: AppBlock = {
                       "Describes the customer-supplied encryption key mechanism used to store an object's data at rest.",
                     additionalProperties: true,
                   },
-                  custom_time: {
+                  customTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -204,7 +278,7 @@ const startResumableWrite: AppBlock = {
                         enum: ["MODE_UNSPECIFIED", "UNLOCKED", "LOCKED"],
                         description: "Optional. The mode of the Retention.",
                       },
-                      retain_until_time: {
+                      retainUntilTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -218,28 +292,28 @@ const startResumableWrite: AppBlock = {
                 description: "An object.",
                 additionalProperties: true,
               },
-              predefined_acl: {
+              predefinedAcl: {
                 type: "string",
                 description:
                   "Optional. Apply a predefined set of access controls to this object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`, `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.",
               },
-              if_generation_match: {
+              ifGenerationMatch: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              if_generation_not_match: {
+              ifGenerationNotMatch: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              if_metageneration_match: {
+              ifMetagenerationMatch: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              if_metageneration_not_match: {
+              ifMetagenerationNotMatch: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              object_size: {
+              objectSize: {
                 type: "string",
                 description: "64-bit integer as string",
               },
@@ -256,23 +330,23 @@ const startResumableWrite: AppBlock = {
           },
           required: true,
         },
-        common_object_request_params: {
+        commonObjectRequestParams: {
           name: "Common Object Request Params",
           description:
             "Optional. A set of parameters common to Storage API requests related to an object.",
           type: {
             type: "object",
             properties: {
-              encryption_algorithm: {
+              encryptionAlgorithm: {
                 type: "string",
                 description:
                   "Optional. Encryption algorithm used with the Customer-Supplied Encryption Keys feature.",
               },
-              encryption_key_bytes: {
+              encryptionKeyBytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              encryption_key_sha256_bytes: {
+              encryptionKeySha256Bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -282,7 +356,7 @@ const startResumableWrite: AppBlock = {
           },
           required: false,
         },
-        object_checksums: {
+        objectChecksums: {
           name: "Object Checksums",
           description:
             "Optional. The checksums of the complete object. This is used to validate the uploaded object. For each upload, `object_checksums` can be provided when initiating a resumable upload with`StartResumableWriteRequest` or when completing a write with `WriteObjectRequest` with `finish_write` set to `true`.",
@@ -294,7 +368,7 @@ const startResumableWrite: AppBlock = {
                 description:
                   "CRC32C digest of the object data. Computed by the Cloud Storage service for all written objects. If set in a WriteObjectRequest, service validates that the stored object matches this checksum.",
               },
-              md5_hash: {
+              md5Hash: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -309,14 +383,7 @@ const startResumableWrite: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.write_object_spec !== undefined)
-          request.write_object_spec = input.event.inputConfig.write_object_spec;
-        if (input.event.inputConfig.common_object_request_params !== undefined)
-          request.common_object_request_params =
-            input.event.inputConfig.common_object_request_params;
-        if (input.event.inputConfig.object_checksums !== undefined)
-          request.object_checksums = input.event.inputConfig.object_checksums;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.write_object_spec?.resource?.bucket !== undefined)
@@ -340,7 +407,8 @@ const startResumableWrite: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -350,7 +418,7 @@ const startResumableWrite: AppBlock = {
       type: {
         type: "object",
         properties: {
-          upload_id: {
+          uploadId: {
             type: "string",
             description:
               "A unique identifier for the initiated resumable write operation. As the ID grants write access, you should keep it confidential during the upload to prevent unauthorized access and data tampering during your upload. This ID should be included in subsequent `WriteObject` requests to upload the object data.",

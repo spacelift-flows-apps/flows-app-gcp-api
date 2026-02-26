@@ -2,7 +2,38 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  approvalResult: "approval_result",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const approveBuild: AppBlock = {
   name: "Approve Build",
@@ -22,7 +53,7 @@ const approveBuild: AppBlock = {
           },
           required: true,
         },
-        approval_result: {
+        approvalResult: {
           name: "Approval Result",
           description: "Approval decision and metadata.",
           type: {
@@ -55,11 +86,7 @@ const approveBuild: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.approval_result !== undefined)
-          request.approval_result = input.event.inputConfig.approval_result;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined) {
@@ -79,7 +106,8 @@ const approveBuild: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -95,7 +123,7 @@ const approveBuild: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -122,7 +150,7 @@ const approveBuild: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -141,7 +169,7 @@ const approveBuild: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

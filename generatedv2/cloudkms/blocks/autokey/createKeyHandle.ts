@@ -1,5 +1,41 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getAutokeyClient } from "../../lib/grpcClient.ts";
+import { getAutokeyClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  keyHandleId: "key_handle_id",
+  keyHandle: {
+    name: "key_handle",
+    fields: {
+      resourceTypeSelector: "resource_type_selector",
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createKeyHandle: AppBlock = {
   name: "Create Key Handle",
@@ -19,7 +55,7 @@ const createKeyHandle: AppBlock = {
           },
           required: true,
         },
-        key_handle_id: {
+        keyHandleId: {
           name: "Key Handle Id",
           description:
             "Optional. Id of the [KeyHandle][google.cloud.kms.v1.KeyHandle]. Must be unique to the resource project and location. If not provided by the caller, a new UUID is used.",
@@ -30,7 +66,7 @@ const createKeyHandle: AppBlock = {
           },
           required: false,
         },
-        key_handle: {
+        keyHandle: {
           name: "Key Handle",
           description:
             "Required. [KeyHandle][google.cloud.kms.v1.KeyHandle] to create.",
@@ -42,13 +78,13 @@ const createKeyHandle: AppBlock = {
                 description:
                   "Identifier. Name of the [KeyHandle][google.cloud.kms.v1.KeyHandle] resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.",
               },
-              resource_type_selector: {
+              resourceTypeSelector: {
                 type: "string",
                 description:
                   "Required. Indicates the resource type that the resulting [CryptoKey][google.cloud.kms.v1.CryptoKey] is meant to protect, e.g. `{SERVICE}.googleapis.com/{TYPE}`. See documentation for supported resource types.",
               },
             },
-            required: ["resource_type_selector"],
+            required: ["resourceTypeSelector"],
             description:
               "Resource-oriented representation of a request to Cloud KMS Autokey and the resulting provisioning of a [CryptoKey][google.cloud.kms.v1.CryptoKey].",
             additionalProperties: true,
@@ -59,13 +95,7 @@ const createKeyHandle: AppBlock = {
       onEvent: async (input) => {
         const client = await getAutokeyClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.key_handle_id !== undefined)
-          request.key_handle_id = input.event.inputConfig.key_handle_id;
-        if (input.event.inputConfig.key_handle !== undefined)
-          request.key_handle = input.event.inputConfig.key_handle;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createKeyHandle(request, (err: any, response: any) => {
@@ -79,7 +109,8 @@ const createKeyHandle: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -95,7 +126,7 @@ const createKeyHandle: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -122,7 +153,7 @@ const createKeyHandle: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -141,7 +172,7 @@ const createKeyHandle: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

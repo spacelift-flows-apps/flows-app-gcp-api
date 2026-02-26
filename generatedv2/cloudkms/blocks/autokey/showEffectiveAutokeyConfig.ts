@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getAutokeyAdminClient } from "../../lib/grpcClient.ts";
+import { getAutokeyAdminClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  key_project: "keyProject",
+};
 
 const showEffectiveAutokeyConfig: AppBlock = {
   name: "Show Effective Autokey Config",
@@ -23,9 +27,7 @@ const showEffectiveAutokeyConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getAutokeyAdminClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.showEffectiveAutokeyConfig(
@@ -42,7 +44,8 @@ const showEffectiveAutokeyConfig: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -52,7 +55,7 @@ const showEffectiveAutokeyConfig: AppBlock = {
       type: {
         type: "object",
         properties: {
-          key_project: {
+          keyProject: {
             type: "string",
             description:
               "Name of the key project configured in the resource project's folder ancestry.",

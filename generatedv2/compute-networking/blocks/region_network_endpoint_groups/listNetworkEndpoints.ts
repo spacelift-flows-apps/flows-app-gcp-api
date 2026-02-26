@@ -17,7 +17,7 @@ const listNetworkEndpoints: AppBlock = {
           },
           required: true,
         },
-        network_endpoint_group: {
+        networkEndpointGroup: {
           name: "Network Endpoint Group",
           description:
             "The name of the network endpoint group from which you want to generate a list of included network endpoints. It should comply with RFC1035.",
@@ -35,7 +35,7 @@ const listNetworkEndpoints: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -44,7 +44,7 @@ const listNetworkEndpoints: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -53,7 +53,7 @@ const listNetworkEndpoints: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -62,7 +62,7 @@ const listNetworkEndpoints: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -77,25 +77,25 @@ const listNetworkEndpoints: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.network_endpoint_group !== undefined)
+        if (input.event.inputConfig.networkEndpointGroup !== undefined)
           pathParams["network_endpoint_group"] = String(
-            input.event.inputConfig.network_endpoint_group,
+            input.event.inputConfig.networkEndpointGroup,
           );
 
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -132,10 +132,10 @@ const listNetworkEndpoints: AppBlock = {
                   items: {
                     type: "object",
                     properties: {
-                      backend_service: {
+                      backendService: {
                         type: "object",
                         properties: {
-                          backend_service: {
+                          backendService: {
                             type: "string",
                           },
                         },
@@ -143,10 +143,10 @@ const listNetworkEndpoints: AppBlock = {
                         description:
                           "URL of the backend service associated with the health state of the network endpoint.",
                       },
-                      forwarding_rule: {
+                      forwardingRule: {
                         type: "object",
                         properties: {
-                          forwarding_rule: {
+                          forwardingRule: {
                             type: "string",
                           },
                         },
@@ -154,10 +154,10 @@ const listNetworkEndpoints: AppBlock = {
                         description:
                           "URL of the forwarding rule associated with the health state of the network endpoint.",
                       },
-                      health_check: {
+                      healthCheck: {
                         type: "object",
                         properties: {
-                          health_check: {
+                          healthCheck: {
                             type: "string",
                           },
                         },
@@ -165,10 +165,10 @@ const listNetworkEndpoints: AppBlock = {
                           "A full or valid partial URL to a health check. For example, the following are valid URLs:     - https://www.googleapis.com/compute/beta/projects/project-id/global/httpHealthChecks/health-check    - projects/project-id/global/httpHealthChecks/health-check    - global/httpHealthChecks/health-check",
                         additionalProperties: true,
                       },
-                      health_check_service: {
+                      healthCheckService: {
                         type: "object",
                         properties: {
-                          health_check_service: {
+                          healthCheckService: {
                             type: "string",
                           },
                         },
@@ -176,12 +176,12 @@ const listNetworkEndpoints: AppBlock = {
                           "A full or valid partial URL to a health check service. For example, the following are valid URLs:     - https://www.googleapis.com/compute/beta/projects/project-id/regions/us-west1/healthCheckServices/health-check-service    - projects/project-id/regions/us-west1/healthCheckServices/health-check-service    - regions/us-west1/healthCheckServices/health-check-service",
                         additionalProperties: true,
                       },
-                      health_state: {
+                      healthState: {
                         type: "string",
                         description:
                           "Health state of the network endpoint determined based on the health checks configured. Check the HealthState enum for the list of possible values.",
                       },
-                      ipv6_health_state: {
+                      ipv6HealthState: {
                         type: "string",
                         description:
                           "Health state of the ipv6 network endpoint determined based on the health checks configured. Check the Ipv6HealthState enum for the list of possible values.",
@@ -192,7 +192,7 @@ const listNetworkEndpoints: AppBlock = {
                   description:
                     "Output only. [Output only] The health status of network endpoint.  Optional. Displayed only if the network endpoint has centralized health checking configured.",
                 },
-                network_endpoint: {
+                networkEndpoint: {
                   type: "object",
                   properties: {
                     annotations: {
@@ -203,7 +203,7 @@ const listNetworkEndpoints: AppBlock = {
                       description:
                         "Optional metadata defined as annotations on the network endpoint.",
                     },
-                    client_destination_port: {
+                    clientDestinationPort: {
                       type: "integer",
                       description:
                         "Represents the port number to which PSC consumer sends packets.  Optional. Only valid for network endpoint groups created withGCE_VM_IP_PORTMAP endpoint type.",
@@ -218,12 +218,12 @@ const listNetworkEndpoints: AppBlock = {
                       description:
                         "The name or a URL of VM instance of this network endpoint. Optional, the field presence depends on the network endpoint type. The field is required for network endpoints of type GCE_VM_IP andGCE_VM_IP_PORT.  The instance must be in the same zone of network endpoint group (for zonal NEGs) or in the zone within the region of the NEG (for regional NEGs). If the ipAddress is specified, it must belongs to the VM instance.  The name must be 1-63 characters long, and comply withRFC1035 or be a valid URL pointing to an existing instance.",
                     },
-                    ip_address: {
+                    ipAddress: {
                       type: "string",
                       description:
                         "Optional IPv4 address of network endpoint. The IP address must belong to a VM in Compute Engine (either the primary IP or as part of an aliased IP range). If the IP address is not specified, then the primary IP address for the VM instance in the network that the network endpoint group belongs to will be used.  This field is redundant and need not be set for network endpoints of typeGCE_VM_IP. If set, it must be set to the primary internal IP address of the attached VM instance that matches the subnetwork of the NEG. The primary internal IP address from any NIC of a multi-NIC VM instance can be added to a NEG as long as it matches the NEG subnetwork.",
                     },
-                    ipv6_address: {
+                    ipv6Address: {
                       type: "string",
                       description: "Optional IPv6 address of network endpoint.",
                     },
@@ -246,7 +246,7 @@ const listNetworkEndpoints: AppBlock = {
             description:
               "Output only. [Output Only] The resource type, which is alwayscompute#networkEndpointGroupsListNetworkEndpoints for the list of network endpoints in the specified network endpoint group.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",

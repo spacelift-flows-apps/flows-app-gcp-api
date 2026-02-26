@@ -1,5 +1,10 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  operationId: "operation_id",
+};
 
 const cancelOperation: AppBlock = {
   name: "Cancel Operation",
@@ -8,7 +13,7 @@ const cancelOperation: AppBlock = {
   inputs: {
     default: {
       config: {
-        project_id: {
+        projectId: {
           name: "Project Id",
           description:
             "Deprecated. The Google Developers Console [project ID or project number](https://cloud.google.com/resource-manager/docs/creating-managing-projects). This field has been deprecated and replaced by the name field.",
@@ -30,7 +35,7 @@ const cancelOperation: AppBlock = {
           },
           required: false,
         },
-        operation_id: {
+        operationId: {
           name: "Operation Id",
           description:
             "Deprecated. The server-assigned `name` of the operation. This field has been deprecated and replaced by the name field.",
@@ -56,15 +61,7 @@ const cancelOperation: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.zone !== undefined)
-          request.zone = input.event.inputConfig.zone;
-        if (input.event.inputConfig.operation_id !== undefined)
-          request.operation_id = input.event.inputConfig.operation_id;
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.cancelOperation(request, (err: any, response: any) => {

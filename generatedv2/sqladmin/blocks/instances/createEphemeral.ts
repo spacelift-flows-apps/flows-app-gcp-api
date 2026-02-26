@@ -1,5 +1,27 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  body: {
+    name: "body",
+    fields: {
+      publicKey: "public_key",
+      accessToken: "access_token",
+    },
+  },
+};
+
+const outputMapping = {
+  cert_serial_number: "certSerialNumber",
+  create_time: "createTime",
+  common_name: "commonName",
+  expiration_time: "expirationTime",
+  sha1_fingerprint: "sha1Fingerprint",
+  self_link: "selfLink",
+};
 
 const createEphemeral: AppBlock = {
   name: "Create Ephemeral",
@@ -34,12 +56,12 @@ const createEphemeral: AppBlock = {
           type: {
             type: "object",
             properties: {
-              public_key: {
+              publicKey: {
                 type: "string",
                 description:
                   "PEM encoded public key to include in the signed certificate.",
               },
-              access_token: {
+              accessToken: {
                 type: "string",
                 description:
                   "Access token to include in the signed certificate.",
@@ -54,13 +76,7 @@ const createEphemeral: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.body !== undefined)
-          request.body = input.event.inputConfig.body;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createEphemeral(request, (err: any, response: any) => {
@@ -74,7 +90,8 @@ const createEphemeral: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -88,7 +105,7 @@ const createEphemeral: AppBlock = {
             type: "string",
             description: "This is always `sql#sslCert`.",
           },
-          cert_serial_number: {
+          certSerialNumber: {
             type: "string",
             description: "Serial number, as extracted from the certificate.",
           },
@@ -96,19 +113,19 @@ const createEphemeral: AppBlock = {
             type: "string",
             description: "PEM representation.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          common_name: {
+          commonName: {
             type: "string",
             description: "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
           },
-          expiration_time: {
+          expirationTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          sha1_fingerprint: {
+          sha1Fingerprint: {
             type: "string",
             description: "Sha1 Fingerprint.",
           },
@@ -116,7 +133,7 @@ const createEphemeral: AppBlock = {
             type: "string",
             description: "Name of the database instance.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "The URI of this resource.",
           },

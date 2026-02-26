@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -107,21 +107,21 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The architecture of the snapshot. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
                 },
-                auto_created: {
+                autoCreated: {
                   type: "boolean",
                   description:
                     "Output only. [Output Only] Set to true if snapshots are automatically created by applying resource policy on the target disk.",
                 },
-                chain_name: {
+                chainName: {
                   type: "string",
                   description:
                     "Creates the new snapshot in the snapshot chain labeled with the specified name. The chain name must be 1-63 characters long and comply with RFC1035. This is an uncommon option only for advanced service owners who needs to create separate snapshot chains, for example, for chargeback tracking. When you describe your snapshot resource, this field is visible only if it has a non-empty value.",
                 },
-                creation_size_bytes: {
+                creationSizeBytes: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -131,25 +131,25 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                disk_size_gb: {
+                diskSizeGb: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                download_bytes: {
+                downloadBytes: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                enable_confidential_compute: {
+                enableConfidentialCompute: {
                   type: "boolean",
                   description:
                     "Output only. Whether this snapshot is created from a confidential compute mode disk. [Output Only]: This field is not set by user, but from source disk.",
                 },
-                guest_flush: {
+                guestFlush: {
                   type: "boolean",
                   description:
                     "[Input Only] Whether to attempt an application consistent snapshot by informing the OS to prepare for the snapshot process.",
                 },
-                guest_os_features: {
+                guestOsFeatures: {
                   type: "array",
                   items: {
                     type: "object",
@@ -175,7 +175,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of the resource. Always compute#snapshot for Snapshot resources.",
                 },
-                label_fingerprint: {
+                labelFingerprint: {
                   type: "string",
                   description:
                     "A fingerprint for the labels being applied to this snapshot, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a snapshot.",
@@ -188,7 +188,7 @@ const list: AppBlock = {
                   description:
                     "Labels to apply to this snapshot. These can be later modified by the setLabels method. Label values may be empty.",
                 },
-                license_codes: {
+                licenseCodes: {
                   type: "array",
                   items: {
                     type: "string",
@@ -205,7 +205,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] A list of public visible licenses that apply to this snapshot. This can be because the original image had licenses attached (such as a Windows image).",
                 },
-                location_hint: {
+                locationHint: {
                   type: "string",
                   description:
                     "An opaque location hint used to place the snapshot close to other resources. This field is for use by internal tools that use the public API.",
@@ -218,7 +218,7 @@ const list: AppBlock = {
                 params: {
                   type: "object",
                   properties: {
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -230,39 +230,39 @@ const list: AppBlock = {
                   description: "Additional snapshot params.",
                   additionalProperties: true,
                 },
-                satisfies_pzi: {
+                satisfiesPzi: {
                   type: "boolean",
                   description: "Output only. Reserved for future use.",
                 },
-                satisfies_pzs: {
+                satisfiesPzs: {
                   type: "boolean",
                   description:
                     "Output only. [Output Only] Reserved for future use.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for the resource.",
                 },
-                snapshot_encryption_key: {
+                snapshotEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -277,34 +277,34 @@ const list: AppBlock = {
                   description:
                     "Encrypts the snapshot using acustomer-supplied encryption key.  After you encrypt a snapshot using a customer-supplied key, you must provide the same key if you use the snapshot later. For example, you must provide the encryption key when you create a disk from the encrypted snapshot in a future request.  Customer-supplied encryption keys do not protect access to metadata of the snapshot.  If you do not provide an encryption key when creating the snapshot, then the snapshot will be encrypted using an automatically generated key and you do not need to provide a key to use the snapshot later.",
                 },
-                snapshot_type: {
+                snapshotType: {
                   type: "string",
                   description:
                     "Indicates the type of the snapshot. Check the SnapshotType enum for the list of possible values.",
                 },
-                source_disk: {
+                sourceDisk: {
                   type: "string",
                   description: "The source disk used to create this snapshot.",
                 },
-                source_disk_encryption_key: {
+                sourceDiskEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -319,40 +319,40 @@ const list: AppBlock = {
                   description:
                     "The customer-supplied encryption key of the source disk. Required if the source disk is protected by a customer-supplied encryption key.",
                 },
-                source_disk_for_recovery_checkpoint: {
+                sourceDiskForRecoveryCheckpoint: {
                   type: "string",
                   description:
                     "The source disk whose recovery checkpoint will be used to create this snapshot.",
                 },
-                source_disk_id: {
+                sourceDiskId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The ID value of the disk used to create this snapshot. This value may be used to determine whether the snapshot was taken from the current or a previous instance of a given disk name.",
                 },
-                source_instant_snapshot: {
+                sourceInstantSnapshot: {
                   type: "string",
                   description:
                     "The source instant snapshot used to create this snapshot. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/instantSnapshots/instantSnapshot      - projects/project/zones/zone/instantSnapshots/instantSnapshot    - zones/zone/instantSnapshots/instantSnapshot",
                 },
-                source_instant_snapshot_encryption_key: {
+                sourceInstantSnapshotEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -367,17 +367,17 @@ const list: AppBlock = {
                   description:
                     "Customer provided encryption key when creating Snapshot from Instant Snapshot.",
                 },
-                source_instant_snapshot_id: {
+                sourceInstantSnapshotId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The unique ID of the instant snapshot used to create this snapshot. This value identifies the exact instant snapshot that was used to create this snapshot. For example, if you created the snapshot from an instant snapshot that was later deleted and recreated under the same name, the source instant snapshot ID would identify the exact instant snapshot that was used.",
                 },
-                source_snapshot_schedule_policy: {
+                sourceSnapshotSchedulePolicy: {
                   type: "string",
                   description:
                     "Output only. [Output Only] URL of the resource policy which created this scheduled snapshot.",
                 },
-                source_snapshot_schedule_policy_id: {
+                sourceSnapshotSchedulePolicyId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] ID of the resource policy which created this scheduled snapshot.",
@@ -387,16 +387,16 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The status of the snapshot. This can beCREATING, DELETING, FAILED,READY, or UPLOADING. Check the Status enum for the list of possible values.",
                 },
-                storage_bytes: {
+                storageBytes: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                storage_bytes_status: {
+                storageBytesStatus: {
                   type: "string",
                   description:
                     "Output only. [Output Only] An indicator whether storageBytes is in a stable state or it is being adjusted as a result of shared storage reallocation. This status can either be UPDATING, meaning the size of the snapshot is being updated, or UP_TO_DATE, meaning the size of the snapshot is up-to-date. Check the StorageBytesStatus enum for the list of possible values.",
                 },
-                storage_locations: {
+                storageLocations: {
                   type: "array",
                   items: {
                     type: "string",
@@ -415,12 +415,12 @@ const list: AppBlock = {
             type: "string",
             description: "Output only. Type of resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

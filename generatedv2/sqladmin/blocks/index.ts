@@ -1,12 +1,14 @@
-import backup_runs_deleteOperation from "./backup_runs/deleteOperation.ts";
-import backup_runs_get from "./backup_runs/get.ts";
-import backup_runs_insert from "./backup_runs/insert.ts";
-import backup_runs_list from "./backup_runs/list.ts";
 import backups_createBackup from "./backups/createBackup.ts";
 import backups_getBackup from "./backups/getBackup.ts";
 import backups_listBackups from "./backups/listBackups.ts";
 import backups_updateBackup from "./backups/updateBackup.ts";
 import backups_deleteBackup from "./backups/deleteBackup.ts";
+import backup_runs_deleteOperation from "./backup_runs/deleteOperation.ts";
+import backup_runs_get from "./backup_runs/get.ts";
+import backup_runs_insert from "./backup_runs/insert.ts";
+import backup_runs_list from "./backup_runs/list.ts";
+import connect_getConnectSettings from "./connect/getConnectSettings.ts";
+import connect_generateEphemeralCert from "./connect/generateEphemeralCert.ts";
 import databases_deleteOperation from "./databases/deleteOperation.ts";
 import databases_get from "./databases/get.ts";
 import databases_insert from "./databases/insert.ts";
@@ -60,13 +62,11 @@ import instances_pointInTimeRestore from "./instances/pointInTimeRestore.ts";
 import operations_get from "./operations/get.ts";
 import operations_list from "./operations/list.ts";
 import operations_cancel from "./operations/cancel.ts";
-import tiers_list from "./tiers/list.ts";
 import ssl_certificates_deleteOperation from "./ssl_certificates/deleteOperation.ts";
 import ssl_certificates_get from "./ssl_certificates/get.ts";
 import ssl_certificates_insert from "./ssl_certificates/insert.ts";
 import ssl_certificates_list from "./ssl_certificates/list.ts";
-import connect_getConnectSettings from "./connect/getConnectSettings.ts";
-import connect_generateEphemeralCert from "./connect/generateEphemeralCert.ts";
+import tiers_list from "./tiers/list.ts";
 import users_deleteOperation from "./users/deleteOperation.ts";
 import users_get from "./users/get.ts";
 import users_insert from "./users/insert.ts";
@@ -74,15 +74,17 @@ import users_list from "./users/list.ts";
 import users_update from "./users/update.ts";
 
 export const blocks = {
-  backup_runs_deleteOperation: backup_runs_deleteOperation,
-  backup_runs_get: backup_runs_get,
-  backup_runs_insert: backup_runs_insert,
-  backup_runs_list: backup_runs_list,
   backups_createBackup: backups_createBackup,
   backups_getBackup: backups_getBackup,
   backups_listBackups: backups_listBackups,
   backups_updateBackup: backups_updateBackup,
   backups_deleteBackup: backups_deleteBackup,
+  backup_runs_deleteOperation: backup_runs_deleteOperation,
+  backup_runs_get: backup_runs_get,
+  backup_runs_insert: backup_runs_insert,
+  backup_runs_list: backup_runs_list,
+  connect_getConnectSettings: connect_getConnectSettings,
+  connect_generateEphemeralCert: connect_generateEphemeralCert,
   databases_deleteOperation: databases_deleteOperation,
   databases_get: databases_get,
   databases_insert: databases_insert,
@@ -136,13 +138,11 @@ export const blocks = {
   operations_get: operations_get,
   operations_list: operations_list,
   operations_cancel: operations_cancel,
-  tiers_list: tiers_list,
   ssl_certificates_deleteOperation: ssl_certificates_deleteOperation,
   ssl_certificates_get: ssl_certificates_get,
   ssl_certificates_insert: ssl_certificates_insert,
   ssl_certificates_list: ssl_certificates_list,
-  connect_getConnectSettings: connect_getConnectSettings,
-  connect_generateEphemeralCert: connect_generateEphemeralCert,
+  tiers_list: tiers_list,
   users_deleteOperation: users_deleteOperation,
   users_get: users_get,
   users_insert: users_insert,

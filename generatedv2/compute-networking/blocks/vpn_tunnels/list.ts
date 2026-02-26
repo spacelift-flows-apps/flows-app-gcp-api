@@ -25,7 +25,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -34,7 +34,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -43,7 +43,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -52,7 +52,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -71,17 +71,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -113,7 +113,7 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                cipher_suite: {
+                cipherSuite: {
                   type: "object",
                   properties: {
                     phase1: {
@@ -175,7 +175,7 @@ const list: AppBlock = {
                   description:
                     "User specified list of ciphers to use for the phase 1 and phase 2 of the IKE protocol.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -185,7 +185,7 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                detailed_status: {
+                detailedStatus: {
                   type: "string",
                   description:
                     "[Output Only] Detailed status message for the VPN tunnel.",
@@ -194,7 +194,7 @@ const list: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                ike_version: {
+                ikeVersion: {
                   type: "integer",
                   description:
                     "IKE protocol version to use when establishing the VPN tunnel with the peer VPN gateway. Acceptable IKE versions are 1 or 2. The default version is 2.",
@@ -204,7 +204,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of resource. Always compute#vpnTunnel for VPN tunnels.",
                 },
-                label_fingerprint: {
+                labelFingerprint: {
                   type: "string",
                   description:
                     "A fingerprint for the labels being applied to this VpnTunnel, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a VpnTunnel.",
@@ -217,7 +217,7 @@ const list: AppBlock = {
                   description:
                     "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
                 },
-                local_traffic_selector: {
+                localTrafficSelector: {
                   type: "array",
                   items: {
                     type: "string",
@@ -230,22 +230,22 @@ const list: AppBlock = {
                   description:
                     "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
                 },
-                peer_external_gateway: {
+                peerExternalGateway: {
                   type: "string",
                   description:
                     "URL of the peer side external VPN gateway to which this VPN tunnel is connected. Provided by the client when the VPN tunnel is created. This field is exclusive with the field peerGcpGateway.",
                 },
-                peer_external_gateway_interface: {
+                peerExternalGatewayInterface: {
                   type: "integer",
                   description:
                     "The interface ID of the external VPN gateway to which this VPN tunnel is connected. Provided by the client when the VPN tunnel is created. Possible values are: `0`, `1`, `2`, `3`. The number of IDs in use depends on the external VPN gateway redundancy type.",
                 },
-                peer_gcp_gateway: {
+                peerGcpGateway: {
                   type: "string",
                   description:
                     "URL of the peer side HA VPN gateway to which this VPN tunnel is connected. Provided by the client when the VPN tunnel is created. This field can be used when creating highly available VPN from VPC network to VPC network, the field is exclusive with the field peerExternalGateway. If provided, the VPN tunnel will automatically use the same vpnGatewayInterface ID in the peer Google Cloud VPN gateway.",
                 },
-                peer_ip: {
+                peerIp: {
                   type: "string",
                   description:
                     "IP address of the peer VPN gateway. Only IPv4 is supported. This field can be set only for Classic VPN tunnels.",
@@ -255,7 +255,7 @@ const list: AppBlock = {
                   description:
                     "[Output Only] URL of the region where the VPN tunnel resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
                 },
-                remote_traffic_selector: {
+                remoteTrafficSelector: {
                   type: "array",
                   items: {
                     type: "string",
@@ -268,17 +268,17 @@ const list: AppBlock = {
                   description:
                     "URL of the router resource to be used for dynamic routing.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined URL for the resource.",
                 },
-                shared_secret: {
+                sharedSecret: {
                   type: "string",
                   description:
                     "Shared secret used to set the secure session between the Cloud VPN gateway and the peer VPN gateway.",
                 },
-                shared_secret_hash: {
+                sharedSecretHash: {
                   type: "string",
                   description: "Hash of the shared secret.",
                 },
@@ -287,17 +287,17 @@ const list: AppBlock = {
                   description:
                     "[Output Only] The status of the VPN tunnel, which can be one of the following:     - PROVISIONING: Resource is being allocated for the VPN tunnel.    - WAITING_FOR_FULL_CONFIG: Waiting to receive all VPN-related configs    from      the user. Network, TargetVpnGateway, VpnTunnel, ForwardingRule, and Route      resources are needed to setup the VPN tunnel.    - FIRST_HANDSHAKE: Successful first handshake with the peer VPN.    - ESTABLISHED: Secure session is successfully established with the peer    VPN.    - NETWORK_ERROR: Deprecated, replaced by    NO_INCOMING_PACKETS    - AUTHORIZATION_ERROR: Auth error (for example,    bad shared secret).    - NEGOTIATION_FAILURE: Handshake failed.    - DEPROVISIONING: Resources are being deallocated for the VPN    tunnel.    - FAILED: Tunnel creation has failed and the tunnel is not    ready to be used.    - NO_INCOMING_PACKETS: No incoming packets from    peer.    - REJECTED: Tunnel configuration was rejected, can be result    of being denied access.    - ALLOCATING_RESOURCES: Cloud VPN is in the    process of allocating all required resources.    - STOPPED: Tunnel is stopped due to its Forwarding Rules being deleted    for Classic VPN tunnels or the project is in frozen state.    - PEER_IDENTITY_MISMATCH: Peer identity does not match peer IP,    probably behind NAT.    - TS_NARROWING_NOT_ALLOWED: Traffic selector    narrowing not allowed for an HA-VPN tunnel. Check the Status enum for the list of possible values.",
                 },
-                target_vpn_gateway: {
+                targetVpnGateway: {
                   type: "string",
                   description:
                     "URL of the Target VPN gateway with which this VPN tunnel is associated. Provided by the client when the VPN tunnel is created. This field can be set only for Classic VPN tunnels.",
                 },
-                vpn_gateway: {
+                vpnGateway: {
                   type: "string",
                   description:
                     "URL of the VPN gateway with which this VPN tunnel is associated. Provided by the client when the VPN tunnel is created. This must be used (instead of target_vpn_gateway) if a High Availability VPN gateway resource is created.",
                 },
-                vpn_gateway_interface: {
+                vpnGatewayInterface: {
                   type: "integer",
                   description:
                     "The interface ID of the VPN gateway with which this VPN tunnel is associated. Possible values are: `0`, `1`.",
@@ -314,12 +314,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Always compute#vpnTunnel for VPN tunnels.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

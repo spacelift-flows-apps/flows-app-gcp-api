@@ -1,5 +1,32 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSecretManagerServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSecretManagerServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  options: {
+    name: "options",
+    fields: {
+      requestedPolicyVersion: "requested_policy_version",
+    },
+  },
+};
+
+const outputMapping = {
+  audit_configs: {
+    name: "auditConfigs",
+    fields: {
+      audit_log_configs: {
+        name: "auditLogConfigs",
+        fields: {
+          log_type: "logType",
+          exempted_members: "exemptedMembers",
+        },
+      },
+    },
+  },
+};
 
 const getIamPolicy: AppBlock = {
   name: "Get IAM Policy",
@@ -22,7 +49,7 @@ const getIamPolicy: AppBlock = {
           type: {
             type: "object",
             properties: {
-              requested_policy_version: {
+              requestedPolicyVersion: {
                 type: "integer",
               },
             },
@@ -34,11 +61,7 @@ const getIamPolicy: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.resource !== undefined)
-          request.resource = input.event.inputConfig.resource;
-        if (input.event.inputConfig.options !== undefined)
-          request.options = input.event.inputConfig.options;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getIamPolicy(request, (err: any, response: any) => {
@@ -52,7 +75,8 @@ const getIamPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -101,7 +125,7 @@ const getIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          audit_configs: {
+          auditConfigs: {
             type: "array",
             items: {
               type: "object",
@@ -109,12 +133,12 @@ const getIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                audit_log_configs: {
+                auditLogConfigs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      log_type: {
+                      logType: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -123,7 +147,7 @@ const getIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exempted_members: {
+                      exemptedMembers: {
                         type: "array",
                         items: {
                           type: "string",

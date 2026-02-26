@@ -4,8 +4,15 @@
  * Generates individual Flows block .ts files for each non-streaming RPC.
  */
 
-import { GeneratedBlock, ParsedRPC, RoutingParameter } from "./types.ts";
-import { messageToInputConfig, messageToOutputSchema } from "./schemaMapper.ts";
+import { GeneratedBlock, RoutingParameter } from "./types.ts";
+import {
+  messageToInputConfig,
+  messageToOutputSchema,
+  generateFieldMapping,
+  INPUT_SCHEMA_OPTIONS,
+  OUTPUT_SCHEMA_OPTIONS,
+  FieldNameMapping,
+} from "./schemaMapper.ts";
 import { cleanComment } from "./naming.ts";
 
 /** Convert a proto field path (e.g. "bucket.project") to a JS accessor (e.g. "request.bucket?.project") */
@@ -52,6 +59,16 @@ function generateRoutingCode(routingParams: RoutingParameter[]): string {
   return lines.join("\n");
 }
 
+/** Format a FieldNameMapping as a TypeScript object literal string. */
+function formatMapping(mapping: FieldNameMapping, indent: number): string {
+  const json = JSON.stringify(mapping, null, 2);
+  const pad = " ".repeat(indent);
+  return json
+    .split("\n")
+    .map((line, i) => (i === 0 ? line : pad + line))
+    .join("\n");
+}
+
 /**
  * Generate the TypeScript source code for a single block.
  */
@@ -59,20 +76,26 @@ export function generateBlockSource(block: GeneratedBlock): string {
   const { rpc } = block;
   const hasRouting = rpc.routingParameters.length > 0;
 
-  // Generate input config from request message
+  // Generate input config from request message (camelCase keys)
   const inputConfig = messageToInputConfig(rpc.requestType);
 
-  // Generate output schema from response message
+  // Generate output schema from response message (camelCase keys)
   const outputSchema = messageToOutputSchema(rpc.responseType);
 
-  // Build the request assembly code
-  const inputFields = Object.keys(inputConfig);
-  const requestAssembly = inputFields
-    .map(
-      (field) =>
-        `      if (input.event.inputConfig.${field} !== undefined) request.${field} = input.event.inputConfig.${field};`,
-    )
-    .join("\n");
+  // Generate field name mappings
+  const inputMapping = generateFieldMapping(
+    rpc.requestType,
+    "toProto",
+    INPUT_SCHEMA_OPTIONS,
+  );
+  const outputMapping = generateFieldMapping(
+    rpc.responseType,
+    "fromProto",
+    OUTPUT_SCHEMA_OPTIONS,
+  );
+
+  const hasInputMapping = Object.keys(inputMapping).length > 0;
+  const hasOutputMapping = Object.keys(outputMapping).length > 0;
 
   // Get the client factory function name
   const clientFactory = `get${block.serviceName}Client`;
@@ -80,6 +103,7 @@ export function generateBlockSource(block: GeneratedBlock): string {
   // Build import list
   const grpcImports = [clientFactory];
   if (hasRouting) grpcImports.push("createRoutingMetadata");
+  if (hasInputMapping || hasOutputMapping) grpcImports.push("convertKeys");
 
   // Clean description
   const description = cleanComment(rpc.comment) || `${block.humanName} operation.`;
@@ -95,9 +119,35 @@ export function generateBlockSource(block: GeneratedBlock): string {
     ? `request, metadata, (err: any, response: any)`
     : `request, (err: any, response: any)`;
 
+  // Build mapping constants (placed before the block definition)
+  const mappingConsts: string[] = [];
+  if (hasInputMapping) {
+    mappingConsts.push(
+      `const inputMapping = ${formatMapping(inputMapping, 0)};`,
+    );
+  }
+  if (hasOutputMapping) {
+    mappingConsts.push(
+      `const outputMapping = ${formatMapping(outputMapping, 0)};`,
+    );
+  }
+  const mappingSection =
+    mappingConsts.length > 0 ? "\n" + mappingConsts.join("\n\n") + "\n" : "";
+
+  // Request conversion: use convertKeys if mapping exists, otherwise spread input directly
+  const requestLine = hasInputMapping
+    ? "        const request = convertKeys(input.event.inputConfig, inputMapping);"
+    : "        const request = { ...input.event.inputConfig };";
+
+  // Output conversion
+  const emitLine = hasOutputMapping
+    ? `        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);`
+    : "        await events.emit(result || {});";
+
   const source = `import { AppBlock, events } from "@slflows/sdk/v1";
 import { ${grpcImports.join(", ")} } from "../../lib/grpcClient.ts";
-
+${mappingSection}
 const ${block.blockName}: AppBlock = {
   name: "${block.humanName}",
   description: \`${escapedDescription}\`,
@@ -108,8 +158,7 @@ const ${block.blockName}: AppBlock = {
       onEvent: async (input) => {
         const client = await ${clientFactory}(input.app.config);
 
-        const request: Record<string, any> = {};
-${requestAssembly}
+${requestLine}
 
 ${routingCode}
         const result = await new Promise<any>((resolve, reject) => {
@@ -119,7 +168,7 @@ ${routingCode}
           });
         });
 
-        await events.emit(result || {});
+${emitLine}
       },
     },
   },

@@ -28,12 +28,7 @@ import objects_getServiceLevelObjective from "./objects/getServiceLevelObjective
 import objects_listServiceLevelObjectives from "./objects/listServiceLevelObjectives.ts";
 import objects_updateServiceLevelObjective from "./objects/updateServiceLevelObjective.ts";
 import objects_deleteServiceLevelObjective from "./objects/deleteServiceLevelObjective.ts";
-import uptime_checks_listUptimeCheckConfigs from "./uptime_checks/listUptimeCheckConfigs.ts";
-import uptime_checks_getUptimeCheckConfig from "./uptime_checks/getUptimeCheckConfig.ts";
-import uptime_checks_createUptimeCheckConfig from "./uptime_checks/createUptimeCheckConfig.ts";
-import uptime_checks_updateUptimeCheckConfig from "./uptime_checks/updateUptimeCheckConfig.ts";
-import uptime_checks_deleteUptimeCheckConfig from "./uptime_checks/deleteUptimeCheckConfig.ts";
-import uptime_checks_listUptimeCheckIps from "./uptime_checks/listUptimeCheckIps.ts";
+import time_series_queryTimeSeries from "./time_series/queryTimeSeries.ts";
 import snoozes_createSnooze from "./snoozes/createSnooze.ts";
 import snoozes_listSnoozes from "./snoozes/listSnoozes.ts";
 import snoozes_getSnooze from "./snoozes/getSnooze.ts";
@@ -48,7 +43,12 @@ import notification_channels_deleteNotificationChannel from "./notification_chan
 import notification_channels_sendNotificationChannelVerificationCode from "./notification_channels/sendNotificationChannelVerificationCode.ts";
 import notification_channels_getNotificationChannelVerificationCode from "./notification_channels/getNotificationChannelVerificationCode.ts";
 import notification_channels_verifyNotificationChannel from "./notification_channels/verifyNotificationChannel.ts";
-import time_series_queryTimeSeries from "./time_series/queryTimeSeries.ts";
+import uptime_checks_listUptimeCheckConfigs from "./uptime_checks/listUptimeCheckConfigs.ts";
+import uptime_checks_getUptimeCheckConfig from "./uptime_checks/getUptimeCheckConfig.ts";
+import uptime_checks_createUptimeCheckConfig from "./uptime_checks/createUptimeCheckConfig.ts";
+import uptime_checks_updateUptimeCheckConfig from "./uptime_checks/updateUptimeCheckConfig.ts";
+import uptime_checks_deleteUptimeCheckConfig from "./uptime_checks/deleteUptimeCheckConfig.ts";
+import uptime_checks_listUptimeCheckIps from "./uptime_checks/listUptimeCheckIps.ts";
 
 export const blocks = {
   alert_policies_listAlertPolicies: alert_policies_listAlertPolicies,
@@ -87,12 +87,7 @@ export const blocks = {
   objects_listServiceLevelObjectives: objects_listServiceLevelObjectives,
   objects_updateServiceLevelObjective: objects_updateServiceLevelObjective,
   objects_deleteServiceLevelObjective: objects_deleteServiceLevelObjective,
-  uptime_checks_listUptimeCheckConfigs: uptime_checks_listUptimeCheckConfigs,
-  uptime_checks_getUptimeCheckConfig: uptime_checks_getUptimeCheckConfig,
-  uptime_checks_createUptimeCheckConfig: uptime_checks_createUptimeCheckConfig,
-  uptime_checks_updateUptimeCheckConfig: uptime_checks_updateUptimeCheckConfig,
-  uptime_checks_deleteUptimeCheckConfig: uptime_checks_deleteUptimeCheckConfig,
-  uptime_checks_listUptimeCheckIps: uptime_checks_listUptimeCheckIps,
+  time_series_queryTimeSeries: time_series_queryTimeSeries,
   snoozes_createSnooze: snoozes_createSnooze,
   snoozes_listSnoozes: snoozes_listSnoozes,
   snoozes_getSnooze: snoozes_getSnooze,
@@ -117,5 +112,10 @@ export const blocks = {
     notification_channels_getNotificationChannelVerificationCode,
   notification_channels_verifyNotificationChannel:
     notification_channels_verifyNotificationChannel,
-  time_series_queryTimeSeries: time_series_queryTimeSeries,
+  uptime_checks_listUptimeCheckConfigs: uptime_checks_listUptimeCheckConfigs,
+  uptime_checks_getUptimeCheckConfig: uptime_checks_getUptimeCheckConfig,
+  uptime_checks_createUptimeCheckConfig: uptime_checks_createUptimeCheckConfig,
+  uptime_checks_updateUptimeCheckConfig: uptime_checks_updateUptimeCheckConfig,
+  uptime_checks_deleteUptimeCheckConfig: uptime_checks_deleteUptimeCheckConfig,
+  uptime_checks_listUptimeCheckIps: uptime_checks_listUptimeCheckIps,
 };

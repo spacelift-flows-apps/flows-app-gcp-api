@@ -8,7 +8,7 @@ const get: AppBlock = {
   inputs: {
     default: {
       config: {
-        public_delegated_prefix: {
+        publicDelegatedPrefix: {
           name: "Public Delegated Prefix",
           description: "Name of the PublicDelegatedPrefix resource to return.",
           type: {
@@ -20,9 +20,9 @@ const get: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.public_delegated_prefix !== undefined)
+        if (input.event.inputConfig.publicDelegatedPrefix !== undefined)
           pathParams["public_delegated_prefix"] = String(
-            input.event.inputConfig.public_delegated_prefix,
+            input.event.inputConfig.publicDelegatedPrefix,
           );
 
         const result = await computeFetch({
@@ -43,17 +43,17 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          allocatable_prefix_length: {
+          allocatablePrefixLength: {
             type: "integer",
             description:
               "The allocatable prefix length supported by this public delegated prefix. This field is optional and cannot be set for prefixes in DELEGATION mode. It cannot be set for IPv4 prefixes either, and it always defaults to 32.",
           },
-          byoip_api_version: {
+          byoipApiVersion: {
             type: "string",
             description:
               "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -63,7 +63,7 @@ const get: AppBlock = {
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
           },
-          enable_enhanced_ipv4_allocation: {
+          enableEnhancedIpv4Allocation: {
             type: "boolean",
             description:
               "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
@@ -77,17 +77,17 @@ const get: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          ip_cidr_range: {
+          ipCidrRange: {
             type: "string",
             description:
               "The IP address range, in CIDR format, represented by this public delegated prefix.",
           },
-          ipv6_access_type: {
+          ipv6AccessType: {
             type: "string",
             description:
               "Output only. [Output Only] The internet access type for IPv6 Public Delegated Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
           },
-          is_live_migration: {
+          isLiveMigration: {
             type: "boolean",
             description: "If true, the prefix will be live migrated.",
           },
@@ -106,22 +106,22 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          parent_prefix: {
+          parentPrefix: {
             type: "string",
             description:
               "The URL of parent prefix. Either PublicAdvertisedPrefix or PublicDelegatedPrefix.",
           },
-          public_delegated_sub_prefixs: {
+          publicDelegatedSubPrefixs: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                allocatable_prefix_length: {
+                allocatablePrefixLength: {
                   type: "integer",
                   description:
                     "The allocatable prefix length supported by this PublicDelegatedSubPrefix.",
                 },
-                delegatee_project: {
+                delegateeProject: {
                   type: "string",
                   description:
                     "Name of the project scoping this PublicDelegatedSubPrefix.",
@@ -131,22 +131,22 @@ const get: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                enable_enhanced_ipv4_allocation: {
+                enableEnhancedIpv4Allocation: {
                   type: "boolean",
                   description:
                     "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
                 },
-                ip_cidr_range: {
+                ipCidrRange: {
                   type: "string",
                   description:
                     "The IP address range, in CIDR format, represented by this sub public delegated prefix.",
                 },
-                ipv6_access_type: {
+                ipv6AccessType: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The internet access type for IPv6 Public Delegated Sub Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
                 },
-                is_address: {
+                isAddress: {
                   type: "boolean",
                   description:
                     "Whether the sub prefix is delegated to create Address resources in the delegatee project.",
@@ -182,7 +182,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] URL of the region where the public delegated prefix resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",

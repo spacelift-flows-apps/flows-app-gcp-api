@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        security_policy: {
+        securityPolicy: {
           name: "Security Policy",
           description: "Name of the security policy to get.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.security_policy !== undefined)
+        if (input.event.inputConfig.securityPolicy !== undefined)
           pathParams["security_policy"] = String(
-            input.event.inputConfig.security_policy,
+            input.event.inputConfig.securityPolicy,
           );
 
         const result = await computeFetch({
@@ -53,10 +53,10 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          adaptive_protection_config: {
+          adaptiveProtectionConfig: {
             type: "object",
             properties: {
-              layer7_ddos_defense_config: {
+              layer7DdosDefenseConfig: {
                 type: "object",
                 properties: {
                   enable: {
@@ -64,35 +64,35 @@ const get: AppBlock = {
                     description:
                       "If set to true, enables CAAP for L7 DDoS detection. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
                   },
-                  rule_visibility: {
+                  ruleVisibility: {
                     type: "string",
                     description:
                       "Rule visibility can be one of the following: STANDARD - opaque rules. (default) PREMIUM - transparent rules. This field is only supported in Global Security Policies of type CLOUD_ARMOR. Check the RuleVisibility enum for the list of possible values.",
                   },
-                  threshold_configs: {
+                  thresholdConfigs: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        auto_deploy_confidence_threshold: {
+                        autoDeployConfidenceThreshold: {
                           type: "number",
                         },
-                        auto_deploy_expiration_sec: {
+                        autoDeployExpirationSec: {
                           type: "integer",
                         },
-                        auto_deploy_impacted_baseline_threshold: {
+                        autoDeployImpactedBaselineThreshold: {
                           type: "number",
                         },
-                        auto_deploy_load_threshold: {
+                        autoDeployLoadThreshold: {
                           type: "number",
                         },
-                        detection_absolute_qps: {
+                        detectionAbsoluteQps: {
                           type: "number",
                         },
-                        detection_load_threshold: {
+                        detectionLoadThreshold: {
                           type: "number",
                         },
-                        detection_relative_to_baseline_qps: {
+                        detectionRelativeToBaselineQps: {
                           type: "number",
                         },
                         name: {
@@ -100,12 +100,12 @@ const get: AppBlock = {
                           description:
                             "The name must be 1-63 characters long, and comply withRFC1035. The name must be unique within the security policy.",
                         },
-                        traffic_granularity_configs: {
+                        trafficGranularityConfigs: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              enable_each_unique_value: {
+                              enableEachUniqueValue: {
                                 type: "boolean",
                                 description:
                                   "If enabled, traffic matching each unique value for the specified type constitutes a separate traffic unit. It can only be set to true if `value` is empty.",
@@ -144,13 +144,13 @@ const get: AppBlock = {
               "Configuration options for Cloud Armor Adaptive Protection (CAAP).",
             additionalProperties: true,
           },
-          advanced_options_config: {
+          advancedOptionsConfig: {
             type: "object",
             properties: {
-              json_custom_config: {
+              jsonCustomConfig: {
                 type: "object",
                 properties: {
-                  content_types: {
+                  contentTypes: {
                     type: "array",
                     items: {
                       type: "string",
@@ -163,22 +163,22 @@ const get: AppBlock = {
                 description:
                   "Custom configuration to apply the JSON parsing. Only applicable when json_parsing is set to STANDARD.",
               },
-              json_parsing: {
+              jsonParsing: {
                 type: "string",
                 description:
                   "Check the JsonParsing enum for the list of possible values.",
               },
-              log_level: {
+              logLevel: {
                 type: "string",
                 description:
                   "Check the LogLevel enum for the list of possible values.",
               },
-              request_body_inspection_size: {
+              requestBodyInspectionSize: {
                 type: "string",
                 description:
                   'The maximum request size chosen by the customer with Waf enabled. Values supported are "8KB", "16KB, "32KB", "48KB" and "64KB". Values are case insensitive.',
               },
-              user_ip_request_headers: {
+              userIpRequestHeaders: {
                 type: "array",
                 items: {
                   type: "string",
@@ -194,17 +194,17 @@ const get: AppBlock = {
             items: {
               type: "object",
               properties: {
-                attachment_id: {
+                attachmentId: {
                   type: "string",
                   description:
                     "The resource that the security policy is attached to.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The display name of the security policy of the association.",
                 },
-                excluded_folders: {
+                excludedFolders: {
                   type: "array",
                   items: {
                     type: "string",
@@ -212,7 +212,7 @@ const get: AppBlock = {
                   description:
                     "A list of folders to exclude from the security policy.",
                 },
-                excluded_projects: {
+                excludedProjects: {
                   type: "array",
                   items: {
                     type: "string",
@@ -224,12 +224,12 @@ const get: AppBlock = {
                   type: "string",
                   description: "The name for an association.",
                 },
-                security_policy_id: {
+                securityPolicyId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The security policy ID of the association.",
                 },
-                short_name: {
+                shortName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The short name of the security policy of the association.",
@@ -239,15 +239,15 @@ const get: AppBlock = {
             },
             description: "A list of associations that belong to this policy.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
-          ddos_protection_config: {
+          ddosProtectionConfig: {
             type: "object",
             properties: {
-              ddos_protection: {
+              ddosProtection: {
                 type: "string",
                 description:
                   "Check the DdosProtection enum for the list of possible values.",
@@ -274,7 +274,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output only] Type of the resource. Alwayscompute#securityPolicyfor security policies",
           },
-          label_fingerprint: {
+          labelFingerprint: {
             type: "string",
             description:
               "A fingerprint for the labels being applied to this security policy, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels.  To see the latest fingerprint, make get() request to the security policy.",
@@ -297,10 +297,10 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The parent of the security policy.",
           },
-          recaptcha_options_config: {
+          recaptchaOptionsConfig: {
             type: "object",
             properties: {
-              redirect_site_key: {
+              redirectSiteKey: {
                 type: "string",
                 description:
                   "An optional field to supply a reCAPTCHA site key to be used for all the rules using the redirect action with the type of GOOGLE_RECAPTCHA under the security policy. The specified site key needs to be created from the reCAPTCHA API. The user is responsible for the validity of the specified site key. If not specified, a Google-managed site key is used. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
@@ -328,19 +328,19 @@ const get: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                header_action: {
+                headerAction: {
                   type: "object",
                   properties: {
-                    request_headers_to_adds: {
+                    requestHeadersToAdds: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          header_name: {
+                          headerName: {
                             type: "string",
                             description: "The name of the header to set.",
                           },
-                          header_value: {
+                          headerValue: {
                             type: "string",
                             description:
                               "The value to set the named header to.",
@@ -367,7 +367,7 @@ const get: AppBlock = {
                     config: {
                       type: "object",
                       properties: {
-                        src_ip_ranges: {
+                        srcIpRanges: {
                           type: "array",
                           items: {
                             type: "string",
@@ -408,13 +408,13 @@ const get: AppBlock = {
                         'Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec.  Example (Comparison):      title: "Summary size limit"     description: "Determines if a summary is less than 100 chars"     expression: "document.summary.size() < 100"  Example (Equality):      title: "Requestor is owner"     description: "Determines if requestor is the document owner"     expression: "document.owner == request.auth.claims.email"  Example (Logic):      title: "Public documents"     description: "Determine whether the document should be publicly visible"     expression: "document.type != \'private\' && document.type != \'internal\'"  Example (Data Manipulation):      title: "Notification string"     description: "Create a notification string with a timestamp."     expression: "\'New message received at \' + string(document.create_time)"  The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.',
                       additionalProperties: true,
                     },
-                    expr_options: {
+                    exprOptions: {
                       type: "object",
                       properties: {
-                        recaptcha_options: {
+                        recaptchaOptions: {
                           type: "object",
                           properties: {
-                            action_token_site_keys: {
+                            actionTokenSiteKeys: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -422,7 +422,7 @@ const get: AppBlock = {
                               description:
                                 "A list of site keys to be used during the validation of reCAPTCHA action-tokens. The provided site keys need to be created from reCAPTCHA API under the same project where the security policy is created.",
                             },
-                            session_token_site_keys: {
+                            sessionTokenSiteKeys: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -440,7 +440,7 @@ const get: AppBlock = {
                       description:
                         "The configuration options available when specifying a user defined CEVAL expression (i.e., 'expr').",
                     },
-                    versioned_expr: {
+                    versionedExpr: {
                       type: "string",
                       description:
                         "Preconfigured versioned expression. If this field is specified, config must also be specified. Available preconfigured expressions along with their requirements are: SRC_IPS_V1 - must specify the corresponding src_ip_range field in config. Check the VersionedExpr enum for the list of possible values.",
@@ -450,10 +450,10 @@ const get: AppBlock = {
                     "Represents a match condition that incoming traffic is evaluated against. Exactly one field must be specified.",
                   additionalProperties: true,
                 },
-                network_match: {
+                networkMatch: {
                   type: "object",
                   properties: {
-                    dest_ip_ranges: {
+                    destIpRanges: {
                       type: "array",
                       items: {
                         type: "string",
@@ -461,7 +461,7 @@ const get: AppBlock = {
                       description:
                         "Destination IPv4/IPv6 addresses or CIDR prefixes, in standard text format.",
                     },
-                    dest_ports: {
+                    destPorts: {
                       type: "array",
                       items: {
                         type: "string",
@@ -469,7 +469,7 @@ const get: AppBlock = {
                       description:
                         'Destination port numbers for TCP/UDP/SCTP. Each element can be a 16-bit unsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
                     },
-                    ip_protocols: {
+                    ipProtocols: {
                       type: "array",
                       items: {
                         type: "string",
@@ -477,7 +477,7 @@ const get: AppBlock = {
                       description:
                         'IPv4 protocol / IPv6 next header (after extension headers). Each element can be an 8-bit unsigned decimal number (e.g. "6"), range (e.g. "253-254"), or one of the following protocol names: "tcp", "udp", "icmp", "esp", "ah", "ipip", or "sctp".',
                     },
-                    src_asns: {
+                    srcAsns: {
                       type: "array",
                       items: {
                         type: "integer",
@@ -485,7 +485,7 @@ const get: AppBlock = {
                       description:
                         "BGP Autonomous System Number associated with the source IP address.",
                     },
-                    src_ip_ranges: {
+                    srcIpRanges: {
                       type: "array",
                       items: {
                         type: "string",
@@ -493,7 +493,7 @@ const get: AppBlock = {
                       description:
                         "Source IPv4/IPv6 addresses or CIDR prefixes, in standard text format.",
                     },
-                    src_ports: {
+                    srcPorts: {
                       type: "array",
                       items: {
                         type: "string",
@@ -501,7 +501,7 @@ const get: AppBlock = {
                       description:
                         'Source port numbers for TCP/UDP/SCTP. Each element can be a 16-bit unsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
                     },
-                    src_region_codes: {
+                    srcRegionCodes: {
                       type: "array",
                       items: {
                         type: "string",
@@ -509,7 +509,7 @@ const get: AppBlock = {
                       description:
                         "Two-letter ISO 3166-1 alpha-2 country code associated with the source IP address.",
                     },
-                    user_defined_fields: {
+                    userDefinedFields: {
                       type: "array",
                       items: {
                         type: "object",
@@ -538,7 +538,7 @@ const get: AppBlock = {
                     "Represents a match condition that incoming network traffic is evaluated against.",
                   additionalProperties: true,
                 },
-                preconfigured_waf_config: {
+                preconfiguredWafConfig: {
                   type: "object",
                   properties: {
                     exclusions: {
@@ -546,7 +546,7 @@ const get: AppBlock = {
                       items: {
                         type: "object",
                         properties: {
-                          request_cookies_to_exclude: {
+                          requestCookiesToExclude: {
                             type: "array",
                             items: {
                               type: "object",
@@ -566,7 +566,7 @@ const get: AppBlock = {
                             description:
                               "A list of request cookie names whose value will be excluded from inspection during preconfigured WAF evaluation.",
                           },
-                          request_headers_to_exclude: {
+                          requestHeadersToExclude: {
                             type: "array",
                             items: {
                               type: "object",
@@ -586,7 +586,7 @@ const get: AppBlock = {
                             description:
                               "A list of request header names whose value will be excluded from inspection during preconfigured WAF evaluation.",
                           },
-                          request_query_params_to_exclude: {
+                          requestQueryParamsToExclude: {
                             type: "array",
                             items: {
                               type: "object",
@@ -606,7 +606,7 @@ const get: AppBlock = {
                             description:
                               "A list of request query parameter names whose value will be excluded from inspection during preconfigured WAF evaluation. Note that the parameter can be in the query string or in the POST body.",
                           },
-                          request_uris_to_exclude: {
+                          requestUrisToExclude: {
                             type: "array",
                             items: {
                               type: "object",
@@ -626,7 +626,7 @@ const get: AppBlock = {
                             description:
                               "A list of request URIs from the request line to be excluded from inspection during preconfigured WAF evaluation. When specifying this field, the query or fragment part should be excluded.",
                           },
-                          target_rule_ids: {
+                          targetRuleIds: {
                             type: "array",
                             items: {
                               type: "string",
@@ -634,7 +634,7 @@ const get: AppBlock = {
                             description:
                               "A list of target rule IDs under the WAF rule set to apply the preconfigured WAF exclusion. If omitted, it refers to all the rule IDs under the WAF rule set.",
                           },
-                          target_rule_set: {
+                          targetRuleSet: {
                             type: "string",
                             description:
                               "Target WAF rule set to apply the preconfigured WAF exclusion.",
@@ -660,15 +660,15 @@ const get: AppBlock = {
                   description:
                     "An integer indicating the priority of a rule in the list. The priority must be a positive value between 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the highest priority and 2147483647 is the lowest priority.",
                 },
-                rate_limit_options: {
+                rateLimitOptions: {
                   type: "object",
                   properties: {
-                    ban_duration_sec: {
+                    banDurationSec: {
                       type: "integer",
                       description:
                         'Can only be specified if the action for the rule is "rate_based_ban". If specified, determines the time (in seconds) the traffic will continue to be banned by the rate limit after the rate falls below the threshold.',
                     },
-                    ban_threshold: {
+                    banThreshold: {
                       type: "object",
                       properties: {
                         count: {
@@ -676,7 +676,7 @@ const get: AppBlock = {
                           description:
                             "Number of HTTP(S) requests for calculating the threshold.",
                         },
-                        interval_sec: {
+                        intervalSec: {
                           type: "integer",
                           description:
                             "Interval over which the threshold is computed.",
@@ -686,27 +686,27 @@ const get: AppBlock = {
                       description:
                         "Can only be specified if the action for the rule is \"rate_based_ban\". If specified, the key will be banned for the configured 'ban_duration_sec' when the number of requests that exceed the 'rate_limit_threshold' also exceed this 'ban_threshold'.",
                     },
-                    conform_action: {
+                    conformAction: {
                       type: "string",
                       description:
                         'Action to take for requests that are under the configured rate limit threshold. Valid option is "allow" only.',
                     },
-                    enforce_on_key: {
+                    enforceOnKey: {
                       type: "string",
                       description:
                         'Determines the key to enforce the rate_limit_threshold on. Possible values are:     - ALL: A single rate limit threshold is applied to all    the requests matching this rule. This is the default value if    "enforceOnKey" is not configured.    - IP: The source IP address of    the request is the key. Each IP has this limit enforced    separately.    - HTTP_HEADER: The value of the HTTP    header whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the header value. If no    such header is present in the request, the key type defaults toALL.    - XFF_IP: The first IP address (i.e. the    originating client IP address) specified in the list of IPs under    X-Forwarded-For HTTP header. If no such header is present or the value    is not a valid IP, the key defaults to the source IP address of    the request i.e. key type IP.    - HTTP_COOKIE: The value of the HTTP    cookie whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the cookie value. If no    such cookie is present in the request, the key type defaults toALL.    - HTTP_PATH: The URL path of the HTTP request. The key    value is truncated to the first 128 bytes.    - SNI: Server name indication in the TLS session of the    HTTPS request. The key value is truncated to the first 128 bytes. The    key type defaults to ALL on a HTTP session.    - REGION_CODE: The country/region from which the request    originates.    - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the    client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the    key type defaults to ALL.    - USER_IP: The IP address of the originating client,    which is resolved based on "userIpRequestHeaders" configured with the    security policy. If there is no "userIpRequestHeaders" configuration or    an IP address cannot be resolved from it, the key type defaults toIP.  - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. For "fairshare" action, this value is limited to ALL i.e. a single rate limit threshold is enforced for all the requests matching the rule. Check the EnforceOnKey enum for the list of possible values.',
                     },
-                    enforce_on_key_configs: {
+                    enforceOnKeyConfigs: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          enforce_on_key_name: {
+                          enforceOnKeyName: {
                             type: "string",
                             description:
                               "Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.",
                           },
-                          enforce_on_key_type: {
+                          enforceOnKeyType: {
                             type: "string",
                             description:
                               'Determines the key to enforce the rate_limit_threshold on. Possible values are:     - ALL: A single rate limit threshold is applied to all    the requests matching this rule. This is the default value if    "enforceOnKeyConfigs" is not configured.    - IP: The source IP address of    the request is the key. Each IP has this limit enforced    separately.    - HTTP_HEADER: The value of the HTTP    header whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the header value. If no    such header is present in the request, the key type defaults toALL.    - XFF_IP: The first IP address (i.e. the    originating client IP address) specified in the list of IPs under    X-Forwarded-For HTTP header. If no such header is present or the    value is not a valid IP, the key defaults to the source IP address of    the request i.e. key type IP.    - HTTP_COOKIE: The value of the HTTP    cookie whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the cookie value. If no    such cookie is present in the request, the key type defaults toALL.    - HTTP_PATH: The URL path of the HTTP request. The key    value is truncated to the first 128 bytes.    - SNI: Server name indication in the TLS session of    the HTTPS request. The key value is truncated to the first 128 bytes.    The key type defaults to ALL on a HTTP session.    - REGION_CODE: The country/region from which the    request originates.    - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the    client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the    key type defaults to ALL.    - USER_IP: The IP address of the originating client,    which is resolved based on "userIpRequestHeaders" configured with the    security policy. If there is no "userIpRequestHeaders" configuration    or an IP address cannot be resolved from it, the key type defaults toIP.  - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. Check the EnforceOnKeyType enum for the list of possible values.',
@@ -717,17 +717,17 @@ const get: AppBlock = {
                       description:
                         "If specified, any combination of values of enforce_on_key_type/enforce_on_key_name is treated as the key on which ratelimit threshold/action is enforced. You can specify up to 3 enforce_on_key_configs. If enforce_on_key_configs is specified, enforce_on_key must not be specified.",
                     },
-                    enforce_on_key_name: {
+                    enforceOnKeyName: {
                       type: "string",
                       description:
                         "Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.",
                     },
-                    exceed_action: {
+                    exceedAction: {
                       type: "string",
                       description:
                         "Action to take for requests that are above the configured rate limit threshold, to either deny with a specified HTTP response code, or redirect to a different endpoint. Valid options are `deny(STATUS)`, where valid values for `STATUS` are 403, 404, 429, and 502, and `redirect`, where the redirect parameters come from `exceedRedirectOptions` below. The `redirect` action is only supported in Global Security Policies of type CLOUD_ARMOR.",
                     },
-                    exceed_redirect_options: {
+                    exceedRedirectOptions: {
                       type: "object",
                       properties: {
                         target: {
@@ -745,7 +745,7 @@ const get: AppBlock = {
                       description:
                         "Parameters defining the redirect action that is used as the exceed action. Cannot be specified if the exceed action is not redirect. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
                     },
-                    rate_limit_threshold: {
+                    rateLimitThreshold: {
                       type: "object",
                       properties: {
                         count: {
@@ -753,7 +753,7 @@ const get: AppBlock = {
                           description:
                             "Number of HTTP(S) requests for calculating the threshold.",
                         },
-                        interval_sec: {
+                        intervalSec: {
                           type: "integer",
                           description:
                             "Interval over which the threshold is computed.",
@@ -767,7 +767,7 @@ const get: AppBlock = {
                   description:
                     'Must be specified if the action is "rate_based_ban" or "throttle" or "fairshare". Cannot be specified for any other actions.',
                 },
-                redirect_options: {
+                redirectOptions: {
                   type: "object",
                   properties: {
                     target: {
@@ -793,12 +793,12 @@ const get: AppBlock = {
             description:
               'A list of rules that belong to this policy. There must always be a default rule which is a rule with priority 2147483647 and match all condition (for the match condition this means match  "*" for srcIpRanges and for the networkMatch condition every field must be either match "*" or not set). If no rules are provided when creating a security policy, a default rule with action "allow" will be added.',
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",
           },
-          short_name: {
+          shortName: {
             type: "string",
             description:
               "User-provided name of the organization security policy. The name should be unique in the organization in which the security policy is created. This should only be used when SecurityPolicyType is CLOUD_ARMOR. The name must be 1-63 characters long, and comply with https://www.ietf.org/rfc/rfc1035.txt. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
@@ -808,7 +808,7 @@ const get: AppBlock = {
             description:
               "The type indicates the intended use of the security policy.     - CLOUD_ARMOR: Cloud Armor backend security policies can    be configured to filter incoming HTTP requests targeting backend services.    They filter requests before they hit the origin servers.    - CLOUD_ARMOR_EDGE: Cloud Armor edge security policies can    be configured to filter incoming HTTP requests targeting backend services    (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage).    They filter requests before the request is served from Google's cache.    - CLOUD_ARMOR_INTERNAL_SERVICE (preview only): Cloud Armor    internal service policies can be configured to filter HTTP requests    targeting services managed by Traffic Director in a service mesh. They    filter requests before the request is served from the application.  - CLOUD_ARMOR_NETWORK: Cloud Armor network policies can be configured to filter packets targeting network load balancing resources such as backend services, target pools, target instances, and instances with external IPs. They filter requests before the request is served from the application.   This field can be set only at resource creation time. Check the Type enum for the list of possible values.",
           },
-          user_defined_fields: {
+          userDefinedFields: {
             type: "array",
             items: {
               type: "object",

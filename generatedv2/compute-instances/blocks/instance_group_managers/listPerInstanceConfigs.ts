@@ -17,7 +17,7 @@ const listPerInstanceConfigs: AppBlock = {
           },
           required: true,
         },
-        instance_group_manager: {
+        instanceGroupManager: {
           name: "Instance Group Manager",
           description:
             "The name of the managed instance group. It should conform to RFC1035.",
@@ -35,7 +35,7 @@ const listPerInstanceConfigs: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -44,7 +44,7 @@ const listPerInstanceConfigs: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -53,7 +53,7 @@ const listPerInstanceConfigs: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -62,7 +62,7 @@ const listPerInstanceConfigs: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -77,25 +77,25 @@ const listPerInstanceConfigs: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.instance_group_manager !== undefined)
+        if (input.event.inputConfig.instanceGroupManager !== undefined)
           pathParams["instance_group_manager"] = String(
-            input.event.inputConfig.instance_group_manager,
+            input.event.inputConfig.instanceGroupManager,
           );
 
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -132,7 +132,7 @@ const listPerInstanceConfigs: AppBlock = {
                   description:
                     "The name of a per-instance configuration and its corresponding instance. Serves as a merge key during UpdatePerInstanceConfigs operations, that is, if a per-instance configuration with the same name exists then it will be updated, otherwise a new one will be created for the VM instance with the same name. An attempt to create a per-instance configuration for a VM instance that either doesn't exist or is not part of the group will result in an error.",
                 },
-                preserved_state: {
+                preservedState: {
                   type: "object",
                   properties: {
                     disks: {
@@ -143,7 +143,7 @@ const listPerInstanceConfigs: AppBlock = {
                       description:
                         "Preserved disks defined for this instance. This map is keyed with the device names of the disks.",
                     },
-                    external_i_ps: {
+                    externalIPs: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -151,7 +151,7 @@ const listPerInstanceConfigs: AppBlock = {
                       description:
                         "Preserved external IPs defined for this instance. This map is keyed with the name of the network interface.",
                     },
-                    internal_i_ps: {
+                    internalIPs: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -182,7 +182,7 @@ const listPerInstanceConfigs: AppBlock = {
             description:
               "Output only. [Output Only] The list of PerInstanceConfig.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Output only. [Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",

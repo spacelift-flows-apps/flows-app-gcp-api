@@ -1,5 +1,17 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  sourceInstanceDeletionTime: "source_instance_deletion_time",
+};
+
+const outputMapping = {
+  latest_recovery_time: "latestRecoveryTime",
+  earliest_recovery_time: "earliestRecoveryTime",
+};
 
 const getLatestRecoveryTime: AppBlock = {
   name: "Get Latest Recovery Time",
@@ -29,7 +41,7 @@ const getLatestRecoveryTime: AppBlock = {
           },
           required: false,
         },
-        source_instance_deletion_time: {
+        sourceInstanceDeletionTime: {
           name: "Source Instance Deletion Time",
           description:
             "The timestamp used to identify the time when the source instance is deleted. If this instance is deleted, then you must set the timestamp.",
@@ -43,14 +55,7 @@ const getLatestRecoveryTime: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.source_instance_deletion_time !== undefined)
-          request.source_instance_deletion_time =
-            input.event.inputConfig.source_instance_deletion_time;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getLatestRecoveryTime(request, (err: any, response: any) => {
@@ -64,7 +69,8 @@ const getLatestRecoveryTime: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -78,11 +84,11 @@ const getLatestRecoveryTime: AppBlock = {
             type: "string",
             description: "This is always `sql#getLatestRecoveryTime`.",
           },
-          latest_recovery_time: {
+          latestRecoveryTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          earliest_recovery_time: {
+          earliestRecoveryTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

@@ -1,5 +1,166 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getServiceMonitoringServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getServiceMonitoringServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  serviceLevelObjectiveId: "service_level_objective_id",
+  serviceLevelObjective: {
+    name: "service_level_objective",
+    fields: {
+      displayName: "display_name",
+      serviceLevelIndicator: {
+        name: "service_level_indicator",
+        fields: {
+          basicSli: "basic_sli",
+          requestBased: {
+            name: "request_based",
+            fields: {
+              goodTotalRatio: {
+                name: "good_total_ratio",
+                fields: {
+                  goodServiceFilter: "good_service_filter",
+                  badServiceFilter: "bad_service_filter",
+                  totalServiceFilter: "total_service_filter",
+                },
+              },
+              distributionCut: {
+                name: "distribution_cut",
+                fields: {
+                  distributionFilter: "distribution_filter",
+                },
+              },
+            },
+          },
+          windowsBased: {
+            name: "windows_based",
+            fields: {
+              goodBadMetricFilter: "good_bad_metric_filter",
+              goodTotalRatioThreshold: {
+                name: "good_total_ratio_threshold",
+                fields: {
+                  performance: {
+                    name: "performance",
+                    fields: {
+                      goodTotalRatio: {
+                        name: "good_total_ratio",
+                        fields: {
+                          goodServiceFilter: "good_service_filter",
+                          badServiceFilter: "bad_service_filter",
+                          totalServiceFilter: "total_service_filter",
+                        },
+                      },
+                      distributionCut: {
+                        name: "distribution_cut",
+                        fields: {
+                          distributionFilter: "distribution_filter",
+                        },
+                      },
+                    },
+                  },
+                  basicSliPerformance: "basic_sli_performance",
+                },
+              },
+              metricMeanInRange: {
+                name: "metric_mean_in_range",
+                fields: {
+                  timeSeries: "time_series",
+                },
+              },
+              metricSumInRange: {
+                name: "metric_sum_in_range",
+                fields: {
+                  timeSeries: "time_series",
+                },
+              },
+              windowPeriod: "window_period",
+            },
+          },
+        },
+      },
+      rollingPeriod: "rolling_period",
+      calendarPeriod: "calendar_period",
+      userLabels: "user_labels",
+    },
+  },
+};
+
+const outputMapping = {
+  display_name: "displayName",
+  service_level_indicator: {
+    name: "serviceLevelIndicator",
+    fields: {
+      basic_sli: "basicSli",
+      request_based: {
+        name: "requestBased",
+        fields: {
+          good_total_ratio: {
+            name: "goodTotalRatio",
+            fields: {
+              good_service_filter: "goodServiceFilter",
+              bad_service_filter: "badServiceFilter",
+              total_service_filter: "totalServiceFilter",
+            },
+          },
+          distribution_cut: {
+            name: "distributionCut",
+            fields: {
+              distribution_filter: "distributionFilter",
+            },
+          },
+        },
+      },
+      windows_based: {
+        name: "windowsBased",
+        fields: {
+          good_bad_metric_filter: "goodBadMetricFilter",
+          good_total_ratio_threshold: {
+            name: "goodTotalRatioThreshold",
+            fields: {
+              performance: {
+                name: "performance",
+                fields: {
+                  good_total_ratio: {
+                    name: "goodTotalRatio",
+                    fields: {
+                      good_service_filter: "goodServiceFilter",
+                      bad_service_filter: "badServiceFilter",
+                      total_service_filter: "totalServiceFilter",
+                    },
+                  },
+                  distribution_cut: {
+                    name: "distributionCut",
+                    fields: {
+                      distribution_filter: "distributionFilter",
+                    },
+                  },
+                },
+              },
+              basic_sli_performance: "basicSliPerformance",
+            },
+          },
+          metric_mean_in_range: {
+            name: "metricMeanInRange",
+            fields: {
+              time_series: "timeSeries",
+            },
+          },
+          metric_sum_in_range: {
+            name: "metricSumInRange",
+            fields: {
+              time_series: "timeSeries",
+            },
+          },
+          window_period: "windowPeriod",
+        },
+      },
+    },
+  },
+  rolling_period: "rollingPeriod",
+  calendar_period: "calendarPeriod",
+  user_labels: "userLabels",
+};
 
 const createServiceLevelObjective: AppBlock = {
   name: "Create Service Level Objective",
@@ -19,7 +180,7 @@ const createServiceLevelObjective: AppBlock = {
           },
           required: true,
         },
-        service_level_objective_id: {
+        serviceLevelObjectiveId: {
           name: "Service Level Objective Id",
           description:
             "Optional. The ServiceLevelObjective id to use for this ServiceLevelObjective. If omitted, an id will be generated instead. Must match the pattern `^[a-zA-Z0-9-_:.]+$`",
@@ -30,7 +191,7 @@ const createServiceLevelObjective: AppBlock = {
           },
           required: false,
         },
-        service_level_objective: {
+        serviceLevelObjective: {
           name: "Service Level Objective",
           description:
             "Required. The `ServiceLevelObjective` to create. The provided `name` will be respected if no `ServiceLevelObjective` exists with this name.",
@@ -42,14 +203,14 @@ const createServiceLevelObjective: AppBlock = {
                 description:
                   "Identifier. Resource name for this `ServiceLevelObjective`. The format is:      projects/[PROJECT_ID_OR_NUMBER]/services/[SERVICE_ID]/serviceLevelObjectives/[SLO_NAME]",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description: "Name used for UI elements listing this SLO.",
               },
-              service_level_indicator: {
+              serviceLevelIndicator: {
                 type: "object",
                 properties: {
-                  basic_sli: {
+                  basicSli: {
                     type: "object",
                     properties: {
                       method: {
@@ -101,23 +262,23 @@ const createServiceLevelObjective: AppBlock = {
                       "An SLI measuring performance on a well-known service type. Performance will be computed on the basis of pre-defined metrics. The type of the `service_resource` determines the metrics to use and the `service_resource.labels` and `metric_labels` are used to construct a monitoring filter to filter that metric down to just the data relevant to this service. (Part of 'type' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  request_based: {
+                  requestBased: {
                     type: "object",
                     properties: {
-                      good_total_ratio: {
+                      goodTotalRatio: {
                         type: "object",
                         properties: {
-                          good_service_filter: {
+                          goodServiceFilter: {
                             type: "string",
                             description:
                               "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying good service provided. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                           },
-                          bad_service_filter: {
+                          badServiceFilter: {
                             type: "string",
                             description:
                               "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying bad service, either demanded service that was not provided or demanded service that was of inadequate quality. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                           },
-                          total_service_filter: {
+                          totalServiceFilter: {
                             type: "string",
                             description:
                               "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying total demanded service. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -127,10 +288,10 @@ const createServiceLevelObjective: AppBlock = {
                           "A `TimeSeriesRatio` specifies two `TimeSeries` to use for computing the `good_service / total_service` ratio. The specified `TimeSeries` must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`. The `TimeSeriesRatio` must specify exactly two of good, bad, and total, and the relationship `good_service + bad_service = total_service` will be assumed. (Part of 'method' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      distribution_cut: {
+                      distributionCut: {
                         type: "object",
                         properties: {
-                          distribution_filter: {
+                          distributionFilter: {
                             type: "string",
                             description:
                               "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` aggregating values. Must have `ValueType = DISTRIBUTION` and `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -161,34 +322,34 @@ const createServiceLevelObjective: AppBlock = {
                       "Service Level Indicators for which atomic units of service are counted directly. (Part of 'type' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  windows_based: {
+                  windowsBased: {
                     type: "object",
                     properties: {
-                      good_bad_metric_filter: {
+                      goodBadMetricFilter: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` with `ValueType = BOOL`. The window is good if any `true` values appear in the window. (Part of 'window_criterion' - only one field in this group can be set)",
                       },
-                      good_total_ratio_threshold: {
+                      goodTotalRatioThreshold: {
                         type: "object",
                         properties: {
                           performance: {
                             type: "object",
                             properties: {
-                              good_total_ratio: {
+                              goodTotalRatio: {
                                 type: "object",
                                 properties: {
-                                  good_service_filter: {
+                                  goodServiceFilter: {
                                     type: "string",
                                     description:
                                       "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying good service provided. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                                   },
-                                  bad_service_filter: {
+                                  badServiceFilter: {
                                     type: "string",
                                     description:
                                       "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying bad service, either demanded service that was not provided or demanded service that was of inadequate quality. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                                   },
-                                  total_service_filter: {
+                                  totalServiceFilter: {
                                     type: "string",
                                     description:
                                       "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying total demanded service. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -198,10 +359,10 @@ const createServiceLevelObjective: AppBlock = {
                                   "A `TimeSeriesRatio` specifies two `TimeSeries` to use for computing the `good_service / total_service` ratio. The specified `TimeSeries` must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`. The `TimeSeriesRatio` must specify exactly two of good, bad, and total, and the relationship `good_service + bad_service = total_service` will be assumed. (Part of 'method' - only one field in this group can be set)",
                                 additionalProperties: true,
                               },
-                              distribution_cut: {
+                              distributionCut: {
                                 type: "object",
                                 properties: {
-                                  distribution_filter: {
+                                  distributionFilter: {
                                     type: "string",
                                     description:
                                       "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` aggregating values. Must have `ValueType = DISTRIBUTION` and `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -232,7 +393,7 @@ const createServiceLevelObjective: AppBlock = {
                               "Service Level Indicators for which atomic units of service are counted directly. (Part of 'type' - only one field in this group can be set)",
                             additionalProperties: true,
                           },
-                          basic_sli_performance: {
+                          basicSliPerformance: {
                             type: "object",
                             properties: {
                               method: {
@@ -294,10 +455,10 @@ const createServiceLevelObjective: AppBlock = {
                           "A `PerformanceThreshold` is used when each window is good when that window has a sufficiently high `performance`. (Part of 'window_criterion' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      metric_mean_in_range: {
+                      metricMeanInRange: {
                         type: "object",
                         properties: {
-                          time_series: {
+                          timeSeries: {
                             type: "string",
                             description:
                               "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying the `TimeSeries` to use for evaluating window quality.",
@@ -323,10 +484,10 @@ const createServiceLevelObjective: AppBlock = {
                           "A `MetricRange` is used when each window is good when the value x of a single `TimeSeries` satisfies `range.min <= x <= range.max`. The provided `TimeSeries` must have `ValueType = INT64` or `ValueType = DOUBLE` and `MetricKind = GAUGE`. (Part of 'window_criterion' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      metric_sum_in_range: {
+                      metricSumInRange: {
                         type: "object",
                         properties: {
-                          time_series: {
+                          timeSeries: {
                             type: "string",
                             description:
                               "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying the `TimeSeries` to use for evaluating window quality.",
@@ -352,7 +513,7 @@ const createServiceLevelObjective: AppBlock = {
                           "A `MetricRange` is used when each window is good when the value x of a single `TimeSeries` satisfies `range.min <= x <= range.max`. The provided `TimeSeries` must have `ValueType = INT64` or `ValueType = DOUBLE` and `MetricKind = GAUGE`. (Part of 'window_criterion' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      window_period: {
+                      windowPeriod: {
                         type: "string",
                         description: "Duration string (e.g., '1.5s', '300s')",
                       },
@@ -371,12 +532,12 @@ const createServiceLevelObjective: AppBlock = {
                 description:
                   "The fraction of service that must be good in order for this objective to be met. `0 < goal <= 0.9999`.",
               },
-              rolling_period: {
+              rollingPeriod: {
                 type: "string",
                 description:
                   "Duration string (e.g., '1.5s', '300s') (Part of 'period' - only one field in this group can be set)",
               },
-              calendar_period: {
+              calendarPeriod: {
                 type: "string",
                 enum: [
                   "CALENDAR_PERIOD_UNSPECIFIED",
@@ -391,7 +552,7 @@ const createServiceLevelObjective: AppBlock = {
                 description:
                   "A calendar period, semantically \"since the start of the current `<calendar_period>`\". At this time, only `DAY`, `WEEK`, `FORTNIGHT`, and `MONTH` are supported. (Part of 'period' - only one field in this group can be set)",
               },
-              user_labels: {
+              userLabels: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -412,15 +573,7 @@ const createServiceLevelObjective: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.service_level_objective_id !== undefined)
-          request.service_level_objective_id =
-            input.event.inputConfig.service_level_objective_id;
-        if (input.event.inputConfig.service_level_objective !== undefined)
-          request.service_level_objective =
-            input.event.inputConfig.service_level_objective;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createServiceLevelObjective(
@@ -437,7 +590,8 @@ const createServiceLevelObjective: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -452,14 +606,14 @@ const createServiceLevelObjective: AppBlock = {
             description:
               "Identifier. Resource name for this `ServiceLevelObjective`. The format is:      projects/[PROJECT_ID_OR_NUMBER]/services/[SERVICE_ID]/serviceLevelObjectives/[SLO_NAME]",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description: "Name used for UI elements listing this SLO.",
           },
-          service_level_indicator: {
+          serviceLevelIndicator: {
             type: "object",
             properties: {
-              basic_sli: {
+              basicSli: {
                 type: "object",
                 properties: {
                   method: {
@@ -510,23 +664,23 @@ const createServiceLevelObjective: AppBlock = {
                   "An SLI measuring performance on a well-known service type. Performance will be computed on the basis of pre-defined metrics. The type of the `service_resource` determines the metrics to use and the `service_resource.labels` and `metric_labels` are used to construct a monitoring filter to filter that metric down to just the data relevant to this service. (Part of 'type' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              request_based: {
+              requestBased: {
                 type: "object",
                 properties: {
-                  good_total_ratio: {
+                  goodTotalRatio: {
                     type: "object",
                     properties: {
-                      good_service_filter: {
+                      goodServiceFilter: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying good service provided. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                       },
-                      bad_service_filter: {
+                      badServiceFilter: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying bad service, either demanded service that was not provided or demanded service that was of inadequate quality. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                       },
-                      total_service_filter: {
+                      totalServiceFilter: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying total demanded service. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -536,10 +690,10 @@ const createServiceLevelObjective: AppBlock = {
                       "A `TimeSeriesRatio` specifies two `TimeSeries` to use for computing the `good_service / total_service` ratio. The specified `TimeSeries` must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`. The `TimeSeriesRatio` must specify exactly two of good, bad, and total, and the relationship `good_service + bad_service = total_service` will be assumed. (Part of 'method' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  distribution_cut: {
+                  distributionCut: {
                     type: "object",
                     properties: {
-                      distribution_filter: {
+                      distributionFilter: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` aggregating values. Must have `ValueType = DISTRIBUTION` and `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -570,34 +724,34 @@ const createServiceLevelObjective: AppBlock = {
                   "Service Level Indicators for which atomic units of service are counted directly. (Part of 'type' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              windows_based: {
+              windowsBased: {
                 type: "object",
                 properties: {
-                  good_bad_metric_filter: {
+                  goodBadMetricFilter: {
                     type: "string",
                     description:
                       "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` with `ValueType = BOOL`. The window is good if any `true` values appear in the window. (Part of 'window_criterion' - only one field in this group can be set)",
                   },
-                  good_total_ratio_threshold: {
+                  goodTotalRatioThreshold: {
                     type: "object",
                     properties: {
                       performance: {
                         type: "object",
                         properties: {
-                          good_total_ratio: {
+                          goodTotalRatio: {
                             type: "object",
                             properties: {
-                              good_service_filter: {
+                              goodServiceFilter: {
                                 type: "string",
                                 description:
                                   "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying good service provided. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                               },
-                              bad_service_filter: {
+                              badServiceFilter: {
                                 type: "string",
                                 description:
                                   "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying bad service, either demanded service that was not provided or demanded service that was of inadequate quality. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
                               },
-                              total_service_filter: {
+                              totalServiceFilter: {
                                 type: "string",
                                 description:
                                   "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` quantifying total demanded service. Must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -607,10 +761,10 @@ const createServiceLevelObjective: AppBlock = {
                               "A `TimeSeriesRatio` specifies two `TimeSeries` to use for computing the `good_service / total_service` ratio. The specified `TimeSeries` must have `ValueType = DOUBLE` or `ValueType = INT64` and must have `MetricKind = DELTA` or `MetricKind = CUMULATIVE`. The `TimeSeriesRatio` must specify exactly two of good, bad, and total, and the relationship `good_service + bad_service = total_service` will be assumed. (Part of 'method' - only one field in this group can be set)",
                             additionalProperties: true,
                           },
-                          distribution_cut: {
+                          distributionCut: {
                             type: "object",
                             properties: {
-                              distribution_filter: {
+                              distributionFilter: {
                                 type: "string",
                                 description:
                                   "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying a `TimeSeries` aggregating values. Must have `ValueType = DISTRIBUTION` and `MetricKind = DELTA` or `MetricKind = CUMULATIVE`.",
@@ -641,7 +795,7 @@ const createServiceLevelObjective: AppBlock = {
                           "Service Level Indicators for which atomic units of service are counted directly. (Part of 'type' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      basic_sli_performance: {
+                      basicSliPerformance: {
                         type: "object",
                         properties: {
                           method: {
@@ -703,10 +857,10 @@ const createServiceLevelObjective: AppBlock = {
                       "A `PerformanceThreshold` is used when each window is good when that window has a sufficiently high `performance`. (Part of 'window_criterion' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  metric_mean_in_range: {
+                  metricMeanInRange: {
                     type: "object",
                     properties: {
-                      time_series: {
+                      timeSeries: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying the `TimeSeries` to use for evaluating window quality.",
@@ -732,10 +886,10 @@ const createServiceLevelObjective: AppBlock = {
                       "A `MetricRange` is used when each window is good when the value x of a single `TimeSeries` satisfies `range.min <= x <= range.max`. The provided `TimeSeries` must have `ValueType = INT64` or `ValueType = DOUBLE` and `MetricKind = GAUGE`. (Part of 'window_criterion' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  metric_sum_in_range: {
+                  metricSumInRange: {
                     type: "object",
                     properties: {
-                      time_series: {
+                      timeSeries: {
                         type: "string",
                         description:
                           "A [monitoring filter](https://cloud.google.com/monitoring/api/v3/filters) specifying the `TimeSeries` to use for evaluating window quality.",
@@ -761,7 +915,7 @@ const createServiceLevelObjective: AppBlock = {
                       "A `MetricRange` is used when each window is good when the value x of a single `TimeSeries` satisfies `range.min <= x <= range.max`. The provided `TimeSeries` must have `ValueType = INT64` or `ValueType = DOUBLE` and `MetricKind = GAUGE`. (Part of 'window_criterion' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  window_period: {
+                  windowPeriod: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
@@ -780,12 +934,12 @@ const createServiceLevelObjective: AppBlock = {
             description:
               "The fraction of service that must be good in order for this objective to be met. `0 < goal <= 0.9999`.",
           },
-          rolling_period: {
+          rollingPeriod: {
             type: "string",
             description:
               "Duration string (e.g., '1.5s', '300s') (Part of 'period' - only one field in this group can be set)",
           },
-          calendar_period: {
+          calendarPeriod: {
             type: "string",
             enum: [
               "CALENDAR_PERIOD_UNSPECIFIED",
@@ -800,7 +954,7 @@ const createServiceLevelObjective: AppBlock = {
             description:
               "A calendar period, semantically \"since the start of the current `<calendar_period>`\". At this time, only `DAY`, `WEEK`, `FORTNIGHT`, and `MONTH` are supported. (Part of 'period' - only one field in this group can be set)",
           },
-          user_labels: {
+          userLabels: {
             type: "object",
             additionalProperties: {
               type: "string",

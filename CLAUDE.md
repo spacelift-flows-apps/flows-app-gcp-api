@@ -393,7 +393,7 @@ generatedv2/{service}/
 
 ### Key Design Decisions
 
-**snake_case field names throughout.** `@grpc/proto-loader` v0.7.15 with `loadFileDescriptorSetFromObject` only accepts snake_case field names for serialization — `keepCase` and `jsonName` options have no effect. The generator uses `field.name` (proto-native snake_case) for all input config keys, request assembly, and output schemas. No case conversion happens at runtime.
+**camelCase user-facing field names with proto-derived mapping.** Input config keys and output schema properties use `field.jsonName` (camelCase, e.g. `bucketId`, `storageClass`). Since `@grpc/proto-loader` v0.7.15 requires snake_case for gRPC serialization, each generated gRPC block stores `inputMapping` (camelCase→snake_case) and `outputMapping` (snake_case→camelCase) constants derived from proto field definitions. A shared `convertKeys()` utility in `lib/grpcClient.ts` recursively converts object keys using these mappings at runtime. Identity mappings (where `jsonName === name`) are omitted. Map fields (e.g. `labels`) pass through correctly because their dynamic user-provided keys are not in the mapping. Routing code reads from the already-converted snake_case `request` object and is unaffected. The compute REST generator does not need runtime conversion since REST APIs natively use camelCase.
 
 **Streaming RPCs are skipped.** Only unary (request-response) RPCs become blocks. Client-streaming, server-streaming, and bidi-streaming RPCs are logged and skipped.
 
@@ -503,7 +503,7 @@ generatedv2/compute-{category}/
 
 **Body field flattening.** For POST/PUT/PATCH RPCs with a `body:` annotation (e.g., `body: "instance_resource"`), the referenced field's message sub-fields are flattened into block input config. At runtime, they're assembled into a request body object.
 
-**Query param keys use `jsonName` (camelCase).** The REST API expects camelCase query params (`requestId`, `maxResults`). Input config keys remain snake_case. The `ParsedField.jsonName` provides the camelCase mapping for URL query parameters.
+**All compute field names use camelCase.** Input config keys, query params, body fields, and output schema properties all use `field.jsonName` (camelCase). Path params read from camelCase config keys but write to the URL template's proto-name keys. No runtime mapping is needed since the REST API natively uses camelCase.
 
 **HTTP annotation keys are composite.** Annotations are keyed as `ServiceName.RPCName` (e.g., `Instances.Get`) because many services share RPC names like `Get`, `List`, `Delete`.
 

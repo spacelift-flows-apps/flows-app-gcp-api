@@ -1,5 +1,341 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  clusterId: "cluster_id",
+  nodePoolId: "node_pool_id",
+  nodeVersion: "node_version",
+  imageType: "image_type",
+  workloadMetadataConfig: "workload_metadata_config",
+  upgradeSettings: {
+    name: "upgrade_settings",
+    fields: {
+      maxSurge: "max_surge",
+      maxUnavailable: "max_unavailable",
+      blueGreenSettings: {
+        name: "blue_green_settings",
+        fields: {
+          standardRolloutPolicy: {
+            name: "standard_rollout_policy",
+            fields: {
+              batchPercentage: "batch_percentage",
+              batchNodeCount: "batch_node_count",
+              batchSoakDuration: "batch_soak_duration",
+            },
+          },
+          autoscaledRolloutPolicy: {
+            name: "autoscaled_rollout_policy",
+            fields: {
+              waitForDrainDuration: "wait_for_drain_duration",
+            },
+          },
+          nodePoolSoakDuration: "node_pool_soak_duration",
+        },
+      },
+    },
+  },
+  linuxNodeConfig: {
+    name: "linux_node_config",
+    fields: {
+      cgroupMode: "cgroup_mode",
+      hugepages: {
+        name: "hugepages",
+        fields: {
+          hugepageSize2m: "hugepage_size2m",
+          hugepageSize1g: "hugepage_size1g",
+        },
+      },
+      transparentHugepageEnabled: "transparent_hugepage_enabled",
+      transparentHugepageDefrag: "transparent_hugepage_defrag",
+      swapConfig: {
+        name: "swap_config",
+        fields: {
+          encryptionConfig: "encryption_config",
+          bootDiskProfile: {
+            name: "boot_disk_profile",
+            fields: {
+              swapSizeGib: "swap_size_gib",
+              swapSizePercent: "swap_size_percent",
+            },
+          },
+          ephemeralLocalSsdProfile: {
+            name: "ephemeral_local_ssd_profile",
+            fields: {
+              swapSizeGib: "swap_size_gib",
+              swapSizePercent: "swap_size_percent",
+            },
+          },
+          dedicatedLocalSsdProfile: {
+            name: "dedicated_local_ssd_profile",
+            fields: {
+              diskCount: "disk_count",
+            },
+          },
+        },
+      },
+      nodeKernelModuleLoading: "node_kernel_module_loading",
+    },
+  },
+  kubeletConfig: {
+    name: "kubelet_config",
+    fields: {
+      cpuManagerPolicy: "cpu_manager_policy",
+      topologyManager: "topology_manager",
+      memoryManager: "memory_manager",
+      cpuCfsQuota: "cpu_cfs_quota",
+      cpuCfsQuotaPeriod: "cpu_cfs_quota_period",
+      podPidsLimit: "pod_pids_limit",
+      insecureKubeletReadonlyPortEnabled:
+        "insecure_kubelet_readonly_port_enabled",
+      imageGcLowThresholdPercent: "image_gc_low_threshold_percent",
+      imageGcHighThresholdPercent: "image_gc_high_threshold_percent",
+      imageMinimumGcAge: "image_minimum_gc_age",
+      imageMaximumGcAge: "image_maximum_gc_age",
+      containerLogMaxSize: "container_log_max_size",
+      containerLogMaxFiles: "container_log_max_files",
+      allowedUnsafeSysctls: "allowed_unsafe_sysctls",
+      evictionSoft: {
+        name: "eviction_soft",
+        fields: {
+          memoryAvailable: "memory_available",
+          nodefsAvailable: "nodefs_available",
+          nodefsInodesFree: "nodefs_inodes_free",
+          imagefsAvailable: "imagefs_available",
+          imagefsInodesFree: "imagefs_inodes_free",
+          pidAvailable: "pid_available",
+        },
+      },
+      evictionSoftGracePeriod: {
+        name: "eviction_soft_grace_period",
+        fields: {
+          memoryAvailable: "memory_available",
+          nodefsAvailable: "nodefs_available",
+          nodefsInodesFree: "nodefs_inodes_free",
+          imagefsAvailable: "imagefs_available",
+          imagefsInodesFree: "imagefs_inodes_free",
+          pidAvailable: "pid_available",
+        },
+      },
+      evictionMinimumReclaim: {
+        name: "eviction_minimum_reclaim",
+        fields: {
+          memoryAvailable: "memory_available",
+          nodefsAvailable: "nodefs_available",
+          nodefsInodesFree: "nodefs_inodes_free",
+          imagefsAvailable: "imagefs_available",
+          imagefsInodesFree: "imagefs_inodes_free",
+          pidAvailable: "pid_available",
+        },
+      },
+      evictionMaxPodGracePeriodSeconds: "eviction_max_pod_grace_period_seconds",
+      maxParallelImagePulls: "max_parallel_image_pulls",
+      singleProcessOomKill: "single_process_oom_kill",
+      shutdownGracePeriodSeconds: "shutdown_grace_period_seconds",
+      shutdownGracePeriodCriticalPodsSeconds:
+        "shutdown_grace_period_critical_pods_seconds",
+    },
+  },
+  nodeNetworkConfig: {
+    name: "node_network_config",
+    fields: {
+      createPodRange: "create_pod_range",
+      podRange: "pod_range",
+      podIpv4CidrBlock: "pod_ipv4_cidr_block",
+      enablePrivateNodes: "enable_private_nodes",
+      networkPerformanceConfig: {
+        name: "network_performance_config",
+        fields: {
+          totalEgressBandwidthTier: "total_egress_bandwidth_tier",
+        },
+      },
+      podCidrOverprovisionConfig: "pod_cidr_overprovision_config",
+      additionalNodeNetworkConfigs: "additional_node_network_configs",
+      additionalPodNetworkConfigs: {
+        name: "additional_pod_network_configs",
+        fields: {
+          secondaryPodRange: "secondary_pod_range",
+          maxPodsPerNode: {
+            name: "max_pods_per_node",
+            fields: {
+              maxPodsPerNode: "max_pods_per_node",
+            },
+          },
+        },
+      },
+    },
+  },
+  gcfsConfig: "gcfs_config",
+  confidentialNodes: {
+    name: "confidential_nodes",
+    fields: {
+      confidentialInstanceType: "confidential_instance_type",
+    },
+  },
+  fastSocket: "fast_socket",
+  loggingConfig: {
+    name: "logging_config",
+    fields: {
+      variantConfig: "variant_config",
+    },
+  },
+  resourceLabels: "resource_labels",
+  windowsNodeConfig: {
+    name: "windows_node_config",
+    fields: {
+      osVersion: "os_version",
+    },
+  },
+  accelerators: {
+    name: "accelerators",
+    fields: {
+      acceleratorCount: "accelerator_count",
+      acceleratorType: "accelerator_type",
+      gpuPartitionSize: "gpu_partition_size",
+      gpuSharingConfig: {
+        name: "gpu_sharing_config",
+        fields: {
+          maxSharedClientsPerGpu: "max_shared_clients_per_gpu",
+          gpuSharingStrategy: "gpu_sharing_strategy",
+        },
+      },
+      gpuDriverInstallationConfig: {
+        name: "gpu_driver_installation_config",
+        fields: {
+          gpuDriverVersion: "gpu_driver_version",
+        },
+      },
+    },
+  },
+  machineType: "machine_type",
+  diskType: "disk_type",
+  diskSizeGb: "disk_size_gb",
+  resourceManagerTags: "resource_manager_tags",
+  containerdConfig: {
+    name: "containerd_config",
+    fields: {
+      privateRegistryAccessConfig: {
+        name: "private_registry_access_config",
+        fields: {
+          certificateAuthorityDomainConfig: {
+            name: "certificate_authority_domain_config",
+            fields: {
+              gcpSecretManagerCertificateConfig: {
+                name: "gcp_secret_manager_certificate_config",
+                fields: {
+                  secretUri: "secret_uri",
+                },
+              },
+            },
+          },
+        },
+      },
+      writableCgroups: "writable_cgroups",
+      registryHosts: {
+        name: "registry_hosts",
+        fields: {
+          hosts: {
+            name: "hosts",
+            fields: {
+              overridePath: "override_path",
+              ca: {
+                name: "ca",
+                fields: {
+                  gcpSecretManagerSecretUri: "gcp_secret_manager_secret_uri",
+                },
+              },
+              client: {
+                name: "client",
+                fields: {
+                  cert: {
+                    name: "cert",
+                    fields: {
+                      gcpSecretManagerSecretUri:
+                        "gcp_secret_manager_secret_uri",
+                    },
+                  },
+                  key: {
+                    name: "key",
+                    fields: {
+                      gcpSecretManagerSecretUri:
+                        "gcp_secret_manager_secret_uri",
+                    },
+                  },
+                },
+              },
+              dialTimeout: "dial_timeout",
+            },
+          },
+        },
+      },
+    },
+  },
+  queuedProvisioning: "queued_provisioning",
+  storagePools: "storage_pools",
+  maxRunDuration: "max_run_duration",
+  flexStart: "flex_start",
+  bootDisk: {
+    name: "boot_disk",
+    fields: {
+      diskType: "disk_type",
+      sizeGb: "size_gb",
+      provisionedIops: "provisioned_iops",
+      provisionedThroughput: "provisioned_throughput",
+    },
+  },
+  nodeDrainConfig: {
+    name: "node_drain_config",
+    fields: {
+      respectPdbDuringNodePoolDeletion: "respect_pdb_during_node_pool_deletion",
+    },
+  },
+  consolidationDelay: "consolidation_delay",
+};
+
+const outputMapping = {
+  operation_type: "operationType",
+  status_message: "statusMessage",
+  self_link: "selfLink",
+  target_link: "targetLink",
+  start_time: "startTime",
+  end_time: "endTime",
+  progress: {
+    name: "progress",
+    fields: {
+      metrics: {
+        name: "metrics",
+        fields: {
+          int_value: "intValue",
+          double_value: "doubleValue",
+          string_value: "stringValue",
+        },
+      },
+    },
+  },
+  cluster_conditions: {
+    name: "clusterConditions",
+    fields: {
+      canonical_code: "canonicalCode",
+    },
+  },
+  nodepool_conditions: {
+    name: "nodepoolConditions",
+    fields: {
+      canonical_code: "canonicalCode",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+};
 
 const updateNodePool: AppBlock = {
   name: "Update Node Pool",
@@ -8,7 +344,7 @@ const updateNodePool: AppBlock = {
   inputs: {
     default: {
       config: {
-        project_id: {
+        projectId: {
           name: "Project Id",
           description:
             "Deprecated. The Google Developers Console [project ID or project number](https://cloud.google.com/resource-manager/docs/creating-managing-projects). This field has been deprecated and replaced by the name field.",
@@ -30,7 +366,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        cluster_id: {
+        clusterId: {
           name: "Cluster Id",
           description:
             "Deprecated. The name of the cluster to upgrade. This field has been deprecated and replaced by the name field.",
@@ -41,7 +377,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        node_pool_id: {
+        nodePoolId: {
           name: "Node Pool Id",
           description:
             "Deprecated. The name of the node pool to upgrade. This field has been deprecated and replaced by the name field.",
@@ -52,7 +388,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        node_version: {
+        nodeVersion: {
           name: "Node Version",
           description:
             'Required. The Kubernetes version to change the nodes to (typically an upgrade).  Users may specify either explicit versions offered by Kubernetes Engine or version aliases, which have the following behavior:  - "latest": picks the highest valid Kubernetes version - "1.X": picks the highest valid patch+gke.N patch in the 1.X version - "1.X.Y": picks the highest valid gke.N patch in the 1.X.Y version - "1.X.Y-gke.N": picks an explicit Kubernetes version - "-": picks the Kubernetes master version',
@@ -63,7 +399,7 @@ const updateNodePool: AppBlock = {
           },
           required: true,
         },
-        image_type: {
+        imageType: {
           name: "Image Type",
           description:
             "Required. The desired image type for the node pool. Please see https://cloud.google.com/kubernetes-engine/docs/concepts/node-images for available image types.",
@@ -99,7 +435,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        workload_metadata_config: {
+        workloadMetadataConfig: {
           name: "Workload Metadata Config",
           description:
             "The desired workload metadata config for the node pool.",
@@ -119,19 +455,19 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        upgrade_settings: {
+        upgradeSettings: {
           name: "Upgrade Settings",
           description:
             "Upgrade settings control disruption and speed of the upgrade.",
           type: {
             type: "object",
             properties: {
-              max_surge: {
+              maxSurge: {
                 type: "integer",
                 description:
                   "The maximum number of nodes that can be created beyond the current size of the node pool during the upgrade process.",
               },
-              max_unavailable: {
+              maxUnavailable: {
                 type: "integer",
                 description:
                   "The maximum number of nodes that can be simultaneously unavailable during the upgrade process. A node is considered available if its status is Ready.",
@@ -146,23 +482,23 @@ const updateNodePool: AppBlock = {
                 ],
                 description: "Strategy used for node pool update.",
               },
-              blue_green_settings: {
+              blueGreenSettings: {
                 type: "object",
                 properties: {
-                  standard_rollout_policy: {
+                  standardRolloutPolicy: {
                     type: "object",
                     properties: {
-                      batch_percentage: {
+                      batchPercentage: {
                         type: "number",
                         description:
                           "Percentage of the blue pool nodes to drain in a batch. The range of this field should be (0.0, 1.0]. (Part of 'update_batch_size' - only one field in this group can be set)",
                       },
-                      batch_node_count: {
+                      batchNodeCount: {
                         type: "integer",
                         description:
                           "Number of blue nodes to drain in a batch. (Part of 'update_batch_size' - only one field in this group can be set)",
                       },
-                      batch_soak_duration: {
+                      batchSoakDuration: {
                         type: "string",
                         description: "Duration string (e.g., '1.5s', '300s')",
                       },
@@ -171,10 +507,10 @@ const updateNodePool: AppBlock = {
                       "Standard rollout policy is the default policy for blue-green. (Part of 'rollout_policy' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  autoscaled_rollout_policy: {
+                  autoscaledRolloutPolicy: {
                     type: "object",
                     properties: {
-                      wait_for_drain_duration: {
+                      waitForDrainDuration: {
                         type: "string",
                         description: "Duration string (e.g., '1.5s', '300s')",
                       },
@@ -183,7 +519,7 @@ const updateNodePool: AppBlock = {
                       "Autoscaled rollout policy utilizes the cluster autoscaler during blue-green upgrade to scale both the blue and green pools. (Part of 'rollout_policy' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  node_pool_soak_duration: {
+                  nodePoolSoakDuration: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
@@ -284,7 +620,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        linux_node_config: {
+        linuxNodeConfig: {
           name: "Linux Node Config",
           description: "Parameters that can be configured on Linux nodes.",
           type: {
@@ -298,7 +634,7 @@ const updateNodePool: AppBlock = {
                 description:
                   "The Linux kernel parameters to be applied to the nodes and all pods running on the nodes.  The following parameters are supported.  net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.rmem_default net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse net.ipv4.tcp_mtu_probing net.ipv4.tcp_max_orphans net.ipv4.tcp_max_tw_buckets net.ipv4.tcp_syn_retries net.ipv4.tcp_ecn net.ipv4.tcp_congestion_control net.netfilter.nf_conntrack_max net.netfilter.nf_conntrack_buckets net.netfilter.nf_conntrack_tcp_timeout_close_wait net.netfilter.nf_conntrack_tcp_timeout_time_wait net.netfilter.nf_conntrack_tcp_timeout_established net.netfilter.nf_conntrack_acct kernel.shmmni kernel.shmmax kernel.shmall kernel.perf_event_paranoid kernel.sched_rt_runtime_us kernel.softlockup_panic kernel.yama.ptrace_scope kernel.kptr_restrict kernel.dmesg_restrict kernel.sysrq fs.aio-max-nr fs.file-max fs.inotify.max_user_instances fs.inotify.max_user_watches fs.nr_open vm.dirty_background_ratio vm.dirty_background_bytes vm.dirty_expire_centisecs vm.dirty_ratio vm.dirty_bytes vm.dirty_writeback_centisecs vm.max_map_count vm.overcommit_memory vm.overcommit_ratio vm.vfs_cache_pressure vm.swappiness vm.watermark_scale_factor vm.min_free_kbytes",
               },
-              cgroup_mode: {
+              cgroupMode: {
                 type: "string",
                 enum: [
                   "CGROUP_MODE_UNSPECIFIED",
@@ -311,11 +647,11 @@ const updateNodePool: AppBlock = {
               hugepages: {
                 type: "object",
                 properties: {
-                  hugepage_size2m: {
+                  hugepageSize2m: {
                     type: "integer",
                     description: "Optional. Amount of 2M hugepages",
                   },
-                  hugepage_size1g: {
+                  hugepageSize1g: {
                     type: "integer",
                     description: "Optional. Amount of 1G hugepages",
                   },
@@ -323,7 +659,7 @@ const updateNodePool: AppBlock = {
                 description: "Hugepages amount in both 2m and 1g size",
                 additionalProperties: true,
               },
-              transparent_hugepage_enabled: {
+              transparentHugepageEnabled: {
                 type: "string",
                 enum: [
                   "TRANSPARENT_HUGEPAGE_ENABLED_UNSPECIFIED",
@@ -334,7 +670,7 @@ const updateNodePool: AppBlock = {
                 description:
                   "Optional. Transparent hugepage support for anonymous memory can be entirely disabled (mostly for debugging purposes) or only enabled inside MADV_HUGEPAGE regions (to avoid the risk of consuming more memory resources) or enabled system wide.  See https://docs.kernel.org/admin-guide/mm/transhuge.html for more details.",
               },
-              transparent_hugepage_defrag: {
+              transparentHugepageDefrag: {
                 type: "string",
                 enum: [
                   "TRANSPARENT_HUGEPAGE_DEFRAG_UNSPECIFIED",
@@ -347,7 +683,7 @@ const updateNodePool: AppBlock = {
                 description:
                   "Optional. Defines the transparent hugepage defrag configuration on the node. VM hugepage allocation can be managed by either limiting defragmentation for delayed allocation or skipping it entirely for immediate allocation only.  See https://docs.kernel.org/admin-guide/mm/transhuge.html for more details.",
               },
-              swap_config: {
+              swapConfig: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -355,7 +691,7 @@ const updateNodePool: AppBlock = {
                     description:
                       "Optional. Enables or disables swap for the node pool.",
                   },
-                  encryption_config: {
+                  encryptionConfig: {
                     type: "object",
                     properties: {
                       disabled: {
@@ -368,15 +704,15 @@ const updateNodePool: AppBlock = {
                       "Defines encryption settings for the swap space.",
                     additionalProperties: true,
                   },
-                  boot_disk_profile: {
+                  bootDiskProfile: {
                     type: "object",
                     properties: {
-                      swap_size_gib: {
+                      swapSizeGib: {
                         type: "string",
                         description:
                           "64-bit integer as string (Part of 'swap_size' - only one field in this group can be set)",
                       },
-                      swap_size_percent: {
+                      swapSizePercent: {
                         type: "integer",
                         description:
                           "Specifies the size of the swap space as a percentage of the boot disk size. (Part of 'swap_size' - only one field in this group can be set)",
@@ -386,15 +722,15 @@ const updateNodePool: AppBlock = {
                       "Swap on the node's boot disk. (Part of 'performance_profile' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  ephemeral_local_ssd_profile: {
+                  ephemeralLocalSsdProfile: {
                     type: "object",
                     properties: {
-                      swap_size_gib: {
+                      swapSizeGib: {
                         type: "string",
                         description:
                           "64-bit integer as string (Part of 'swap_size' - only one field in this group can be set)",
                       },
-                      swap_size_percent: {
+                      swapSizePercent: {
                         type: "integer",
                         description:
                           "Specifies the size of the swap space as a percentage of the ephemeral local SSD capacity. (Part of 'swap_size' - only one field in this group can be set)",
@@ -404,10 +740,10 @@ const updateNodePool: AppBlock = {
                       "Swap on the local SSD shared with pod ephemeral storage. (Part of 'performance_profile' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  dedicated_local_ssd_profile: {
+                  dedicatedLocalSsdProfile: {
                     type: "object",
                     properties: {
-                      disk_count: {
+                      diskCount: {
                         type: "string",
                         description: "64-bit integer as string",
                       },
@@ -420,7 +756,7 @@ const updateNodePool: AppBlock = {
                 description: "Configuration for swap memory on a node pool.",
                 additionalProperties: true,
               },
-              node_kernel_module_loading: {
+              nodeKernelModuleLoading: {
                 type: "object",
                 properties: {
                   policy: {
@@ -444,18 +780,18 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        kubelet_config: {
+        kubeletConfig: {
           name: "Kubelet Config",
           description: "Node kubelet configs.",
           type: {
             type: "object",
             properties: {
-              cpu_manager_policy: {
+              cpuManagerPolicy: {
                 type: "string",
                 description:
                   'Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/  The following values are allowed. * "none": the default, which represents the existing scheduling behavior. * "static": allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is \'none\' if unspecified.',
               },
-              topology_manager: {
+              topologyManager: {
                 type: "object",
                 properties: {
                   policy: {
@@ -473,7 +809,7 @@ const updateNodePool: AppBlock = {
                   "TopologyManager defines the configuration options for Topology Manager feature. See https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/",
                 additionalProperties: true,
               },
-              memory_manager: {
+              memoryManager: {
                 type: "object",
                 properties: {
                   policy: {
@@ -486,55 +822,55 @@ const updateNodePool: AppBlock = {
                   "The option enables the Kubernetes NUMA-aware Memory Manager feature. Detailed description about the feature can be found [here](https://kubernetes.io/docs/tasks/administer-cluster/memory-manager/).",
                 additionalProperties: true,
               },
-              cpu_cfs_quota: {
+              cpuCfsQuota: {
                 type: "boolean",
                 description:
                   "Enable CPU CFS quota enforcement for containers that specify CPU limits.  This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all.  Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits.  The default value is 'true' if unspecified.",
               },
-              cpu_cfs_quota_period: {
+              cpuCfsQuotaPeriod: {
                 type: "string",
                 description:
                   'Set the CPU CFS quota period value \'cpu.cfs_period_us\'.  The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". The value must be a positive duration between 1ms and 1 second, inclusive.',
               },
-              pod_pids_limit: {
+              podPidsLimit: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              insecure_kubelet_readonly_port_enabled: {
+              insecureKubeletReadonlyPortEnabled: {
                 type: "boolean",
                 description: "Enable or disable Kubelet read only port.",
               },
-              image_gc_low_threshold_percent: {
+              imageGcLowThresholdPercent: {
                 type: "integer",
                 description:
                   "Optional. Defines the percent of disk usage before which image garbage collection is never run. Lowest disk usage to garbage collect to. The percent is calculated as this field value out of 100.  The value must be between 10 and 85, inclusive and smaller than image_gc_high_threshold_percent.  The default value is 80 if unspecified.",
               },
-              image_gc_high_threshold_percent: {
+              imageGcHighThresholdPercent: {
                 type: "integer",
                 description:
                   "Optional. Defines the percent of disk usage after which image garbage collection is always run. The percent is calculated as this field value out of 100.  The value must be between 10 and 85, inclusive and greater than image_gc_low_threshold_percent.  The default value is 85 if unspecified.",
               },
-              image_minimum_gc_age: {
+              imageMinimumGcAge: {
                 type: "string",
                 description:
                   'Optional. Defines the minimum age for an unused image before it is garbage collected.  The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300s", "1.5h", and "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".  The value must be a positive duration less than or equal to 2 minutes.  The default value is "2m0s" if unspecified.',
               },
-              image_maximum_gc_age: {
+              imageMaximumGcAge: {
                 type: "string",
                 description:
                   'Optional. Defines the maximum age an image can be unused before it is garbage collected. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300s", "1.5h", and "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".  The value must be a positive duration greater than image_minimum_gc_age or "0s".  The default value is "0s" if unspecified, which disables this field, meaning images won\'t be garbage collected based on being unused for too long.',
               },
-              container_log_max_size: {
+              containerLogMaxSize: {
                 type: "string",
                 description:
                   "Optional. Defines the maximum size of the container log file before it is rotated. See https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation  Valid format is positive number + unit, e.g. 100Ki, 10Mi. Valid units are Ki, Mi, Gi. The value must be between 10Mi and 500Mi, inclusive.  Note that the total container log size (container_log_max_size * container_log_max_files) cannot exceed 1% of the total storage of the node, to avoid disk pressure caused by log files.  The default value is 10Mi if unspecified.",
               },
-              container_log_max_files: {
+              containerLogMaxFiles: {
                 type: "integer",
                 description:
                   "Optional. Defines the maximum number of container log files that can be present for a container. See https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation  The value must be an integer between 2 and 10, inclusive. The default value is 5 if unspecified.",
               },
-              allowed_unsafe_sysctls: {
+              allowedUnsafeSysctls: {
                 type: "array",
                 items: {
                   type: "string",
@@ -542,35 +878,35 @@ const updateNodePool: AppBlock = {
                 description:
                   "Optional. Defines a comma-separated allowlist of unsafe sysctls or sysctl patterns (ending in `*`).  The unsafe namespaced sysctl groups are `kernel.shm*`, `kernel.msg*`, `kernel.sem`, `fs.mqueue.*`, and `net.*`. Leaving this allowlist empty means they cannot be set on Pods.  To allow certain sysctls or sysctl patterns to be set on Pods, list them separated by commas. For example: `kernel.msg*,net.ipv4.route.min_pmtu`.  See https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/ for more details.",
               },
-              eviction_soft: {
+              evictionSoft: {
                 type: "object",
                 properties: {
-                  memory_available: {
+                  memoryAvailable: {
                     type: "string",
                     description:
                       'Optional. Memory available (i.e. capacity - workingSet), in bytes. Defines the amount of "memory.available" signal in kubelet. Default is unset, if not specified in the kubelet config. Format: positive number + unit, e.g. 100Ki, 10Mi, 5Gi. Valid units are Ki, Mi, Gi. Must be >= 100Mi and <= 50% of the node\'s memory. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  nodefs_available: {
+                  nodefsAvailable: {
                     type: "string",
                     description:
                       'Optional. Amount of storage available on filesystem that kubelet uses for volumes, daemon logs, etc. Defines the amount of "nodefs.available" signal in kubelet. Default is unset, if not specified in the kubelet config. It takses percentage value for now. Sample format: "30%". Must be >= 10% and <= 50%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  nodefs_inodes_free: {
+                  nodefsInodesFree: {
                     type: "string",
                     description:
                       'Optional. Amount of inodes available on filesystem that kubelet uses for volumes, daemon logs, etc. Defines the amount of "nodefs.inodesFree" signal in kubelet. Default is unset, if not specified in the kubelet config. Linux only. It takses percentage value for now. Sample format: "30%". Must be >= 5% and <= 50%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  imagefs_available: {
+                  imagefsAvailable: {
                     type: "string",
                     description:
                       'Optional. Amount of storage available on filesystem that container runtime uses for storing images layers. If the container filesystem and image filesystem are not separate, then imagefs can store both image layers and writeable layers. Defines the amount of "imagefs.available" signal in kubelet. Default is unset, if not specified in the kubelet config. It takses percentage value for now. Sample format: "30%". Must be >= 15% and <= 50%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  imagefs_inodes_free: {
+                  imagefsInodesFree: {
                     type: "string",
                     description:
                       'Optional. Amount of inodes available on filesystem that container runtime uses for storing images layers. Defines the amount of "imagefs.inodesFree" signal in kubelet. Default is unset, if not specified in the kubelet config. Linux only. It takses percentage value for now. Sample format: "30%". Must be >= 5% and <= 50%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  pid_available: {
+                  pidAvailable: {
                     type: "string",
                     description:
                       'Optional. Amount of PID available for pod allocation. Defines the amount of "pid.available" signal in kubelet. Default is unset, if not specified in the kubelet config. It takses percentage value for now. Sample format: "30%". Must be >= 10% and <= 50%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
@@ -580,35 +916,35 @@ const updateNodePool: AppBlock = {
                   "Eviction signals are the current state of a particular resource at a specific point in time. The kubelet uses eviction signals to make eviction decisions by comparing the signals to eviction thresholds, which are the minimum amount of the resource that should be available on the node.",
                 additionalProperties: true,
               },
-              eviction_soft_grace_period: {
+              evictionSoftGracePeriod: {
                 type: "object",
                 properties: {
-                  memory_available: {
+                  memoryAvailable: {
                     type: "string",
                     description:
                       'Optional. Grace period for eviction due to memory available signal. Sample format: "10s". Must be >= 0. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  nodefs_available: {
+                  nodefsAvailable: {
                     type: "string",
                     description:
                       'Optional. Grace period for eviction due to nodefs available signal. Sample format: "10s". Must be >= 0. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  nodefs_inodes_free: {
+                  nodefsInodesFree: {
                     type: "string",
                     description:
                       'Optional. Grace period for eviction due to nodefs inodes free signal. Sample format: "10s". Must be >= 0. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  imagefs_available: {
+                  imagefsAvailable: {
                     type: "string",
                     description:
                       'Optional. Grace period for eviction due to imagefs available signal. Sample format: "10s". Must be >= 0. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  imagefs_inodes_free: {
+                  imagefsInodesFree: {
                     type: "string",
                     description:
                       'Optional. Grace period for eviction due to imagefs inodes free signal. Sample format: "10s". Must be >= 0. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  pid_available: {
+                  pidAvailable: {
                     type: "string",
                     description:
                       'Optional. Grace period for eviction due to pid available signal. Sample format: "10s". Must be >= 0. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
@@ -618,35 +954,35 @@ const updateNodePool: AppBlock = {
                   "Eviction grace periods are grace periods for each eviction signal.",
                 additionalProperties: true,
               },
-              eviction_minimum_reclaim: {
+              evictionMinimumReclaim: {
                 type: "object",
                 properties: {
-                  memory_available: {
+                  memoryAvailable: {
                     type: "string",
                     description:
                       'Optional. Minimum reclaim for eviction due to memory available signal. Only take percentage value for now. Sample format: "10%". Must be <=10%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  nodefs_available: {
+                  nodefsAvailable: {
                     type: "string",
                     description:
                       'Optional. Minimum reclaim for eviction due to nodefs available signal. Only take percentage value for now. Sample format: "10%". Must be <=10%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  nodefs_inodes_free: {
+                  nodefsInodesFree: {
                     type: "string",
                     description:
                       'Optional. Minimum reclaim for eviction due to nodefs inodes free signal. Only take percentage value for now. Sample format: "10%". Must be <=10%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  imagefs_available: {
+                  imagefsAvailable: {
                     type: "string",
                     description:
                       'Optional. Minimum reclaim for eviction due to imagefs available signal. Only take percentage value for now. Sample format: "10%". Must be <=10%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  imagefs_inodes_free: {
+                  imagefsInodesFree: {
                     type: "string",
                     description:
                       'Optional. Minimum reclaim for eviction due to imagefs inodes free signal. Only take percentage value for now. Sample format: "10%". Must be <=10%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
                   },
-                  pid_available: {
+                  pidAvailable: {
                     type: "string",
                     description:
                       'Optional. Minimum reclaim for eviction due to pid available signal. Only take percentage value for now. Sample format: "10%". Must be <=10%. See https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#eviction-signals',
@@ -656,27 +992,27 @@ const updateNodePool: AppBlock = {
                   "Eviction minimum reclaims are the resource amounts of minimum reclaims for each eviction signal.",
                 additionalProperties: true,
               },
-              eviction_max_pod_grace_period_seconds: {
+              evictionMaxPodGracePeriodSeconds: {
                 type: "integer",
                 description:
                   "Optional. eviction_max_pod_grace_period_seconds is the maximum allowed grace period (in seconds) to use when terminating pods in response to a soft eviction threshold being met. This value effectively caps the Pod's terminationGracePeriodSeconds value during soft evictions. Default: 0. Range: [0, 300].",
               },
-              max_parallel_image_pulls: {
+              maxParallelImagePulls: {
                 type: "integer",
                 description:
                   "Optional. Defines the maximum number of image pulls in parallel. The range is 2 to 5, inclusive. The default value is 2 or 3 depending on the disk type.  See https://kubernetes.io/docs/concepts/containers/images/#maximum-parallel-image-pulls for more details.",
               },
-              single_process_oom_kill: {
+              singleProcessOomKill: {
                 type: "boolean",
                 description:
                   "Optional. Defines whether to enable single process OOM killer. If true, will prevent the memory.oom.group flag from being set for container cgroups in cgroups v2. This causes processes in the container to be OOM killed individually instead of as a group.",
               },
-              shutdown_grace_period_seconds: {
+              shutdownGracePeriodSeconds: {
                 type: "integer",
                 description:
                   "Optional. shutdown_grace_period_seconds is the maximum allowed grace period (in seconds) the total duration that the node should delay the shutdown during a graceful shutdown. This is the total grace period for pod termination for both regular and critical pods. https://kubernetes.io/docs/concepts/cluster-administration/node-shutdown/ If set to 0, node will not enable the graceful node shutdown functionality. This field is only valid for Spot VMs. Allowed values: 0, 30, 120.",
               },
-              shutdown_grace_period_critical_pods_seconds: {
+              shutdownGracePeriodCriticalPodsSeconds: {
                 type: "integer",
                 description:
                   "Optional. shutdown_grace_period_critical_pods_seconds is the maximum allowed grace period (in seconds) used to terminate critical pods during a node shutdown. This value should be <= shutdown_grace_period_seconds, and is only valid if shutdown_grace_period_seconds is set. https://kubernetes.io/docs/concepts/cluster-administration/node-shutdown/ Range: [0, 120].",
@@ -687,36 +1023,36 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        node_network_config: {
+        nodeNetworkConfig: {
           name: "Node Network Config",
           description: "Node network config.",
           type: {
             type: "object",
             properties: {
-              create_pod_range: {
+              createPodRange: {
                 type: "boolean",
                 description:
                   "Input only. Whether to create a new range for pod IPs in this node pool. Defaults are provided for `pod_range` and `pod_ipv4_cidr_block` if they are not specified.  If neither `create_pod_range` or `pod_range` are specified, the cluster-level default (`ip_allocation_policy.cluster_ipv4_cidr_block`) is used.  Only applicable if `ip_allocation_policy.use_ip_aliases` is true.  This field cannot be changed after the node pool has been created.",
               },
-              pod_range: {
+              podRange: {
                 type: "string",
                 description:
                   "The ID of the secondary range for pod IPs. If `create_pod_range` is true, this ID is used for the new range. If `create_pod_range` is false, uses an existing secondary range with this ID.  Only applicable if `ip_allocation_policy.use_ip_aliases` is true.  This field cannot be changed after the node pool has been created.",
               },
-              pod_ipv4_cidr_block: {
+              podIpv4CidrBlock: {
                 type: "string",
                 description:
                   "The IP address range for pod IPs in this node pool.  Only applicable if `create_pod_range` is true.  Set to blank to have a range chosen with the default size.  Set to /netmask (e.g. `/14`) to have a range chosen with a specific netmask.  Set to a [CIDR](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) notation (e.g. `10.96.0.0/14`) to pick a specific range to use.  Only applicable if `ip_allocation_policy.use_ip_aliases` is true.  This field cannot be changed after the node pool has been created.",
               },
-              enable_private_nodes: {
+              enablePrivateNodes: {
                 type: "boolean",
                 description:
                   "Whether nodes have internal IP addresses only. If enable_private_nodes is not specified, then the value is derived from [Cluster.NetworkConfig.default_enable_private_nodes][]",
               },
-              network_performance_config: {
+              networkPerformanceConfig: {
                 type: "object",
                 properties: {
-                  total_egress_bandwidth_tier: {
+                  totalEgressBandwidthTier: {
                     type: "string",
                     enum: ["TIER_UNSPECIFIED", "TIER_1"],
                     description:
@@ -726,7 +1062,7 @@ const updateNodePool: AppBlock = {
                 description: "Configuration of all network bandwidth tiers",
                 additionalProperties: true,
               },
-              pod_cidr_overprovision_config: {
+              podCidrOverprovisionConfig: {
                 type: "object",
                 properties: {
                   disable: {
@@ -739,7 +1075,7 @@ const updateNodePool: AppBlock = {
                   "[PRIVATE FIELD] Config for pod CIDR size overprovisioning.",
                 additionalProperties: true,
               },
-              additional_node_network_configs: {
+              additionalNodeNetworkConfigs: {
                 type: "array",
                 items: {
                   type: "object",
@@ -762,7 +1098,7 @@ const updateNodePool: AppBlock = {
                 description:
                   "We specify the additional node networks for this node pool using this list. Each node network corresponds to an additional interface",
               },
-              additional_pod_network_configs: {
+              additionalPodNetworkConfigs: {
                 type: "array",
                 items: {
                   type: "object",
@@ -772,15 +1108,15 @@ const updateNodePool: AppBlock = {
                       description:
                         "Name of the subnetwork where the additional pod network belongs.",
                     },
-                    secondary_pod_range: {
+                    secondaryPodRange: {
                       type: "string",
                       description:
                         "The name of the secondary range on the subnet which provides IP address for this pod range.",
                     },
-                    max_pods_per_node: {
+                    maxPodsPerNode: {
                       type: "object",
                       properties: {
-                        max_pods_per_node: {
+                        maxPodsPerNode: {
                           type: "string",
                           description: "64-bit integer as string",
                         },
@@ -807,7 +1143,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        gcfs_config: {
+        gcfsConfig: {
           name: "Gcfs Config",
           description: "GCFS config.",
           type: {
@@ -824,7 +1160,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        confidential_nodes: {
+        confidentialNodes: {
           name: "Confidential Nodes",
           description:
             "Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.",
@@ -835,7 +1171,7 @@ const updateNodePool: AppBlock = {
                 type: "boolean",
                 description: "Whether Confidential Nodes feature is enabled.",
               },
-              confidential_instance_type: {
+              confidentialInstanceType: {
                 type: "string",
                 enum: [
                   "CONFIDENTIAL_INSTANCE_TYPE_UNSPECIFIED",
@@ -881,7 +1217,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        fast_socket: {
+        fastSocket: {
           name: "Fast Socket",
           description: "Enable or disable NCCL fast socket for the node pool.",
           type: {
@@ -898,13 +1234,13 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        logging_config: {
+        loggingConfig: {
           name: "Logging Config",
           description: "Logging configuration.",
           type: {
             type: "object",
             properties: {
-              variant_config: {
+              variantConfig: {
                 type: "object",
                 properties: {
                   variant: {
@@ -924,7 +1260,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        resource_labels: {
+        resourceLabels: {
           name: "Resource Labels",
           description:
             "The resource labels for the node pool to use to annotate any related Google Compute Engine resources.",
@@ -945,13 +1281,13 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        windows_node_config: {
+        windowsNodeConfig: {
           name: "Windows Node Config",
           description: "Parameters that can be configured on Windows nodes.",
           type: {
             type: "object",
             properties: {
-              os_version: {
+              osVersion: {
                 type: "string",
                 enum: [
                   "OS_VERSION_UNSPECIFIED",
@@ -977,28 +1313,28 @@ const updateNodePool: AppBlock = {
             items: {
               type: "object",
               properties: {
-                accelerator_count: {
+                acceleratorCount: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                accelerator_type: {
+                acceleratorType: {
                   type: "string",
                   description:
                     "The accelerator type resource name. List of supported accelerators [here](https://cloud.google.com/compute/docs/gpus)",
                 },
-                gpu_partition_size: {
+                gpuPartitionSize: {
                   type: "string",
                   description:
                     "Size of partitions to create on the GPU. Valid values are described in the NVIDIA [mig user guide](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/#partitioning).",
                 },
-                gpu_sharing_config: {
+                gpuSharingConfig: {
                   type: "object",
                   properties: {
-                    max_shared_clients_per_gpu: {
+                    maxSharedClientsPerGpu: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
-                    gpu_sharing_strategy: {
+                    gpuSharingStrategy: {
                       type: "string",
                       enum: [
                         "GPU_SHARING_STRATEGY_UNSPECIFIED",
@@ -1013,10 +1349,10 @@ const updateNodePool: AppBlock = {
                     "GPUSharingConfig represents the GPU sharing configuration for Hardware Accelerators.",
                   additionalProperties: true,
                 },
-                gpu_driver_installation_config: {
+                gpuDriverInstallationConfig: {
                   type: "object",
                   properties: {
-                    gpu_driver_version: {
+                    gpuDriverVersion: {
                       type: "string",
                       enum: [
                         "GPU_DRIVER_VERSION_UNSPECIFIED",
@@ -1041,7 +1377,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        machine_type: {
+        machineType: {
           name: "Machine Type",
           description:
             "Optional. The desired [Google Compute Engine machine type](https://cloud.google.com/compute/docs/machine-types) for nodes in the node pool. Initiates an upgrade operation that migrates the nodes in the node pool to the specified machine type.",
@@ -1052,7 +1388,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        disk_type: {
+        diskType: {
           name: "Disk Type",
           description:
             "Optional. The desired disk type (e.g. 'pd-standard', 'pd-ssd' or 'pd-balanced') for nodes in the node pool. Initiates an upgrade operation that migrates the nodes in the node pool to the specified disk type.",
@@ -1063,7 +1399,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        disk_size_gb: {
+        diskSizeGb: {
           name: "Disk Size Gb",
           description:
             "Optional. The desired disk size for nodes in the node pool specified in GB. The smallest allowed disk size is 10GB. Initiates an upgrade operation that migrates the nodes in the node pool to the specified disk size.",
@@ -1073,7 +1409,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        resource_manager_tags: {
+        resourceManagerTags: {
           name: "Resource Manager Tags",
           description:
             "Desired resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies. Existing tags will be replaced with new values.",
@@ -1095,21 +1431,21 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        containerd_config: {
+        containerdConfig: {
           name: "Containerd Config",
           description:
             "The desired containerd config for nodes in the node pool. Initiates an upgrade operation that recreates the nodes with the new config.",
           type: {
             type: "object",
             properties: {
-              private_registry_access_config: {
+              privateRegistryAccessConfig: {
                 type: "object",
                 properties: {
                   enabled: {
                     type: "boolean",
                     description: "Private registry access is enabled.",
                   },
-                  certificate_authority_domain_config: {
+                  certificateAuthorityDomainConfig: {
                     type: "array",
                     items: {
                       type: "object",
@@ -1122,10 +1458,10 @@ const updateNodePool: AppBlock = {
                           description:
                             "List of fully qualified domain names (FQDN). Specifying port is supported. Wildcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000",
                         },
-                        gcp_secret_manager_certificate_config: {
+                        gcpSecretManagerCertificateConfig: {
                           type: "object",
                           properties: {
-                            secret_uri: {
+                            secretUri: {
                               type: "string",
                               description:
                                 'Secret URI, in the form "projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION". Version can be fixed (e.g. "2") or "latest"',
@@ -1146,7 +1482,7 @@ const updateNodePool: AppBlock = {
                   "PrivateRegistryAccessConfig contains access configuration for private container registries.",
                 additionalProperties: true,
               },
-              writable_cgroups: {
+              writableCgroups: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -1158,7 +1494,7 @@ const updateNodePool: AppBlock = {
                 description: "Defines writable cgroups configuration.",
                 additionalProperties: true,
               },
-              registry_hosts: {
+              registryHosts: {
                 type: "array",
                 items: {
                   type: "object",
@@ -1192,7 +1528,7 @@ const updateNodePool: AppBlock = {
                             description:
                               "Capabilities represent the capabilities of the registry host, specifying what operations a host is capable of performing. If not set, containerd enables all capabilities by default.",
                           },
-                          override_path: {
+                          overridePath: {
                             type: "boolean",
                             description:
                               "OverridePath is used to indicate the host's API root endpoint is defined in the URL path rather than by the API specification. This may be used with non-compliant OCI registries which are missing the /v2 prefix. If not set, containerd sets default false.",
@@ -1227,7 +1563,7 @@ const updateNodePool: AppBlock = {
                             items: {
                               type: "object",
                               properties: {
-                                gcp_secret_manager_secret_uri: {
+                                gcpSecretManagerSecretUri: {
                                   type: "string",
                                   description:
                                     'The URI configures a secret from [Secret Manager](https://cloud.google.com/secret-manager) in the format "projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION" for global secret or "projects/$PROJECT_ID/locations/$REGION/secrets/$SECRET_NAME/versions/$VERSION" for regional secret. Version can be fixed (e.g. "2") or "latest"',
@@ -1248,7 +1584,7 @@ const updateNodePool: AppBlock = {
                                 cert: {
                                   type: "object",
                                   properties: {
-                                    gcp_secret_manager_secret_uri: {
+                                    gcpSecretManagerSecretUri: {
                                       type: "string",
                                       description:
                                         'The URI configures a secret from [Secret Manager](https://cloud.google.com/secret-manager) in the format "projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION" for global secret or "projects/$PROJECT_ID/locations/$REGION/secrets/$SECRET_NAME/versions/$VERSION" for regional secret. Version can be fixed (e.g. "2") or "latest"',
@@ -1261,7 +1597,7 @@ const updateNodePool: AppBlock = {
                                 key: {
                                   type: "object",
                                   properties: {
-                                    gcp_secret_manager_secret_uri: {
+                                    gcpSecretManagerSecretUri: {
                                       type: "string",
                                       description:
                                         'The URI configures a secret from [Secret Manager](https://cloud.google.com/secret-manager) in the format "projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION" for global secret or "projects/$PROJECT_ID/locations/$REGION/secrets/$SECRET_NAME/versions/$VERSION" for regional secret. Version can be fixed (e.g. "2") or "latest"',
@@ -1279,7 +1615,7 @@ const updateNodePool: AppBlock = {
                             description:
                               "Client configures the registry host client certificate and key.",
                           },
-                          dial_timeout: {
+                          dialTimeout: {
                             type: "string",
                             description:
                               "Duration string (e.g., '1.5s', '300s')",
@@ -1307,7 +1643,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        queued_provisioning: {
+        queuedProvisioning: {
           name: "Queued Provisioning",
           description: "Specifies the configuration of queued provisioning.",
           type: {
@@ -1325,7 +1661,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        storage_pools: {
+        storagePools: {
           name: "Storage Pools",
           description:
             "List of Storage Pools where boot disks are provisioned. Existing Storage Pools will be replaced with storage-pools.",
@@ -1339,7 +1675,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        max_run_duration: {
+        maxRunDuration: {
           name: "Max Run Duration",
           description:
             "The maximum duration for the nodes to exist. If unspecified, the nodes can exist indefinitely.",
@@ -1349,7 +1685,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        flex_start: {
+        flexStart: {
           name: "Flex Start",
           description: "Flex Start flag for enabling Flex Start VM.",
           type: {
@@ -1358,27 +1694,27 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        boot_disk: {
+        bootDisk: {
           name: "Boot Disk",
           description:
             "The desired boot disk config for nodes in the node pool. Initiates an upgrade operation that migrates the nodes in the node pool to the specified boot disk config.",
           type: {
             type: "object",
             properties: {
-              disk_type: {
+              diskType: {
                 type: "string",
                 description:
                   "Disk type of the boot disk. (i.e. Hyperdisk-Balanced, PD-Balanced, etc.)",
               },
-              size_gb: {
+              sizeGb: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              provisioned_iops: {
+              provisionedIops: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              provisioned_throughput: {
+              provisionedThroughput: {
                 type: "string",
                 description: "64-bit integer as string",
               },
@@ -1389,14 +1725,14 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        node_drain_config: {
+        nodeDrainConfig: {
           name: "Node Drain Config",
           description:
             "The desired node drain configuration for nodes in the node pool.",
           type: {
             type: "object",
             properties: {
-              respect_pdb_during_node_pool_deletion: {
+              respectPdbDuringNodePoolDeletion: {
                 type: "boolean",
                 description:
                   "Whether to respect PDB during node pool deletion.",
@@ -1408,7 +1744,7 @@ const updateNodePool: AppBlock = {
           },
           required: false,
         },
-        consolidation_delay: {
+        consolidationDelay: {
           name: "Consolidation Delay",
           description:
             "Consolidation delay defines duration after which the Cluster Autoscaler can scale down underutilized nodes. If not set, nodes are scaled down by default behavior, i.e. according to the chosen autoscaling profile.",
@@ -1422,88 +1758,7 @@ const updateNodePool: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.zone !== undefined)
-          request.zone = input.event.inputConfig.zone;
-        if (input.event.inputConfig.cluster_id !== undefined)
-          request.cluster_id = input.event.inputConfig.cluster_id;
-        if (input.event.inputConfig.node_pool_id !== undefined)
-          request.node_pool_id = input.event.inputConfig.node_pool_id;
-        if (input.event.inputConfig.node_version !== undefined)
-          request.node_version = input.event.inputConfig.node_version;
-        if (input.event.inputConfig.image_type !== undefined)
-          request.image_type = input.event.inputConfig.image_type;
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.locations !== undefined)
-          request.locations = input.event.inputConfig.locations;
-        if (input.event.inputConfig.workload_metadata_config !== undefined)
-          request.workload_metadata_config =
-            input.event.inputConfig.workload_metadata_config;
-        if (input.event.inputConfig.upgrade_settings !== undefined)
-          request.upgrade_settings = input.event.inputConfig.upgrade_settings;
-        if (input.event.inputConfig.tags !== undefined)
-          request.tags = input.event.inputConfig.tags;
-        if (input.event.inputConfig.taints !== undefined)
-          request.taints = input.event.inputConfig.taints;
-        if (input.event.inputConfig.labels !== undefined)
-          request.labels = input.event.inputConfig.labels;
-        if (input.event.inputConfig.linux_node_config !== undefined)
-          request.linux_node_config = input.event.inputConfig.linux_node_config;
-        if (input.event.inputConfig.kubelet_config !== undefined)
-          request.kubelet_config = input.event.inputConfig.kubelet_config;
-        if (input.event.inputConfig.node_network_config !== undefined)
-          request.node_network_config =
-            input.event.inputConfig.node_network_config;
-        if (input.event.inputConfig.gcfs_config !== undefined)
-          request.gcfs_config = input.event.inputConfig.gcfs_config;
-        if (input.event.inputConfig.confidential_nodes !== undefined)
-          request.confidential_nodes =
-            input.event.inputConfig.confidential_nodes;
-        if (input.event.inputConfig.gvnic !== undefined)
-          request.gvnic = input.event.inputConfig.gvnic;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
-        if (input.event.inputConfig.fast_socket !== undefined)
-          request.fast_socket = input.event.inputConfig.fast_socket;
-        if (input.event.inputConfig.logging_config !== undefined)
-          request.logging_config = input.event.inputConfig.logging_config;
-        if (input.event.inputConfig.resource_labels !== undefined)
-          request.resource_labels = input.event.inputConfig.resource_labels;
-        if (input.event.inputConfig.windows_node_config !== undefined)
-          request.windows_node_config =
-            input.event.inputConfig.windows_node_config;
-        if (input.event.inputConfig.accelerators !== undefined)
-          request.accelerators = input.event.inputConfig.accelerators;
-        if (input.event.inputConfig.machine_type !== undefined)
-          request.machine_type = input.event.inputConfig.machine_type;
-        if (input.event.inputConfig.disk_type !== undefined)
-          request.disk_type = input.event.inputConfig.disk_type;
-        if (input.event.inputConfig.disk_size_gb !== undefined)
-          request.disk_size_gb = input.event.inputConfig.disk_size_gb;
-        if (input.event.inputConfig.resource_manager_tags !== undefined)
-          request.resource_manager_tags =
-            input.event.inputConfig.resource_manager_tags;
-        if (input.event.inputConfig.containerd_config !== undefined)
-          request.containerd_config = input.event.inputConfig.containerd_config;
-        if (input.event.inputConfig.queued_provisioning !== undefined)
-          request.queued_provisioning =
-            input.event.inputConfig.queued_provisioning;
-        if (input.event.inputConfig.storage_pools !== undefined)
-          request.storage_pools = input.event.inputConfig.storage_pools;
-        if (input.event.inputConfig.max_run_duration !== undefined)
-          request.max_run_duration = input.event.inputConfig.max_run_duration;
-        if (input.event.inputConfig.flex_start !== undefined)
-          request.flex_start = input.event.inputConfig.flex_start;
-        if (input.event.inputConfig.boot_disk !== undefined)
-          request.boot_disk = input.event.inputConfig.boot_disk;
-        if (input.event.inputConfig.node_drain_config !== undefined)
-          request.node_drain_config = input.event.inputConfig.node_drain_config;
-        if (input.event.inputConfig.consolidation_delay !== undefined)
-          request.consolidation_delay =
-            input.event.inputConfig.consolidation_delay;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateNodePool(request, (err: any, response: any) => {
@@ -1517,7 +1772,8 @@ const updateNodePool: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -1537,7 +1793,7 @@ const updateNodePool: AppBlock = {
             description:
               "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/zones#available) in which the operation is taking place. This field is deprecated, use location instead.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             enum: [
               "TYPE_UNSPECIFIED",
@@ -1578,17 +1834,17 @@ const updateNodePool: AppBlock = {
             description:
               "Output only. Detailed operation progress, if available.",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "Output only. If an error has occurred, a textual description of the error. Deprecated. Use the field error instead.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. Server-defined URI for the operation. Example: `https://container.googleapis.com/v1alpha1/projects/123/locations/us-central1/operations/operation-123`.",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "Output only. Server-defined URI for the target of the operation. The format of this is a URI to the resource being modified (such as a cluster, node pool, or node). For node pool repairs, there may be multiple nodes being repaired, but only one will be the target.  Examples:  - ## `https://container.googleapis.com/v1/projects/123/locations/us-central1/clusters/my-cluster`  ## `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np`  `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np/node/my-node`",
@@ -1598,12 +1854,12 @@ const updateNodePool: AppBlock = {
             description:
               "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) or [region](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) in which the cluster resides.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "Output only. The time the operation started, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "Output only. The time the operation completed, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
@@ -1638,17 +1894,17 @@ const updateNodePool: AppBlock = {
                       description:
                         'Required. Metric name, e.g., "nodes total", "percent done".',
                     },
-                    int_value: {
+                    intValue: {
                       type: "string",
                       description:
                         "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                     },
-                    double_value: {
+                    doubleValue: {
                       type: "number",
                       description:
                         "For metrics with floating point value. (Part of 'value' - only one field in this group can be set)",
                     },
-                    string_value: {
+                    stringValue: {
                       type: "string",
                       description:
                         "For metrics with custom values (ratios, visual progress, etc.). (Part of 'value' - only one field in this group can be set)",
@@ -1675,7 +1931,7 @@ const updateNodePool: AppBlock = {
               "Information about operation (or operation stage) progress.",
             additionalProperties: true,
           },
-          cluster_conditions: {
+          clusterConditions: {
             type: "array",
             items: {
               type: "object",
@@ -1700,7 +1956,7 @@ const updateNodePool: AppBlock = {
                   type: "string",
                   description: "Human-friendly representation of the condition",
                 },
-                canonical_code: {
+                canonicalCode: {
                   type: "string",
                   enum: [
                     "OK",
@@ -1731,7 +1987,7 @@ const updateNodePool: AppBlock = {
             description:
               "Which conditions caused the current cluster state. Deprecated. Use field error instead.",
           },
-          nodepool_conditions: {
+          nodepoolConditions: {
             type: "array",
             items: {
               type: "object",
@@ -1756,7 +2012,7 @@ const updateNodePool: AppBlock = {
                   type: "string",
                   description: "Human-friendly representation of the condition",
                 },
-                canonical_code: {
+                canonicalCode: {
                   type: "string",
                   enum: [
                     "OK",
@@ -1801,7 +2057,7 @@ const updateNodePool: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {

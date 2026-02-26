@@ -1,5 +1,28 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import { getSubscriberClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  returnImmediately: "return_immediately",
+  maxMessages: "max_messages",
+};
+
+const outputMapping = {
+  received_messages: {
+    name: "receivedMessages",
+    fields: {
+      ack_id: "ackId",
+      message: {
+        name: "message",
+        fields: {
+          message_id: "messageId",
+          publish_time: "publishTime",
+          ordering_key: "orderingKey",
+        },
+      },
+      delivery_attempt: "deliveryAttempt",
+    },
+  },
+};
 
 const pull: AppBlock = {
   name: "Pull",
@@ -19,7 +42,7 @@ const pull: AppBlock = {
           },
           required: true,
         },
-        return_immediately: {
+        returnImmediately: {
           name: "Return Immediately",
           description:
             "Optional. If this field set to true, the system will respond immediately even if it there are no messages available to return in the `Pull` response. Otherwise, the system may wait (for a bounded amount of time) until at least one message is available, rather than returning no messages. Warning: setting this field to `true` is discouraged because it adversely impacts the performance of `Pull` operations. We recommend that users do not set this field.",
@@ -30,7 +53,7 @@ const pull: AppBlock = {
           },
           required: false,
         },
-        max_messages: {
+        maxMessages: {
           name: "Max Messages",
           description:
             "Required. The maximum number of messages to return for this request. Must be a positive integer. The Pub/Sub system may return fewer than the number specified.",
@@ -45,14 +68,7 @@ const pull: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.subscription !== undefined)
-          request.subscription = input.event.inputConfig.subscription;
-        if (input.event.inputConfig.return_immediately !== undefined)
-          request.return_immediately =
-            input.event.inputConfig.return_immediately;
-        if (input.event.inputConfig.max_messages !== undefined)
-          request.max_messages = input.event.inputConfig.max_messages;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.pull(request, (err: any, response: any) => {
@@ -66,7 +82,8 @@ const pull: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -76,12 +93,12 @@ const pull: AppBlock = {
       type: {
         type: "object",
         properties: {
-          received_messages: {
+          receivedMessages: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                ack_id: {
+                ackId: {
                   type: "string",
                   description:
                     "Optional. This ID can be used to acknowledge the received message.",
@@ -101,17 +118,17 @@ const pull: AppBlock = {
                       description:
                         "Optional. Attributes for this message. If this field is empty, the message must contain non-empty data. This can be used to filter messages on the subscription.",
                     },
-                    message_id: {
+                    messageId: {
                       type: "string",
                       description:
                         "ID of this message, assigned by the server when the message is published. Guaranteed to be unique within the topic. This value may be read by a subscriber that receives a `PubsubMessage` via a `Pull` call or a push delivery. It must not be populated by the publisher in a `Publish` call.",
                     },
-                    publish_time: {
+                    publishTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                     },
-                    ordering_key: {
+                    orderingKey: {
                       type: "string",
                       description:
                         "Optional. If non-empty, identifies related messages for which publish order should be respected. If a `Subscription` has `enable_message_ordering` set to `true`, messages published with the same non-empty `ordering_key` value will be delivered to subscribers in the order in which they are received by the Pub/Sub system. All `PubsubMessage`s published in a given `PublishRequest` must specify the same `ordering_key` value. For more information, see [ordering messages](https://cloud.google.com/pubsub/docs/ordering).",
@@ -121,7 +138,7 @@ const pull: AppBlock = {
                     "A message that is published by publishers and consumed by subscribers. The message must contain either a non-empty data field or at least one attribute. Note that client libraries represent this object differently depending on the language. See the corresponding [client library documentation](https://cloud.google.com/pubsub/docs/reference/libraries) for more information. See [quotas and limits] (https://cloud.google.com/pubsub/quotas) for more information about message limits.",
                   additionalProperties: true,
                 },
-                delivery_attempt: {
+                deliveryAttempt: {
                   type: "integer",
                   description:
                     "Optional. The approximate number of times that Pub/Sub has attempted to deliver the associated message to a subscriber.  More precisely, this is 1 + (number of NACKs) + (number of ack_deadline exceeds) for this message.  A NACK is any call to ModifyAckDeadline with a 0 deadline. An ack_deadline exceeds event is whenever a message is not acknowledged within ack_deadline. Note that ack_deadline is initially Subscription.ackDeadlineSeconds, but may get extended automatically by the client library.  Upon the first delivery of a given message, `delivery_attempt` will have a value of 1. The value is calculated at best effort and is approximate.  If a DeadLetterPolicy is not set on the subscription, this will be 0.",

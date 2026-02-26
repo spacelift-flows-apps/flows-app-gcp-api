@@ -16,7 +16,7 @@ const validate: AppBlock = {
           },
           required: true,
         },
-        url_map: {
+        urlMap: {
           name: "Url Map",
           description: "Name of the UrlMap resource to be validated as.",
           type: {
@@ -30,20 +30,20 @@ const validate: AppBlock = {
           type: {
             type: "object",
             properties: {
-              creation_timestamp: {
+              creationTimestamp: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
               },
-              default_custom_error_response_policy: {
+              defaultCustomErrorResponsePolicy: {
                 type: "object",
                 properties: {
-                  error_response_rules: {
+                  errorResponseRules: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        match_response_codes: {
+                        matchResponseCodes: {
                           type: "array",
                           items: {
                             type: "string",
@@ -51,7 +51,7 @@ const validate: AppBlock = {
                           description:
                             "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
                         },
-                        override_response_code: {
+                        overrideResponseCode: {
                           type: "integer",
                           description:
                             "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
@@ -69,7 +69,7 @@ const validate: AppBlock = {
                     description:
                       "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
                   },
-                  error_service: {
+                  errorService: {
                     type: "string",
                     description:
                       "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
@@ -79,18 +79,18 @@ const validate: AppBlock = {
                   "Specifies the custom error response policy that must be applied when the backend service or backend bucket responds with an error.",
                 additionalProperties: true,
               },
-              default_route_action: {
+              defaultRouteAction: {
                 type: "object",
                 properties: {
-                  cors_policy: {
+                  corsPolicy: {
                     type: "object",
                     properties: {
-                      allow_credentials: {
+                      allowCredentials: {
                         type: "boolean",
                         description:
                           "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
                       },
-                      allow_headers: {
+                      allowHeaders: {
                         type: "array",
                         items: {
                           type: "string",
@@ -98,7 +98,7 @@ const validate: AppBlock = {
                         description:
                           "Specifies the content for the Access-Control-Allow-Headers header.",
                       },
-                      allow_methods: {
+                      allowMethods: {
                         type: "array",
                         items: {
                           type: "string",
@@ -106,7 +106,7 @@ const validate: AppBlock = {
                         description:
                           "Specifies the content for the Access-Control-Allow-Methods header.",
                       },
-                      allow_origin_regexes: {
+                      allowOriginRegexes: {
                         type: "array",
                         items: {
                           type: "string",
@@ -114,7 +114,7 @@ const validate: AppBlock = {
                         description:
                           "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
                       },
-                      allow_origins: {
+                      allowOrigins: {
                         type: "array",
                         items: {
                           type: "string",
@@ -127,7 +127,7 @@ const validate: AppBlock = {
                         description:
                           "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
                       },
-                      expose_headers: {
+                      exposeHeaders: {
                         type: "array",
                         items: {
                           type: "string",
@@ -135,7 +135,7 @@ const validate: AppBlock = {
                         description:
                           "Specifies the content for the Access-Control-Expose-Headers header.",
                       },
-                      max_age: {
+                      maxAge: {
                         type: "integer",
                         description:
                           "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
@@ -145,13 +145,13 @@ const validate: AppBlock = {
                       "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
                     additionalProperties: true,
                   },
-                  fault_injection_policy: {
+                  faultInjectionPolicy: {
                     type: "object",
                     properties: {
                       abort: {
                         type: "object",
                         properties: {
-                          http_status: {
+                          httpStatus: {
                             type: "integer",
                             description:
                               "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
@@ -169,7 +169,7 @@ const validate: AppBlock = {
                       delay: {
                         type: "object",
                         properties: {
-                          fixed_delay: {
+                          fixedDelay: {
                             type: "object",
                             properties: {
                               nanos: {
@@ -201,7 +201,7 @@ const validate: AppBlock = {
                       "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
                     additionalProperties: true,
                   },
-                  max_stream_duration: {
+                  maxStreamDuration: {
                     type: "object",
                     properties: {
                       nanos: {
@@ -218,15 +218,15 @@ const validate: AppBlock = {
                       'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                     additionalProperties: true,
                   },
-                  request_mirror_policy: {
+                  requestMirrorPolicy: {
                     type: "object",
                     properties: {
-                      backend_service: {
+                      backendService: {
                         type: "string",
                         description:
                           "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
                       },
-                      mirror_percent: {
+                      mirrorPercent: {
                         type: "number",
                         description:
                           "The percentage of requests to be mirrored to `backend_service`.",
@@ -236,15 +236,15 @@ const validate: AppBlock = {
                       "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
                     additionalProperties: true,
                   },
-                  retry_policy: {
+                  retryPolicy: {
                     type: "object",
                     properties: {
-                      num_retries: {
+                      numRetries: {
                         type: "integer",
                         description:
                           "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
                       },
-                      per_try_timeout: {
+                      perTryTimeout: {
                         type: "object",
                         properties: {
                           nanos: {
@@ -261,7 +261,7 @@ const validate: AppBlock = {
                           'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                         additionalProperties: true,
                       },
-                      retry_conditions: {
+                      retryConditions: {
                         type: "array",
                         items: {
                           type: "string",
@@ -291,20 +291,20 @@ const validate: AppBlock = {
                       'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                     additionalProperties: true,
                   },
-                  url_rewrite: {
+                  urlRewrite: {
                     type: "object",
                     properties: {
-                      host_rewrite: {
+                      hostRewrite: {
                         type: "string",
                         description:
                           "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
                       },
-                      path_prefix_rewrite: {
+                      pathPrefixRewrite: {
                         type: "string",
                         description:
                           "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
                       },
-                      path_template_rewrite: {
+                      pathTemplateRewrite: {
                         type: "string",
                         description:
                           "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
@@ -314,29 +314,29 @@ const validate: AppBlock = {
                       "The spec for modifying the path before sending the request to the matched backend service.",
                     additionalProperties: true,
                   },
-                  weighted_backend_services: {
+                  weightedBackendServices: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        backend_service: {
+                        backendService: {
                           type: "string",
                           description:
                             "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
                         },
-                        header_action: {
+                        headerAction: {
                           type: "object",
                           properties: {
-                            request_headers_to_add: {
+                            requestHeadersToAdd: {
                               type: "array",
                               items: {
                                 type: "object",
                                 properties: {
-                                  header_name: {
+                                  headerName: {
                                     type: "string",
                                     description: "The name of the header.",
                                   },
-                                  header_value: {
+                                  headerValue: {
                                     type: "string",
                                     description:
                                       "The value of the header to add.",
@@ -354,7 +354,7 @@ const validate: AppBlock = {
                               description:
                                 "Headers to add to a matching request before forwarding the request to thebackendService.",
                             },
-                            request_headers_to_remove: {
+                            requestHeadersToRemove: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -362,16 +362,16 @@ const validate: AppBlock = {
                               description:
                                 "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                             },
-                            response_headers_to_add: {
+                            responseHeadersToAdd: {
                               type: "array",
                               items: {
                                 type: "object",
                                 properties: {
-                                  header_name: {
+                                  headerName: {
                                     type: "string",
                                     description: "The name of the header.",
                                   },
-                                  header_value: {
+                                  headerValue: {
                                     type: "string",
                                     description:
                                       "The value of the header to add.",
@@ -389,7 +389,7 @@ const validate: AppBlock = {
                               description:
                                 "Headers to add the response before sending the response back to the client.",
                             },
-                            response_headers_to_remove: {
+                            responseHeadersToRemove: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -420,40 +420,40 @@ const validate: AppBlock = {
                 description:
                   "defaultRouteAction takes effect when none of the hostRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.    URL maps for classic Application Load Balancers only support the urlRewrite action within defaultRouteAction.   defaultRouteAction has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
               },
-              default_service: {
+              defaultService: {
                 type: "string",
                 description:
                   "The full or partial URL of the defaultService resource to which traffic is directed if none of the hostRules match. If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.   defaultService has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
               },
-              default_url_redirect: {
+              defaultUrlRedirect: {
                 type: "object",
                 properties: {
-                  host_redirect: {
+                  hostRedirect: {
                     type: "string",
                     description:
                       "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
                   },
-                  https_redirect: {
+                  httpsRedirect: {
                     type: "boolean",
                     description:
                       "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
                   },
-                  path_redirect: {
+                  pathRedirect: {
                     type: "string",
                     description:
                       "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                   },
-                  prefix_redirect: {
+                  prefixRedirect: {
                     type: "string",
                     description:
                       "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                   },
-                  redirect_response_code: {
+                  redirectResponseCode: {
                     type: "string",
                     description:
                       "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
                   },
-                  strip_query: {
+                  stripQuery: {
                     type: "boolean",
                     description:
                       "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
@@ -472,19 +472,19 @@ const validate: AppBlock = {
                 description:
                   "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field is ignored when inserting a UrlMap. An up-to-date fingerprint must be provided in order to update the UrlMap, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a UrlMap.",
               },
-              header_action: {
+              headerAction: {
                 type: "object",
                 properties: {
-                  request_headers_to_add: {
+                  requestHeadersToAdd: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        header_name: {
+                        headerName: {
                           type: "string",
                           description: "The name of the header.",
                         },
-                        header_value: {
+                        headerValue: {
                           type: "string",
                           description: "The value of the header to add.",
                         },
@@ -501,7 +501,7 @@ const validate: AppBlock = {
                     description:
                       "Headers to add to a matching request before forwarding the request to thebackendService.",
                   },
-                  request_headers_to_remove: {
+                  requestHeadersToRemove: {
                     type: "array",
                     items: {
                       type: "string",
@@ -509,16 +509,16 @@ const validate: AppBlock = {
                     description:
                       "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                   },
-                  response_headers_to_add: {
+                  responseHeadersToAdd: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        header_name: {
+                        headerName: {
                           type: "string",
                           description: "The name of the header.",
                         },
-                        header_value: {
+                        headerValue: {
                           type: "string",
                           description: "The value of the header to add.",
                         },
@@ -535,7 +535,7 @@ const validate: AppBlock = {
                     description:
                       "Headers to add the response before sending the response back to the client.",
                   },
-                  response_headers_to_remove: {
+                  responseHeadersToRemove: {
                     type: "array",
                     items: {
                       type: "string",
@@ -548,7 +548,7 @@ const validate: AppBlock = {
                   "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
                 additionalProperties: true,
               },
-              host_rules: {
+              hostRules: {
                 type: "array",
                 items: {
                   type: "object",
@@ -566,7 +566,7 @@ const validate: AppBlock = {
                       description:
                         "The list of host patterns to match. They must be valid hostnames with optional port numbers in the format host:port.* matches any string of ([a-z0-9-.]*). In that case, * must be the first character, and if followed by anything, the immediate following character must be either - or ..  * based matching is not supported when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
                     },
-                    path_matcher: {
+                    pathMatcher: {
                       type: "string",
                       description:
                         "The name of the PathMatcher to use to match the path portion of the URL if the hostRule matches the URL's host portion.",
@@ -592,20 +592,20 @@ const validate: AppBlock = {
                 description:
                   "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
               },
-              path_matchers: {
+              pathMatchers: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    default_custom_error_response_policy: {
+                    defaultCustomErrorResponsePolicy: {
                       type: "object",
                       properties: {
-                        error_response_rules: {
+                        errorResponseRules: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              match_response_codes: {
+                              matchResponseCodes: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -613,7 +613,7 @@ const validate: AppBlock = {
                                 description:
                                   "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
                               },
-                              override_response_code: {
+                              overrideResponseCode: {
                                 type: "integer",
                                 description:
                                   "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
@@ -631,7 +631,7 @@ const validate: AppBlock = {
                           description:
                             "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
                         },
-                        error_service: {
+                        errorService: {
                           type: "string",
                           description:
                             "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
@@ -641,18 +641,18 @@ const validate: AppBlock = {
                         "Specifies the custom error response policy that must be applied when the backend service or backend bucket responds with an error.",
                       additionalProperties: true,
                     },
-                    default_route_action: {
+                    defaultRouteAction: {
                       type: "object",
                       properties: {
-                        cors_policy: {
+                        corsPolicy: {
                           type: "object",
                           properties: {
-                            allow_credentials: {
+                            allowCredentials: {
                               type: "boolean",
                               description:
                                 "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
                             },
-                            allow_headers: {
+                            allowHeaders: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -660,7 +660,7 @@ const validate: AppBlock = {
                               description:
                                 "Specifies the content for the Access-Control-Allow-Headers header.",
                             },
-                            allow_methods: {
+                            allowMethods: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -668,7 +668,7 @@ const validate: AppBlock = {
                               description:
                                 "Specifies the content for the Access-Control-Allow-Methods header.",
                             },
-                            allow_origin_regexes: {
+                            allowOriginRegexes: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -676,7 +676,7 @@ const validate: AppBlock = {
                               description:
                                 "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
                             },
-                            allow_origins: {
+                            allowOrigins: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -689,7 +689,7 @@ const validate: AppBlock = {
                               description:
                                 "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
                             },
-                            expose_headers: {
+                            exposeHeaders: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -697,7 +697,7 @@ const validate: AppBlock = {
                               description:
                                 "Specifies the content for the Access-Control-Expose-Headers header.",
                             },
-                            max_age: {
+                            maxAge: {
                               type: "integer",
                               description:
                                 "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
@@ -707,13 +707,13 @@ const validate: AppBlock = {
                             "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
                           additionalProperties: true,
                         },
-                        fault_injection_policy: {
+                        faultInjectionPolicy: {
                           type: "object",
                           properties: {
                             abort: {
                               type: "object",
                               properties: {
-                                http_status: {
+                                httpStatus: {
                                   type: "integer",
                                   description:
                                     "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
@@ -731,7 +731,7 @@ const validate: AppBlock = {
                             delay: {
                               type: "object",
                               properties: {
-                                fixed_delay: {
+                                fixedDelay: {
                                   type: "object",
                                   properties: {
                                     nanos: {
@@ -763,7 +763,7 @@ const validate: AppBlock = {
                             "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
                           additionalProperties: true,
                         },
-                        max_stream_duration: {
+                        maxStreamDuration: {
                           type: "object",
                           properties: {
                             nanos: {
@@ -780,15 +780,15 @@ const validate: AppBlock = {
                             'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                           additionalProperties: true,
                         },
-                        request_mirror_policy: {
+                        requestMirrorPolicy: {
                           type: "object",
                           properties: {
-                            backend_service: {
+                            backendService: {
                               type: "string",
                               description:
                                 "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
                             },
-                            mirror_percent: {
+                            mirrorPercent: {
                               type: "number",
                               description:
                                 "The percentage of requests to be mirrored to `backend_service`.",
@@ -798,15 +798,15 @@ const validate: AppBlock = {
                             "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
                           additionalProperties: true,
                         },
-                        retry_policy: {
+                        retryPolicy: {
                           type: "object",
                           properties: {
-                            num_retries: {
+                            numRetries: {
                               type: "integer",
                               description:
                                 "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
                             },
-                            per_try_timeout: {
+                            perTryTimeout: {
                               type: "object",
                               properties: {
                                 nanos: {
@@ -823,7 +823,7 @@ const validate: AppBlock = {
                                 'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                               additionalProperties: true,
                             },
-                            retry_conditions: {
+                            retryConditions: {
                               type: "array",
                               items: {
                                 type: "string",
@@ -853,20 +853,20 @@ const validate: AppBlock = {
                             'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                           additionalProperties: true,
                         },
-                        url_rewrite: {
+                        urlRewrite: {
                           type: "object",
                           properties: {
-                            host_rewrite: {
+                            hostRewrite: {
                               type: "string",
                               description:
                                 "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
                             },
-                            path_prefix_rewrite: {
+                            pathPrefixRewrite: {
                               type: "string",
                               description:
                                 "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
                             },
-                            path_template_rewrite: {
+                            pathTemplateRewrite: {
                               type: "string",
                               description:
                                 "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
@@ -876,30 +876,30 @@ const validate: AppBlock = {
                             "The spec for modifying the path before sending the request to the matched backend service.",
                           additionalProperties: true,
                         },
-                        weighted_backend_services: {
+                        weightedBackendServices: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              backend_service: {
+                              backendService: {
                                 type: "string",
                                 description:
                                   "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
                               },
-                              header_action: {
+                              headerAction: {
                                 type: "object",
                                 properties: {
-                                  request_headers_to_add: {
+                                  requestHeadersToAdd: {
                                     type: "array",
                                     items: {
                                       type: "object",
                                       properties: {
-                                        header_name: {
+                                        headerName: {
                                           type: "string",
                                           description:
                                             "The name of the header.",
                                         },
-                                        header_value: {
+                                        headerValue: {
                                           type: "string",
                                           description:
                                             "The value of the header to add.",
@@ -917,7 +917,7 @@ const validate: AppBlock = {
                                     description:
                                       "Headers to add to a matching request before forwarding the request to thebackendService.",
                                   },
-                                  request_headers_to_remove: {
+                                  requestHeadersToRemove: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -925,17 +925,17 @@ const validate: AppBlock = {
                                     description:
                                       "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                                   },
-                                  response_headers_to_add: {
+                                  responseHeadersToAdd: {
                                     type: "array",
                                     items: {
                                       type: "object",
                                       properties: {
-                                        header_name: {
+                                        headerName: {
                                           type: "string",
                                           description:
                                             "The name of the header.",
                                         },
-                                        header_value: {
+                                        headerValue: {
                                           type: "string",
                                           description:
                                             "The value of the header to add.",
@@ -953,7 +953,7 @@ const validate: AppBlock = {
                                     description:
                                       "Headers to add the response before sending the response back to the client.",
                                   },
-                                  response_headers_to_remove: {
+                                  responseHeadersToRemove: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -984,40 +984,40 @@ const validate: AppBlock = {
                       description:
                         "defaultRouteAction takes effect when none of the pathRules or routeRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.   URL maps for classic Application Load Balancers only support the urlRewrite action within a path matcher'sdefaultRouteAction.",
                     },
-                    default_service: {
+                    defaultService: {
                       type: "string",
                       description:
                         "The full or partial URL to the BackendService resource. This URL is used if none of the pathRules orrouteRules defined by this PathMatcher are matched. For example, the following are all valid URLs to a BackendService resource:        - https://www.googleapis.com/compute/v1/projects/project/global/backendServices/backendService      - compute/v1/projects/project/global/backendServices/backendService      - global/backendServices/backendService   If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.   Authorization requires one or more of the following Google IAM permissions on the specified resource default_service:         - compute.backendBuckets.use       - compute.backendServices.use",
                     },
-                    default_url_redirect: {
+                    defaultUrlRedirect: {
                       type: "object",
                       properties: {
-                        host_redirect: {
+                        hostRedirect: {
                           type: "string",
                           description:
                             "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
                         },
-                        https_redirect: {
+                        httpsRedirect: {
                           type: "boolean",
                           description:
                             "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
                         },
-                        path_redirect: {
+                        pathRedirect: {
                           type: "string",
                           description:
                             "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                         },
-                        prefix_redirect: {
+                        prefixRedirect: {
                           type: "string",
                           description:
                             "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                         },
-                        redirect_response_code: {
+                        redirectResponseCode: {
                           type: "string",
                           description:
                             "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
                         },
-                        strip_query: {
+                        stripQuery: {
                           type: "boolean",
                           description:
                             "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
@@ -1031,19 +1031,19 @@ const validate: AppBlock = {
                       description:
                         "An optional description of this resource. Provide this property when you create the resource.",
                     },
-                    header_action: {
+                    headerAction: {
                       type: "object",
                       properties: {
-                        request_headers_to_add: {
+                        requestHeadersToAdd: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              header_name: {
+                              headerName: {
                                 type: "string",
                                 description: "The name of the header.",
                               },
-                              header_value: {
+                              headerValue: {
                                 type: "string",
                                 description: "The value of the header to add.",
                               },
@@ -1060,7 +1060,7 @@ const validate: AppBlock = {
                           description:
                             "Headers to add to a matching request before forwarding the request to thebackendService.",
                         },
-                        request_headers_to_remove: {
+                        requestHeadersToRemove: {
                           type: "array",
                           items: {
                             type: "string",
@@ -1068,16 +1068,16 @@ const validate: AppBlock = {
                           description:
                             "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                         },
-                        response_headers_to_add: {
+                        responseHeadersToAdd: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              header_name: {
+                              headerName: {
                                 type: "string",
                                 description: "The name of the header.",
                               },
-                              header_value: {
+                              headerValue: {
                                 type: "string",
                                 description: "The value of the header to add.",
                               },
@@ -1094,7 +1094,7 @@ const validate: AppBlock = {
                           description:
                             "Headers to add the response before sending the response back to the client.",
                         },
-                        response_headers_to_remove: {
+                        responseHeadersToRemove: {
                           type: "array",
                           items: {
                             type: "string",
@@ -1112,20 +1112,20 @@ const validate: AppBlock = {
                       description:
                         "The name to which this PathMatcher is referred by theHostRule.",
                     },
-                    path_rules: {
+                    pathRules: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          custom_error_response_policy: {
+                          customErrorResponsePolicy: {
                             type: "object",
                             properties: {
-                              error_response_rules: {
+                              errorResponseRules: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    match_response_codes: {
+                                    matchResponseCodes: {
                                       type: "array",
                                       items: {
                                         type: "string",
@@ -1133,7 +1133,7 @@ const validate: AppBlock = {
                                       description:
                                         "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
                                     },
-                                    override_response_code: {
+                                    overrideResponseCode: {
                                       type: "integer",
                                       description:
                                         "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
@@ -1151,7 +1151,7 @@ const validate: AppBlock = {
                                 description:
                                   "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
                               },
-                              error_service: {
+                              errorService: {
                                 type: "string",
                                 description:
                                   "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
@@ -1169,18 +1169,18 @@ const validate: AppBlock = {
                             description:
                               "The list of path patterns to match. Each must start with / and the only place a * is allowed is at the end following a /.  The string fed to the path matcher does not include any text after the first ? or #, and those chars are not allowed here.",
                           },
-                          route_action: {
+                          routeAction: {
                             type: "object",
                             properties: {
-                              cors_policy: {
+                              corsPolicy: {
                                 type: "object",
                                 properties: {
-                                  allow_credentials: {
+                                  allowCredentials: {
                                     type: "boolean",
                                     description:
                                       "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
                                   },
-                                  allow_headers: {
+                                  allowHeaders: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1188,7 +1188,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies the content for the Access-Control-Allow-Headers header.",
                                   },
-                                  allow_methods: {
+                                  allowMethods: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1196,7 +1196,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies the content for the Access-Control-Allow-Methods header.",
                                   },
-                                  allow_origin_regexes: {
+                                  allowOriginRegexes: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1204,7 +1204,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
                                   },
-                                  allow_origins: {
+                                  allowOrigins: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1217,7 +1217,7 @@ const validate: AppBlock = {
                                     description:
                                       "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
                                   },
-                                  expose_headers: {
+                                  exposeHeaders: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1225,7 +1225,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies the content for the Access-Control-Expose-Headers header.",
                                   },
-                                  max_age: {
+                                  maxAge: {
                                     type: "integer",
                                     description:
                                       "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
@@ -1235,13 +1235,13 @@ const validate: AppBlock = {
                                   "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
                                 additionalProperties: true,
                               },
-                              fault_injection_policy: {
+                              faultInjectionPolicy: {
                                 type: "object",
                                 properties: {
                                   abort: {
                                     type: "object",
                                     properties: {
-                                      http_status: {
+                                      httpStatus: {
                                         type: "integer",
                                         description:
                                           "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
@@ -1259,7 +1259,7 @@ const validate: AppBlock = {
                                   delay: {
                                     type: "object",
                                     properties: {
-                                      fixed_delay: {
+                                      fixedDelay: {
                                         type: "object",
                                         properties: {
                                           nanos: {
@@ -1292,7 +1292,7 @@ const validate: AppBlock = {
                                   "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
                                 additionalProperties: true,
                               },
-                              max_stream_duration: {
+                              maxStreamDuration: {
                                 type: "object",
                                 properties: {
                                   nanos: {
@@ -1309,15 +1309,15 @@ const validate: AppBlock = {
                                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                                 additionalProperties: true,
                               },
-                              request_mirror_policy: {
+                              requestMirrorPolicy: {
                                 type: "object",
                                 properties: {
-                                  backend_service: {
+                                  backendService: {
                                     type: "string",
                                     description:
                                       "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
                                   },
-                                  mirror_percent: {
+                                  mirrorPercent: {
                                     type: "number",
                                     description:
                                       "The percentage of requests to be mirrored to `backend_service`.",
@@ -1327,15 +1327,15 @@ const validate: AppBlock = {
                                   "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
                                 additionalProperties: true,
                               },
-                              retry_policy: {
+                              retryPolicy: {
                                 type: "object",
                                 properties: {
-                                  num_retries: {
+                                  numRetries: {
                                     type: "integer",
                                     description:
                                       "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
                                   },
-                                  per_try_timeout: {
+                                  perTryTimeout: {
                                     type: "object",
                                     properties: {
                                       nanos: {
@@ -1352,7 +1352,7 @@ const validate: AppBlock = {
                                       'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                                     additionalProperties: true,
                                   },
-                                  retry_conditions: {
+                                  retryConditions: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1382,20 +1382,20 @@ const validate: AppBlock = {
                                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                                 additionalProperties: true,
                               },
-                              url_rewrite: {
+                              urlRewrite: {
                                 type: "object",
                                 properties: {
-                                  host_rewrite: {
+                                  hostRewrite: {
                                     type: "string",
                                     description:
                                       "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
                                   },
-                                  path_prefix_rewrite: {
+                                  pathPrefixRewrite: {
                                     type: "string",
                                     description:
                                       "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
                                   },
-                                  path_template_rewrite: {
+                                  pathTemplateRewrite: {
                                     type: "string",
                                     description:
                                       "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
@@ -1405,30 +1405,30 @@ const validate: AppBlock = {
                                   "The spec for modifying the path before sending the request to the matched backend service.",
                                 additionalProperties: true,
                               },
-                              weighted_backend_services: {
+                              weightedBackendServices: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    backend_service: {
+                                    backendService: {
                                       type: "string",
                                       description:
                                         "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
                                     },
-                                    header_action: {
+                                    headerAction: {
                                       type: "object",
                                       properties: {
-                                        request_headers_to_add: {
+                                        requestHeadersToAdd: {
                                           type: "array",
                                           items: {
                                             type: "object",
                                             properties: {
-                                              header_name: {
+                                              headerName: {
                                                 type: "string",
                                                 description:
                                                   "The name of the header.",
                                               },
-                                              header_value: {
+                                              headerValue: {
                                                 type: "string",
                                                 description:
                                                   "The value of the header to add.",
@@ -1446,7 +1446,7 @@ const validate: AppBlock = {
                                           description:
                                             "Headers to add to a matching request before forwarding the request to thebackendService.",
                                         },
-                                        request_headers_to_remove: {
+                                        requestHeadersToRemove: {
                                           type: "array",
                                           items: {
                                             type: "string",
@@ -1454,17 +1454,17 @@ const validate: AppBlock = {
                                           description:
                                             "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                                         },
-                                        response_headers_to_add: {
+                                        responseHeadersToAdd: {
                                           type: "array",
                                           items: {
                                             type: "object",
                                             properties: {
-                                              header_name: {
+                                              headerName: {
                                                 type: "string",
                                                 description:
                                                   "The name of the header.",
                                               },
-                                              header_value: {
+                                              headerValue: {
                                                 type: "string",
                                                 description:
                                                   "The value of the header to add.",
@@ -1482,7 +1482,7 @@ const validate: AppBlock = {
                                           description:
                                             "Headers to add the response before sending the response back to the client.",
                                         },
-                                        response_headers_to_remove: {
+                                        responseHeadersToRemove: {
                                           type: "array",
                                           items: {
                                             type: "string",
@@ -1518,35 +1518,35 @@ const validate: AppBlock = {
                             description:
                               "The full or partial URL of the backend service resource to which traffic is directed if this rule is matched. If routeAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of urlRedirect, service orrouteAction.weightedBackendService can be set.",
                           },
-                          url_redirect: {
+                          urlRedirect: {
                             type: "object",
                             properties: {
-                              host_redirect: {
+                              hostRedirect: {
                                 type: "string",
                                 description:
                                   "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
                               },
-                              https_redirect: {
+                              httpsRedirect: {
                                 type: "boolean",
                                 description:
                                   "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
                               },
-                              path_redirect: {
+                              pathRedirect: {
                                 type: "string",
                                 description:
                                   "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                               },
-                              prefix_redirect: {
+                              prefixRedirect: {
                                 type: "string",
                                 description:
                                   "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                               },
-                              redirect_response_code: {
+                              redirectResponseCode: {
                                 type: "string",
                                 description:
                                   "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
                               },
-                              strip_query: {
+                              stripQuery: {
                                 type: "boolean",
                                 description:
                                   "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
@@ -1564,20 +1564,20 @@ const validate: AppBlock = {
                       description:
                         'The list of path rules. Use this list instead of routeRules when routing based on simple path matching is all that\'s required. A path rule can only include a wildcard character (*) after a forward slash character ("/").  The order by which path rules are specified does not matter. Matches are always done on the longest-path-first basis.  For example: a pathRule with a path /a/b/c/* will match before /a/b/* irrespective of the order in which those paths appear in this list.  Within a given pathMatcher, only one ofpathRules or routeRules must be set.',
                     },
-                    route_rules: {
+                    routeRules: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          custom_error_response_policy: {
+                          customErrorResponsePolicy: {
                             type: "object",
                             properties: {
-                              error_response_rules: {
+                              errorResponseRules: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    match_response_codes: {
+                                    matchResponseCodes: {
                                       type: "array",
                                       items: {
                                         type: "string",
@@ -1585,7 +1585,7 @@ const validate: AppBlock = {
                                       description:
                                         "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
                                     },
-                                    override_response_code: {
+                                    overrideResponseCode: {
                                       type: "integer",
                                       description:
                                         "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
@@ -1603,7 +1603,7 @@ const validate: AppBlock = {
                                 description:
                                   "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
                               },
-                              error_service: {
+                              errorService: {
                                 type: "string",
                                 description:
                                   "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
@@ -1618,19 +1618,19 @@ const validate: AppBlock = {
                             description:
                               "The short description conveying the intent of this routeRule.   The description can have a maximum length of 1024 characters.",
                           },
-                          header_action: {
+                          headerAction: {
                             type: "object",
                             properties: {
-                              request_headers_to_add: {
+                              requestHeadersToAdd: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    header_name: {
+                                    headerName: {
                                       type: "string",
                                       description: "The name of the header.",
                                     },
-                                    header_value: {
+                                    headerValue: {
                                       type: "string",
                                       description:
                                         "The value of the header to add.",
@@ -1648,7 +1648,7 @@ const validate: AppBlock = {
                                 description:
                                   "Headers to add to a matching request before forwarding the request to thebackendService.",
                               },
-                              request_headers_to_remove: {
+                              requestHeadersToRemove: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -1656,16 +1656,16 @@ const validate: AppBlock = {
                                 description:
                                   "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                               },
-                              response_headers_to_add: {
+                              responseHeadersToAdd: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    header_name: {
+                                    headerName: {
                                       type: "string",
                                       description: "The name of the header.",
                                     },
-                                    header_value: {
+                                    headerValue: {
                                       type: "string",
                                       description:
                                         "The value of the header to add.",
@@ -1683,7 +1683,7 @@ const validate: AppBlock = {
                                 description:
                                   "Headers to add the response before sending the response back to the client.",
                               },
-                              response_headers_to_remove: {
+                              responseHeadersToRemove: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -1696,55 +1696,55 @@ const validate: AppBlock = {
                               "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
                             additionalProperties: true,
                           },
-                          match_rules: {
+                          matchRules: {
                             type: "array",
                             items: {
                               type: "object",
                               properties: {
-                                full_path_match: {
+                                fullPathMatch: {
                                   type: "string",
                                   description:
                                     "For satisfying the matchRule condition, the path of the request must exactly match the value specified infullPathMatch after removing any query parameters and anchor that may be part of the original URL.  fullPathMatch must be from 1 to 1024 characters.  Only one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be specified.",
                                 },
-                                header_matches: {
+                                headerMatches: {
                                   type: "array",
                                   items: {
                                     type: "object",
                                     properties: {
-                                      exact_match: {
+                                      exactMatch: {
                                         type: "string",
                                         description:
                                           "The value should exactly match contents of exactMatch.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
                                       },
-                                      header_name: {
+                                      headerName: {
                                         type: "string",
                                         description:
                                           'The name of the HTTP header to match.  For matching against the HTTP request\'s authority, use a headerMatch with the header name ":authority".  For matching a request\'s method, use the headerName ":method".  When the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true, only non-binary user-specified custom metadata and the `content-type` header are supported. The following transport-level headers cannot be used in header matching rules: `:authority`, `:method`, `:path`, `:scheme`, `user-agent`, `accept-encoding`, `content-encoding`, `grpc-accept-encoding`, `grpc-encoding`, `grpc-previous-rpc-attempts`, `grpc-tags-bin`, `grpc-timeout` and `grpc-trace-bin`.',
                                       },
-                                      invert_match: {
+                                      invertMatch: {
                                         type: "boolean",
                                         description:
                                           "If set to false, the headerMatch is considered a match if the preceding match criteria are met. If set to true, the headerMatch is considered a match if the preceding match criteria are NOT met.  The default setting is false.",
                                       },
-                                      prefix_match: {
+                                      prefixMatch: {
                                         type: "string",
                                         description:
                                           "The value of the header must start with the contents ofprefixMatch.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
                                       },
-                                      present_match: {
+                                      presentMatch: {
                                         type: "boolean",
                                         description:
                                           "A header with the contents of headerName must exist. The match takes place whether or not the request's header has a value.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
                                       },
-                                      range_match: {
+                                      rangeMatch: {
                                         type: "object",
                                         properties: {
-                                          range_end: {
+                                          rangeEnd: {
                                             type: "string",
                                             description:
                                               "64-bit integer as string",
                                           },
-                                          range_start: {
+                                          rangeStart: {
                                             type: "string",
                                             description:
                                               "64-bit integer as string",
@@ -1754,12 +1754,12 @@ const validate: AppBlock = {
                                           "HttpRouteRuleMatch criteria for field values that must stay within the specified integer range.",
                                         additionalProperties: true,
                                       },
-                                      regex_match: {
+                                      regexMatch: {
                                         type: "string",
                                         description:
                                           "The value of the header must match the regular expression specified inregexMatch. For more information about regular expression syntax, see Syntax.  For matching against a port specified in the HTTP request, use a headerMatch with headerName set to PORT and a regular expression that satisfies the RFC2616 Host header's port specifier.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED (regional scope) or INTERNAL_MANAGED.",
                                       },
-                                      suffix_match: {
+                                      suffixMatch: {
                                         type: "string",
                                         description:
                                           "The value of the header must end with the contents ofsuffixMatch.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
@@ -1772,17 +1772,17 @@ const validate: AppBlock = {
                                   description:
                                     "Specifies a list of header match criteria, all of which must match corresponding headers in the request.",
                                 },
-                                ignore_case: {
+                                ignoreCase: {
                                   type: "boolean",
                                   description:
                                     "Specifies that prefixMatch and fullPathMatch matches are case sensitive.  The default value is false.  ignoreCase must not be used with regexMatch.  Not supported when the URL map is bound to a target gRPC proxy.",
                                 },
-                                metadata_filters: {
+                                metadataFilters: {
                                   type: "array",
                                   items: {
                                     type: "object",
                                     properties: {
-                                      filter_labels: {
+                                      filterLabels: {
                                         type: "array",
                                         items: {
                                           type: "object",
@@ -1805,7 +1805,7 @@ const validate: AppBlock = {
                                         description:
                                           "The list of label value pairs that must match labels in the provided metadata based on filterMatchCriteria  This list must not be empty and can have at the most 64 entries.",
                                       },
-                                      filter_match_criteria: {
+                                      filterMatchCriteria: {
                                         type: "string",
                                         description:
                                           "Specifies how individual filter label matches within the list of filterLabels and contributes toward the overall metadataFilter match.   Supported values are:     - MATCH_ANY: at least one of the filterLabels    must have a matching label in the provided metadata.    - MATCH_ALL: all filterLabels must have    matching labels in the provided metadata. Check the FilterMatchCriteria enum for the list of possible values.",
@@ -1818,22 +1818,22 @@ const validate: AppBlock = {
                                   description:
                                     "Opaque filter criteria used by the load balancer to restrict routing configuration to a limited set of xDS compliant clients. In their xDS requests to the load balancer, xDS clients present node metadata. When there is a match, the relevant routing configuration is made available to those proxies.  For each metadataFilter in this list, if itsfilterMatchCriteria is set to MATCH_ANY, at least one of thefilterLabels must match the corresponding label provided in the metadata. If its filterMatchCriteria is set to MATCH_ALL, then all of its filterLabels must match with corresponding labels provided in the metadata. If multiple metadata filters are specified, all of them need to be satisfied in order to be considered a match.  metadataFilters specified here is applied after those specified in ForwardingRule that refers to theUrlMap this HttpRouteRuleMatch belongs to.  metadataFilters only applies to load balancers that haveloadBalancingScheme set toINTERNAL_SELF_MANAGED.  Not supported when the URL map is bound to a target gRPC proxy that has validateForProxyless field set to true.",
                                 },
-                                path_template_match: {
+                                pathTemplateMatch: {
                                   type: "string",
                                   description:
                                     'If specified, this field defines a path template pattern that must match the :path header after the query string is removed.  A path template pattern can include variables and wildcards. Variables are enclosed in curly braces, for example{variable_name}. Wildcards include * that matches a single path segment, and ** that matches zero or more path segments. The pattern must follow these rules:         - The value must be between 1 and 1024 characters.       - The pattern must start with a leading slash ("/").       - No more than 5 operators (variables or wildcards) may appear in       the pattern.  Precisely one ofprefixMatch, fullPathMatch,regexMatch, or pathTemplateMatch must be set.',
                                 },
-                                prefix_match: {
+                                prefixMatch: {
                                   type: "string",
                                   description:
                                     "For satisfying the matchRule condition, the request's path must begin with the specified prefixMatch.prefixMatch must begin with a /.  The value must be from 1 to 1024 characters.  The * character inside a prefix match is treated as a literal character, not as a wildcard.  Only one of prefixMatch, fullPathMatch,regexMatch or path_template_match can be used within a matchRule.",
                                 },
-                                query_parameter_matches: {
+                                queryParameterMatches: {
                                   type: "array",
                                   items: {
                                     type: "object",
                                     properties: {
-                                      exact_match: {
+                                      exactMatch: {
                                         type: "string",
                                         description:
                                           "The queryParameterMatch matches if the value of the parameter exactly matches the contents of exactMatch.  Only one of presentMatch, exactMatch, orregexMatch must be set.",
@@ -1843,12 +1843,12 @@ const validate: AppBlock = {
                                         description:
                                           "The name of the query parameter to match. The query parameter must exist in the request, in the absence of which the request match fails.",
                                       },
-                                      present_match: {
+                                      presentMatch: {
                                         type: "boolean",
                                         description:
                                           "Specifies that the queryParameterMatch matches if the request contains the query parameter, irrespective of whether the parameter has a value or not.  Only one of presentMatch, exactMatch, orregexMatch must be set.",
                                       },
-                                      regex_match: {
+                                      regexMatch: {
                                         type: "string",
                                         description:
                                           "The queryParameterMatch matches if the value of the parameter matches the regular expression specified byregexMatch. For more information about regular expression syntax, see Syntax.  Only one of presentMatch, exactMatch, orregexMatch must be set.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED (regional scope) or INTERNAL_MANAGED.",
@@ -1861,7 +1861,7 @@ const validate: AppBlock = {
                                   description:
                                     "Specifies a list of query parameter match criteria, all of which must match corresponding query parameters in the request.  Not supported when the URL map is bound to a target gRPC proxy.",
                                 },
-                                regex_match: {
+                                regexMatch: {
                                   type: "string",
                                   description:
                                     "For satisfying the matchRule condition, the path of the request must satisfy the regular expression specified inregexMatch after removing any query parameters and anchor supplied with the original URL. For more information about regular expression syntax, see Syntax.  Only one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be specified.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED (regional scope) or INTERNAL_MANAGED.",
@@ -1879,18 +1879,18 @@ const validate: AppBlock = {
                             description:
                               "For routeRules within a given pathMatcher, priority determines the order in which a load balancer interpretsrouteRules. RouteRules are evaluated in order of priority, from the lowest to highest number. The priority of a rule decreases as its number increases (1, 2, 3, N+1). The first rule that matches the request is applied.   You cannot configure two or more routeRules with the same priority. Priority for each rule must be set to a number from 0 to 2147483647 inclusive.   Priority numbers can have gaps, which enable you to add or remove rules in the future without affecting the rest of the rules. For example, 1, 2, 3, 4, 5, 9, 12, 16 is a valid series of priority numbers to which you could add rules numbered from 6 to 8, 10 to 11, and 13 to 15 in the future without any impact on existing rules.",
                           },
-                          route_action: {
+                          routeAction: {
                             type: "object",
                             properties: {
-                              cors_policy: {
+                              corsPolicy: {
                                 type: "object",
                                 properties: {
-                                  allow_credentials: {
+                                  allowCredentials: {
                                     type: "boolean",
                                     description:
                                       "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
                                   },
-                                  allow_headers: {
+                                  allowHeaders: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1898,7 +1898,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies the content for the Access-Control-Allow-Headers header.",
                                   },
-                                  allow_methods: {
+                                  allowMethods: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1906,7 +1906,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies the content for the Access-Control-Allow-Methods header.",
                                   },
-                                  allow_origin_regexes: {
+                                  allowOriginRegexes: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1914,7 +1914,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
                                   },
-                                  allow_origins: {
+                                  allowOrigins: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1927,7 +1927,7 @@ const validate: AppBlock = {
                                     description:
                                       "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
                                   },
-                                  expose_headers: {
+                                  exposeHeaders: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -1935,7 +1935,7 @@ const validate: AppBlock = {
                                     description:
                                       "Specifies the content for the Access-Control-Expose-Headers header.",
                                   },
-                                  max_age: {
+                                  maxAge: {
                                     type: "integer",
                                     description:
                                       "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
@@ -1945,13 +1945,13 @@ const validate: AppBlock = {
                                   "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
                                 additionalProperties: true,
                               },
-                              fault_injection_policy: {
+                              faultInjectionPolicy: {
                                 type: "object",
                                 properties: {
                                   abort: {
                                     type: "object",
                                     properties: {
-                                      http_status: {
+                                      httpStatus: {
                                         type: "integer",
                                         description:
                                           "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
@@ -1969,7 +1969,7 @@ const validate: AppBlock = {
                                   delay: {
                                     type: "object",
                                     properties: {
-                                      fixed_delay: {
+                                      fixedDelay: {
                                         type: "object",
                                         properties: {
                                           nanos: {
@@ -2002,7 +2002,7 @@ const validate: AppBlock = {
                                   "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
                                 additionalProperties: true,
                               },
-                              max_stream_duration: {
+                              maxStreamDuration: {
                                 type: "object",
                                 properties: {
                                   nanos: {
@@ -2019,15 +2019,15 @@ const validate: AppBlock = {
                                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                                 additionalProperties: true,
                               },
-                              request_mirror_policy: {
+                              requestMirrorPolicy: {
                                 type: "object",
                                 properties: {
-                                  backend_service: {
+                                  backendService: {
                                     type: "string",
                                     description:
                                       "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
                                   },
-                                  mirror_percent: {
+                                  mirrorPercent: {
                                     type: "number",
                                     description:
                                       "The percentage of requests to be mirrored to `backend_service`.",
@@ -2037,15 +2037,15 @@ const validate: AppBlock = {
                                   "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
                                 additionalProperties: true,
                               },
-                              retry_policy: {
+                              retryPolicy: {
                                 type: "object",
                                 properties: {
-                                  num_retries: {
+                                  numRetries: {
                                     type: "integer",
                                     description:
                                       "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
                                   },
-                                  per_try_timeout: {
+                                  perTryTimeout: {
                                     type: "object",
                                     properties: {
                                       nanos: {
@@ -2062,7 +2062,7 @@ const validate: AppBlock = {
                                       'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                                     additionalProperties: true,
                                   },
-                                  retry_conditions: {
+                                  retryConditions: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -2092,20 +2092,20 @@ const validate: AppBlock = {
                                   'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                                 additionalProperties: true,
                               },
-                              url_rewrite: {
+                              urlRewrite: {
                                 type: "object",
                                 properties: {
-                                  host_rewrite: {
+                                  hostRewrite: {
                                     type: "string",
                                     description:
                                       "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
                                   },
-                                  path_prefix_rewrite: {
+                                  pathPrefixRewrite: {
                                     type: "string",
                                     description:
                                       "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
                                   },
-                                  path_template_rewrite: {
+                                  pathTemplateRewrite: {
                                     type: "string",
                                     description:
                                       "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
@@ -2115,30 +2115,30 @@ const validate: AppBlock = {
                                   "The spec for modifying the path before sending the request to the matched backend service.",
                                 additionalProperties: true,
                               },
-                              weighted_backend_services: {
+                              weightedBackendServices: {
                                 type: "array",
                                 items: {
                                   type: "object",
                                   properties: {
-                                    backend_service: {
+                                    backendService: {
                                       type: "string",
                                       description:
                                         "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
                                     },
-                                    header_action: {
+                                    headerAction: {
                                       type: "object",
                                       properties: {
-                                        request_headers_to_add: {
+                                        requestHeadersToAdd: {
                                           type: "array",
                                           items: {
                                             type: "object",
                                             properties: {
-                                              header_name: {
+                                              headerName: {
                                                 type: "string",
                                                 description:
                                                   "The name of the header.",
                                               },
-                                              header_value: {
+                                              headerValue: {
                                                 type: "string",
                                                 description:
                                                   "The value of the header to add.",
@@ -2156,7 +2156,7 @@ const validate: AppBlock = {
                                           description:
                                             "Headers to add to a matching request before forwarding the request to thebackendService.",
                                         },
-                                        request_headers_to_remove: {
+                                        requestHeadersToRemove: {
                                           type: "array",
                                           items: {
                                             type: "string",
@@ -2164,17 +2164,17 @@ const validate: AppBlock = {
                                           description:
                                             "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                                         },
-                                        response_headers_to_add: {
+                                        responseHeadersToAdd: {
                                           type: "array",
                                           items: {
                                             type: "object",
                                             properties: {
-                                              header_name: {
+                                              headerName: {
                                                 type: "string",
                                                 description:
                                                   "The name of the header.",
                                               },
-                                              header_value: {
+                                              headerValue: {
                                                 type: "string",
                                                 description:
                                                   "The value of the header to add.",
@@ -2192,7 +2192,7 @@ const validate: AppBlock = {
                                           description:
                                             "Headers to add the response before sending the response back to the client.",
                                         },
-                                        response_headers_to_remove: {
+                                        responseHeadersToRemove: {
                                           type: "array",
                                           items: {
                                             type: "string",
@@ -2228,35 +2228,35 @@ const validate: AppBlock = {
                             description:
                               "The full or partial URL of the backend service resource to which traffic is directed if this rule is matched. If routeAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of urlRedirect, service orrouteAction.weightedBackendService can be set.",
                           },
-                          url_redirect: {
+                          urlRedirect: {
                             type: "object",
                             properties: {
-                              host_redirect: {
+                              hostRedirect: {
                                 type: "string",
                                 description:
                                   "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
                               },
-                              https_redirect: {
+                              httpsRedirect: {
                                 type: "boolean",
                                 description:
                                   "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
                               },
-                              path_redirect: {
+                              pathRedirect: {
                                 type: "string",
                                 description:
                                   "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                               },
-                              prefix_redirect: {
+                              prefixRedirect: {
                                 type: "string",
                                 description:
                                   "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
                               },
-                              redirect_response_code: {
+                              redirectResponseCode: {
                                 type: "string",
                                 description:
                                   "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
                               },
-                              strip_query: {
+                              stripQuery: {
                                 type: "boolean",
                                 description:
                                   "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
@@ -2287,7 +2287,7 @@ const validate: AppBlock = {
                 description:
                   "Output only. [Output Only] URL of the region where the regional URL map resides. This field is not applicable to global URL maps. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
               },
-              self_link: {
+              selfLink: {
                 type: "string",
                 description:
                   "[Output Only] Server-defined URL for the resource.",
@@ -2301,12 +2301,12 @@ const validate: AppBlock = {
                       type: "string",
                       description: "Description of this test case.",
                     },
-                    expected_output_url: {
+                    expectedOutputUrl: {
                       type: "string",
                       description:
                         "The expected output URL evaluated by the load balancer containing the scheme, host, path and query parameters.  For rules that forward requests to backends, the test passes only whenexpectedOutputUrl matches the request forwarded by the load balancer to backends. For rules with urlRewrite, the test verifies that the forwarded request matcheshostRewrite and pathPrefixRewrite in theurlRewrite action. When service is specified,expectedOutputUrl`s scheme is ignored.  For rules with urlRedirect, the test passes only ifexpectedOutputUrl matches the URL in the load balancer's redirect response. If urlRedirect specifieshttps_redirect, the test passes only if the scheme inexpectedOutputUrl is also set to HTTPS. If urlRedirect specifies strip_query, the test passes only if expectedOutputUrl does not contain any query parameters.  expectedOutputUrl is optional whenservice is specified.",
                     },
-                    expected_redirect_response_code: {
+                    expectedRedirectResponseCode: {
                       type: "integer",
                       description:
                         "For rules with urlRedirect, the test passes only ifexpectedRedirectResponseCode matches the HTTP status code in load balancer's redirect response.  expectedRedirectResponseCode cannot be set whenservice is set.",
@@ -2365,8 +2365,8 @@ const validate: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.url_map !== undefined)
-          pathParams["url_map"] = String(input.event.inputConfig.url_map);
+        if (input.event.inputConfig.urlMap !== undefined)
+          pathParams["url_map"] = String(input.event.inputConfig.urlMap);
 
         const body: Record<string, any> = {};
         if (input.event.inputConfig.resource !== undefined)
@@ -2394,48 +2394,48 @@ const validate: AppBlock = {
           result: {
             type: "object",
             properties: {
-              load_errors: {
+              loadErrors: {
                 type: "array",
                 items: {
                   type: "string",
                 },
               },
-              load_succeeded: {
+              loadSucceeded: {
                 type: "boolean",
                 description:
                   "Whether the given UrlMap can be successfully loaded. If false, 'loadErrors' indicates the reasons.",
               },
-              test_failures: {
+              testFailures: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    actual_output_url: {
+                    actualOutputUrl: {
                       type: "string",
                       description:
                         "The actual output URL evaluated by a load balancer containing the scheme, host, path and query parameters.",
                     },
-                    actual_redirect_response_code: {
+                    actualRedirectResponseCode: {
                       type: "integer",
                       description:
                         "Actual HTTP status code for rule with `urlRedirect` calculated by load balancer",
                     },
-                    actual_service: {
+                    actualService: {
                       type: "string",
                       description:
                         "BackendService or BackendBucket returned by load balancer.",
                     },
-                    expected_output_url: {
+                    expectedOutputUrl: {
                       type: "string",
                       description:
                         "The expected output URL evaluated by a load balancer containing the scheme, host, path and query parameters.",
                     },
-                    expected_redirect_response_code: {
+                    expectedRedirectResponseCode: {
                       type: "integer",
                       description:
                         "Expected HTTP status code for rule with `urlRedirect` calculated by load balancer",
                     },
-                    expected_service: {
+                    expectedService: {
                       type: "string",
                       description:
                         "Expected BackendService or BackendBucket resource the given URL should be mapped to.",
@@ -2472,7 +2472,7 @@ const validate: AppBlock = {
                   additionalProperties: true,
                 },
               },
-              test_passed: {
+              testPassed: {
                 type: "boolean",
                 description:
                   "If successfully loaded, this field indicates whether the test passed. If false, 'testFailures's indicate the reason of failure.",

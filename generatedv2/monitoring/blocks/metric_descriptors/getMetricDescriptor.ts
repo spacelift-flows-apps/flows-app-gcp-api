@@ -1,5 +1,28 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getMetricServiceClient } from "../../lib/grpcClient.ts";
+import { getMetricServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  labels: {
+    name: "labels",
+    fields: {
+      value_type: "valueType",
+    },
+  },
+  metric_kind: "metricKind",
+  value_type: "valueType",
+  display_name: "displayName",
+  metadata: {
+    name: "metadata",
+    fields: {
+      launch_stage: "launchStage",
+      sample_period: "samplePeriod",
+      ingest_delay: "ingestDelay",
+      time_series_resource_hierarchy_level: "timeSeriesResourceHierarchyLevel",
+    },
+  },
+  launch_stage: "launchStage",
+  monitored_resource_types: "monitoredResourceTypes",
+};
 
 const getMetricDescriptor: AppBlock = {
   name: "Get Metric Descriptor",
@@ -23,9 +46,7 @@ const getMetricDescriptor: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getMetricDescriptor(request, (err: any, response: any) => {
@@ -39,7 +60,8 @@ const getMetricDescriptor: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -63,7 +85,7 @@ const getMetricDescriptor: AppBlock = {
                 key: {
                   type: "string",
                 },
-                value_type: {
+                valueType: {
                   type: "string",
                   enum: ["STRING", "BOOL", "INT64"],
                 },
@@ -74,11 +96,11 @@ const getMetricDescriptor: AppBlock = {
               additionalProperties: true,
             },
           },
-          metric_kind: {
+          metricKind: {
             type: "string",
             enum: ["METRIC_KIND_UNSPECIFIED", "GAUGE", "DELTA", "CUMULATIVE"],
           },
-          value_type: {
+          valueType: {
             type: "string",
             enum: [
               "VALUE_TYPE_UNSPECIFIED",
@@ -96,13 +118,13 @@ const getMetricDescriptor: AppBlock = {
           description: {
             type: "string",
           },
-          display_name: {
+          displayName: {
             type: "string",
           },
           metadata: {
             type: "object",
             properties: {
-              launch_stage: {
+              launchStage: {
                 type: "string",
                 enum: [
                   "LAUNCH_STAGE_UNSPECIFIED",
@@ -115,15 +137,15 @@ const getMetricDescriptor: AppBlock = {
                   "DEPRECATED",
                 ],
               },
-              sample_period: {
+              samplePeriod: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              ingest_delay: {
+              ingestDelay: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              time_series_resource_hierarchy_level: {
+              timeSeriesResourceHierarchyLevel: {
                 type: "array",
                 items: {
                   type: "string",
@@ -138,7 +160,7 @@ const getMetricDescriptor: AppBlock = {
             },
             additionalProperties: true,
           },
-          launch_stage: {
+          launchStage: {
             type: "string",
             enum: [
               "LAUNCH_STAGE_UNSPECIFIED",
@@ -151,7 +173,7 @@ const getMetricDescriptor: AppBlock = {
               "DEPRECATED",
             ],
           },
-          monitored_resource_types: {
+          monitoredResourceTypes: {
             type: "array",
             items: {
               type: "string",

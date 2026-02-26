@@ -1,5 +1,91 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  cryptoKey: {
+    name: "crypto_key",
+    fields: {
+      nextRotationTime: "next_rotation_time",
+      rotationPeriod: "rotation_period",
+      versionTemplate: {
+        name: "version_template",
+        fields: {
+          protectionLevel: "protection_level",
+        },
+      },
+      importOnly: "import_only",
+      destroyScheduledDuration: "destroy_scheduled_duration",
+      cryptoKeyBackend: "crypto_key_backend",
+      keyAccessJustificationsPolicy: {
+        name: "key_access_justifications_policy",
+        fields: {
+          allowedAccessReasons: "allowed_access_reasons",
+        },
+      },
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  primary: {
+    name: "primary",
+    fields: {
+      protection_level: "protectionLevel",
+      attestation: {
+        name: "attestation",
+        fields: {
+          cert_chains: {
+            name: "certChains",
+            fields: {
+              cavium_certs: "caviumCerts",
+              google_card_certs: "googleCardCerts",
+              google_partition_certs: "googlePartitionCerts",
+            },
+          },
+        },
+      },
+      create_time: "createTime",
+      generate_time: "generateTime",
+      destroy_time: "destroyTime",
+      destroy_event_time: "destroyEventTime",
+      import_job: "importJob",
+      import_time: "importTime",
+      import_failure_reason: "importFailureReason",
+      generation_failure_reason: "generationFailureReason",
+      external_destruction_failure_reason: "externalDestructionFailureReason",
+      external_protection_level_options: {
+        name: "externalProtectionLevelOptions",
+        fields: {
+          external_key_uri: "externalKeyUri",
+          ekm_connection_key_path: "ekmConnectionKeyPath",
+        },
+      },
+      reimport_eligible: "reimportEligible",
+    },
+  },
+  create_time: "createTime",
+  next_rotation_time: "nextRotationTime",
+  rotation_period: "rotationPeriod",
+  version_template: {
+    name: "versionTemplate",
+    fields: {
+      protection_level: "protectionLevel",
+    },
+  },
+  import_only: "importOnly",
+  destroy_scheduled_duration: "destroyScheduledDuration",
+  crypto_key_backend: "cryptoKeyBackend",
+  key_access_justifications_policy: {
+    name: "keyAccessJustificationsPolicy",
+    fields: {
+      allowed_access_reasons: "allowedAccessReasons",
+    },
+  },
+};
 
 const updateCryptoKey: AppBlock = {
   name: "Update Crypto Key",
@@ -8,7 +94,7 @@ const updateCryptoKey: AppBlock = {
   inputs: {
     default: {
       config: {
-        crypto_key: {
+        cryptoKey: {
           name: "Crypto Key",
           description:
             "Required. [CryptoKey][google.cloud.kms.v1.CryptoKey] with updated values.",
@@ -29,18 +115,18 @@ const updateCryptoKey: AppBlock = {
                 description:
                   "Immutable. The immutable purpose of this [CryptoKey][google.cloud.kms.v1.CryptoKey].",
               },
-              next_rotation_time: {
+              nextRotationTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              rotation_period: {
+              rotationPeriod: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              version_template: {
+              versionTemplate: {
                 type: "object",
                 properties: {
-                  protection_level: {
+                  protectionLevel: {
                     type: "string",
                     enum: [
                       "PROTECTION_LEVEL_UNSPECIFIED",
@@ -121,24 +207,24 @@ const updateCryptoKey: AppBlock = {
                 description:
                   "Labels with user-defined metadata. For more information, see [Labeling Keys](https://cloud.google.com/kms/docs/labeling-keys).",
               },
-              import_only: {
+              importOnly: {
                 type: "boolean",
                 description:
                   "Immutable. Whether this key may contain imported versions only.",
               },
-              destroy_scheduled_duration: {
+              destroyScheduledDuration: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              crypto_key_backend: {
+              cryptoKeyBackend: {
                 type: "string",
                 description:
                   "Immutable. The resource name of the backend environment where the key material for all [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] associated with this [CryptoKey][google.cloud.kms.v1.CryptoKey] reside and where all related cryptographic operations are performed. Only applicable if [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] have a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC], with the resource name in the format `projects/*/locations/*/ekmConnections/*`. Only applicable if [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] have a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [HSM_SINGLE_TENANT][google.cloud.kms.v1.ProtectionLevel.HSM_SINGLE_TENANT], with the resource name in the format `projects/*/locations/*/singleTenantHsmInstances/*`. Note, this list is non-exhaustive and may apply to additional [ProtectionLevels][google.cloud.kms.v1.ProtectionLevel] in the future.",
               },
-              key_access_justifications_policy: {
+              keyAccessJustificationsPolicy: {
                 type: "object",
                 properties: {
-                  allowed_access_reasons: {
+                  allowedAccessReasons: {
                     type: "array",
                     items: {
                       type: "string",
@@ -174,7 +260,7 @@ const updateCryptoKey: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Required. List of fields to be updated in this request.",
@@ -189,11 +275,7 @@ const updateCryptoKey: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.crypto_key !== undefined)
-          request.crypto_key = input.event.inputConfig.crypto_key;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateCryptoKey(request, (err: any, response: any) => {
@@ -207,7 +289,8 @@ const updateCryptoKey: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -248,7 +331,7 @@ const updateCryptoKey: AppBlock = {
                 description:
                   "The current state of the [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion].",
               },
-              protection_level: {
+              protectionLevel: {
                 type: "string",
                 enum: [
                   "PROTECTION_LEVEL_UNSPECIFIED",
@@ -332,10 +415,10 @@ const updateCryptoKey: AppBlock = {
                     type: "string",
                     description: "Base64-encoded bytes",
                   },
-                  cert_chains: {
+                  certChains: {
                     type: "object",
                     properties: {
-                      cavium_certs: {
+                      caviumCerts: {
                         type: "array",
                         items: {
                           type: "string",
@@ -343,7 +426,7 @@ const updateCryptoKey: AppBlock = {
                         description:
                           "Cavium certificate chain corresponding to the attestation.",
                       },
-                      google_card_certs: {
+                      googleCardCerts: {
                         type: "array",
                         items: {
                           type: "string",
@@ -351,7 +434,7 @@ const updateCryptoKey: AppBlock = {
                         description:
                           "Google card certificate chain corresponding to the attestation.",
                       },
-                      google_partition_certs: {
+                      googlePartitionCerts: {
                         type: "array",
                         items: {
                           type: "string",
@@ -369,55 +452,55 @@ const updateCryptoKey: AppBlock = {
                   "Contains an HSM-generated attestation about a key operation. For more information, see [Verifying attestations] (https://cloud.google.com/kms/docs/attest-key).",
                 additionalProperties: true,
               },
-              create_time: {
+              createTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              generate_time: {
+              generateTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              destroy_time: {
+              destroyTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              destroy_event_time: {
+              destroyEventTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              import_job: {
+              importJob: {
                 type: "string",
                 description:
                   "Output only. The name of the [ImportJob][google.cloud.kms.v1.ImportJob] used in the most recent import of this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion]. Only present if the underlying key material was imported.",
               },
-              import_time: {
+              importTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              import_failure_reason: {
+              importFailureReason: {
                 type: "string",
                 description:
                   "Output only. The root cause of the most recent import failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [IMPORT_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.IMPORT_FAILED].",
               },
-              generation_failure_reason: {
+              generationFailureReason: {
                 type: "string",
                 description:
                   "Output only. The root cause of the most recent generation failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [GENERATION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.GENERATION_FAILED].",
               },
-              external_destruction_failure_reason: {
+              externalDestructionFailureReason: {
                 type: "string",
                 description:
                   "Output only. The root cause of the most recent external destruction failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [EXTERNAL_DESTRUCTION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.EXTERNAL_DESTRUCTION_FAILED].",
               },
-              external_protection_level_options: {
+              externalProtectionLevelOptions: {
                 type: "object",
                 properties: {
-                  external_key_uri: {
+                  externalKeyUri: {
                     type: "string",
                     description:
                       "The URI for an external resource that this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] represents.",
                   },
-                  ekm_connection_key_path: {
+                  ekmConnectionKeyPath: {
                     type: "string",
                     description:
                       'The path to the external key material on the EKM when using [EkmConnection][google.cloud.kms.v1.EkmConnection] e.g., "v0/my/key". Set this field instead of external_key_uri when using an [EkmConnection][google.cloud.kms.v1.EkmConnection].',
@@ -427,7 +510,7 @@ const updateCryptoKey: AppBlock = {
                   "ExternalProtectionLevelOptions stores a group of additional fields for configuring a [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] that are specific to the [EXTERNAL][google.cloud.kms.v1.ProtectionLevel.EXTERNAL] protection level and [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC] protection levels.",
                 additionalProperties: true,
               },
-              reimport_eligible: {
+              reimportEligible: {
                 type: "boolean",
                 description:
                   "Output only. Whether or not this key version is eligible for reimport, by being specified as a target in [ImportCryptoKeyVersionRequest.crypto_key_version][google.cloud.kms.v1.ImportCryptoKeyVersionRequest.crypto_key_version].",
@@ -451,22 +534,22 @@ const updateCryptoKey: AppBlock = {
             description:
               "Immutable. The immutable purpose of this [CryptoKey][google.cloud.kms.v1.CryptoKey].",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          next_rotation_time: {
+          nextRotationTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          rotation_period: {
+          rotationPeriod: {
             type: "string",
             description: "Duration string (e.g., '1.5s', '300s')",
           },
-          version_template: {
+          versionTemplate: {
             type: "object",
             properties: {
-              protection_level: {
+              protectionLevel: {
                 type: "string",
                 enum: [
                   "PROTECTION_LEVEL_UNSPECIFIED",
@@ -547,24 +630,24 @@ const updateCryptoKey: AppBlock = {
             description:
               "Labels with user-defined metadata. For more information, see [Labeling Keys](https://cloud.google.com/kms/docs/labeling-keys).",
           },
-          import_only: {
+          importOnly: {
             type: "boolean",
             description:
               "Immutable. Whether this key may contain imported versions only.",
           },
-          destroy_scheduled_duration: {
+          destroyScheduledDuration: {
             type: "string",
             description: "Duration string (e.g., '1.5s', '300s')",
           },
-          crypto_key_backend: {
+          cryptoKeyBackend: {
             type: "string",
             description:
               "Immutable. The resource name of the backend environment where the key material for all [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] associated with this [CryptoKey][google.cloud.kms.v1.CryptoKey] reside and where all related cryptographic operations are performed. Only applicable if [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] have a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC], with the resource name in the format `projects/*/locations/*/ekmConnections/*`. Only applicable if [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] have a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [HSM_SINGLE_TENANT][google.cloud.kms.v1.ProtectionLevel.HSM_SINGLE_TENANT], with the resource name in the format `projects/*/locations/*/singleTenantHsmInstances/*`. Note, this list is non-exhaustive and may apply to additional [ProtectionLevels][google.cloud.kms.v1.ProtectionLevel] in the future.",
           },
-          key_access_justifications_policy: {
+          keyAccessJustificationsPolicy: {
             type: "object",
             properties: {
-              allowed_access_reasons: {
+              allowedAccessReasons: {
                 type: "array",
                 items: {
                   type: "string",

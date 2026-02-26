@@ -1,5 +1,20 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import { getPublisherClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  messages: {
+    name: "messages",
+    fields: {
+      messageId: "message_id",
+      publishTime: "publish_time",
+      orderingKey: "ordering_key",
+    },
+  },
+};
+
+const outputMapping = {
+  message_ids: "messageIds",
+};
 
 const publish: AppBlock = {
   name: "Publish",
@@ -39,17 +54,17 @@ const publish: AppBlock = {
                   description:
                     "Optional. Attributes for this message. If this field is empty, the message must contain non-empty data. This can be used to filter messages on the subscription.",
                 },
-                message_id: {
+                messageId: {
                   type: "string",
                   description:
                     "ID of this message, assigned by the server when the message is published. Guaranteed to be unique within the topic. This value may be read by a subscriber that receives a `PubsubMessage` via a `Pull` call or a push delivery. It must not be populated by the publisher in a `Publish` call.",
                 },
-                publish_time: {
+                publishTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                ordering_key: {
+                orderingKey: {
                   type: "string",
                   description:
                     "Optional. If non-empty, identifies related messages for which publish order should be respected. If a `Subscription` has `enable_message_ordering` set to `true`, messages published with the same non-empty `ordering_key` value will be delivered to subscribers in the order in which they are received by the Pub/Sub system. All `PubsubMessage`s published in a given `PublishRequest` must specify the same `ordering_key` value. For more information, see [ordering messages](https://cloud.google.com/pubsub/docs/ordering).",
@@ -67,11 +82,7 @@ const publish: AppBlock = {
       onEvent: async (input) => {
         const client = await getPublisherClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.topic !== undefined)
-          request.topic = input.event.inputConfig.topic;
-        if (input.event.inputConfig.messages !== undefined)
-          request.messages = input.event.inputConfig.messages;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.publish(request, (err: any, response: any) => {
@@ -85,7 +96,8 @@ const publish: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -95,7 +107,7 @@ const publish: AppBlock = {
       type: {
         type: "object",
         properties: {
-          message_ids: {
+          messageIds: {
             type: "array",
             items: {
               type: "string",

@@ -25,7 +25,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: true,
         },
-        address_family: {
+        addressFamily: {
           name: "Address Family",
           description:
             "(Required) limit results to this address family (either IPv4 or IPv6) Check the AddressFamily enum for the list of possible values.",
@@ -34,7 +34,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        destination_prefix: {
+        destinationPrefix: {
           name: "Destination Prefix",
           description:
             "Limit results to destinations that are subnets of this CIDR range",
@@ -52,7 +52,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -61,7 +61,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -70,7 +70,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -88,7 +88,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        policy_applied: {
+        policyApplied: {
           name: "Policy Applied",
           description:
             "When true, the method returns post-policy routes. Otherwise, it returns pre-policy routes.",
@@ -97,7 +97,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -106,7 +106,7 @@ const listBgpRoutes: AppBlock = {
           },
           required: false,
         },
-        route_type: {
+        routeType: {
           name: "Route Type",
           description:
             "(Required) limit results to this type of route (either LEARNED or ADVERTISED) Check the RouteType enum for the list of possible values.",
@@ -125,36 +125,36 @@ const listBgpRoutes: AppBlock = {
           pathParams["router"] = String(input.event.inputConfig.router);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.address_family !== undefined)
+        if (input.event.inputConfig.addressFamily !== undefined)
           queryParams["addressFamily"] = String(
-            input.event.inputConfig.address_family,
+            input.event.inputConfig.addressFamily,
           );
-        if (input.event.inputConfig.destination_prefix !== undefined)
+        if (input.event.inputConfig.destinationPrefix !== undefined)
           queryParams["destinationPrefix"] = String(
-            input.event.inputConfig.destination_prefix,
+            input.event.inputConfig.destinationPrefix,
           );
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
         if (input.event.inputConfig.peer !== undefined)
           queryParams["peer"] = String(input.event.inputConfig.peer);
-        if (input.event.inputConfig.policy_applied !== undefined)
+        if (input.event.inputConfig.policyApplied !== undefined)
           queryParams["policyApplied"] = String(
-            input.event.inputConfig.policy_applied,
+            input.event.inputConfig.policyApplied,
           );
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
-        if (input.event.inputConfig.route_type !== undefined)
-          queryParams["routeType"] = String(input.event.inputConfig.route_type);
+        if (input.event.inputConfig.routeType !== undefined)
+          queryParams["routeType"] = String(input.event.inputConfig.routeType);
 
         const result = await computeFetch({
           config: input.app.config,
@@ -188,7 +188,7 @@ const listBgpRoutes: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Alwayscompute#routersListBgpRoutes for lists of bgp routes.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
@@ -198,7 +198,7 @@ const listBgpRoutes: AppBlock = {
             items: {
               type: "object",
               properties: {
-                as_paths: {
+                asPaths: {
                   type: "array",
                   items: {
                     type: "object",
@@ -241,7 +241,7 @@ const listBgpRoutes: AppBlock = {
                 destination: {
                   type: "object",
                   properties: {
-                    path_id: {
+                    pathId: {
                       type: "integer",
                       description:
                         "If the BGP session supports multiple paths (RFC 7911), the path identifier for this route.",
@@ -271,7 +271,7 @@ const listBgpRoutes: AppBlock = {
             },
             description: "[Output Only] A list of bgp routes.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

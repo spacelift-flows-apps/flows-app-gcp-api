@@ -1,5 +1,49 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  requests: {
+    name: "requests",
+    fields: {
+      repository: {
+        name: "repository",
+        fields: {
+          remoteUri: "remote_uri",
+        },
+      },
+      repositoryId: "repository_id",
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const batchCreateRepositories: AppBlock = {
   name: "Batch Create Repositories",
@@ -41,7 +85,7 @@ const batchCreateRepositories: AppBlock = {
                       description:
                         "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
                     },
-                    remote_uri: {
+                    remoteUri: {
                       type: "string",
                       description: "Required. Git Clone HTTPS URI.",
                     },
@@ -59,18 +103,18 @@ const batchCreateRepositories: AppBlock = {
                         "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
                     },
                   },
-                  required: ["remote_uri"],
+                  required: ["remoteUri"],
                   description:
                     "A repository associated to a parent connection.",
                   additionalProperties: true,
                 },
-                repository_id: {
+                repositoryId: {
                   type: "string",
                   description:
                     "Required. The ID to use for the repository, which will become the final component of the repository's resource name. This ID should be unique in the connection. Allows alphanumeric characters and any of -._~%!$&'()*+,;=@.",
                 },
               },
-              required: ["parent", "repository", "repository_id"],
+              required: ["parent", "repository", "repositoryId"],
               description: "Message for creating a Repository.",
               additionalProperties: true,
             },
@@ -83,11 +127,7 @@ const batchCreateRepositories: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.requests !== undefined)
-          request.requests = input.event.inputConfig.requests;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.batchCreateRepositories(request, (err: any, response: any) => {
@@ -101,7 +141,8 @@ const batchCreateRepositories: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -117,7 +158,7 @@ const batchCreateRepositories: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -144,7 +185,7 @@ const batchCreateRepositories: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -163,7 +204,7 @@ const batchCreateRepositories: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

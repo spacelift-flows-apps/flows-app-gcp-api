@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  fullResourceName: "full_resource_name",
+};
+
+const outputMapping = {
+  lint_results: {
+    name: "lintResults",
+    fields: {
+      validation_unit_name: "validationUnitName",
+      field_name: "fieldName",
+      location_offset: "locationOffset",
+      debug_message: "debugMessage",
+    },
+  },
+};
 
 const lintPolicy: AppBlock = {
   name: "Lint Policy",
@@ -8,7 +24,7 @@ const lintPolicy: AppBlock = {
   inputs: {
     default: {
       config: {
-        full_resource_name: {
+        fullResourceName: {
           name: "Full Resource Name",
           description:
             "The full resource name of the policy this lint request is about.  The name follows the Google Cloud Platform (GCP) resource format. For example, a GCP project with ID `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.  The resource name is not used to read the policy instance from the Cloud IAM database. The candidate policy for lint has to be provided in the same request object.",
@@ -49,12 +65,7 @@ const lintPolicy: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.full_resource_name !== undefined)
-          request.full_resource_name =
-            input.event.inputConfig.full_resource_name;
-        if (input.event.inputConfig.condition !== undefined)
-          request.condition = input.event.inputConfig.condition;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.lintPolicy(request, (err: any, response: any) => {
@@ -68,7 +79,8 @@ const lintPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -78,7 +90,7 @@ const lintPolicy: AppBlock = {
       type: {
         type: "object",
         properties: {
-          lint_results: {
+          lintResults: {
             type: "array",
             items: {
               type: "object",
@@ -88,7 +100,7 @@ const lintPolicy: AppBlock = {
                   enum: ["LEVEL_UNSPECIFIED", "CONDITION"],
                   description: "The validation unit level.",
                 },
-                validation_unit_name: {
+                validationUnitName: {
                   type: "string",
                   description:
                     'The validation unit name, for instance "lintValidationUnits/ConditionComplexityCheck".',
@@ -105,17 +117,17 @@ const lintPolicy: AppBlock = {
                   ],
                   description: "The validation unit severity.",
                 },
-                field_name: {
+                fieldName: {
                   type: "string",
                   description:
                     "The name of the field for which this lint result is about.  For nested messages `field_name` consists of names of the embedded fields separated by period character. The top-level qualifier is the input object to lint in the request. For example, the `field_name` value `condition.expression` identifies a lint result for the `expression` field of the provided condition.",
                 },
-                location_offset: {
+                locationOffset: {
                   type: "integer",
                   description:
                     "0-based character position of problematic construct within the object identified by `field_name`. Currently, this is populated only for condition expression.",
                 },
-                debug_message: {
+                debugMessage: {
                   type: "string",
                   description:
                     "Human readable debug message associated with the issue.",

@@ -24,7 +24,7 @@ const getGuestAttributes: AppBlock = {
           },
           required: true,
         },
-        query_path: {
+        queryPath: {
           name: "Query Path",
           description: "Specifies the guest attributes path to be queried.",
           type: {
@@ -32,7 +32,7 @@ const getGuestAttributes: AppBlock = {
           },
           required: false,
         },
-        variable_key: {
+        variableKey: {
           name: "Variable Key",
           description: "Specifies the key for the guest attributes entry.",
           type: {
@@ -50,11 +50,11 @@ const getGuestAttributes: AppBlock = {
           pathParams["instance"] = String(input.event.inputConfig.instance);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.query_path !== undefined)
-          queryParams["queryPath"] = String(input.event.inputConfig.query_path);
-        if (input.event.inputConfig.variable_key !== undefined)
+        if (input.event.inputConfig.queryPath !== undefined)
+          queryParams["queryPath"] = String(input.event.inputConfig.queryPath);
+        if (input.event.inputConfig.variableKey !== undefined)
           queryParams["variableKey"] = String(
-            input.event.inputConfig.variable_key,
+            input.event.inputConfig.variableKey,
           );
 
         const result = await computeFetch({
@@ -81,12 +81,12 @@ const getGuestAttributes: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#guestAttributes for guest attributes entry.",
           },
-          query_path: {
+          queryPath: {
             type: "string",
             description:
               "The path to be queried. This can be the default namespace ('') or a nested namespace ('\\/') or a specified key ('\\/\\').",
           },
-          query_value: {
+          queryValue: {
             type: "object",
             properties: {
               items: {
@@ -115,16 +115,16 @@ const getGuestAttributes: AppBlock = {
             description: "Array of guest attribute namespace/key/value tuples.",
             additionalProperties: true,
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",
           },
-          variable_key: {
+          variableKey: {
             type: "string",
             description: "The key to search for.",
           },
-          variable_value: {
+          variableValue: {
             type: "string",
             description:
               "Output only. [Output Only] The value found for the requested key.",

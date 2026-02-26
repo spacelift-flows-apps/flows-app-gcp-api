@@ -16,7 +16,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        resource_policy: {
+        resourcePolicy: {
           name: "Resource Policy",
           description: "Id of the resource policy to patch.",
           type: {
@@ -24,7 +24,7 @@ const patch: AppBlock = {
           },
           required: true,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -43,7 +43,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        disk_consistency_group_policy: {
+        diskConsistencyGroupPolicy: {
           name: "Disk Consistency Group Policy",
           description: "Resource policy for disk consistency groups.",
           type: {
@@ -54,14 +54,14 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        group_placement_policy: {
+        groupPlacementPolicy: {
           name: "Group Placement Policy",
           description:
             "Resource policy for instances for placement configuration.",
           type: {
             type: "object",
             properties: {
-              availability_domain_count: {
+              availabilityDomainCount: {
                 type: "integer",
                 description:
                   "The number of availability domains to spread instances across. If two instances are in different availability domain, they are not in the same low latency network.",
@@ -71,12 +71,12 @@ const patch: AppBlock = {
                 description:
                   "Specifies network collocation Check the Collocation enum for the list of possible values.",
               },
-              gpu_topology: {
+              gpuTopology: {
                 type: "string",
                 description:
                   "Specifies the shape of the GPU slice, in slice based GPU families eg. A4X.",
               },
-              vm_count: {
+              vmCount: {
                 type: "integer",
                 description:
                   "Number of VMs in this placement group. Google does not recommend that you use this field unless you use a compact policy and you want your policy to work only if it contains this exact number of VMs.",
@@ -98,28 +98,28 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        instance_schedule_policy: {
+        instanceSchedulePolicy: {
           name: "Instance Schedule Policy",
           description: "Resource policy for scheduling instance operations.",
           type: {
             type: "object",
             properties: {
-              expiration_time: {
+              expirationTime: {
                 type: "string",
                 description:
                   "The expiration time of the schedule. The timestamp is an RFC3339 string.",
               },
-              start_time: {
+              startTime: {
                 type: "string",
                 description:
                   "The start time of the schedule. The timestamp is an RFC3339 string.",
               },
-              time_zone: {
+              timeZone: {
                 type: "string",
                 description:
                   "Specifies the time zone to be used in interpreting Schedule.schedule. The value of this field must be a time zone name from the tz database: https://wikipedia.org/wiki/Tz_database.",
               },
-              vm_start_schedule: {
+              vmStartSchedule: {
                 type: "object",
                 properties: {
                   schedule: {
@@ -131,7 +131,7 @@ const patch: AppBlock = {
                 description: "Schedule for an instance operation.",
                 additionalProperties: true,
               },
-              vm_stop_schedule: {
+              vmStopSchedule: {
                 type: "object",
                 properties: {
                   schedule: {
@@ -172,22 +172,22 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        resource_status: {
+        resourceStatus: {
           name: "Resource Status",
           description:
             "Output only. [Output Only] The system status of the resource policy.",
           type: {
             type: "object",
             properties: {
-              instance_schedule_policy: {
+              instanceSchedulePolicy: {
                 type: "object",
                 properties: {
-                  last_run_start_time: {
+                  lastRunStartTime: {
                     type: "string",
                     description:
                       "Output only. [Output Only] The last time the schedule successfully ran. The timestamp is an RFC3339 string.",
                   },
-                  next_run_start_time: {
+                  nextRunStartTime: {
                     type: "string",
                     description:
                       "Output only. [Output Only] The next time the schedule is planned to run. The actual time might be slightly different. The timestamp is an RFC3339 string.",
@@ -204,7 +204,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
@@ -215,22 +215,22 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        snapshot_schedule_policy: {
+        snapshotSchedulePolicy: {
           name: "Snapshot Schedule Policy",
           description:
             "Resource policy for persistent disks for creating snapshots.",
           type: {
             type: "object",
             properties: {
-              retention_policy: {
+              retentionPolicy: {
                 type: "object",
                 properties: {
-                  max_retention_days: {
+                  maxRetentionDays: {
                     type: "integer",
                     description:
                       "Maximum age of the snapshot that is allowed to be kept.",
                   },
-                  on_source_disk_delete: {
+                  onSourceDiskDelete: {
                     type: "string",
                     description:
                       "Specifies the behavior to apply to scheduled snapshots when the source disk is deleted. Check the OnSourceDiskDelete enum for the list of possible values.",
@@ -242,10 +242,10 @@ const patch: AppBlock = {
               schedule: {
                 type: "object",
                 properties: {
-                  daily_schedule: {
+                  dailySchedule: {
                     type: "object",
                     properties: {
-                      days_in_cycle: {
+                      daysInCycle: {
                         type: "integer",
                         description:
                           "Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle.",
@@ -255,7 +255,7 @@ const patch: AppBlock = {
                         description:
                           "Output only. [Output only] A predetermined duration for the window, automatically chosen to be the smallest possible in the given scenario.",
                       },
-                      start_time: {
+                      startTime: {
                         type: "string",
                         description:
                           "Start time of the window. This must be in UTC format that resolves to one of 00:00, 04:00, 08:00,12:00, 16:00, or 20:00. For example, both 13:00-5 and 08:00 are valid.",
@@ -264,7 +264,7 @@ const patch: AppBlock = {
                     description: "Time window specified for daily operations.",
                     additionalProperties: true,
                   },
-                  hourly_schedule: {
+                  hourlySchedule: {
                     type: "object",
                     properties: {
                       duration: {
@@ -272,12 +272,12 @@ const patch: AppBlock = {
                         description:
                           "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                       },
-                      hours_in_cycle: {
+                      hoursInCycle: {
                         type: "integer",
                         description:
                           "Defines a schedule with units measured in hours. The value determines how many hours pass between the start of each cycle.",
                       },
-                      start_time: {
+                      startTime: {
                         type: "string",
                         description:
                           'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
@@ -286,10 +286,10 @@ const patch: AppBlock = {
                     description: "Time window specified for hourly operations.",
                     additionalProperties: true,
                   },
-                  weekly_schedule: {
+                  weeklySchedule: {
                     type: "object",
                     properties: {
-                      day_of_weeks: {
+                      dayOfWeeks: {
                         type: "array",
                         items: {
                           type: "object",
@@ -304,7 +304,7 @@ const patch: AppBlock = {
                               description:
                                 "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                             },
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
@@ -324,14 +324,14 @@ const patch: AppBlock = {
                   "A schedule for disks where the schedueled operations are performed.",
                 additionalProperties: true,
               },
-              snapshot_properties: {
+              snapshotProperties: {
                 type: "object",
                 properties: {
-                  chain_name: {
+                  chainName: {
                     type: "string",
                     description: "Chain name that the snapshot is created in.",
                   },
-                  guest_flush: {
+                  guestFlush: {
                     type: "boolean",
                     description:
                       "Indication to perform a 'guest aware' snapshot.",
@@ -344,7 +344,7 @@ const patch: AppBlock = {
                     description:
                       "Labels to apply to scheduled snapshots. These can be later modified by the setLabels method. Label values may be empty.",
                   },
-                  storage_locations: {
+                  storageLocations: {
                     type: "array",
                     items: {
                       type: "string",
@@ -375,19 +375,19 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        workload_policy: {
+        workloadPolicy: {
           name: "Workload Policy",
           description:
             "Resource policy for defining instance placement for MIGs.",
           type: {
             type: "object",
             properties: {
-              accelerator_topology: {
+              acceleratorTopology: {
                 type: "string",
                 description:
                   "Specifies the topology required to create a partition for VMs that have interconnected GPUs.",
               },
-              max_topology_distance: {
+              maxTopologyDistance: {
                 type: "string",
                 description:
                   "Specifies the maximum distance between instances. Check the MaxTopologyDistance enum for the list of possible values.",
@@ -403,7 +403,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -412,7 +412,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "update_mask indicates fields to be updated as part of this request.",
@@ -427,51 +427,51 @@ const patch: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.resource_policy !== undefined)
+        if (input.event.inputConfig.resourcePolicy !== undefined)
           pathParams["resource_policy"] = String(
-            input.event.inputConfig.resource_policy,
+            input.event.inputConfig.resourcePolicy,
           );
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
-        if (input.event.inputConfig.update_mask !== undefined)
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
+        if (input.event.inputConfig.updateMask !== undefined)
           queryParams["updateMask"] = String(
-            input.event.inputConfig.update_mask,
+            input.event.inputConfig.updateMask,
           );
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.disk_consistency_group_policy !== undefined)
-          body.disk_consistency_group_policy =
-            input.event.inputConfig.disk_consistency_group_policy;
-        if (input.event.inputConfig.group_placement_policy !== undefined)
-          body.group_placement_policy =
-            input.event.inputConfig.group_placement_policy;
+        if (input.event.inputConfig.diskConsistencyGroupPolicy !== undefined)
+          body.diskConsistencyGroupPolicy =
+            input.event.inputConfig.diskConsistencyGroupPolicy;
+        if (input.event.inputConfig.groupPlacementPolicy !== undefined)
+          body.groupPlacementPolicy =
+            input.event.inputConfig.groupPlacementPolicy;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.instance_schedule_policy !== undefined)
-          body.instance_schedule_policy =
-            input.event.inputConfig.instance_schedule_policy;
+        if (input.event.inputConfig.instanceSchedulePolicy !== undefined)
+          body.instanceSchedulePolicy =
+            input.event.inputConfig.instanceSchedulePolicy;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.resource_status !== undefined)
-          body.resource_status = input.event.inputConfig.resource_status;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.snapshot_schedule_policy !== undefined)
-          body.snapshot_schedule_policy =
-            input.event.inputConfig.snapshot_schedule_policy;
+        if (input.event.inputConfig.resourceStatus !== undefined)
+          body.resourceStatus = input.event.inputConfig.resourceStatus;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.snapshotSchedulePolicy !== undefined)
+          body.snapshotSchedulePolicy =
+            input.event.inputConfig.snapshotSchedulePolicy;
         if (input.event.inputConfig.status !== undefined)
           body.status = input.event.inputConfig.status;
-        if (input.event.inputConfig.workload_policy !== undefined)
-          body.workload_policy = input.event.inputConfig.workload_policy;
+        if (input.event.inputConfig.workloadPolicy !== undefined)
+          body.workloadPolicy = input.event.inputConfig.workloadPolicy;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -493,12 +493,12 @@ const patch: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -507,7 +507,7 @@ const patch: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -525,12 +525,12 @@ const patch: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -585,7 +585,7 @@ const patch: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -603,7 +603,7 @@ const patch: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -614,7 +614,7 @@ const patch: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -624,16 +624,16 @@ const patch: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -670,12 +670,12 @@ const patch: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -684,15 +684,15 @@ const patch: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -712,12 +712,12 @@ const patch: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -732,18 +732,18 @@ const patch: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -756,7 +756,7 @@ const patch: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -767,16 +767,16 @@ const patch: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

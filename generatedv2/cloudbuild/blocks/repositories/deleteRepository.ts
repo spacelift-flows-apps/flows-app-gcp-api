@@ -1,5 +1,38 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const deleteRepository: AppBlock = {
   name: "Delete Repository",
@@ -30,7 +63,7 @@ const deleteRepository: AppBlock = {
           },
           required: false,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "If set, validate the request, but do not actually post it.",
@@ -45,13 +78,7 @@ const deleteRepository: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteRepository(request, (err: any, response: any) => {
@@ -65,7 +92,8 @@ const deleteRepository: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -81,7 +109,7 @@ const deleteRepository: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -108,7 +136,7 @@ const deleteRepository: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -127,7 +155,7 @@ const deleteRepository: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

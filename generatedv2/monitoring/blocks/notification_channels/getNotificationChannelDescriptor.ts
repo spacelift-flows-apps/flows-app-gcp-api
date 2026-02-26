@@ -1,5 +1,20 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getNotificationChannelServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getNotificationChannelServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  display_name: "displayName",
+  labels: {
+    name: "labels",
+    fields: {
+      value_type: "valueType",
+    },
+  },
+  supported_tiers: "supportedTiers",
+  launch_stage: "launchStage",
+};
 
 const getNotificationChannelDescriptor: AppBlock = {
   name: "Get Notification Channel Descriptor",
@@ -25,9 +40,7 @@ const getNotificationChannelDescriptor: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getNotificationChannelDescriptor(
@@ -44,7 +57,8 @@ const getNotificationChannelDescriptor: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -64,7 +78,7 @@ const getNotificationChannelDescriptor: AppBlock = {
             description:
               'The type of notification channel, such as "email" and "sms". To view the full list of channels, see [Channel descriptors](https://cloud.google.com/monitoring/alerts/using-channels-api#ncd). Notification channel types are globally unique.',
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "A human-readable name for the notification channel type.  This form of the name is suitable for a user interface.",
@@ -82,7 +96,7 @@ const getNotificationChannelDescriptor: AppBlock = {
                 key: {
                   type: "string",
                 },
-                value_type: {
+                valueType: {
                   type: "string",
                   enum: ["STRING", "BOOL", "INT64"],
                 },
@@ -95,7 +109,7 @@ const getNotificationChannelDescriptor: AppBlock = {
             description:
               "The set of labels that must be defined to identify a particular channel of the corresponding type. Each label includes a description for how that field should be populated.",
           },
-          supported_tiers: {
+          supportedTiers: {
             type: "array",
             items: {
               type: "string",
@@ -110,7 +124,7 @@ const getNotificationChannelDescriptor: AppBlock = {
             description:
               "The tiers that support this notification channel; the project service tier must be one of the supported_tiers.",
           },
-          launch_stage: {
+          launchStage: {
             type: "string",
             enum: [
               "LAUNCH_STAGE_UNSPECIFIED",

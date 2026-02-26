@@ -23,9 +23,7 @@ const deleteTopic: AppBlock = {
       onEvent: async (input) => {
         const client = await getPublisherClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.topic !== undefined)
-          request.topic = input.event.inputConfig.topic;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteTopic(request, (err: any, response: any) => {

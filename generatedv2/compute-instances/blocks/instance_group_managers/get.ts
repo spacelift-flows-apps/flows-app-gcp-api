@@ -17,7 +17,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        instance_group_manager: {
+        instanceGroupManager: {
           name: "Instance Group Manager",
           description: "The name of the managed instance group.",
           type: {
@@ -31,9 +31,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.instance_group_manager !== undefined)
+        if (input.event.inputConfig.instanceGroupManager !== undefined)
           pathParams["instance_group_manager"] = String(
-            input.event.inputConfig.instance_group_manager,
+            input.event.inputConfig.instanceGroupManager,
           );
 
         const result = await computeFetch({
@@ -54,7 +54,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          all_instances_config: {
+          allInstancesConfig: {
             type: "object",
             properties: {
               properties: {
@@ -86,17 +86,17 @@ const get: AppBlock = {
             description:
               "Specifies configuration that overrides the instance template configuration for the group.",
           },
-          auto_healing_policies: {
+          autoHealingPolicies: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                health_check: {
+                healthCheck: {
                   type: "string",
                   description:
                     "The URL for the health check that signals autohealing.",
                 },
-                initial_delay_sec: {
+                initialDelaySec: {
                   type: "integer",
                   description:
                     "The initial delay is the number of seconds that a new VM takes to initialize and run its startup script. During a VM's initial delay period, the MIG ignores unsuccessful health checks because the VM might be in the startup process. This prevents the MIG from prematurely recreating a VM. If the health check receives a healthy response during the initial delay, it indicates that the startup process is complete and the VM is ready. The value of initial delay must be between 0 and 3600 seconds. The default value is 0.",
@@ -107,17 +107,17 @@ const get: AppBlock = {
             description:
               "The autohealing policy for this managed instance group. You can specify only one value.",
           },
-          base_instance_name: {
+          baseInstanceName: {
             type: "string",
             description:
               'The base instance name is a prefix that you want to attach to the names of all VMs in a MIG. The maximum character length is 58 and the name must comply with RFC1035 format.  When a VM is created in the group, the MIG appends a hyphen and a random four-character string to the base instance name. If you want the MIG to assign sequential numbers instead of a random string, then end the base instance name with a hyphen followed by one or more hash symbols. The hash symbols indicate the number of digits. For example, a base instance name of "vm-###" results in "vm-001" as a VM name. @pattern [a-z](([-a-z0-9]{0,57})|([-a-z0-9]{0,51}-#{1,10}(\\\\[[0-9]{1,10}\\\\])?))',
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] The creation timestamp for this managed instance group inRFC3339 text format.",
           },
-          current_actions: {
+          currentActions: {
             type: "object",
             properties: {
               abandoning: {
@@ -130,7 +130,7 @@ const get: AppBlock = {
                 description:
                   "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be created or are currently being created. If the group fails to create any of these instances, it tries again until it creates the instance successfully.  If you have disabled creation retries, this field will not be populated; instead, the creatingWithoutRetries field will be populated.",
               },
-              creating_without_retries: {
+              creatingWithoutRetries: {
                 type: "integer",
                 description:
                   "Output only. [Output Only] The number of instances that the managed instance group will attempt to create. The group attempts to create each instance only once. If the group fails to create any of these instances, it decreases the group's targetSize value accordingly.",
@@ -194,10 +194,10 @@ const get: AppBlock = {
             type: "string",
             description: "An optional description of this resource.",
           },
-          distribution_policy: {
+          distributionPolicy: {
             type: "object",
             properties: {
-              target_shape: {
+              targetShape: {
                 type: "string",
                 description:
                   "The distribution shape to which the group converges either proactively or on resize events (depending on the value set inupdatePolicy.instanceRedistributionType). Check the TargetShape enum for the list of possible values.",
@@ -232,10 +232,10 @@ const get: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          instance_flexibility_policy: {
+          instanceFlexibilityPolicy: {
             type: "object",
             properties: {
-              instance_selections: {
+              instanceSelections: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -248,20 +248,20 @@ const get: AppBlock = {
             description:
               "Instance flexibility allowing MIG to create VMs from multiple types of machines. Instance flexibility configuration on MIG overrides instance template configuration.",
           },
-          instance_group: {
+          instanceGroup: {
             type: "string",
             description:
               "Output only. [Output Only] The URL of the Instance Group resource.",
           },
-          instance_lifecycle_policy: {
+          instanceLifecyclePolicy: {
             type: "object",
             properties: {
-              default_action_on_failure: {
+              defaultActionOnFailure: {
                 type: "string",
                 description:
                   "The action that a MIG performs on a failed or an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are     - REPAIR (default): MIG automatically repairs a failed or    an unhealthy VM by recreating it. For more information, see About    repairing VMs in a MIG.    - DO_NOTHING: MIG does not repair a failed or an unhealthy    VM. Check the DefaultActionOnFailure enum for the list of possible values.",
               },
-              force_update_on_repair: {
+              forceUpdateOnRepair: {
                 type: "string",
                 description:
                   "A bit indicating whether to forcefully apply the group's latest configuration when repairing a VM. Valid options are:         -  NO (default): If configuration updates are available, they are not      forcefully applied during repair. Instead, configuration updates are      applied according to the group's update policy.       -  YES: If configuration updates are available, they are applied      during repair. Check the ForceUpdateOnRepair enum for the list of possible values.",
@@ -270,7 +270,7 @@ const get: AppBlock = {
             additionalProperties: true,
             description: "The repair policy for this managed instance group.",
           },
-          instance_template: {
+          instanceTemplate: {
             type: "string",
             description:
               "The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, runapplyUpdatesToInstances, or set the group'supdatePolicy.type to PROACTIVE.",
@@ -280,7 +280,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The resource type, which is alwayscompute#instanceGroupManager for managed instance groups.",
           },
-          list_managed_instances_results: {
+          listManagedInstancesResults: {
             type: "string",
             description:
               "Pagination behavior of the listManagedInstances API method for this managed instance group. Check the ListManagedInstancesResults enum for the list of possible values.",
@@ -290,7 +290,7 @@ const get: AppBlock = {
             description:
               "The name of the managed instance group. The name must be 1-63 characters long, and comply withRFC1035.",
           },
-          named_ports: {
+          namedPorts: {
             type: "array",
             items: {
               type: "object",
@@ -317,10 +317,10 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The URL of theregion where the managed instance group resides (for regional resources).",
           },
-          resource_policies: {
+          resourcePolicies: {
             type: "object",
             properties: {
-              workload_policy: {
+              workloadPolicy: {
                 type: "string",
                 description:
                   "The URL of the workload policy that is specified for this managed instance group. It can be a full or partial URL. For example, the following are all valid URLs to a workload policy:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/resourcePolicies/resourcePolicy       - projects/project/regions/region/resourcePolicies/resourcePolicy       - regions/region/resourcePolicies/resourcePolicy",
@@ -329,23 +329,23 @@ const get: AppBlock = {
             additionalProperties: true,
             description: "Resource policies for this managed instance group.",
           },
-          satisfies_pzi: {
+          satisfiesPzi: {
             type: "boolean",
             description: "Output only. [Output Only] Reserved for future use.",
           },
-          satisfies_pzs: {
+          satisfiesPzs: {
             type: "boolean",
             description: "Output only. [Output Only] Reserved for future use.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] The URL for this managed instance group. The server defines this URL.",
           },
-          standby_policy: {
+          standbyPolicy: {
             type: "object",
             properties: {
-              initial_delay_sec: {
+              initialDelaySec: {
                 type: "integer",
                 description:
                   "Specifies the number of seconds that the MIG should wait to suspend or stop a VM after that VM was created. The initial delay gives the initialization script the time to prepare your VM for a quick scale out. The value of initial delay must be between 0 and 3600 seconds. The default value is 0.",
@@ -359,10 +359,10 @@ const get: AppBlock = {
             additionalProperties: true,
             description: "Standby policy for stopped and suspended instances.",
           },
-          stateful_policy: {
+          statefulPolicy: {
             type: "object",
             properties: {
-              preserved_state: {
+              preservedState: {
                 type: "object",
                 properties: {
                   disks: {
@@ -373,7 +373,7 @@ const get: AppBlock = {
                     description:
                       "Disks created on the instances that will be preserved on instance delete, update, etc. This map is keyed with the device names of the disks.",
                   },
-                  external_i_ps: {
+                  externalIPs: {
                     type: "object",
                     additionalProperties: {
                       type: "string",
@@ -381,7 +381,7 @@ const get: AppBlock = {
                     description:
                       "External network IPs assigned to the instances that will be preserved on instance delete, update, etc. This map is keyed with the network interface name.",
                   },
-                  internal_i_ps: {
+                  internalIPs: {
                     type: "object",
                     additionalProperties: {
                       type: "string",
@@ -401,10 +401,10 @@ const get: AppBlock = {
           status: {
             type: "object",
             properties: {
-              all_instances_config: {
+              allInstancesConfig: {
                 type: "object",
                 properties: {
-                  current_revision: {
+                  currentRevision: {
                     type: "string",
                     description:
                       "Output only. [Output Only] Current all-instances configuration revision. This value is in RFC3339 text format.",
@@ -424,7 +424,7 @@ const get: AppBlock = {
                 description:
                   "Output only. [Output Only] The URL of theAutoscaler that targets this instance group manager.",
               },
-              is_stable: {
+              isStable: {
                 type: "boolean",
                 description:
                   "Output only. [Output Only] A bit indicating whether the managed instance group is in a stable state. A stable state means that: none of the instances in the managed instance group is currently undergoing any type of change (for example, creation, restart, or deletion); no future changes are scheduled for instances in the managed instance group; and the managed instance group itself is not being modified.",
@@ -432,15 +432,15 @@ const get: AppBlock = {
               stateful: {
                 type: "object",
                 properties: {
-                  has_stateful_config: {
+                  hasStatefulConfig: {
                     type: "boolean",
                     description:
                       "Output only. [Output Only] A bit indicating whether the managed instance group has stateful configuration, that is, if you have configured any items in a stateful policy or in per-instance configs. The group might report that it has no stateful configuration even when there is still some preserved state on a managed instance, for example, if you have deleted all PICs but not yet applied those deletions.",
                   },
-                  per_instance_configs: {
+                  perInstanceConfigs: {
                     type: "object",
                     properties: {
-                      all_effective: {
+                      allEffective: {
                         type: "boolean",
                         description:
                           "Output only. A bit indicating if all of the group's per-instance configurations (listed in the output of a listPerInstanceConfigs API call) have status EFFECTIVE or there are no per-instance-configs.",
@@ -455,10 +455,10 @@ const get: AppBlock = {
                 description:
                   "Output only. [Output Only] Stateful status of the given Instance Group Manager.",
               },
-              version_target: {
+              versionTarget: {
                 type: "object",
                 properties: {
-                  is_reached: {
+                  isReached: {
                     type: "boolean",
                     description:
                       "Output only. [Output Only] A bit indicating whether version target has been reached in this managed instance group, i.e. all instances are in their target version. Instances' target version are specified byversion field on Instance Group Manager.",
@@ -473,7 +473,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The status of this managed instance group.",
           },
-          target_pools: {
+          targetPools: {
             type: "array",
             items: {
               type: "string",
@@ -481,30 +481,30 @@ const get: AppBlock = {
             description:
               "The URLs for all TargetPool resources to which instances in theinstanceGroup field are added. The target pools automatically apply to all of the instances in the managed instance group.",
           },
-          target_size: {
+          targetSize: {
             type: "integer",
             description:
               "The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.",
           },
-          target_stopped_size: {
+          targetStoppedSize: {
             type: "integer",
             description:
               "The target number of stopped instances for this managed instance group. This number changes when you:     - Stop instance using the stopInstances    method or start instances using the startInstances    method.    - Manually change the targetStoppedSize using the update    method.",
           },
-          target_suspended_size: {
+          targetSuspendedSize: {
             type: "integer",
             description:
               "The target number of suspended instances for this managed instance group. This number changes when you:     - Suspend instance using the suspendInstances    method or resume instances using the resumeInstances    method.    - Manually change the targetSuspendedSize using the update    method.",
           },
-          update_policy: {
+          updatePolicy: {
             type: "object",
             properties: {
-              instance_redistribution_type: {
+              instanceRedistributionType: {
                 type: "string",
                 description:
                   "The instance redistribution policy for regional managed instance groups. Valid values are:     - PROACTIVE (default): The group attempts to maintain an    even distribution of VM instances across zones in the region.    - NONE: For non-autoscaled groups, proactive    redistribution is disabled. Check the InstanceRedistributionType enum for the list of possible values.",
               },
-              max_surge: {
+              maxSurge: {
                 type: "object",
                 properties: {
                   calculated: {
@@ -527,7 +527,7 @@ const get: AppBlock = {
                   "Encapsulates numeric value that can be either absolute or relative.",
                 additionalProperties: true,
               },
-              max_unavailable: {
+              maxUnavailable: {
                 type: "object",
                 properties: {
                   calculated: {
@@ -550,17 +550,17 @@ const get: AppBlock = {
                   "Encapsulates numeric value that can be either absolute or relative.",
                 additionalProperties: true,
               },
-              minimal_action: {
+              minimalAction: {
                 type: "string",
                 description:
                   "Minimal action to be taken on an instance. Use this option to minimize disruption as much as possible or to apply a more disruptive action than is necessary.     - To limit disruption as much as possible, set the minimal action toREFRESH. If your update requires a more disruptive action,    Compute Engine performs the necessary action to execute the update.    - To apply a more disruptive action than is strictly necessary, set the    minimal action to RESTART or REPLACE. For    example, Compute Engine does not need to restart a VM to change its    metadata. But if your application reads instance metadata only when a VM    is restarted, you can set the minimal action to RESTART in    order to pick up metadata changes. Check the MinimalAction enum for the list of possible values.",
               },
-              most_disruptive_allowed_action: {
+              mostDisruptiveAllowedAction: {
                 type: "string",
                 description:
                   "Most disruptive action that is allowed to be taken on an instance. You can specify either NONE to forbid any actions,REFRESH to avoid restarting the VM and to limit disruption as much as possible. RESTART to allow actions that can be applied without instance replacing or REPLACE to allow all possible actions. If the Updater determines that the minimal update action needed is more disruptive than most disruptive allowed action you specify it will not perform the update at all. Check the MostDisruptiveAllowedAction enum for the list of possible values.",
               },
-              replacement_method: {
+              replacementMethod: {
                 type: "string",
                 description:
                   "What action should be used to replace instances. See minimal_action.REPLACE Check the ReplacementMethod enum for the list of possible values.",
@@ -579,7 +579,7 @@ const get: AppBlock = {
             items: {
               type: "object",
               properties: {
-                instance_template: {
+                instanceTemplate: {
                   type: "string",
                   description:
                     "The URL of the instance template that is specified for this managed instance group. The group uses this template to create new instances in the managed instance group until the `targetSize` for this version is reached. The templates for existing instances in the group do not change unless you run recreateInstances, runapplyUpdatesToInstances, or set the group'supdatePolicy.type to PROACTIVE; in those cases, existing instances are updated until the `targetSize` for this version is reached.",
@@ -589,7 +589,7 @@ const get: AppBlock = {
                   description:
                     "Name of the version. Unique among all versions in the scope of this managed instance group.",
                 },
-                target_size: {
+                targetSize: {
                   type: "object",
                   properties: {
                     calculated: {

@@ -1,5 +1,39 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient } from "../../lib/grpcClient.ts";
+import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  items: {
+    name: "items",
+    fields: {
+      sqlserver_user_details: {
+        name: "sqlserverUserDetails",
+        fields: {
+          server_roles: "serverRoles",
+        },
+      },
+      iam_email: "iamEmail",
+      password_policy: {
+        name: "passwordPolicy",
+        fields: {
+          allowed_failed_attempts: "allowedFailedAttempts",
+          password_expiration_duration: "passwordExpirationDuration",
+          enable_failed_attempts_check: "enableFailedAttemptsCheck",
+          status: {
+            name: "status",
+            fields: {
+              password_expiration_time: "passwordExpirationTime",
+            },
+          },
+          enable_password_verification: "enablePasswordVerification",
+        },
+      },
+      dual_password_type: "dualPasswordType",
+      iam_status: "iamStatus",
+      database_roles: "databaseRoles",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const list: AppBlock = {
   name: "List",
@@ -33,11 +67,7 @@ const list: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlUsersServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.list(request, (err: any, response: any) => {
@@ -51,7 +81,8 @@ const list: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -117,14 +148,14 @@ const list: AppBlock = {
                   description:
                     "The user type. It determines the method to authenticate the user during login. The default is the database's built-in user type.",
                 },
-                sqlserver_user_details: {
+                sqlserverUserDetails: {
                   type: "object",
                   properties: {
                     disabled: {
                       type: "boolean",
                       description: "If the user has been disabled",
                     },
-                    server_roles: {
+                    serverRoles: {
                       type: "array",
                       items: {
                         type: "string",
@@ -136,24 +167,24 @@ const list: AppBlock = {
                     "Represents a Sql Server user on the Cloud SQL instance.",
                   additionalProperties: true,
                 },
-                iam_email: {
+                iamEmail: {
                   type: "string",
                   description:
                     "Optional. The full email for an IAM user. For normal database users, this will not be filled. Only applicable to MySQL database users.",
                 },
-                password_policy: {
+                passwordPolicy: {
                   type: "object",
                   properties: {
-                    allowed_failed_attempts: {
+                    allowedFailedAttempts: {
                       type: "integer",
                       description:
                         "Number of failed login attempts allowed before user get locked.",
                     },
-                    password_expiration_duration: {
+                    passwordExpirationDuration: {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
-                    enable_failed_attempts_check: {
+                    enableFailedAttemptsCheck: {
                       type: "boolean",
                       description:
                         "If true, failed login attempts check will be enabled.",
@@ -166,7 +197,7 @@ const list: AppBlock = {
                           description:
                             "If true, user does not have login privileges.",
                         },
-                        password_expiration_time: {
+                        passwordExpirationTime: {
                           type: "string",
                           description:
                             "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -175,7 +206,7 @@ const list: AppBlock = {
                       description: "Read-only password status.",
                       additionalProperties: true,
                     },
-                    enable_password_verification: {
+                    enablePasswordVerification: {
                       type: "boolean",
                       description:
                         "If true, the user must specify the current password before changing the password. This flag is supported only for MySQL.",
@@ -184,7 +215,7 @@ const list: AppBlock = {
                   description: "User level password validation policy.",
                   additionalProperties: true,
                 },
-                dual_password_type: {
+                dualPasswordType: {
                   type: "string",
                   enum: [
                     "DUAL_PASSWORD_TYPE_UNSPECIFIED",
@@ -194,13 +225,13 @@ const list: AppBlock = {
                   ],
                   description: "Dual password status for the user.",
                 },
-                iam_status: {
+                iamStatus: {
                   type: "string",
                   enum: ["IAM_STATUS_UNSPECIFIED", "INACTIVE", "ACTIVE"],
                   description:
                     "Indicates if a group is active or inactive for IAM database authentication.",
                 },
-                database_roles: {
+                databaseRoles: {
                   type: "array",
                   items: {
                     type: "string",
@@ -213,7 +244,7 @@ const list: AppBlock = {
             },
             description: "List of user resources in the instance.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description: "Unused.",
           },

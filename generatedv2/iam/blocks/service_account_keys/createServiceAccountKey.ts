@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  privateKeyType: "private_key_type",
+  keyAlgorithm: "key_algorithm",
+};
+
+const outputMapping = {
+  private_key_type: "privateKeyType",
+  key_algorithm: "keyAlgorithm",
+  private_key_data: "privateKeyData",
+  public_key_data: "publicKeyData",
+  valid_after_time: "validAfterTime",
+  valid_before_time: "validBeforeTime",
+  key_origin: "keyOrigin",
+  key_type: "keyType",
+};
 
 const createServiceAccountKey: AppBlock = {
   name: "Create Service Account Key",
@@ -19,7 +35,7 @@ const createServiceAccountKey: AppBlock = {
           },
           required: true,
         },
-        private_key_type: {
+        privateKeyType: {
           name: "Private Key Type",
           description:
             "The output format of the private key. The default value is `TYPE_GOOGLE_CREDENTIALS_FILE`, which is the Google Credentials File format.",
@@ -34,7 +50,7 @@ const createServiceAccountKey: AppBlock = {
           },
           required: false,
         },
-        key_algorithm: {
+        keyAlgorithm: {
           name: "Key Algorithm",
           description:
             "Which type of key and algorithm to use for the key. The default is currently a 2K RSA key.  However this may change in the future.",
@@ -53,13 +69,7 @@ const createServiceAccountKey: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.private_key_type !== undefined)
-          request.private_key_type = input.event.inputConfig.private_key_type;
-        if (input.event.inputConfig.key_algorithm !== undefined)
-          request.key_algorithm = input.event.inputConfig.key_algorithm;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createServiceAccountKey(request, (err: any, response: any) => {
@@ -73,7 +83,8 @@ const createServiceAccountKey: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -88,7 +99,7 @@ const createServiceAccountKey: AppBlock = {
             description:
               "The resource name of the service account key in the following format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.",
           },
-          private_key_type: {
+          privateKeyType: {
             type: "string",
             enum: [
               "TYPE_UNSPECIFIED",
@@ -97,7 +108,7 @@ const createServiceAccountKey: AppBlock = {
             ],
             description: "Supported private key output formats.",
           },
-          key_algorithm: {
+          keyAlgorithm: {
             type: "string",
             enum: [
               "KEY_ALG_UNSPECIFIED",
@@ -106,28 +117,28 @@ const createServiceAccountKey: AppBlock = {
             ],
             description: "Supported key algorithms.",
           },
-          private_key_data: {
+          privateKeyData: {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          public_key_data: {
+          publicKeyData: {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          valid_after_time: {
+          validAfterTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          valid_before_time: {
+          validBeforeTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          key_origin: {
+          keyOrigin: {
             type: "string",
             enum: ["ORIGIN_UNSPECIFIED", "USER_PROVIDED", "GOOGLE_PROVIDED"],
             description: "Service Account Key Origin.",
           },
-          key_type: {
+          keyType: {
             type: "string",
             enum: ["KEY_TYPE_UNSPECIFIED", "USER_MANAGED", "SYSTEM_MANAGED"],
             description: "The key type.",

@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        storage_pool_type: {
+        storagePoolType: {
           name: "Storage Pool Type",
           description: "Name of the storage pool type to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.storage_pool_type !== undefined)
+        if (input.event.inputConfig.storagePoolType !== undefined)
           pathParams["storage_pool_type"] = String(
-            input.event.inputConfig.storage_pool_type,
+            input.event.inputConfig.storagePoolType,
           );
 
         const result = await computeFetch({
@@ -53,7 +53,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "[Output Only] Creation timestamp inRFC3339 text format.",
@@ -104,31 +104,31 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#storagePoolType for storage pool types.",
           },
-          max_pool_provisioned_capacity_gb: {
+          maxPoolProvisionedCapacityGb: {
             type: "string",
             description: "64-bit integer as string",
           },
-          max_pool_provisioned_iops: {
+          maxPoolProvisionedIops: {
             type: "string",
             description: "64-bit integer as string",
           },
-          max_pool_provisioned_throughput: {
+          maxPoolProvisionedThroughput: {
             type: "string",
             description: "64-bit integer as string",
           },
-          min_pool_provisioned_capacity_gb: {
+          minPoolProvisionedCapacityGb: {
             type: "string",
             description: "64-bit integer as string",
           },
-          min_pool_provisioned_iops: {
+          minPoolProvisionedIops: {
             type: "string",
             description: "64-bit integer as string",
           },
-          min_pool_provisioned_throughput: {
+          minPoolProvisionedThroughput: {
             type: "string",
             description: "64-bit integer as string",
           },
-          min_size_gb: {
+          minSizeGb: {
             type: "string",
             description: "64-bit integer as string",
           },
@@ -136,16 +136,16 @@ const get: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the resource.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          self_link_with_id: {
+          selfLinkWithId: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
           },
-          supported_disk_types: {
+          supportedDiskTypes: {
             type: "array",
             items: {
               type: "string",

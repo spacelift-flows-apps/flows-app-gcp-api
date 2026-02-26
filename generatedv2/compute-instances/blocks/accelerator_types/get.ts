@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        accelerator_type: {
+        acceleratorType: {
           name: "Accelerator Type",
           description: "Name of the accelerator type to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.accelerator_type !== undefined)
+        if (input.event.inputConfig.acceleratorType !== undefined)
           pathParams["accelerator_type"] = String(
-            input.event.inputConfig.accelerator_type,
+            input.event.inputConfig.acceleratorType,
           );
 
         const result = await computeFetch({
@@ -53,7 +53,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "[Output Only] Creation timestamp inRFC3339 text format.",
@@ -104,7 +104,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The type of the resource. Alwayscompute#acceleratorType for accelerator types.",
           },
-          maximum_cards_per_instance: {
+          maximumCardsPerInstance: {
             type: "integer",
             description:
               "[Output Only] Maximum number of accelerator cards allowed per instance.",
@@ -113,7 +113,7 @@ const get: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the resource.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined, fully qualified URL for this resource.",

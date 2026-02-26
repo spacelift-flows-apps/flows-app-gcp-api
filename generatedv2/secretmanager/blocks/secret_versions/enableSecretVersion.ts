@@ -1,5 +1,53 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSecretManagerServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSecretManagerServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  create_time: "createTime",
+  destroy_time: "destroyTime",
+  replication_status: {
+    name: "replicationStatus",
+    fields: {
+      automatic: {
+        name: "automatic",
+        fields: {
+          customer_managed_encryption: {
+            name: "customerManagedEncryption",
+            fields: {
+              kms_key_version_name: "kmsKeyVersionName",
+            },
+          },
+        },
+      },
+      user_managed: {
+        name: "userManaged",
+        fields: {
+          replicas: {
+            name: "replicas",
+            fields: {
+              customer_managed_encryption: {
+                name: "customerManagedEncryption",
+                fields: {
+                  kms_key_version_name: "kmsKeyVersionName",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  client_specified_payload_checksum: "clientSpecifiedPayloadChecksum",
+  scheduled_destroy_time: "scheduledDestroyTime",
+  customer_managed_encryption: {
+    name: "customerManagedEncryption",
+    fields: {
+      kms_key_version_name: "kmsKeyVersionName",
+    },
+  },
+};
 
 const enableSecretVersion: AppBlock = {
   name: "Enable Secret Version",
@@ -34,11 +82,7 @@ const enableSecretVersion: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.enableSecretVersion(request, (err: any, response: any) => {
@@ -52,7 +96,8 @@ const enableSecretVersion: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -67,11 +112,11 @@ const enableSecretVersion: AppBlock = {
             description:
               "Output only. The resource name of the [SecretVersion][google.cloud.secretmanager.v1.SecretVersion] in the format `projects/*/secrets/*/versions/*`.  [SecretVersion][google.cloud.secretmanager.v1.SecretVersion] IDs in a [Secret][google.cloud.secretmanager.v1.Secret] start at 1 and are incremented for each subsequent version of the secret.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          destroy_time: {
+          destroyTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -81,22 +126,22 @@ const enableSecretVersion: AppBlock = {
             description:
               "Output only. The current state of the [SecretVersion][google.cloud.secretmanager.v1.SecretVersion].",
           },
-          replication_status: {
+          replicationStatus: {
             type: "object",
             properties: {
               automatic: {
                 type: "object",
                 properties: {
-                  customer_managed_encryption: {
+                  customerManagedEncryption: {
                     type: "object",
                     properties: {
-                      kms_key_version_name: {
+                      kmsKeyVersionName: {
                         type: "string",
                         description:
                           "Required. The resource name of the Cloud KMS CryptoKeyVersion used to encrypt the secret payload, in the following format: `projects/*/locations/*/keyRings/*/cryptoKeys/*/versions/*`.",
                       },
                     },
-                    required: ["kms_key_version_name"],
+                    required: ["kmsKeyVersionName"],
                     description:
                       "Describes the status of customer-managed encryption.",
                     additionalProperties: true,
@@ -106,7 +151,7 @@ const enableSecretVersion: AppBlock = {
                   "The replication status of a [SecretVersion][google.cloud.secretmanager.v1.SecretVersion] using automatic replication.  Only populated if the parent [Secret][google.cloud.secretmanager.v1.Secret] has an automatic replication policy. (Part of 'replication_status' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              user_managed: {
+              userManaged: {
                 type: "object",
                 properties: {
                   replicas: {
@@ -119,16 +164,16 @@ const enableSecretVersion: AppBlock = {
                           description:
                             'Output only. The canonical ID of the replica location. For example: `"us-east1"`.',
                         },
-                        customer_managed_encryption: {
+                        customerManagedEncryption: {
                           type: "object",
                           properties: {
-                            kms_key_version_name: {
+                            kmsKeyVersionName: {
                               type: "string",
                               description:
                                 "Required. The resource name of the Cloud KMS CryptoKeyVersion used to encrypt the secret payload, in the following format: `projects/*/locations/*/keyRings/*/cryptoKeys/*/versions/*`.",
                             },
                           },
-                          required: ["kms_key_version_name"],
+                          required: ["kmsKeyVersionName"],
                           description:
                             "Describes the status of customer-managed encryption.",
                           additionalProperties: true,
@@ -156,25 +201,25 @@ const enableSecretVersion: AppBlock = {
             description:
               "Output only. Etag of the currently stored [SecretVersion][google.cloud.secretmanager.v1.SecretVersion].",
           },
-          client_specified_payload_checksum: {
+          clientSpecifiedPayloadChecksum: {
             type: "boolean",
             description:
               "Output only. True if payload checksum specified in [SecretPayload][google.cloud.secretmanager.v1.SecretPayload] object has been received by [SecretManagerService][google.cloud.secretmanager.v1.SecretManagerService] on [SecretManagerService.AddSecretVersion][google.cloud.secretmanager.v1.SecretManagerService.AddSecretVersion].",
           },
-          scheduled_destroy_time: {
+          scheduledDestroyTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          customer_managed_encryption: {
+          customerManagedEncryption: {
             type: "object",
             properties: {
-              kms_key_version_name: {
+              kmsKeyVersionName: {
                 type: "string",
                 description:
                   "Required. The resource name of the Cloud KMS CryptoKeyVersion used to encrypt the secret payload, in the following format: `projects/*/locations/*/keyRings/*/cryptoKeys/*/versions/*`.",
               },
             },
-            required: ["kms_key_version_name"],
+            required: ["kmsKeyVersionName"],
             description: "Describes the status of customer-managed encryption.",
             additionalProperties: true,
           },

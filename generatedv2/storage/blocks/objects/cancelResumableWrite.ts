@@ -2,7 +2,12 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  uploadId: "upload_id",
+};
 
 const cancelResumableWrite: AppBlock = {
   name: "Cancel Resumable Write",
@@ -11,7 +16,7 @@ const cancelResumableWrite: AppBlock = {
   inputs: {
     default: {
       config: {
-        upload_id: {
+        uploadId: {
           name: "Upload Id",
           description:
             "Required. The upload_id of the resumable upload to cancel. This should be copied from the `upload_id` field of `StartResumableWriteResponse`.",
@@ -26,9 +31,7 @@ const cancelResumableWrite: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.upload_id !== undefined)
-          request.upload_id = input.event.inputConfig.upload_id;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.upload_id !== undefined) {

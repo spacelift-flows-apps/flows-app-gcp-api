@@ -2,7 +2,204 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ifMetagenerationMatch: "if_metageneration_match",
+  ifMetagenerationNotMatch: "if_metageneration_not_match",
+  readMask: "read_mask",
+};
+
+const outputMapping = {
+  bucket_id: "bucketId",
+  location_type: "locationType",
+  storage_class: "storageClass",
+  acl: {
+    name: "acl",
+    fields: {
+      entity_alt: "entityAlt",
+      entity_id: "entityId",
+      project_team: {
+        name: "projectTeam",
+        fields: {
+          project_number: "projectNumber",
+        },
+      },
+    },
+  },
+  default_object_acl: {
+    name: "defaultObjectAcl",
+    fields: {
+      entity_alt: "entityAlt",
+      entity_id: "entityId",
+      project_team: {
+        name: "projectTeam",
+        fields: {
+          project_number: "projectNumber",
+        },
+      },
+    },
+  },
+  lifecycle: {
+    name: "lifecycle",
+    fields: {
+      rule: {
+        name: "rule",
+        fields: {
+          action: {
+            name: "action",
+            fields: {
+              storage_class: "storageClass",
+            },
+          },
+          condition: {
+            name: "condition",
+            fields: {
+              age_days: "ageDays",
+              created_before: "createdBefore",
+              is_live: "isLive",
+              num_newer_versions: "numNewerVersions",
+              matches_storage_class: "matchesStorageClass",
+              days_since_custom_time: "daysSinceCustomTime",
+              custom_time_before: "customTimeBefore",
+              days_since_noncurrent_time: "daysSinceNoncurrentTime",
+              noncurrent_time_before: "noncurrentTimeBefore",
+              matches_prefix: "matchesPrefix",
+              matches_suffix: "matchesSuffix",
+            },
+          },
+        },
+      },
+    },
+  },
+  create_time: "createTime",
+  cors: {
+    name: "cors",
+    fields: {
+      response_header: "responseHeader",
+      max_age_seconds: "maxAgeSeconds",
+    },
+  },
+  update_time: "updateTime",
+  default_event_based_hold: "defaultEventBasedHold",
+  website: {
+    name: "website",
+    fields: {
+      main_page_suffix: "mainPageSuffix",
+      not_found_page: "notFoundPage",
+    },
+  },
+  logging: {
+    name: "logging",
+    fields: {
+      log_bucket: "logBucket",
+      log_object_prefix: "logObjectPrefix",
+    },
+  },
+  owner: {
+    name: "owner",
+    fields: {
+      entity_id: "entityId",
+    },
+  },
+  encryption: {
+    name: "encryption",
+    fields: {
+      default_kms_key: "defaultKmsKey",
+      google_managed_encryption_enforcement_config: {
+        name: "googleManagedEncryptionEnforcementConfig",
+        fields: {
+          restriction_mode: "restrictionMode",
+          effective_time: "effectiveTime",
+        },
+      },
+      customer_managed_encryption_enforcement_config: {
+        name: "customerManagedEncryptionEnforcementConfig",
+        fields: {
+          restriction_mode: "restrictionMode",
+          effective_time: "effectiveTime",
+        },
+      },
+      customer_supplied_encryption_enforcement_config: {
+        name: "customerSuppliedEncryptionEnforcementConfig",
+        fields: {
+          restriction_mode: "restrictionMode",
+          effective_time: "effectiveTime",
+        },
+      },
+    },
+  },
+  billing: {
+    name: "billing",
+    fields: {
+      requester_pays: "requesterPays",
+    },
+  },
+  retention_policy: {
+    name: "retentionPolicy",
+    fields: {
+      effective_time: "effectiveTime",
+      is_locked: "isLocked",
+      retention_duration: "retentionDuration",
+    },
+  },
+  iam_config: {
+    name: "iamConfig",
+    fields: {
+      uniform_bucket_level_access: {
+        name: "uniformBucketLevelAccess",
+        fields: {
+          lock_time: "lockTime",
+        },
+      },
+      public_access_prevention: "publicAccessPrevention",
+    },
+  },
+  satisfies_pzs: "satisfiesPzs",
+  custom_placement_config: {
+    name: "customPlacementConfig",
+    fields: {
+      data_locations: "dataLocations",
+    },
+  },
+  autoclass: {
+    name: "autoclass",
+    fields: {
+      toggle_time: "toggleTime",
+      terminal_storage_class: "terminalStorageClass",
+      terminal_storage_class_update_time: "terminalStorageClassUpdateTime",
+    },
+  },
+  hierarchical_namespace: "hierarchicalNamespace",
+  soft_delete_policy: {
+    name: "softDeletePolicy",
+    fields: {
+      retention_duration: "retentionDuration",
+      effective_time: "effectiveTime",
+    },
+  },
+  object_retention: "objectRetention",
+  ip_filter: {
+    name: "ipFilter",
+    fields: {
+      public_network_source: {
+        name: "publicNetworkSource",
+        fields: {
+          allowed_ip_cidr_ranges: "allowedIpCidrRanges",
+        },
+      },
+      vpc_network_sources: {
+        name: "vpcNetworkSources",
+        fields: {
+          allowed_ip_cidr_ranges: "allowedIpCidrRanges",
+        },
+      },
+      allow_cross_org_vpcs: "allowCrossOrgVpcs",
+      allow_all_service_agent_access: "allowAllServiceAgentAccess",
+    },
+  },
+};
 
 const getBucket: AppBlock = {
   name: "Get Bucket",
@@ -20,7 +217,7 @@ const getBucket: AppBlock = {
           },
           required: true,
         },
-        if_metageneration_match: {
+        ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "If set, only gets the bucket metadata if its metageneration matches this value.",
@@ -30,7 +227,7 @@ const getBucket: AppBlock = {
           },
           required: false,
         },
-        if_metageneration_not_match: {
+        ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "If set, and if the bucket's current metageneration matches the specified value, the request returns an error.",
@@ -40,7 +237,7 @@ const getBucket: AppBlock = {
           },
           required: false,
         },
-        read_mask: {
+        readMask: {
           name: "Read Mask",
           description:
             "Mask specifying which fields to read. A `*` field might be used to indicate all fields. If no mask is specified, it defaults to all fields.",
@@ -55,17 +252,7 @@ const getBucket: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.if_metageneration_match !== undefined)
-          request.if_metageneration_match =
-            input.event.inputConfig.if_metageneration_match;
-        if (input.event.inputConfig.if_metageneration_not_match !== undefined)
-          request.if_metageneration_not_match =
-            input.event.inputConfig.if_metageneration_not_match;
-        if (input.event.inputConfig.read_mask !== undefined)
-          request.read_mask = input.event.inputConfig.read_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined)
@@ -83,7 +270,8 @@ const getBucket: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -98,7 +286,7 @@ const getBucket: AppBlock = {
             description:
               "Identifier. The name of the bucket. Format: `projects/{project}/buckets/{bucket}`",
           },
-          bucket_id: {
+          bucketId: {
             type: "string",
             description:
               "Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the `name` field. For globally unique buckets, this is equal to the `bucket name` of other Cloud Storage APIs. Example: `pub`.",
@@ -122,12 +310,12 @@ const getBucket: AppBlock = {
             description:
               "Immutable. The location of the bucket. Object data for objects in the bucket resides in physical storage within this region.  Defaults to `US`. Attempting to update this field after the bucket is created results in an error.",
           },
-          location_type: {
+          locationType: {
             type: "string",
             description:
               "Output only. The location type of the bucket (region, dual-region, multi-region, etc).",
           },
-          storage_class: {
+          storageClass: {
             type: "string",
             description:
               "Optional. The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. If this value is not specified when the bucket is created, it defaults to `STANDARD`. For more information, see [Storage classes](https://developers.google.com/storage/docs/storage-classes).",
@@ -156,12 +344,12 @@ const getBucket: AppBlock = {
                   description:
                     "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com` * All members of the Google Apps for Business domain `example.com` would be `domain-example.com` For project entities, `project-{team}-{projectnumber}` format is returned on response.",
                 },
-                entity_alt: {
+                entityAlt: {
                   type: "string",
                   description:
                     "Output only. The alternative entity format, if exists. For project entities, `project-{team}-{projectid}` format is returned in the response.",
                 },
-                entity_id: {
+                entityId: {
                   type: "string",
                   description: "Optional. The ID for the entity, if any.",
                 },
@@ -180,10 +368,10 @@ const getBucket: AppBlock = {
                   description:
                     "Optional. The domain associated with the entity, if any.",
                 },
-                project_team: {
+                projectTeam: {
                   type: "object",
                   properties: {
-                    project_number: {
+                    projectNumber: {
                       type: "string",
                       description: "Optional. The project number.",
                     },
@@ -203,7 +391,7 @@ const getBucket: AppBlock = {
             description:
               "Optional. Access controls on the bucket. If `iam_config.uniform_bucket_level_access` is enabled on this bucket, requests to set, read, or modify acl is an error.",
           },
-          default_object_acl: {
+          defaultObjectAcl: {
             type: "array",
             items: {
               type: "object",
@@ -222,12 +410,12 @@ const getBucket: AppBlock = {
                   description:
                     "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                 },
-                entity_alt: {
+                entityAlt: {
                   type: "string",
                   description:
                     "Output only. The alternative entity format, if exists. For project entities, `project-{team}-{projectid}` format is returned in the response.",
                 },
-                entity_id: {
+                entityId: {
                   type: "string",
                   description: "Optional. The ID for the entity, if any.",
                 },
@@ -246,10 +434,10 @@ const getBucket: AppBlock = {
                   description:
                     "Optional. The domain associated with the entity, if any.",
                 },
-                project_team: {
+                projectTeam: {
                   type: "object",
                   properties: {
-                    project_number: {
+                    projectNumber: {
                       type: "string",
                       description: "Optional. The project number.",
                     },
@@ -285,7 +473,7 @@ const getBucket: AppBlock = {
                           description:
                             "Optional. Type of the action. Currently, only `Delete`, `SetStorageClass`, and `AbortIncompleteMultipartUpload` are supported.",
                         },
-                        storage_class: {
+                        storageClass: {
                           type: "string",
                           description:
                             "Optional. Target storage class. Required iff the type of the action is SetStorageClass.",
@@ -297,12 +485,12 @@ const getBucket: AppBlock = {
                     condition: {
                       type: "object",
                       properties: {
-                        age_days: {
+                        ageDays: {
                           type: "integer",
                           description:
                             "Age of an object (in days). This condition is satisfied when an object reaches the specified age. A value of 0 indicates that all objects immediately match this condition.",
                         },
-                        created_before: {
+                        createdBefore: {
                           type: "object",
                           properties: {
                             year: {
@@ -319,17 +507,17 @@ const getBucket: AppBlock = {
                           description:
                             "Optional. This condition is satisfied when an object is created before midnight of the specified date in UTC.",
                         },
-                        is_live: {
+                        isLive: {
                           type: "boolean",
                           description:
                             "Relevant only for versioned objects. If the value is `true`, this condition matches live objects; if the value is `false`, it matches archived objects.",
                         },
-                        num_newer_versions: {
+                        numNewerVersions: {
                           type: "integer",
                           description:
                             "Relevant only for versioned objects. If the value is N, this condition is satisfied when there are at least N versions (including the live version) newer than this version of the object.",
                         },
-                        matches_storage_class: {
+                        matchesStorageClass: {
                           type: "array",
                           items: {
                             type: "string",
@@ -337,12 +525,12 @@ const getBucket: AppBlock = {
                           description:
                             "Optional. Objects having any of the storage classes specified by this condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and `DURABLE_REDUCED_AVAILABILITY`.",
                         },
-                        days_since_custom_time: {
+                        daysSinceCustomTime: {
                           type: "integer",
                           description:
                             "Number of days that have elapsed since the custom timestamp set on an object. The value of the field must be a nonnegative integer.",
                         },
-                        custom_time_before: {
+                        customTimeBefore: {
                           type: "object",
                           properties: {
                             year: {
@@ -359,12 +547,12 @@ const getBucket: AppBlock = {
                           description:
                             "Optional. An object matches this condition if the custom timestamp set on the object is before the specified date in UTC.",
                         },
-                        days_since_noncurrent_time: {
+                        daysSinceNoncurrentTime: {
                           type: "integer",
                           description:
                             "This condition is relevant only for versioned objects. An object version satisfies this condition only if these many days have been passed since it became noncurrent. The value of the field must be a nonnegative integer. If it's zero, the object version becomes eligible for Lifecycle action as soon as it becomes noncurrent.",
                         },
-                        noncurrent_time_before: {
+                        noncurrentTimeBefore: {
                           type: "object",
                           properties: {
                             year: {
@@ -381,7 +569,7 @@ const getBucket: AppBlock = {
                           description:
                             "Optional. This condition is relevant only for versioned objects. An object version satisfies this condition only if it became noncurrent before the specified date in UTC.",
                         },
-                        matches_prefix: {
+                        matchesPrefix: {
                           type: "array",
                           items: {
                             type: "string",
@@ -389,7 +577,7 @@ const getBucket: AppBlock = {
                           description:
                             "Optional. List of object name prefixes. If any prefix exactly matches the beginning of the object name, the condition evaluates to true.",
                         },
-                        matches_suffix: {
+                        matchesSuffix: {
                           type: "array",
                           items: {
                             type: "string",
@@ -415,7 +603,7 @@ const getBucket: AppBlock = {
               "Lifecycle properties of a bucket. For more information, see [Object Lifecycle Management](https://cloud.google.com/storage/docs/lifecycle).",
             additionalProperties: true,
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -440,7 +628,7 @@ const getBucket: AppBlock = {
                   description:
                     'Optional. The list of HTTP methods on which to include CORS response headers, (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of methods, and means "any method".',
                 },
-                response_header: {
+                responseHeader: {
                   type: "array",
                   items: {
                     type: "string",
@@ -448,7 +636,7 @@ const getBucket: AppBlock = {
                   description:
                     "Optional. The list of HTTP headers other than the [simple response headers](https://www.w3.org/TR/cors/#simple-response-headers) to give permission for the user-agent to share across domains.",
                 },
-                max_age_seconds: {
+                maxAgeSeconds: {
                   type: "integer",
                   description:
                     "Optional. The value, in seconds, to return in the [Access-Control-Max-Age header](https://www.w3.org/TR/cors/#access-control-max-age-response-header) used in preflight responses.",
@@ -461,11 +649,11 @@ const getBucket: AppBlock = {
             description:
               "Optional. The bucket's [CORS](https://www.w3.org/TR/cors/) configuration.",
           },
-          update_time: {
+          updateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          default_event_based_hold: {
+          defaultEventBasedHold: {
             type: "boolean",
             description:
               "Optional. The default value for event-based hold on newly created objects in this bucket.  Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects are subject to bucket-level retention (if any).  One sample use case of this flag is for banks to hold loan documents for at least 3 years after loan is paid in full. Here, bucket-level retention is 3 years and the event is loan being paid in full. In this example, these objects are held intact for any number of years until the event has occurred (event-based hold on the object is released) and then 3 more years after that. That means retention duration of the objects begins from the moment event-based hold transitioned from true to false.  Objects under event-based hold cannot be deleted, overwritten or archived until the hold is removed.",
@@ -480,12 +668,12 @@ const getBucket: AppBlock = {
           website: {
             type: "object",
             properties: {
-              main_page_suffix: {
+              mainPageSuffix: {
                 type: "string",
                 description:
                   "Optional. If the requested object path is missing, the service ensures the path has a trailing '/', append this suffix, and attempt to retrieve the resulting object. This allows the creation of `index.html` objects to represent directory pages.",
               },
-              not_found_page: {
+              notFoundPage: {
                 type: "string",
                 description:
                   "Optional. If the requested object path is missing, and any `mainPageSuffix` object is missing, if applicable, the service returns the named object from this bucket as the content for a [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4) result.",
@@ -511,12 +699,12 @@ const getBucket: AppBlock = {
           logging: {
             type: "object",
             properties: {
-              log_bucket: {
+              logBucket: {
                 type: "string",
                 description:
                   "Optional. The destination bucket where the current bucket's logs should be placed, using path format (like `projects/123456/buckets/foo`).",
               },
-              log_object_prefix: {
+              logObjectPrefix: {
                 type: "string",
                 description: "Optional. A prefix for log object names.",
               },
@@ -532,7 +720,7 @@ const getBucket: AppBlock = {
                 description:
                   "Optional. The entity, in the form `user-`*userId*.",
               },
-              entity_id: {
+              entityId: {
                 type: "string",
                 description: "Optional. The ID for the entity.",
               },
@@ -543,20 +731,20 @@ const getBucket: AppBlock = {
           encryption: {
             type: "object",
             properties: {
-              default_kms_key: {
+              defaultKmsKey: {
                 type: "string",
                 description:
                   "Optional. The name of the Cloud KMS key that is used to encrypt objects inserted into this bucket, if no encryption method is specified.",
               },
-              google_managed_encryption_enforcement_config: {
+              googleManagedEncryptionEnforcementConfig: {
                 type: "object",
                 properties: {
-                  restriction_mode: {
+                  restrictionMode: {
                     type: "string",
                     description:
                       "Restriction mode for google-managed encryption for new objects within the bucket. Valid values are: `NotRestricted` and `FullyRestricted`. If `NotRestricted` or unset, creation of new objects with google-managed encryption is allowed. If `FullyRestricted`, new objects can't be created using google-managed encryption.",
                   },
-                  effective_time: {
+                  effectiveTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -566,15 +754,15 @@ const getBucket: AppBlock = {
                   "Google Managed Encryption (GMEK) enforcement config of a bucket.",
                 additionalProperties: true,
               },
-              customer_managed_encryption_enforcement_config: {
+              customerManagedEncryptionEnforcementConfig: {
                 type: "object",
                 properties: {
-                  restriction_mode: {
+                  restrictionMode: {
                     type: "string",
                     description:
                       "Restriction mode for customer-managed encryption for new objects within the bucket. Valid values are: `NotRestricted` and `FullyRestricted`. If `NotRestricted` or unset, creation of new objects with customer-managed encryption is allowed. If `FullyRestricted`, new objects can't be created using customer-managed encryption.",
                   },
-                  effective_time: {
+                  effectiveTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -584,15 +772,15 @@ const getBucket: AppBlock = {
                   "Customer Managed Encryption (CMEK) enforcement config of a bucket.",
                 additionalProperties: true,
               },
-              customer_supplied_encryption_enforcement_config: {
+              customerSuppliedEncryptionEnforcementConfig: {
                 type: "object",
                 properties: {
-                  restriction_mode: {
+                  restrictionMode: {
                     type: "string",
                     description:
                       "Restriction mode for customer-supplied encryption for new objects within the bucket. Valid values are: `NotRestricted` and `FullyRestricted`. If `NotRestricted` or unset, creation of new objects with customer-supplied encryption is allowed. If `FullyRestricted`, new objects can't be created using customer-supplied encryption.",
                   },
-                  effective_time: {
+                  effectiveTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -609,7 +797,7 @@ const getBucket: AppBlock = {
           billing: {
             type: "object",
             properties: {
-              requester_pays: {
+              requesterPays: {
                 type: "boolean",
                 description:
                   "Optional. When set to true, Requester Pays is enabled for this bucket.",
@@ -618,19 +806,19 @@ const getBucket: AppBlock = {
             description: "Billing properties of a bucket.",
             additionalProperties: true,
           },
-          retention_policy: {
+          retentionPolicy: {
             type: "object",
             properties: {
-              effective_time: {
+              effectiveTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              is_locked: {
+              isLocked: {
                 type: "boolean",
                 description:
                   "Optional. Once locked, an object retention policy cannot be modified.",
               },
-              retention_duration: {
+              retentionDuration: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
@@ -638,10 +826,10 @@ const getBucket: AppBlock = {
             description: "Retention policy properties of a bucket.",
             additionalProperties: true,
           },
-          iam_config: {
+          iamConfig: {
             type: "object",
             properties: {
-              uniform_bucket_level_access: {
+              uniformBucketLevelAccess: {
                 type: "object",
                 properties: {
                   enabled: {
@@ -649,7 +837,7 @@ const getBucket: AppBlock = {
                     description:
                       "Optional. If set, access checks only use bucket-level IAM policies or above.",
                   },
-                  lock_time: {
+                  lockTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -659,7 +847,7 @@ const getBucket: AppBlock = {
                   "Settings for Uniform Bucket level access. See https://cloud.google.com/storage/docs/uniform-bucket-level-access.",
                 additionalProperties: true,
               },
-              public_access_prevention: {
+              publicAccessPrevention: {
                 type: "string",
                 description:
                   "Optional. Whether IAM enforces public access prevention. Valid values are `enforced` or `inherited`.",
@@ -668,14 +856,14 @@ const getBucket: AppBlock = {
             description: "Bucket restriction options.",
             additionalProperties: true,
           },
-          satisfies_pzs: {
+          satisfiesPzs: {
             type: "boolean",
             description: "Optional. Reserved for future use.",
           },
-          custom_placement_config: {
+          customPlacementConfig: {
             type: "object",
             properties: {
-              data_locations: {
+              dataLocations: {
                 type: "array",
                 items: {
                   type: "string",
@@ -695,16 +883,16 @@ const getBucket: AppBlock = {
                 type: "boolean",
                 description: "Optional. Enables Autoclass.",
               },
-              toggle_time: {
+              toggleTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              terminal_storage_class: {
+              terminalStorageClass: {
                 type: "string",
                 description:
                   "An object in an Autoclass bucket eventually cools down to the terminal storage class if there is no access to the object. The only valid values are NEARLINE and ARCHIVE.",
               },
-              terminal_storage_class_update_time: {
+              terminalStorageClassUpdateTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -712,7 +900,7 @@ const getBucket: AppBlock = {
             description: "Configuration for a bucket's Autoclass feature.",
             additionalProperties: true,
           },
-          hierarchical_namespace: {
+          hierarchicalNamespace: {
             type: "object",
             properties: {
               enabled: {
@@ -725,14 +913,14 @@ const getBucket: AppBlock = {
               "Configuration for a bucket's hierarchical namespace feature.",
             additionalProperties: true,
           },
-          soft_delete_policy: {
+          softDeletePolicy: {
             type: "object",
             properties: {
-              retention_duration: {
+              retentionDuration: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              effective_time: {
+              effectiveTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -740,7 +928,7 @@ const getBucket: AppBlock = {
             description: "Soft delete policy properties of a bucket.",
             additionalProperties: true,
           },
-          object_retention: {
+          objectRetention: {
             type: "object",
             properties: {
               enabled: {
@@ -752,7 +940,7 @@ const getBucket: AppBlock = {
             description: "Object Retention related properties of a bucket.",
             additionalProperties: true,
           },
-          ip_filter: {
+          ipFilter: {
             type: "object",
             properties: {
               mode: {
@@ -760,10 +948,10 @@ const getBucket: AppBlock = {
                 description:
                   "The state of the IP filter configuration. Valid values are `Enabled` and `Disabled`. When set to `Enabled`, IP filtering rules are applied to a bucket and all incoming requests to the bucket are evaluated against these rules. When set to `Disabled`, IP filtering rules are not applied to a bucket.",
               },
-              public_network_source: {
+              publicNetworkSource: {
                 type: "object",
                 properties: {
-                  allowed_ip_cidr_ranges: {
+                  allowedIpCidrRanges: {
                     type: "array",
                     items: {
                       type: "string",
@@ -776,7 +964,7 @@ const getBucket: AppBlock = {
                   "The public network IP address ranges that can access the bucket and its data.",
                 additionalProperties: true,
               },
-              vpc_network_sources: {
+              vpcNetworkSources: {
                 type: "array",
                 items: {
                   type: "object",
@@ -786,7 +974,7 @@ const getBucket: AppBlock = {
                       description:
                         "Name of the network.  Format: `projects/PROJECT_ID/global/networks/NETWORK_NAME`",
                     },
-                    allowed_ip_cidr_ranges: {
+                    allowedIpCidrRanges: {
                       type: "array",
                       items: {
                         type: "string",
@@ -802,12 +990,12 @@ const getBucket: AppBlock = {
                 description:
                   "Optional. The list of network sources that are allowed to access operations on the bucket or the underlying objects.",
               },
-              allow_cross_org_vpcs: {
+              allowCrossOrgVpcs: {
                 type: "boolean",
                 description:
                   "Optional. Whether or not to allow VPCs from orgs different than the bucket's parent org to access the bucket. When set to true, validations on the existence of the VPCs won't be performed. If set to false, each VPC network source is checked to belong to the same org as the bucket as well as validated for existence.",
               },
-              allow_all_service_agent_access: {
+              allowAllServiceAgentAccess: {
                 type: "boolean",
                 description:
                   "Whether or not to allow all P4SA access to the bucket. When set to true, IP filter config validation doesn't apply.",

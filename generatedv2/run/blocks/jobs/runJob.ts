@@ -1,5 +1,62 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getJobsClient, createRoutingMetadata } from "../../lib/grpcClient.ts";
+import {
+  getJobsClient,
+  createRoutingMetadata,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  validateOnly: "validate_only",
+  overrides: {
+    name: "overrides",
+    fields: {
+      containerOverrides: {
+        name: "container_overrides",
+        fields: {
+          env: {
+            name: "env",
+            fields: {
+              valueSource: {
+                name: "value_source",
+                fields: {
+                  secretKeyRef: "secret_key_ref",
+                },
+              },
+            },
+          },
+          clearArgs: "clear_args",
+        },
+      },
+      taskCount: "task_count",
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const runJob: AppBlock = {
   name: "Run Job",
@@ -19,7 +76,7 @@ const runJob: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Indicates that the request should be validated without actually deleting any resources.",
@@ -48,7 +105,7 @@ const runJob: AppBlock = {
           type: {
             type: "object",
             properties: {
-              container_overrides: {
+              containerOverrides: {
                 type: "array",
                 items: {
                   type: "object",
@@ -81,10 +138,10 @@ const runJob: AppBlock = {
                             description:
                               "Literal value of the environment variable. Defaults to \"\", and the maximum length is 32768 bytes. Variable references are not supported in Cloud Run. (Part of 'values' - only one field in this group can be set)",
                           },
-                          value_source: {
+                          valueSource: {
                             type: "object",
                             properties: {
-                              secret_key_ref: {
+                              secretKeyRef: {
                                 type: "object",
                                 properties: {
                                   secret: {
@@ -117,7 +174,7 @@ const runJob: AppBlock = {
                       description:
                         "List of environment variables to set in the container. Will be merged with existing env for override.",
                     },
-                    clear_args: {
+                    clearArgs: {
                       type: "boolean",
                       description:
                         "Optional. True if the intention is to clear out existing args list.",
@@ -128,7 +185,7 @@ const runJob: AppBlock = {
                 },
                 description: "Per container override specification.",
               },
-              task_count: {
+              taskCount: {
                 type: "integer",
                 description:
                   "Optional. The desired number of tasks the execution should run. Will replace existing task_count value.",
@@ -148,15 +205,7 @@ const runJob: AppBlock = {
       onEvent: async (input) => {
         const client = await getJobsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
-        if (input.event.inputConfig.overrides !== undefined)
-          request.overrides = input.event.inputConfig.overrides;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined) {
@@ -176,7 +225,8 @@ const runJob: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -192,7 +242,7 @@ const runJob: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -219,7 +269,7 @@ const runJob: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -238,7 +288,7 @@ const runJob: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

@@ -43,13 +43,7 @@ const seek: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.subscription !== undefined)
-          request.subscription = input.event.inputConfig.subscription;
-        if (input.event.inputConfig.time !== undefined)
-          request.time = input.event.inputConfig.time;
-        if (input.event.inputConfig.snapshot !== undefined)
-          request.snapshot = input.event.inputConfig.snapshot;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.seek(request, (err: any, response: any) => {

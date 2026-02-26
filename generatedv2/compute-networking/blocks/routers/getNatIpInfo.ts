@@ -25,7 +25,7 @@ const getNatIpInfo: AppBlock = {
           },
           required: true,
         },
-        nat_name: {
+        natName: {
           name: "Nat Name",
           description:
             "Name of the nat service to filter the NAT IP information. If it is omitted, all nats for this router will be returned. Name should conform to RFC1035.",
@@ -44,8 +44,8 @@ const getNatIpInfo: AppBlock = {
           pathParams["router"] = String(input.event.inputConfig.router);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.nat_name !== undefined)
-          queryParams["natName"] = String(input.event.inputConfig.nat_name);
+        if (input.event.inputConfig.natName !== undefined)
+          queryParams["natName"] = String(input.event.inputConfig.natName);
 
         const result = await computeFetch({
           config: input.app.config,
@@ -71,7 +71,7 @@ const getNatIpInfo: AppBlock = {
             items: {
               type: "object",
               properties: {
-                nat_ip_info_mappings: {
+                natIpInfoMappings: {
                   type: "array",
                   items: {
                     type: "object",
@@ -81,7 +81,7 @@ const getNatIpInfo: AppBlock = {
                         description:
                           "Output only. Specifies whether NAT IP is auto or manual. Check the Mode enum for the list of possible values.",
                       },
-                      nat_ip: {
+                      natIp: {
                         type: "string",
                         description:
                           "Output only. NAT IP address. For example: 203.0.113.11.",
@@ -98,7 +98,7 @@ const getNatIpInfo: AppBlock = {
                   description:
                     "Output only. A list of all NAT IPs assigned to this NAT config.",
                 },
-                nat_name: {
+                natName: {
                   type: "string",
                   description:
                     "Output only. Name of the NAT config which the NAT IP belongs to.",

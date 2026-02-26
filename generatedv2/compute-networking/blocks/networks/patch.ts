@@ -16,7 +16,7 @@ const patch: AppBlock = {
           },
           required: true,
         },
-        I_pv4_range: {
+        IPv4Range: {
           name: "I Pv4 Range",
           description:
             "Deprecated in favor of subnet mode networks. The range of internal addresses that are legal on this network. This range is aCIDR specification, for example:192.168.0.0/16. Provided by the client when the network is created.",
@@ -27,7 +27,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        auto_create_subnetworks: {
+        autoCreateSubnetworks: {
           name: "Auto Create Subnetworks",
           description:
             "Must be set to create a VPC network. If not set, a legacy network is created.  When set to true, the VPC network is created in auto mode. When set to false, the VPC network is created in custom mode.  An auto mode VPC network starts with one subnet per region. Each subnet has a predetermined range as described inAuto mode VPC network IP ranges.  For custom mode VPC networks, you can add subnets using the subnetworksinsert method.",
@@ -38,7 +38,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -60,7 +60,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        enable_ula_internal_ipv6: {
+        enableUlaInternalIpv6: {
           name: "Enable Ula Internal Ipv6",
           description:
             "Enable ULA internal ipv6 on this network. Enabling this feature will assign a /48 from google defined ULA prefix fd20::/20. .",
@@ -71,7 +71,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        firewall_policy: {
+        firewallPolicy: {
           name: "Firewall Policy",
           description:
             "Output only. [Output Only] URL of the firewall policy the network is associated with.",
@@ -82,7 +82,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        gateway_i_pv4: {
+        gatewayIPv4: {
           name: "Gateway I Pv4",
           description:
             "[Output Only] The gateway address for default routing out of the network, selected by Google Cloud.",
@@ -103,7 +103,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        internal_ipv6_range: {
+        internalIpv6Range: {
           name: "Internal Ipv6 Range",
           description:
             "When enabling ula internal ipv6, caller optionally can specify the /48 range they want from the google defined ULA prefix fd20::/20. The input must be a valid /48 ULA IPv6 address and must be within the fd20::/20. Operation will fail if the speficied /48 is already in used by another resource. If the field is not speficied, then a /48 range will be randomly allocated from fd20::/20 and returned via this field. .",
@@ -147,7 +147,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        network_firewall_policy_enforcement_order: {
+        networkFirewallPolicyEnforcementOrder: {
           name: "Network Firewall Policy Enforcement Order",
           description:
             "The network firewall policy enforcement order. Can be either AFTER_CLASSIC_FIREWALL or BEFORE_CLASSIC_FIREWALL. Defaults to AFTER_CLASSIC_FIREWALL if the field is not specified. Check the NetworkFirewallPolicyEnforcementOrder enum for the list of possible values.",
@@ -158,7 +158,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        network_profile: {
+        networkProfile: {
           name: "Network Profile",
           description:
             "A full or partial URL of the network profile to apply to this network. This field can be set only at resource creation time. For example, the following are valid URLs:     - https://www.googleapis.com/compute/{api_version}/projects/{project_id}/global/networkProfiles/{network_profile_name}    - projects/{project_id}/global/networkProfiles/{network_profile_name}",
@@ -176,7 +176,7 @@ const patch: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -199,23 +199,23 @@ const patch: AppBlock = {
             items: {
               type: "object",
               properties: {
-                auto_create_routes: {
+                autoCreateRoutes: {
                   type: "boolean",
                   description:
                     "This field will be deprecated soon. Use theexchange_subnet_routes field instead. Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
                 },
-                connection_status: {
+                connectionStatus: {
                   type: "object",
                   properties: {
-                    consensus_state: {
+                    consensusState: {
                       type: "object",
                       properties: {
-                        delete_status: {
+                        deleteStatus: {
                           type: "string",
                           description:
                             "The status of the delete request. Check the DeleteStatus enum for the list of possible values.",
                         },
-                        update_status: {
+                        updateStatus: {
                           type: "string",
                           description:
                             "The status of the update request. Check the UpdateStatus enum for the list of possible values.",
@@ -225,30 +225,30 @@ const patch: AppBlock = {
                         "The status of update/delete for a consensus peering connection. Only set when connection_status.update_strategy isCONSENSUS or a network peering is proposing to update the strategy to CONSENSUS.",
                       additionalProperties: true,
                     },
-                    traffic_configuration: {
+                    trafficConfiguration: {
                       type: "object",
                       properties: {
-                        export_custom_routes_to_peer: {
+                        exportCustomRoutesToPeer: {
                           type: "boolean",
                           description:
                             "Whether custom routes are being exported to the peer network.",
                         },
-                        export_subnet_routes_with_public_ip_to_peer: {
+                        exportSubnetRoutesWithPublicIpToPeer: {
                           type: "boolean",
                           description:
                             "Whether subnet routes with public IP ranges are being exported to the peer network.",
                         },
-                        import_custom_routes_from_peer: {
+                        importCustomRoutesFromPeer: {
                           type: "boolean",
                           description:
                             "Whether custom routes are being imported from the peer network.",
                         },
-                        import_subnet_routes_with_public_ip_from_peer: {
+                        importSubnetRoutesWithPublicIpFromPeer: {
                           type: "boolean",
                           description:
                             "Whether subnet routes with public IP ranges are being imported from the peer network.",
                         },
-                        stack_type: {
+                        stackType: {
                           type: "string",
                           description:
                             "Which IP version(s) of traffic and routes are being imported or exported between peer networks. Check the StackType enum for the list of possible values.",
@@ -258,7 +258,7 @@ const patch: AppBlock = {
                       description:
                         "The active connectivity settings for the peering connection based on the settings of the network peerings.",
                     },
-                    update_strategy: {
+                    updateStrategy: {
                       type: "string",
                       description:
                         "The update strategy determines the update/delete semantics for this peering connection. Check the UpdateStrategy enum for the list of possible values.",
@@ -268,27 +268,27 @@ const patch: AppBlock = {
                     "[Output Only] Describes the state of a peering connection, not just the local peering. This field provides information about the effective settings for the connection as a whole, including pending delete/update requests for CONSENSUS peerings.",
                   additionalProperties: true,
                 },
-                exchange_subnet_routes: {
+                exchangeSubnetRoutes: {
                   type: "boolean",
                   description:
                     "Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
                 },
-                export_custom_routes: {
+                exportCustomRoutes: {
                   type: "boolean",
                   description:
                     "Whether to export the custom routes to peer network. The default value is false.",
                 },
-                export_subnet_routes_with_public_ip: {
+                exportSubnetRoutesWithPublicIp: {
                   type: "boolean",
                   description:
                     "Whether subnet routes with public IP range are exported. The default value is true, all subnet routes are exported.IPv4 special-use ranges are always exported to peers and are not controlled by this field.",
                 },
-                import_custom_routes: {
+                importCustomRoutes: {
                   type: "boolean",
                   description:
                     "Whether to import the custom routes from peer network. The default value is false.",
                 },
-                import_subnet_routes_with_public_ip: {
+                importSubnetRoutesWithPublicIp: {
                   type: "boolean",
                   description:
                     "Whether subnet routes with public IP range are imported. The default value is false.IPv4 special-use ranges are always imported from peers and are not controlled by this field.",
@@ -303,12 +303,12 @@ const patch: AppBlock = {
                   description:
                     "The URL of the peer network. It can be either full URL or partial URL. The peer network may belong to a different project. If the partial URL does not contain project, it is assumed that the peer network is in the same project as the current network.",
                 },
-                peer_mtu: {
+                peerMtu: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] Maximum Transmission Unit in bytes of the peer network.",
                 },
-                stack_type: {
+                stackType: {
                   type: "string",
                   description:
                     "Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Check the StackType enum for the list of possible values.",
@@ -318,12 +318,12 @@ const patch: AppBlock = {
                   description:
                     "Output only. [Output Only] State for the peering, either `ACTIVE` or `INACTIVE`. The peering is `ACTIVE` when there's a matching configuration in the peer network. Check the State enum for the list of possible values.",
                 },
-                state_details: {
+                stateDetails: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Details about the current state of the peering.",
                 },
-                update_strategy: {
+                updateStrategy: {
                   type: "string",
                   description:
                     "The update strategy determines the semantics for updates and deletes to the peering connection configuration. Check the UpdateStrategy enum for the list of possible values.",
@@ -338,39 +338,39 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        routing_config: {
+        routingConfig: {
           name: "Routing Config",
           description:
             "The network-level routing configuration for this network.  Used by Cloud Router to determine what type of network-wide routing behavior to enforce.",
           type: {
             type: "object",
             properties: {
-              bgp_always_compare_med: {
+              bgpAlwaysCompareMed: {
                 type: "boolean",
                 description:
                   "Enable comparison of Multi-Exit Discriminators (MED) across routes with different neighbor ASNs when using the STANDARD BGP best path selection algorithm.",
               },
-              bgp_best_path_selection_mode: {
+              bgpBestPathSelectionMode: {
                 type: "string",
                 description:
                   "The BGP best path selection algorithm to be employed within this network for dynamic routes learned by Cloud Routers. Can be LEGACY (default) or STANDARD. Check the BgpBestPathSelectionMode enum for the list of possible values.",
               },
-              bgp_inter_region_cost: {
+              bgpInterRegionCost: {
                 type: "string",
                 description:
                   "Allows to define a preferred approach for handling inter-region cost in the selection process when using the STANDARD BGP best path selection algorithm. Can be DEFAULT orADD_COST_TO_MED. Check the BgpInterRegionCost enum for the list of possible values.",
               },
-              effective_bgp_always_compare_med: {
+              effectiveBgpAlwaysCompareMed: {
                 type: "boolean",
                 description:
                   "Output only. [Output Only] Effective value of the bgp_always_compare_med field.",
               },
-              effective_bgp_inter_region_cost: {
+              effectiveBgpInterRegionCost: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Effective value of the bgp_inter_region_cost field. Check the EffectiveBgpInterRegionCost enum for the list of possible values.",
               },
-              routing_mode: {
+              routingMode: {
                 type: "string",
                 description:
                   "The network-wide routing mode to use. If set to REGIONAL, this network's Cloud Routers will only advertise routes with subnets of this network in the same region as the router. If set toGLOBAL, this network's Cloud Routers will advertise routes with all subnets of this network, across regions. Check the RoutingMode enum for the list of possible values.",
@@ -382,7 +382,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description: "[Output Only] Server-defined URL for the resource.",
           type: {
@@ -391,7 +391,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        self_link_with_id: {
+        selfLinkWithId: {
           name: "Self Link With Id",
           description:
             "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
@@ -416,7 +416,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -433,30 +433,29 @@ const patch: AppBlock = {
           pathParams["network"] = String(input.event.inputConfig.network);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.I_pv4_range !== undefined)
-          body.I_pv4_range = input.event.inputConfig.I_pv4_range;
-        if (input.event.inputConfig.auto_create_subnetworks !== undefined)
-          body.auto_create_subnetworks =
-            input.event.inputConfig.auto_create_subnetworks;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.IPv4Range !== undefined)
+          body.IPv4Range = input.event.inputConfig.IPv4Range;
+        if (input.event.inputConfig.autoCreateSubnetworks !== undefined)
+          body.autoCreateSubnetworks =
+            input.event.inputConfig.autoCreateSubnetworks;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.enable_ula_internal_ipv6 !== undefined)
-          body.enable_ula_internal_ipv6 =
-            input.event.inputConfig.enable_ula_internal_ipv6;
-        if (input.event.inputConfig.firewall_policy !== undefined)
-          body.firewall_policy = input.event.inputConfig.firewall_policy;
-        if (input.event.inputConfig.gateway_i_pv4 !== undefined)
-          body.gateway_i_pv4 = input.event.inputConfig.gateway_i_pv4;
+        if (input.event.inputConfig.enableUlaInternalIpv6 !== undefined)
+          body.enableUlaInternalIpv6 =
+            input.event.inputConfig.enableUlaInternalIpv6;
+        if (input.event.inputConfig.firewallPolicy !== undefined)
+          body.firewallPolicy = input.event.inputConfig.firewallPolicy;
+        if (input.event.inputConfig.gatewayIPv4 !== undefined)
+          body.gatewayIPv4 = input.event.inputConfig.gatewayIPv4;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.internal_ipv6_range !== undefined)
-          body.internal_ipv6_range =
-            input.event.inputConfig.internal_ipv6_range;
+        if (input.event.inputConfig.internalIpv6Range !== undefined)
+          body.internalIpv6Range = input.event.inputConfig.internalIpv6Range;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.mtu !== undefined)
@@ -464,23 +463,23 @@ const patch: AppBlock = {
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
         if (
-          input.event.inputConfig.network_firewall_policy_enforcement_order !==
+          input.event.inputConfig.networkFirewallPolicyEnforcementOrder !==
           undefined
         )
-          body.network_firewall_policy_enforcement_order =
-            input.event.inputConfig.network_firewall_policy_enforcement_order;
-        if (input.event.inputConfig.network_profile !== undefined)
-          body.network_profile = input.event.inputConfig.network_profile;
+          body.networkFirewallPolicyEnforcementOrder =
+            input.event.inputConfig.networkFirewallPolicyEnforcementOrder;
+        if (input.event.inputConfig.networkProfile !== undefined)
+          body.networkProfile = input.event.inputConfig.networkProfile;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
         if (input.event.inputConfig.peerings !== undefined)
           body.peerings = input.event.inputConfig.peerings;
-        if (input.event.inputConfig.routing_config !== undefined)
-          body.routing_config = input.event.inputConfig.routing_config;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.self_link_with_id !== undefined)
-          body.self_link_with_id = input.event.inputConfig.self_link_with_id;
+        if (input.event.inputConfig.routingConfig !== undefined)
+          body.routingConfig = input.event.inputConfig.routingConfig;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.selfLinkWithId !== undefined)
+          body.selfLinkWithId = input.event.inputConfig.selfLinkWithId;
         if (input.event.inputConfig.subnetworks !== undefined)
           body.subnetworks = input.event.inputConfig.subnetworks;
 
@@ -504,12 +503,12 @@ const patch: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -518,7 +517,7 @@ const patch: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -536,12 +535,12 @@ const patch: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -596,7 +595,7 @@ const patch: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -614,7 +613,7 @@ const patch: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -625,7 +624,7 @@ const patch: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -635,16 +634,16 @@ const patch: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -681,12 +680,12 @@ const patch: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -695,15 +694,15 @@ const patch: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -723,12 +722,12 @@ const patch: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -743,18 +742,18 @@ const patch: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -767,7 +766,7 @@ const patch: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -778,16 +777,16 @@ const patch: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

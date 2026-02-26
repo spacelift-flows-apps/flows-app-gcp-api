@@ -33,7 +33,7 @@ const setIamPolicy: AppBlock = {
             items: {
               type: "object",
               properties: {
-                binding_id: {
+                bindingId: {
                   type: "string",
                 },
                 condition: {
@@ -105,17 +105,17 @@ const setIamPolicy: AppBlock = {
           type: {
             type: "object",
             properties: {
-              audit_configs: {
+              auditConfigs: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    audit_log_configs: {
+                    auditLogConfigs: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          exempted_members: {
+                          exemptedMembers: {
                             type: "array",
                             items: {
                               type: "string",
@@ -123,10 +123,10 @@ const setIamPolicy: AppBlock = {
                             description:
                               "Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.",
                           },
-                          ignore_child_exemptions: {
+                          ignoreChildExemptions: {
                             type: "boolean",
                           },
-                          log_type: {
+                          logType: {
                             type: "string",
                             description:
                               "The log type that this config enables. Check the LogType enum for the list of possible values.",
@@ -139,7 +139,7 @@ const setIamPolicy: AppBlock = {
                       description:
                         "The configuration for logging of each type of permission.",
                     },
-                    exempted_members: {
+                    exemptedMembers: {
                       type: "array",
                       items: {
                         type: "string",
@@ -163,7 +163,7 @@ const setIamPolicy: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    binding_id: {
+                    bindingId: {
                       type: "string",
                     },
                     condition: {
@@ -220,7 +220,7 @@ const setIamPolicy: AppBlock = {
                 description:
                   "`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy.  **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.",
               },
-              iam_owned: {
+              iamOwned: {
                 type: "boolean",
               },
               version: {
@@ -271,17 +271,17 @@ const setIamPolicy: AppBlock = {
       type: {
         type: "object",
         properties: {
-          audit_configs: {
+          auditConfigs: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                audit_log_configs: {
+                auditLogConfigs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      exempted_members: {
+                      exemptedMembers: {
                         type: "array",
                         items: {
                           type: "string",
@@ -289,10 +289,10 @@ const setIamPolicy: AppBlock = {
                         description:
                           "Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.",
                       },
-                      ignore_child_exemptions: {
+                      ignoreChildExemptions: {
                         type: "boolean",
                       },
-                      log_type: {
+                      logType: {
                         type: "string",
                         description:
                           "The log type that this config enables. Check the LogType enum for the list of possible values.",
@@ -305,7 +305,7 @@ const setIamPolicy: AppBlock = {
                   description:
                     "The configuration for logging of each type of permission.",
                 },
-                exempted_members: {
+                exemptedMembers: {
                   type: "array",
                   items: {
                     type: "string",
@@ -329,7 +329,7 @@ const setIamPolicy: AppBlock = {
             items: {
               type: "object",
               properties: {
-                binding_id: {
+                bindingId: {
                   type: "string",
                 },
                 condition: {
@@ -386,7 +386,7 @@ const setIamPolicy: AppBlock = {
             description:
               "`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy.  **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.",
           },
-          iam_owned: {
+          iamOwned: {
             type: "boolean",
           },
           version: {

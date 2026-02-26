@@ -1,5 +1,10 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  key_id: "keyId",
+  signed_jwt: "signedJwt",
+};
 
 const signJwt: AppBlock = {
   name: "Sign JWT",
@@ -34,11 +39,7 @@ const signJwt: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.payload !== undefined)
-          request.payload = input.event.inputConfig.payload;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.signJwt(request, (err: any, response: any) => {
@@ -52,7 +53,8 @@ const signJwt: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -62,12 +64,12 @@ const signJwt: AppBlock = {
       type: {
         type: "object",
         properties: {
-          key_id: {
+          keyId: {
             type: "string",
             description:
               "Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The id of the key used to sign the JWT.",
           },
-          signed_jwt: {
+          signedJwt: {
             type: "string",
             description:
               "Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The signed JWT.",

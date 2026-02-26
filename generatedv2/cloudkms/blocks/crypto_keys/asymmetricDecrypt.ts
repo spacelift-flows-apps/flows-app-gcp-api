@@ -1,5 +1,18 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ciphertextCrc32c: "ciphertext_crc32c",
+};
+
+const outputMapping = {
+  plaintext_crc32c: "plaintextCrc32c",
+  verified_ciphertext_crc32c: "verifiedCiphertextCrc32c",
+  protection_level: "protectionLevel",
+};
 
 const asymmetricDecrypt: AppBlock = {
   name: "Asymmetric Decrypt",
@@ -29,7 +42,7 @@ const asymmetricDecrypt: AppBlock = {
           },
           required: true,
         },
-        ciphertext_crc32c: {
+        ciphertextCrc32c: {
           name: "Ciphertext Crc32c",
           description:
             "Optional. An optional CRC32C checksum of the [AsymmetricDecryptRequest.ciphertext][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext]. If specified, [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will verify the integrity of the received [AsymmetricDecryptRequest.ciphertext][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext] using this checksum. [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C([AsymmetricDecryptRequest.ciphertext][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext]) is equal to [AsymmetricDecryptRequest.ciphertext_crc32c][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext_crc32c], and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
@@ -43,13 +56,7 @@ const asymmetricDecrypt: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.ciphertext !== undefined)
-          request.ciphertext = input.event.inputConfig.ciphertext;
-        if (input.event.inputConfig.ciphertext_crc32c !== undefined)
-          request.ciphertext_crc32c = input.event.inputConfig.ciphertext_crc32c;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.asymmetricDecrypt(request, (err: any, response: any) => {
@@ -63,7 +70,8 @@ const asymmetricDecrypt: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -77,16 +85,16 @@ const asymmetricDecrypt: AppBlock = {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          plaintext_crc32c: {
+          plaintextCrc32c: {
             type: "string",
             description: "64-bit integer as string",
           },
-          verified_ciphertext_crc32c: {
+          verifiedCiphertextCrc32c: {
             type: "boolean",
             description:
               "Integrity verification field. A flag indicating whether [AsymmetricDecryptRequest.ciphertext_crc32c][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext_crc32c] was received by [KeyManagementService][google.cloud.kms.v1.KeyManagementService] and used for the integrity verification of the [ciphertext][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext]. A false value of this field indicates either that [AsymmetricDecryptRequest.ciphertext_crc32c][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext_crc32c] was left unset or that it was not delivered to [KeyManagementService][google.cloud.kms.v1.KeyManagementService]. If you've set [AsymmetricDecryptRequest.ciphertext_crc32c][google.cloud.kms.v1.AsymmetricDecryptRequest.ciphertext_crc32c] but this field is still false, discard the response and perform a limited number of retries.",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",

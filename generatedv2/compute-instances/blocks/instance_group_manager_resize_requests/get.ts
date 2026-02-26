@@ -17,7 +17,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        instance_group_manager: {
+        instanceGroupManager: {
           name: "Instance Group Manager",
           description:
             "The name of the managed instance group. Name should conform to RFC1035 or be a resource ID.",
@@ -26,7 +26,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        resize_request: {
+        resizeRequest: {
           name: "Resize Request",
           description:
             "The name of the resize request. Name should conform to RFC1035 or be a resource ID.",
@@ -41,13 +41,13 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.instance_group_manager !== undefined)
+        if (input.event.inputConfig.instanceGroupManager !== undefined)
           pathParams["instance_group_manager"] = String(
-            input.event.inputConfig.instance_group_manager,
+            input.event.inputConfig.instanceGroupManager,
           );
-        if (input.event.inputConfig.resize_request !== undefined)
+        if (input.event.inputConfig.resizeRequest !== undefined)
           pathParams["resize_request"] = String(
-            input.event.inputConfig.resize_request,
+            input.event.inputConfig.resizeRequest,
           );
 
         const result = await computeFetch({
@@ -68,7 +68,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] The creation timestamp for this resize request inRFC3339 text format.",
@@ -91,7 +91,7 @@ const get: AppBlock = {
             description:
               "The name of this resize request. The name must be 1-63 characters long, and comply withRFC1035.",
           },
-          requested_run_duration: {
+          requestedRunDuration: {
             type: "object",
             properties: {
               nanos: {
@@ -108,17 +108,17 @@ const get: AppBlock = {
               'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
             additionalProperties: true,
           },
-          resize_by: {
+          resizeBy: {
             type: "integer",
             description:
               "The number of instances to be created by this resize request. The group's target size will be increased by this number. This field cannot be used together with 'instances'.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] The URL for this resize request. The server defines this URL.",
           },
-          self_link_with_id: {
+          selfLinkWithId: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
@@ -144,12 +144,12 @@ const get: AppBlock = {
                           description:
                             "[Output Only] The error type identifier for this error.",
                         },
-                        error_details: {
+                        errorDetails: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              error_info: {
+                              errorInfo: {
                                 type: "object",
                                 properties: {
                                   domain: {
@@ -204,7 +204,7 @@ const get: AppBlock = {
                                   "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                                 additionalProperties: true,
                               },
-                              localized_message: {
+                              localizedMessage: {
                                 type: "object",
                                 properties: {
                                   locale: {
@@ -222,7 +222,7 @@ const get: AppBlock = {
                                   "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                                 additionalProperties: true,
                               },
-                              quota_info: {
+                              quotaInfo: {
                                 type: "object",
                                 properties: {
                                   dimensions: {
@@ -233,7 +233,7 @@ const get: AppBlock = {
                                     description:
                                       "The map holding related quota dimensions.",
                                   },
-                                  future_limit: {
+                                  futureLimit: {
                                     type: "number",
                                     description:
                                       "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -243,16 +243,16 @@ const get: AppBlock = {
                                     description:
                                       "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                                   },
-                                  limit_name: {
+                                  limitName: {
                                     type: "string",
                                     description: "The name of the quota limit.",
                                   },
-                                  metric_name: {
+                                  metricName: {
                                     type: "string",
                                     description:
                                       "The Compute Engine quota metric name.",
                                   },
-                                  rollout_status: {
+                                  rolloutStatus: {
                                     type: "string",
                                     description:
                                       "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -289,7 +289,7 @@ const get: AppBlock = {
                   "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
                 additionalProperties: true,
               },
-              last_attempt: {
+              lastAttempt: {
                 type: "object",
                 properties: {
                   error: {
@@ -305,12 +305,12 @@ const get: AppBlock = {
                               description:
                                 "[Output Only] The error type identifier for this error.",
                             },
-                            error_details: {
+                            errorDetails: {
                               type: "array",
                               items: {
                                 type: "object",
                                 properties: {
-                                  error_info: {
+                                  errorInfo: {
                                     type: "object",
                                     properties: {
                                       domain: {
@@ -366,7 +366,7 @@ const get: AppBlock = {
                                       "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                                     additionalProperties: true,
                                   },
-                                  localized_message: {
+                                  localizedMessage: {
                                     type: "object",
                                     properties: {
                                       locale: {
@@ -384,7 +384,7 @@ const get: AppBlock = {
                                       "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                                     additionalProperties: true,
                                   },
-                                  quota_info: {
+                                  quotaInfo: {
                                     type: "object",
                                     properties: {
                                       dimensions: {
@@ -395,7 +395,7 @@ const get: AppBlock = {
                                         description:
                                           "The map holding related quota dimensions.",
                                       },
-                                      future_limit: {
+                                      futureLimit: {
                                         type: "number",
                                         description:
                                           "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -405,17 +405,17 @@ const get: AppBlock = {
                                         description:
                                           "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                                       },
-                                      limit_name: {
+                                      limitName: {
                                         type: "string",
                                         description:
                                           "The name of the quota limit.",
                                       },
-                                      metric_name: {
+                                      metricName: {
                                         type: "string",
                                         description:
                                           "The Compute Engine quota metric name.",
                                       },
-                                      rollout_status: {
+                                      rolloutStatus: {
                                         type: "string",
                                         description:
                                           "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",

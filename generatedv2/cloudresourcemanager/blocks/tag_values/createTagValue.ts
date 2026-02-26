@@ -1,5 +1,41 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagValuesClient } from "../../lib/grpcClient.ts";
+import { getTagValuesClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  tagValue: {
+    name: "tag_value",
+    fields: {
+      shortName: "short_name",
+    },
+  },
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createTagValue: AppBlock = {
   name: "Create Tag Value",
@@ -8,7 +44,7 @@ const createTagValue: AppBlock = {
   inputs: {
     default: {
       config: {
-        tag_value: {
+        tagValue: {
           name: "Tag Value",
           description:
             "Required. The TagValue to be created. Only fields `short_name`, `description`, and `parent` are considered during the creation request.",
@@ -25,7 +61,7 @@ const createTagValue: AppBlock = {
                 description:
                   "Immutable. The resource name of the new TagValue's parent TagKey. Must be of the form `tagKeys/{tag_key_id}`.",
               },
-              short_name: {
+              shortName: {
                 type: "string",
                 description:
                   "Required. Immutable. User-assigned short name for TagValue. The short name should be unique for TagValues within the same parent TagKey.  The short name must be 63 characters or less, beginning and ending with an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_), dots (.), and alphanumerics between.",
@@ -41,14 +77,14 @@ const createTagValue: AppBlock = {
                   "Optional. Entity tag which users can pass to prevent race conditions. This field is always set in server responses. See UpdateTagValueRequest for details.",
               },
             },
-            required: ["short_name"],
+            required: ["shortName"],
             description:
               "A TagValue is a child of a particular TagKey. This is used to group cloud resources for the purpose of controlling them using policies.",
             additionalProperties: true,
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Optional. Set as true to perform the validations necessary for creating the resource, but not actually perform the action.",
@@ -63,11 +99,7 @@ const createTagValue: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagValuesClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.tag_value !== undefined)
-          request.tag_value = input.event.inputConfig.tag_value;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createTagValue(request, (err: any, response: any) => {
@@ -81,7 +113,8 @@ const createTagValue: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -97,7 +130,7 @@ const createTagValue: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -124,7 +157,7 @@ const createTagValue: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -143,7 +176,7 @@ const createTagValue: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

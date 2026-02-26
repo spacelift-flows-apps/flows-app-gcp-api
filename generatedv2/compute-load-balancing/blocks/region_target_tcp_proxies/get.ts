@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        target_tcp_proxy: {
+        targetTcpProxy: {
           name: "Target Tcp Proxy",
           description: "Name of the TargetTcpProxy resource to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.target_tcp_proxy !== undefined)
+        if (input.event.inputConfig.targetTcpProxy !== undefined)
           pathParams["target_tcp_proxy"] = String(
-            input.event.inputConfig.target_tcp_proxy,
+            input.event.inputConfig.targetTcpProxy,
           );
 
         const result = await computeFetch({
@@ -53,7 +53,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -77,12 +77,12 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          proxy_bind: {
+          proxyBind: {
             type: "boolean",
             description:
               "This field only applies when the forwarding rule that references this target proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.  When this field is set to true, Envoy proxies set up inbound traffic interception and bind to the IP address and port specified in the forwarding rule. This is generally useful when using Traffic Director to configure Envoy as a gateway or middle proxy (in other words, not a sidecar proxy). The Envoy proxy listens for inbound requests and handles requests when it receives them.  The default is false.",
           },
-          proxy_header: {
+          proxyHeader: {
             type: "string",
             description:
               "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
@@ -92,7 +92,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] URL of the region where the regional TCP proxy resides. This field is not applicable to global TCP proxy.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },

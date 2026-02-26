@@ -1,5 +1,16 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFunctionServiceClient } from "../../lib/grpcClient.ts";
+import { getFunctionServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  runtimes: {
+    name: "runtimes",
+    fields: {
+      display_name: "displayName",
+      deprecation_date: "deprecationDate",
+      decommission_date: "decommissionDate",
+    },
+  },
+};
 
 const listRuntimes: AppBlock = {
   name: "List Runtimes",
@@ -34,11 +45,7 @@ const listRuntimes: AppBlock = {
       onEvent: async (input) => {
         const client = await getFunctionServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listRuntimes(request, (err: any, response: any) => {
@@ -52,7 +59,8 @@ const listRuntimes: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -72,7 +80,7 @@ const listRuntimes: AppBlock = {
                   description:
                     "The name of the runtime, e.g., 'go113', 'nodejs12', etc.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "The user facing name, eg 'Go 1.13', 'Node.js 12', etc.",
@@ -103,7 +111,7 @@ const listRuntimes: AppBlock = {
                   enum: ["ENVIRONMENT_UNSPECIFIED", "GEN_1", "GEN_2"],
                   description: "The environment the function is hosted on.",
                 },
-                deprecation_date: {
+                deprecationDate: {
                   type: "object",
                   properties: {
                     year: {
@@ -119,7 +127,7 @@ const listRuntimes: AppBlock = {
                   additionalProperties: true,
                   description: "Deprecation date for the runtime.",
                 },
-                decommission_date: {
+                decommissionDate: {
                   type: "object",
                   properties: {
                     year: {

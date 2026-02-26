@@ -73,6 +73,33 @@ export function createRoutingMetadata(
   return metadata;
 }
 
+/** Mapping between field name conventions. String = simple rename; Object = rename + recurse. */
+export type FieldNameMapping = Record<
+  string,
+  string | { name: string; fields: FieldNameMapping }
+>;
+
+/** Recursively convert object keys using a field name mapping. */
+export function convertKeys(obj: any, mapping: FieldNameMapping): any {
+  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map((item) => convertKeys(item, mapping));
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
+    const fieldDef = mapping[key];
+    if (!fieldDef) {
+      result[key] = value;
+      continue;
+    }
+    if (typeof fieldDef === "string") {
+      result[fieldDef] = value;
+    } else {
+      result[fieldDef.name] = convertKeys(value, fieldDef.fields);
+    }
+  }
+  return result;
+}
+
 export async function getBuildsClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -97,11 +124,9 @@ export async function getInstancesClient(
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getRevisionsClient(
-  config: Record<string, any>,
-): Promise<any> {
+export async function getJobsClient(config: Record<string, any>): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.run.v2", "Revisions");
+  const Service = getService("google.cloud.run.v2", "Jobs");
   return new Service("run.googleapis.com:443", credentials);
 }
 
@@ -113,9 +138,11 @@ export async function getServicesClient(
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getJobsClient(config: Record<string, any>): Promise<any> {
+export async function getRevisionsClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.run.v2", "Jobs");
+  const Service = getService("google.cloud.run.v2", "Revisions");
   return new Service("run.googleapis.com:443", credentials);
 }
 

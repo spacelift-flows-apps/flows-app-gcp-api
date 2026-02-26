@@ -1,5 +1,19 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  role: {
+    name: "role",
+    fields: {
+      includedPermissions: "included_permissions",
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  included_permissions: "includedPermissions",
+};
 
 const updateRole: AppBlock = {
   name: "Update Role",
@@ -40,7 +54,7 @@ const updateRole: AppBlock = {
                 description:
                   "Optional. A human-readable description for the role.",
               },
-              included_permissions: {
+              includedPermissions: {
                 type: "array",
                 items: {
                   type: "string",
@@ -69,7 +83,7 @@ const updateRole: AppBlock = {
           },
           required: false,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "A mask describing which fields in the Role have changed.",
@@ -84,13 +98,7 @@ const updateRole: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.role !== undefined)
-          request.role = input.event.inputConfig.role;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateRole(request, (err: any, response: any) => {
@@ -104,7 +112,8 @@ const updateRole: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -128,7 +137,7 @@ const updateRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          included_permissions: {
+          includedPermissions: {
             type: "array",
             items: {
               type: "string",

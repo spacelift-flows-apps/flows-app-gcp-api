@@ -1,5 +1,23 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  verifyConnectionOnly: "verify_connection_only",
+  syncMode: "sync_mode",
+  verifyReplicationOnly: "verify_replication_only",
+  mysqlSyncConfig: {
+    name: "mysql_sync_config",
+    fields: {
+      initialSyncFlags: "initial_sync_flags",
+    },
+  },
+  migrationType: "migration_type",
+  syncParallelLevel: "sync_parallel_level",
+  selectedObjects: "selected_objects",
+};
 
 const verifyExternalSyncSettings: AppBlock = {
   name: "Verify External Sync Settings",
@@ -29,7 +47,7 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        verify_connection_only: {
+        verifyConnectionOnly: {
           name: "Verify Connection Only",
           description: "Flag to enable verifying connection only",
           type: {
@@ -38,7 +56,7 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        sync_mode: {
+        syncMode: {
           name: "Sync Mode",
           description: "External sync mode",
           type: {
@@ -48,7 +66,7 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        verify_replication_only: {
+        verifyReplicationOnly: {
           name: "Verify Replication Only",
           description:
             "Optional. Flag to verify settings required by replication setup only",
@@ -59,14 +77,14 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        mysql_sync_config: {
+        mysqlSyncConfig: {
           name: "Mysql Sync Config",
           description:
             "Optional. MySQL-specific settings for start external sync.",
           type: {
             type: "object",
             properties: {
-              initial_sync_flags: {
+              initialSyncFlags: {
                 type: "array",
                 items: {
                   type: "object",
@@ -93,7 +111,7 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        migration_type: {
+        migrationType: {
           name: "Migration Type",
           description:
             "Optional. MigrationType configures the migration to use physical files or logical dump files. If not set, then the logical dump file configuration is used. Valid values are `LOGICAL` or `PHYSICAL`. Only applicable to MySQL.",
@@ -105,7 +123,7 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        sync_parallel_level: {
+        syncParallelLevel: {
           name: "Sync Parallel Level",
           description:
             "Optional. Parallel level for initial data sync. Only applicable for PostgreSQL.",
@@ -121,7 +139,7 @@ const verifyExternalSyncSettings: AppBlock = {
           },
           required: false,
         },
-        selected_objects: {
+        selectedObjects: {
           name: "Selected Objects",
           description:
             "Optional. Migrate only the specified objects from the source instance. If this field is empty, then migrate all objects.",
@@ -148,28 +166,7 @@ const verifyExternalSyncSettings: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.verify_connection_only !== undefined)
-          request.verify_connection_only =
-            input.event.inputConfig.verify_connection_only;
-        if (input.event.inputConfig.sync_mode !== undefined)
-          request.sync_mode = input.event.inputConfig.sync_mode;
-        if (input.event.inputConfig.verify_replication_only !== undefined)
-          request.verify_replication_only =
-            input.event.inputConfig.verify_replication_only;
-        if (input.event.inputConfig.mysql_sync_config !== undefined)
-          request.mysql_sync_config = input.event.inputConfig.mysql_sync_config;
-        if (input.event.inputConfig.migration_type !== undefined)
-          request.migration_type = input.event.inputConfig.migration_type;
-        if (input.event.inputConfig.sync_parallel_level !== undefined)
-          request.sync_parallel_level =
-            input.event.inputConfig.sync_parallel_level;
-        if (input.event.inputConfig.selected_objects !== undefined)
-          request.selected_objects = input.event.inputConfig.selected_objects;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.verifyExternalSyncSettings(

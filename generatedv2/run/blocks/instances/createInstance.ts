@@ -2,7 +2,191 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getInstancesClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  instance: {
+    name: "instance",
+    fields: {
+      clientVersion: "client_version",
+      launchStage: "launch_stage",
+      binaryAuthorization: {
+        name: "binary_authorization",
+        fields: {
+          useDefault: "use_default",
+          breakglassJustification: "breakglass_justification",
+        },
+      },
+      vpcAccess: {
+        name: "vpc_access",
+        fields: {
+          networkInterfaces: "network_interfaces",
+        },
+      },
+      serviceAccount: "service_account",
+      containers: {
+        name: "containers",
+        fields: {
+          sourceCode: {
+            name: "source_code",
+            fields: {
+              cloudStorageSource: "cloud_storage_source",
+            },
+          },
+          env: {
+            name: "env",
+            fields: {
+              valueSource: {
+                name: "value_source",
+                fields: {
+                  secretKeyRef: "secret_key_ref",
+                },
+              },
+            },
+          },
+          resources: {
+            name: "resources",
+            fields: {
+              cpuIdle: "cpu_idle",
+              startupCpuBoost: "startup_cpu_boost",
+            },
+          },
+          ports: {
+            name: "ports",
+            fields: {
+              containerPort: "container_port",
+            },
+          },
+          volumeMounts: {
+            name: "volume_mounts",
+            fields: {
+              mountPath: "mount_path",
+              subPath: "sub_path",
+            },
+          },
+          workingDir: "working_dir",
+          livenessProbe: {
+            name: "liveness_probe",
+            fields: {
+              initialDelaySeconds: "initial_delay_seconds",
+              timeoutSeconds: "timeout_seconds",
+              periodSeconds: "period_seconds",
+              failureThreshold: "failure_threshold",
+              httpGet: {
+                name: "http_get",
+                fields: {
+                  httpHeaders: "http_headers",
+                },
+              },
+              tcpSocket: "tcp_socket",
+            },
+          },
+          startupProbe: {
+            name: "startup_probe",
+            fields: {
+              initialDelaySeconds: "initial_delay_seconds",
+              timeoutSeconds: "timeout_seconds",
+              periodSeconds: "period_seconds",
+              failureThreshold: "failure_threshold",
+              httpGet: {
+                name: "http_get",
+                fields: {
+                  httpHeaders: "http_headers",
+                },
+              },
+              tcpSocket: "tcp_socket",
+            },
+          },
+          readinessProbe: {
+            name: "readiness_probe",
+            fields: {
+              initialDelaySeconds: "initial_delay_seconds",
+              timeoutSeconds: "timeout_seconds",
+              periodSeconds: "period_seconds",
+              failureThreshold: "failure_threshold",
+              httpGet: {
+                name: "http_get",
+                fields: {
+                  httpHeaders: "http_headers",
+                },
+              },
+              tcpSocket: "tcp_socket",
+            },
+          },
+          dependsOn: "depends_on",
+          baseImageUri: "base_image_uri",
+        },
+      },
+      volumes: {
+        name: "volumes",
+        fields: {
+          secret: {
+            name: "secret",
+            fields: {
+              defaultMode: "default_mode",
+            },
+          },
+          cloudSqlInstance: "cloud_sql_instance",
+          emptyDir: {
+            name: "empty_dir",
+            fields: {
+              sizeLimit: "size_limit",
+            },
+          },
+          nfs: {
+            name: "nfs",
+            fields: {
+              readOnly: "read_only",
+            },
+          },
+          gcs: {
+            name: "gcs",
+            fields: {
+              readOnly: "read_only",
+              mountOptions: "mount_options",
+            },
+          },
+        },
+      },
+      encryptionKey: "encryption_key",
+      encryptionKeyRevocationAction: "encryption_key_revocation_action",
+      encryptionKeyShutdownDuration: "encryption_key_shutdown_duration",
+      nodeSelector: "node_selector",
+      gpuZonalRedundancyDisabled: "gpu_zonal_redundancy_disabled",
+      invokerIamDisabled: "invoker_iam_disabled",
+      iapEnabled: "iap_enabled",
+    },
+  },
+  instanceId: "instance_id",
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createInstance: AppBlock = {
   name: "Create Instance",
@@ -51,11 +235,11 @@ const createInstance: AppBlock = {
                 type: "string",
                 description: "Arbitrary identifier for the API client.",
               },
-              client_version: {
+              clientVersion: {
                 type: "string",
                 description: "Arbitrary version identifier for the API client.",
               },
-              launch_stage: {
+              launchStage: {
                 type: "string",
                 enum: [
                   "LAUNCH_STAGE_UNSPECIFIED",
@@ -70,10 +254,10 @@ const createInstance: AppBlock = {
                 description:
                   "The launch stage as defined by [Google Cloud Platform  Launch Stages](https://cloud.google.com/terms/launch-stages).  Cloud Run supports `ALPHA`, `BETA`, and `GA`. If no value is specified, GA  is assumed.  Set the launch stage to a preview stage on input to allow use of preview  features in that stage. On read (or output), describes whether the  resource uses preview features. <p>  For example, if ALPHA is provided as input, but only BETA and GA-level  features are used, this field will be BETA on output.",
               },
-              binary_authorization: {
+              binaryAuthorization: {
                 type: "object",
                 properties: {
-                  use_default: {
+                  useDefault: {
                     type: "boolean",
                     description:
                       "Optional. If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled. (Part of 'binauthz_method' - only one field in this group can be set)",
@@ -83,7 +267,7 @@ const createInstance: AppBlock = {
                     description:
                       "Optional. The path to a binary authorization policy. Format: `projects/{project}/platforms/cloudRun/{policy-name}` (Part of 'binauthz_method' - only one field in this group can be set)",
                   },
-                  breakglass_justification: {
+                  breakglassJustification: {
                     type: "string",
                     description:
                       "Optional. If present, indicates to use Breakglass using this justification. If use_default is False, then it must be empty. For more information on breakglass, see https://cloud.google.com/binary-authorization/docs/using-breakglass",
@@ -92,7 +276,7 @@ const createInstance: AppBlock = {
                 description: "Settings for Binary Authorization feature.",
                 additionalProperties: true,
               },
-              vpc_access: {
+              vpcAccess: {
                 type: "object",
                 properties: {
                   connector: {
@@ -110,7 +294,7 @@ const createInstance: AppBlock = {
                     description:
                       "Optional. Traffic VPC egress settings. If not provided, it defaults to PRIVATE_RANGES_ONLY.",
                   },
-                  network_interfaces: {
+                  networkInterfaces: {
                     type: "array",
                     items: {
                       type: "object",
@@ -145,7 +329,7 @@ const createInstance: AppBlock = {
                   "VPC Access settings. For more information on sending traffic to a VPC network, visit https://cloud.google.com/run/docs/configuring/connecting-vpc.",
                 additionalProperties: true,
               },
-              service_account: {
+              serviceAccount: {
                 type: "string",
               },
               containers: {
@@ -163,10 +347,10 @@ const createInstance: AppBlock = {
                       description:
                         "Required. Name of the container image in Dockerhub, Google Artifact Registry, or Google Container Registry. If the host is not provided, Dockerhub is assumed.",
                     },
-                    source_code: {
+                    sourceCode: {
                       type: "object",
                       properties: {
-                        cloud_storage_source: {
+                        cloudStorageSource: {
                           type: "object",
                           properties: {
                             bucket: {
@@ -223,10 +407,10 @@ const createInstance: AppBlock = {
                             description:
                               "Literal value of the environment variable. Defaults to \"\", and the maximum length is 32768 bytes. Variable references are not supported in Cloud Run. (Part of 'values' - only one field in this group can be set)",
                           },
-                          value_source: {
+                          valueSource: {
                             type: "object",
                             properties: {
-                              secret_key_ref: {
+                              secretKeyRef: {
                                 type: "object",
                                 properties: {
                                   secret: {
@@ -270,12 +454,12 @@ const createInstance: AppBlock = {
                           description:
                             "Only `memory`, `cpu` and `nvidia.com/gpu` keys in the map are supported.  <p>Notes:  * The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. For more information, go to https://cloud.google.com/run/docs/configuring/cpu.   * For supported 'memory' values and syntax, go to  https://cloud.google.com/run/docs/configuring/memory-limits  * The only supported 'nvidia.com/gpu' value is '1'.",
                         },
-                        cpu_idle: {
+                        cpuIdle: {
                           type: "boolean",
                           description:
                             "Determines whether CPU is only allocated during requests (true by default). However, if ResourceRequirements is set, the caller must explicitly set this field to true to preserve the default behavior.",
                         },
-                        startup_cpu_boost: {
+                        startupCpuBoost: {
                           type: "boolean",
                           description:
                             "Determines whether CPU should be boosted on startup of a new container instance above the requested CPU threshold, this can help reduce cold-start latency.",
@@ -295,7 +479,7 @@ const createInstance: AppBlock = {
                             description:
                               'If specified, used to specify which protocol to use. Allowed values are "http1" and "h2c".',
                           },
-                          container_port: {
+                          containerPort: {
                             type: "integer",
                             description:
                               "Port number the container listens on. This must be a valid TCP port number, 0 < container_port < 65536.",
@@ -308,7 +492,7 @@ const createInstance: AppBlock = {
                       description:
                         "List of ports to expose from the container. Only a single port can be specified. The specified ports must be listening on all interfaces (0.0.0.0) within the container to be accessible.  If omitted, a port number will be chosen and passed to the container through the PORT environment variable for the container to listen on.",
                     },
-                    volume_mounts: {
+                    volumeMounts: {
                       type: "array",
                       items: {
                         type: "object",
@@ -318,18 +502,18 @@ const createInstance: AppBlock = {
                             description:
                               "Required. This must match the Name of a Volume.",
                           },
-                          mount_path: {
+                          mountPath: {
                             type: "string",
                             description:
                               "Required. Path within the container at which the volume should be mounted. Must not contain ':'. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run",
                           },
-                          sub_path: {
+                          subPath: {
                             type: "string",
                             description:
                               "Optional. Path within the volume from which the container's volume should be mounted. Defaults to \"\" (volume's root).",
                           },
                         },
-                        required: ["name", "mount_path"],
+                        required: ["name", "mountPath"],
                         description:
                           "VolumeMount describes a mounting of a Volume within a container.",
                         additionalProperties: true,
@@ -337,35 +521,35 @@ const createInstance: AppBlock = {
                       description:
                         "Volume to mount into the container's filesystem.",
                     },
-                    working_dir: {
+                    workingDir: {
                       type: "string",
                       description:
                         "Container's working directory. If not specified, the container runtime's default will be used, which might be configured in the container image.",
                     },
-                    liveness_probe: {
+                    livenessProbe: {
                       type: "object",
                       properties: {
-                        initial_delay_seconds: {
+                        initialDelaySeconds: {
                           type: "integer",
                           description:
                             "Optional. Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240.",
                         },
-                        timeout_seconds: {
+                        timeoutSeconds: {
                           type: "integer",
                           description:
                             "Optional. Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds.",
                         },
-                        period_seconds: {
+                        periodSeconds: {
                           type: "integer",
                           description:
                             "Optional. How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.",
                         },
-                        failure_threshold: {
+                        failureThreshold: {
                           type: "integer",
                           description:
                             "Optional. Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
                         },
-                        http_get: {
+                        httpGet: {
                           type: "object",
                           properties: {
                             path: {
@@ -373,7 +557,7 @@ const createInstance: AppBlock = {
                               description:
                                 "Optional. Path to access on the HTTP server. Defaults to '/'.",
                             },
-                            http_headers: {
+                            httpHeaders: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -407,7 +591,7 @@ const createInstance: AppBlock = {
                             "HTTPGetAction describes an action based on HTTP Get requests. (Part of 'probe_type' - only one field in this group can be set)",
                           additionalProperties: true,
                         },
-                        tcp_socket: {
+                        tcpSocket: {
                           type: "object",
                           properties: {
                             port: {
@@ -443,30 +627,30 @@ const createInstance: AppBlock = {
                         "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
                       additionalProperties: true,
                     },
-                    startup_probe: {
+                    startupProbe: {
                       type: "object",
                       properties: {
-                        initial_delay_seconds: {
+                        initialDelaySeconds: {
                           type: "integer",
                           description:
                             "Optional. Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240.",
                         },
-                        timeout_seconds: {
+                        timeoutSeconds: {
                           type: "integer",
                           description:
                             "Optional. Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds.",
                         },
-                        period_seconds: {
+                        periodSeconds: {
                           type: "integer",
                           description:
                             "Optional. How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.",
                         },
-                        failure_threshold: {
+                        failureThreshold: {
                           type: "integer",
                           description:
                             "Optional. Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
                         },
-                        http_get: {
+                        httpGet: {
                           type: "object",
                           properties: {
                             path: {
@@ -474,7 +658,7 @@ const createInstance: AppBlock = {
                               description:
                                 "Optional. Path to access on the HTTP server. Defaults to '/'.",
                             },
-                            http_headers: {
+                            httpHeaders: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -508,7 +692,7 @@ const createInstance: AppBlock = {
                             "HTTPGetAction describes an action based on HTTP Get requests. (Part of 'probe_type' - only one field in this group can be set)",
                           additionalProperties: true,
                         },
-                        tcp_socket: {
+                        tcpSocket: {
                           type: "object",
                           properties: {
                             port: {
@@ -544,30 +728,30 @@ const createInstance: AppBlock = {
                         "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
                       additionalProperties: true,
                     },
-                    readiness_probe: {
+                    readinessProbe: {
                       type: "object",
                       properties: {
-                        initial_delay_seconds: {
+                        initialDelaySeconds: {
                           type: "integer",
                           description:
                             "Optional. Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240.",
                         },
-                        timeout_seconds: {
+                        timeoutSeconds: {
                           type: "integer",
                           description:
                             "Optional. Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds.",
                         },
-                        period_seconds: {
+                        periodSeconds: {
                           type: "integer",
                           description:
                             "Optional. How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.",
                         },
-                        failure_threshold: {
+                        failureThreshold: {
                           type: "integer",
                           description:
                             "Optional. Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
                         },
-                        http_get: {
+                        httpGet: {
                           type: "object",
                           properties: {
                             path: {
@@ -575,7 +759,7 @@ const createInstance: AppBlock = {
                               description:
                                 "Optional. Path to access on the HTTP server. Defaults to '/'.",
                             },
-                            http_headers: {
+                            httpHeaders: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -609,7 +793,7 @@ const createInstance: AppBlock = {
                             "HTTPGetAction describes an action based on HTTP Get requests. (Part of 'probe_type' - only one field in this group can be set)",
                           additionalProperties: true,
                         },
-                        tcp_socket: {
+                        tcpSocket: {
                           type: "object",
                           properties: {
                             port: {
@@ -645,7 +829,7 @@ const createInstance: AppBlock = {
                         "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
                       additionalProperties: true,
                     },
-                    depends_on: {
+                    dependsOn: {
                       type: "array",
                       items: {
                         type: "string",
@@ -653,7 +837,7 @@ const createInstance: AppBlock = {
                       description:
                         "Names of the containers that must start before this container.",
                     },
-                    base_image_uri: {
+                    baseImageUri: {
                       type: "string",
                       description:
                         "Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.",
@@ -713,7 +897,7 @@ const createInstance: AppBlock = {
                           description:
                             "If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.",
                         },
-                        default_mode: {
+                        defaultMode: {
                           type: "integer",
                           description:
                             "Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by  this setting.  Notes  * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.  This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.",
@@ -724,7 +908,7 @@ const createInstance: AppBlock = {
                         "The secret's value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. (Part of 'volume_type' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    cloud_sql_instance: {
+                    cloudSqlInstance: {
                       type: "object",
                       properties: {
                         instances: {
@@ -740,7 +924,7 @@ const createInstance: AppBlock = {
                         "Represents a set of Cloud SQL instances. Each one will be available under /cloudsql/[instance]. Visit https://cloud.google.com/sql/docs/mysql/connect-run for more information on how to connect Cloud SQL and Cloud Run. (Part of 'volume_type' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    empty_dir: {
+                    emptyDir: {
                       type: "object",
                       properties: {
                         medium: {
@@ -749,7 +933,7 @@ const createInstance: AppBlock = {
                           description:
                             "The medium on which the data is stored. Acceptable values today is only MEMORY or none. When none, the default will currently be backed by memory but could change over time. +optional",
                         },
-                        size_limit: {
+                        sizeLimit: {
                           type: "string",
                           description:
                             "Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers. The default is nil which means that the limit is undefined. More info: https://cloud.google.com/run/docs/configuring/in-memory-volumes#configure-volume. Info in Kubernetes: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -772,7 +956,7 @@ const createInstance: AppBlock = {
                           description:
                             "Path that is exported by the NFS server.",
                         },
-                        read_only: {
+                        readOnly: {
                           type: "boolean",
                           description:
                             "If true, the volume will be mounted as read only for all mounts.",
@@ -789,12 +973,12 @@ const createInstance: AppBlock = {
                           type: "string",
                           description: "Cloud Storage Bucket name.",
                         },
-                        read_only: {
+                        readOnly: {
                           type: "boolean",
                           description:
                             "If true, the volume will be mounted as read only for all mounts.",
                         },
-                        mount_options: {
+                        mountOptions: {
                           type: "array",
                           items: {
                             type: "string",
@@ -816,12 +1000,12 @@ const createInstance: AppBlock = {
                 description:
                   "A list of Volumes to make available to containers.",
               },
-              encryption_key: {
+              encryptionKey: {
                 type: "string",
                 description:
                   "A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek",
               },
-              encryption_key_revocation_action: {
+              encryptionKeyRevocationAction: {
                 type: "string",
                 enum: [
                   "ENCRYPTION_KEY_REVOCATION_ACTION_UNSPECIFIED",
@@ -831,11 +1015,11 @@ const createInstance: AppBlock = {
                 description:
                   "Specifies behavior if an encryption key used by a resource is revoked.",
               },
-              encryption_key_shutdown_duration: {
+              encryptionKeyShutdownDuration: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              node_selector: {
+              nodeSelector: {
                 type: "object",
                 properties: {
                   accelerator: {
@@ -848,7 +1032,7 @@ const createInstance: AppBlock = {
                 description: "Hardware constraints configuration.",
                 additionalProperties: true,
               },
-              gpu_zonal_redundancy_disabled: {
+              gpuZonalRedundancyDisabled: {
                 type: "boolean",
                 description:
                   "Optional. True if GPU zonal redundancy is disabled on this instance.",
@@ -864,12 +1048,12 @@ const createInstance: AppBlock = {
                 ],
                 description: "Allowed ingress traffic for the Container.",
               },
-              invoker_iam_disabled: {
+              invokerIamDisabled: {
                 type: "boolean",
                 description:
                   "Optional. Disables IAM permission check for run.routes.invoke for callers of this Instance. For more information, visit https://cloud.google.com/run/docs/securing/managing-access#invoker_check.",
               },
-              iap_enabled: {
+              iapEnabled: {
                 type: "boolean",
                 description: "Optional. IAP settings on the Instance.",
               },
@@ -886,7 +1070,7 @@ const createInstance: AppBlock = {
           },
           required: true,
         },
-        instance_id: {
+        instanceId: {
           name: "Instance Id",
           description:
             "Required. The unique identifier for the Instance. It must begin with letter, and cannot end with hyphen; must contain fewer than 50 characters. The name of the instance becomes {parent}/instances/{instance_id}.",
@@ -897,7 +1081,7 @@ const createInstance: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Optional. Indicates that the request should be validated and default values populated, without persisting the request or creating any resources.",
@@ -912,15 +1096,7 @@ const createInstance: AppBlock = {
       onEvent: async (input) => {
         const client = await getInstancesClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.instance_id !== undefined)
-          request.instance_id = input.event.inputConfig.instance_id;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.parent !== undefined) {
@@ -944,7 +1120,8 @@ const createInstance: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -960,7 +1137,7 @@ const createInstance: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -987,7 +1164,7 @@ const createInstance: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -1006,7 +1183,7 @@ const createInstance: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

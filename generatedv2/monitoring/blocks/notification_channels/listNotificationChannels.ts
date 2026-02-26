@@ -1,5 +1,41 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getNotificationChannelServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getNotificationChannelServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  orderBy: "order_by",
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  notification_channels: {
+    name: "notificationChannels",
+    fields: {
+      display_name: "displayName",
+      user_labels: "userLabels",
+      verification_status: "verificationStatus",
+      creation_record: {
+        name: "creationRecord",
+        fields: {
+          mutate_time: "mutateTime",
+          mutated_by: "mutatedBy",
+        },
+      },
+      mutation_records: {
+        name: "mutationRecords",
+        fields: {
+          mutate_time: "mutateTime",
+          mutated_by: "mutatedBy",
+        },
+      },
+    },
+  },
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listNotificationChannels: AppBlock = {
   name: "List Notification Channels",
@@ -30,7 +66,7 @@ const listNotificationChannels: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             "Optional. A comma-separated list of fields by which to sort the result. Supports the same set of fields as in `filter`. Entries can be prefixed with a minus sign to sort in descending rather than ascending order.  For more details, see [sorting and filtering](https://cloud.google.com/monitoring/api/v3/sorting-and-filtering).",
@@ -41,7 +77,7 @@ const listNotificationChannels: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of results to return in a single response. If not set to a positive number, a reasonable value will be chosen by the service.",
@@ -52,7 +88,7 @@ const listNotificationChannels: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. If non-empty, `page_token` must contain a value returned as the `next_page_token` in a previous response to request the next set of results.",
@@ -69,17 +105,7 @@ const listNotificationChannels: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.order_by !== undefined)
-          request.order_by = input.event.inputConfig.order_by;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listNotificationChannels(
@@ -96,7 +122,8 @@ const listNotificationChannels: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -106,7 +133,7 @@ const listNotificationChannels: AppBlock = {
       type: {
         type: "object",
         properties: {
-          notification_channels: {
+          notificationChannels: {
             type: "array",
             items: {
               type: "object",
@@ -121,7 +148,7 @@ const listNotificationChannels: AppBlock = {
                   description:
                     "Identifier. The full REST resource name for this channel. The format is:      projects/[PROJECT_ID_OR_NUMBER]/notificationChannels/[CHANNEL_ID]  The `[CHANNEL_ID]` is automatically assigned by the server on creation.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "An optional human-readable name for this notification channel. It is recommended that you specify a non-empty and unique name in order to make it easier to identify the channels in your project, though this is not enforced. The display name is limited to 512 Unicode characters.",
@@ -139,7 +166,7 @@ const listNotificationChannels: AppBlock = {
                   description:
                     "Configuration fields that define the channel and its behavior. The permissible and required labels are specified in the [NotificationChannelDescriptor.labels][google.monitoring.v3.NotificationChannelDescriptor.labels] of the `NotificationChannelDescriptor` corresponding to the `type` field.",
                 },
-                user_labels: {
+                userLabels: {
                   type: "object",
                   additionalProperties: {
                     type: "string",
@@ -147,7 +174,7 @@ const listNotificationChannels: AppBlock = {
                   description:
                     "User-supplied key/value data that does not need to conform to the corresponding `NotificationChannelDescriptor`'s schema, unlike the `labels` field. This field is intended to be used for organizing and identifying the `NotificationChannel` objects.  The field can contain up to 64 entries. Each key and value is limited to 63 Unicode characters or 128 bytes, whichever is smaller. Labels and values can contain only lowercase letters, numerals, underscores, and dashes. Keys must begin with a letter.",
                 },
-                verification_status: {
+                verificationStatus: {
                   type: "string",
                   enum: [
                     "VERIFICATION_STATUS_UNSPECIFIED",
@@ -162,15 +189,15 @@ const listNotificationChannels: AppBlock = {
                   description:
                     "Whether notifications are forwarded to the described channel. This makes it possible to disable delivery of notifications to a particular channel without removing the channel from all alerting policies that reference the channel. This is a more convenient approach when the change is temporary and you want to receive notifications from the same set of alerting policies on the channel at some point in the future.",
                 },
-                creation_record: {
+                creationRecord: {
                   type: "object",
                   properties: {
-                    mutate_time: {
+                    mutateTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                     },
-                    mutated_by: {
+                    mutatedBy: {
                       type: "string",
                       description:
                         "The email address of the user making the change.",
@@ -179,17 +206,17 @@ const listNotificationChannels: AppBlock = {
                   description: "Describes a change made to a configuration.",
                   additionalProperties: true,
                 },
-                mutation_records: {
+                mutationRecords: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      mutate_time: {
+                      mutateTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                       },
-                      mutated_by: {
+                      mutatedBy: {
                         type: "string",
                         description:
                           "The email address of the user making the change.",
@@ -208,12 +235,12 @@ const listNotificationChannels: AppBlock = {
             description:
               "The notification channels defined for the specified project.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If not empty, indicates that there may be more results that match the request. Use the value in the `page_token` field in a subsequent request to fetch the next set of results. If empty, all results have been returned.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description:
               "The total number of notification channels in all pages. This number is only an estimate, and may change in subsequent pages. https://aip.dev/158",

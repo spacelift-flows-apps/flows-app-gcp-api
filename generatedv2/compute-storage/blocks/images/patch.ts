@@ -27,7 +27,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        archive_size_bytes: {
+        archiveSizeBytes: {
           name: "Archive Size Bytes",
           description:
             "Size of the image tar.gz archive stored in Google Cloud Storage (in bytes).",
@@ -37,7 +37,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -97,7 +97,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        disk_size_gb: {
+        diskSizeGb: {
           name: "Disk Size Gb",
           description:
             "Size of the image when restored onto a persistent disk (in GB).",
@@ -107,7 +107,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        enable_confidential_compute: {
+        enableConfidentialCompute: {
           name: "Enable Confidential Compute",
           description:
             "Output only. Whether this image is created from a confidential compute mode disk. [Output Only]: This field is not set by user, but from source disk.",
@@ -129,7 +129,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        guest_os_features: {
+        guestOsFeatures: {
           name: "Guest Os Features",
           description:
             "A list of features to enable on the guest operating system. Applicable only for bootable images. To see a list of available options, see theguestOSfeatures[].type parameter.",
@@ -162,29 +162,29 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        image_encryption_key: {
+        imageEncryptionKey: {
           name: "Image Encryption Key",
           description:
             "Encrypts the image using acustomer-supplied encryption key.  After you encrypt an image with a customer-supplied key, you must provide the same key if you use the image later (e.g. to create a disk from the image).  Customer-supplied encryption keys do not protect access to metadata of the disk.  If you do not provide an encryption key when creating the image, then the disk will be encrypted using an automatically generated key and you do not need to provide a key to use the image later.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -212,7 +212,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        label_fingerprint: {
+        labelFingerprint: {
           name: "Label Fingerprint",
           description:
             "A fingerprint for the labels being applied to this image, which is essentially a hash of the labels used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an image.",
@@ -237,7 +237,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        license_codes: {
+        licenseCodes: {
           name: "License Codes",
           description:
             "Integer license codes indicating which licenses are attached to this image.",
@@ -282,7 +282,7 @@ const patch: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -296,18 +296,18 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        raw_disk: {
+        rawDisk: {
           name: "Raw Disk",
           description: "The parameters of the raw disk image.",
           type: {
             type: "object",
             properties: {
-              container_type: {
+              containerType: {
                 type: "string",
                 description:
                   "The format used to encode and transmit the block device, which should beTAR. This is just a container and transmission format and not a runtime format. Provided by the client when the disk image is created. Check the ContainerType enum for the list of possible values.",
               },
-              sha1_checksum: {
+              sha1Checksum: {
                 type: "string",
                 description:
                   "[Deprecated] This field is deprecated. An optional SHA1 checksum of the disk image before unpackaging provided by the client when the disk image is created.",
@@ -323,7 +323,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzi: {
+        satisfiesPzi: {
           name: "Satisfies Pzi",
           description: "Output only. Reserved for future use.",
           type: {
@@ -332,7 +332,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzs: {
+        satisfiesPzs: {
           name: "Satisfies Pzs",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -341,7 +341,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] Server-defined URL for the resource.",
@@ -352,7 +352,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        shielded_instance_initial_state: {
+        shieldedInstanceInitialState: {
           name: "Shielded Instance Initial State",
           description: "Set the secure boot keys of shielded instance.",
           type: {
@@ -367,7 +367,7 @@ const patch: AppBlock = {
                       type: "string",
                       description: "The raw content in the secure keys file.",
                     },
-                    file_type: {
+                    fileType: {
                       type: "string",
                       description:
                         "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -386,7 +386,7 @@ const patch: AppBlock = {
                       type: "string",
                       description: "The raw content in the secure keys file.",
                     },
-                    file_type: {
+                    fileType: {
                       type: "string",
                       description:
                         "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -405,7 +405,7 @@ const patch: AppBlock = {
                       type: "string",
                       description: "The raw content in the secure keys file.",
                     },
-                    file_type: {
+                    fileType: {
                       type: "string",
                       description:
                         "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -422,7 +422,7 @@ const patch: AppBlock = {
                     type: "string",
                     description: "The raw content in the secure keys file.",
                   },
-                  file_type: {
+                  fileType: {
                     type: "string",
                     description:
                       "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -438,7 +438,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_disk: {
+        sourceDisk: {
           name: "Source Disk",
           description:
             "URL of the source disk used to create this image. For example, the following are valid values:     - https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk    - projects/project/zones/zone/disks/disk    - zones/zone/disks/disk    In order to create an image, you must provide the full or partial URL of one of the following:     - The rawDisk.source URL    - The sourceDisk URL    - The sourceImage URL    - The sourceSnapshot URL",
@@ -449,29 +449,29 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_disk_encryption_key: {
+        sourceDiskEncryptionKey: {
           name: "Source Disk Encryption Key",
           description:
             "Thecustomer-supplied encryption key of the source disk. Required if the source disk is protected by a customer-supplied encryption key.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -488,7 +488,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_disk_id: {
+        sourceDiskId: {
           name: "Source Disk Id",
           description:
             "Output only. [Output Only] The ID value of the disk used to create this image. This value may be used to determine whether the image was taken from the current or a previous instance of a given disk name.",
@@ -499,7 +499,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_image: {
+        sourceImage: {
           name: "Source Image",
           description:
             "URL of the source image used to create this image. The following are valid formats for the URL:     - https://www.googleapis.com/compute/v1/projects/project_id/global/    images/image_name    - projects/project_id/global/images/image_name    In order to create an image, you must provide the full or partial URL of one of the following:     - The rawDisk.source URL    - The sourceDisk URL    - The sourceImage URL    - The sourceSnapshot URL",
@@ -510,29 +510,29 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_image_encryption_key: {
+        sourceImageEncryptionKey: {
           name: "Source Image Encryption Key",
           description:
             "The customer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -549,7 +549,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_image_id: {
+        sourceImageId: {
           name: "Source Image Id",
           description:
             "Output only. [Output Only] The ID value of the image used to create this image. This value may be used to determine whether the image was taken from the current or a previous instance of a given image name.",
@@ -560,7 +560,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_snapshot: {
+        sourceSnapshot: {
           name: "Source Snapshot",
           description:
             "URL of the source snapshot used to create this image. The following are valid formats for the URL:     - https://www.googleapis.com/compute/v1/projects/project_id/global/    snapshots/snapshot_name    - projects/project_id/global/snapshots/snapshot_name    In order to create an image, you must provide the full or partial URL of one of the following:     - The rawDisk.source URL    - The sourceDisk URL    - The sourceImage URL    - The sourceSnapshot URL",
@@ -571,29 +571,29 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_snapshot_encryption_key: {
+        sourceSnapshotEncryptionKey: {
           name: "Source Snapshot Encryption Key",
           description:
             "The customer-supplied encryption key of the source snapshot. Required if the source snapshot is protected by a customer-supplied encryption key.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -610,7 +610,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_snapshot_id: {
+        sourceSnapshotId: {
           name: "Source Snapshot Id",
           description:
             "Output only. [Output Only] The ID value of the snapshot used to create this image. This value may be used to determine whether the snapshot was taken from the current or a previous instance of a given snapshot name.",
@@ -621,7 +621,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        source_type: {
+        sourceType: {
           name: "Source Type",
           description:
             "The type of the image used to create this disk. The default and only valid value is RAW. Check the SourceType enum for the list of possible values.",
@@ -643,7 +643,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        storage_locations: {
+        storageLocations: {
           name: "Storage Locations",
           description:
             "Cloud Storage bucket storage location of the image (regional or multi-regional).",
@@ -657,7 +657,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -674,89 +674,84 @@ const patch: AppBlock = {
           pathParams["image"] = String(input.event.inputConfig.image);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
         if (input.event.inputConfig.architecture !== undefined)
           body.architecture = input.event.inputConfig.architecture;
-        if (input.event.inputConfig.archive_size_bytes !== undefined)
-          body.archive_size_bytes = input.event.inputConfig.archive_size_bytes;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.archiveSizeBytes !== undefined)
+          body.archiveSizeBytes = input.event.inputConfig.archiveSizeBytes;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.deprecated !== undefined)
           body.deprecated = input.event.inputConfig.deprecated;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.disk_size_gb !== undefined)
-          body.disk_size_gb = input.event.inputConfig.disk_size_gb;
-        if (input.event.inputConfig.enable_confidential_compute !== undefined)
-          body.enable_confidential_compute =
-            input.event.inputConfig.enable_confidential_compute;
+        if (input.event.inputConfig.diskSizeGb !== undefined)
+          body.diskSizeGb = input.event.inputConfig.diskSizeGb;
+        if (input.event.inputConfig.enableConfidentialCompute !== undefined)
+          body.enableConfidentialCompute =
+            input.event.inputConfig.enableConfidentialCompute;
         if (input.event.inputConfig.family !== undefined)
           body.family = input.event.inputConfig.family;
-        if (input.event.inputConfig.guest_os_features !== undefined)
-          body.guest_os_features = input.event.inputConfig.guest_os_features;
+        if (input.event.inputConfig.guestOsFeatures !== undefined)
+          body.guestOsFeatures = input.event.inputConfig.guestOsFeatures;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.image_encryption_key !== undefined)
-          body.image_encryption_key =
-            input.event.inputConfig.image_encryption_key;
+        if (input.event.inputConfig.imageEncryptionKey !== undefined)
+          body.imageEncryptionKey = input.event.inputConfig.imageEncryptionKey;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.label_fingerprint !== undefined)
-          body.label_fingerprint = input.event.inputConfig.label_fingerprint;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
         if (input.event.inputConfig.labels !== undefined)
           body.labels = input.event.inputConfig.labels;
-        if (input.event.inputConfig.license_codes !== undefined)
-          body.license_codes = input.event.inputConfig.license_codes;
+        if (input.event.inputConfig.licenseCodes !== undefined)
+          body.licenseCodes = input.event.inputConfig.licenseCodes;
         if (input.event.inputConfig.licenses !== undefined)
           body.licenses = input.event.inputConfig.licenses;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
-        if (input.event.inputConfig.raw_disk !== undefined)
-          body.raw_disk = input.event.inputConfig.raw_disk;
-        if (input.event.inputConfig.satisfies_pzi !== undefined)
-          body.satisfies_pzi = input.event.inputConfig.satisfies_pzi;
-        if (input.event.inputConfig.satisfies_pzs !== undefined)
-          body.satisfies_pzs = input.event.inputConfig.satisfies_pzs;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (
-          input.event.inputConfig.shielded_instance_initial_state !== undefined
-        )
-          body.shielded_instance_initial_state =
-            input.event.inputConfig.shielded_instance_initial_state;
-        if (input.event.inputConfig.source_disk !== undefined)
-          body.source_disk = input.event.inputConfig.source_disk;
-        if (input.event.inputConfig.source_disk_encryption_key !== undefined)
-          body.source_disk_encryption_key =
-            input.event.inputConfig.source_disk_encryption_key;
-        if (input.event.inputConfig.source_disk_id !== undefined)
-          body.source_disk_id = input.event.inputConfig.source_disk_id;
-        if (input.event.inputConfig.source_image !== undefined)
-          body.source_image = input.event.inputConfig.source_image;
-        if (input.event.inputConfig.source_image_encryption_key !== undefined)
-          body.source_image_encryption_key =
-            input.event.inputConfig.source_image_encryption_key;
-        if (input.event.inputConfig.source_image_id !== undefined)
-          body.source_image_id = input.event.inputConfig.source_image_id;
-        if (input.event.inputConfig.source_snapshot !== undefined)
-          body.source_snapshot = input.event.inputConfig.source_snapshot;
-        if (
-          input.event.inputConfig.source_snapshot_encryption_key !== undefined
-        )
-          body.source_snapshot_encryption_key =
-            input.event.inputConfig.source_snapshot_encryption_key;
-        if (input.event.inputConfig.source_snapshot_id !== undefined)
-          body.source_snapshot_id = input.event.inputConfig.source_snapshot_id;
-        if (input.event.inputConfig.source_type !== undefined)
-          body.source_type = input.event.inputConfig.source_type;
+        if (input.event.inputConfig.rawDisk !== undefined)
+          body.rawDisk = input.event.inputConfig.rawDisk;
+        if (input.event.inputConfig.satisfiesPzi !== undefined)
+          body.satisfiesPzi = input.event.inputConfig.satisfiesPzi;
+        if (input.event.inputConfig.satisfiesPzs !== undefined)
+          body.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.shieldedInstanceInitialState !== undefined)
+          body.shieldedInstanceInitialState =
+            input.event.inputConfig.shieldedInstanceInitialState;
+        if (input.event.inputConfig.sourceDisk !== undefined)
+          body.sourceDisk = input.event.inputConfig.sourceDisk;
+        if (input.event.inputConfig.sourceDiskEncryptionKey !== undefined)
+          body.sourceDiskEncryptionKey =
+            input.event.inputConfig.sourceDiskEncryptionKey;
+        if (input.event.inputConfig.sourceDiskId !== undefined)
+          body.sourceDiskId = input.event.inputConfig.sourceDiskId;
+        if (input.event.inputConfig.sourceImage !== undefined)
+          body.sourceImage = input.event.inputConfig.sourceImage;
+        if (input.event.inputConfig.sourceImageEncryptionKey !== undefined)
+          body.sourceImageEncryptionKey =
+            input.event.inputConfig.sourceImageEncryptionKey;
+        if (input.event.inputConfig.sourceImageId !== undefined)
+          body.sourceImageId = input.event.inputConfig.sourceImageId;
+        if (input.event.inputConfig.sourceSnapshot !== undefined)
+          body.sourceSnapshot = input.event.inputConfig.sourceSnapshot;
+        if (input.event.inputConfig.sourceSnapshotEncryptionKey !== undefined)
+          body.sourceSnapshotEncryptionKey =
+            input.event.inputConfig.sourceSnapshotEncryptionKey;
+        if (input.event.inputConfig.sourceSnapshotId !== undefined)
+          body.sourceSnapshotId = input.event.inputConfig.sourceSnapshotId;
+        if (input.event.inputConfig.sourceType !== undefined)
+          body.sourceType = input.event.inputConfig.sourceType;
         if (input.event.inputConfig.status !== undefined)
           body.status = input.event.inputConfig.status;
-        if (input.event.inputConfig.storage_locations !== undefined)
-          body.storage_locations = input.event.inputConfig.storage_locations;
+        if (input.event.inputConfig.storageLocations !== undefined)
+          body.storageLocations = input.event.inputConfig.storageLocations;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -777,12 +772,12 @@ const patch: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -791,7 +786,7 @@ const patch: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -809,12 +804,12 @@ const patch: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -869,7 +864,7 @@ const patch: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -887,7 +882,7 @@ const patch: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -898,7 +893,7 @@ const patch: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -908,16 +903,16 @@ const patch: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -954,12 +949,12 @@ const patch: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -968,15 +963,15 @@ const patch: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -996,12 +991,12 @@ const patch: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -1016,18 +1011,18 @@ const patch: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -1040,7 +1035,7 @@ const patch: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -1051,16 +1046,16 @@ const patch: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

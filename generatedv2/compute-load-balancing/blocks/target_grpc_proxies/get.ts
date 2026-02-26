@@ -8,7 +8,7 @@ const get: AppBlock = {
   inputs: {
     default: {
       config: {
-        target_grpc_proxy: {
+        targetGrpcProxy: {
           name: "Target Grpc Proxy",
           description: "Name of the TargetGrpcProxy resource to return.",
           type: {
@@ -20,9 +20,9 @@ const get: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.target_grpc_proxy !== undefined)
+        if (input.event.inputConfig.targetGrpcProxy !== undefined)
           pathParams["target_grpc_proxy"] = String(
-            input.event.inputConfig.target_grpc_proxy,
+            input.event.inputConfig.targetGrpcProxy,
           );
 
         const result = await computeFetch({
@@ -43,7 +43,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -72,22 +72,22 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",
           },
-          self_link_with_id: {
+          selfLinkWithId: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL with id for the resource.",
           },
-          url_map: {
+          urlMap: {
             type: "string",
             description:
               "URL to the UrlMap resource that defines the mapping from URL to the BackendService. The protocol field in the BackendService must be set to GRPC.",
           },
-          validate_for_proxyless: {
+          validateForProxyless: {
             type: "boolean",
             description:
               'If true, indicates that the BackendServices referenced by the urlMap may be accessed by gRPC applications without using a sidecar proxy. This will enable configuration checks on urlMap and its referenced BackendServices to not allow unsupported features. A gRPC application must use "xds:///" scheme in the target URI of the service it is connecting to. If false, indicates that the BackendServices referenced by the urlMap will be accessed by gRPC applications via a sidecar proxy. In this case, a gRPC application must not use "xds:///" scheme in the target URI of the service it is connecting to',

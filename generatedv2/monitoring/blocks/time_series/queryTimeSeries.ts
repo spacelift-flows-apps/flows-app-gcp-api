@@ -1,5 +1,114 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getQueryServiceClient } from "../../lib/grpcClient.ts";
+import { getQueryServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  time_series_descriptor: {
+    name: "timeSeriesDescriptor",
+    fields: {
+      label_descriptors: {
+        name: "labelDescriptors",
+        fields: {
+          value_type: "valueType",
+        },
+      },
+      point_descriptors: {
+        name: "pointDescriptors",
+        fields: {
+          value_type: "valueType",
+          metric_kind: "metricKind",
+        },
+      },
+    },
+  },
+  time_series_data: {
+    name: "timeSeriesData",
+    fields: {
+      label_values: {
+        name: "labelValues",
+        fields: {
+          bool_value: "boolValue",
+          int64_value: "int64Value",
+          string_value: "stringValue",
+        },
+      },
+      point_data: {
+        name: "pointData",
+        fields: {
+          values: {
+            name: "values",
+            fields: {
+              bool_value: "boolValue",
+              int64_value: "int64Value",
+              double_value: "doubleValue",
+              string_value: "stringValue",
+              distribution_value: {
+                name: "distributionValue",
+                fields: {
+                  sum_of_squared_deviation: "sumOfSquaredDeviation",
+                  bucket_options: {
+                    name: "bucketOptions",
+                    fields: {
+                      linear_buckets: {
+                        name: "linearBuckets",
+                        fields: {
+                          num_finite_buckets: "numFiniteBuckets",
+                        },
+                      },
+                      exponential_buckets: {
+                        name: "exponentialBuckets",
+                        fields: {
+                          num_finite_buckets: "numFiniteBuckets",
+                          growth_factor: "growthFactor",
+                        },
+                      },
+                      explicit_buckets: "explicitBuckets",
+                    },
+                  },
+                  bucket_counts: "bucketCounts",
+                  exemplars: {
+                    name: "exemplars",
+                    fields: {
+                      attachments: {
+                        name: "attachments",
+                        fields: {
+                          type_url: "typeUrl",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          time_interval: {
+            name: "timeInterval",
+            fields: {
+              end_time: "endTime",
+              start_time: "startTime",
+            },
+          },
+        },
+      },
+    },
+  },
+  next_page_token: "nextPageToken",
+  partial_errors: {
+    name: "partialErrors",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+};
 
 const queryTimeSeries: AppBlock = {
   name: "Query Time Series",
@@ -30,7 +139,7 @@ const queryTimeSeries: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "A positive number that is the maximum number of time_series_data to return.",
@@ -41,7 +150,7 @@ const queryTimeSeries: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If this field is not empty then it must contain the `nextPageToken` value returned by a previous call to this method.  Using this field causes the method to return additional results from the previous method call.",
@@ -56,15 +165,7 @@ const queryTimeSeries: AppBlock = {
       onEvent: async (input) => {
         const client = await getQueryServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.query !== undefined)
-          request.query = input.event.inputConfig.query;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.queryTimeSeries(request, (err: any, response: any) => {
@@ -78,7 +179,8 @@ const queryTimeSeries: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -88,10 +190,10 @@ const queryTimeSeries: AppBlock = {
       type: {
         type: "object",
         properties: {
-          time_series_descriptor: {
+          timeSeriesDescriptor: {
             type: "object",
             properties: {
-              label_descriptors: {
+              labelDescriptors: {
                 type: "array",
                 items: {
                   type: "object",
@@ -99,7 +201,7 @@ const queryTimeSeries: AppBlock = {
                     key: {
                       type: "string",
                     },
-                    value_type: {
+                    valueType: {
                       type: "string",
                       enum: ["STRING", "BOOL", "INT64"],
                     },
@@ -111,7 +213,7 @@ const queryTimeSeries: AppBlock = {
                 },
                 description: "Descriptors for the labels.",
               },
-              point_descriptors: {
+              pointDescriptors: {
                 type: "array",
                 items: {
                   type: "object",
@@ -120,7 +222,7 @@ const queryTimeSeries: AppBlock = {
                       type: "string",
                       description: "The value key.",
                     },
-                    value_type: {
+                    valueType: {
                       type: "string",
                       enum: [
                         "VALUE_TYPE_UNSPECIFIED",
@@ -133,7 +235,7 @@ const queryTimeSeries: AppBlock = {
                       ],
                       description: "The value type.",
                     },
-                    metric_kind: {
+                    metricKind: {
                       type: "string",
                       enum: [
                         "METRIC_KIND_UNSPECIFIED",
@@ -160,27 +262,27 @@ const queryTimeSeries: AppBlock = {
               "A descriptor for the labels and points in a time series.",
             additionalProperties: true,
           },
-          time_series_data: {
+          timeSeriesData: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                label_values: {
+                labelValues: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      bool_value: {
+                      boolValue: {
                         type: "boolean",
                         description:
                           "A bool label value. (Part of 'value' - only one field in this group can be set)",
                       },
-                      int64_value: {
+                      int64Value: {
                         type: "string",
                         description:
                           "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                       },
-                      string_value: {
+                      stringValue: {
                         type: "string",
                         description:
                           "A string label value. (Part of 'value' - only one field in this group can be set)",
@@ -192,7 +294,7 @@ const queryTimeSeries: AppBlock = {
                   description:
                     "The values of the labels in the time series identifier, given in the same order as the `label_descriptors` field of the TimeSeriesDescriptor associated with this object. Each value must have a value of the type given in the corresponding entry of `label_descriptors`.",
                 },
-                point_data: {
+                pointData: {
                   type: "array",
                   items: {
                     type: "object",
@@ -202,27 +304,27 @@ const queryTimeSeries: AppBlock = {
                         items: {
                           type: "object",
                           properties: {
-                            bool_value: {
+                            boolValue: {
                               type: "boolean",
                               description:
                                 "A Boolean value: `true` or `false`. (Part of 'value' - only one field in this group can be set)",
                             },
-                            int64_value: {
+                            int64Value: {
                               type: "string",
                               description:
                                 "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                             },
-                            double_value: {
+                            doubleValue: {
                               type: "number",
                               description:
                                 "A 64-bit double-precision floating-point number. Its magnitude is approximately &plusmn;10<sup>&plusmn;300</sup> and it has 16 significant digits of precision. (Part of 'value' - only one field in this group can be set)",
                             },
-                            string_value: {
+                            stringValue: {
                               type: "string",
                               description:
                                 "A variable-length string value. (Part of 'value' - only one field in this group can be set)",
                             },
-                            distribution_value: {
+                            distributionValue: {
                               type: "object",
                               properties: {
                                 count: {
@@ -232,7 +334,7 @@ const queryTimeSeries: AppBlock = {
                                 mean: {
                                   type: "number",
                                 },
-                                sum_of_squared_deviation: {
+                                sumOfSquaredDeviation: {
                                   type: "number",
                                 },
                                 range: {
@@ -249,13 +351,13 @@ const queryTimeSeries: AppBlock = {
                                     "Range of numerical values within `min` and `max`.",
                                   additionalProperties: true,
                                 },
-                                bucket_options: {
+                                bucketOptions: {
                                   type: "object",
                                   properties: {
-                                    linear_buckets: {
+                                    linearBuckets: {
                                       type: "object",
                                       properties: {
-                                        num_finite_buckets: {
+                                        numFiniteBuckets: {
                                           type: "integer",
                                         },
                                         width: {
@@ -269,13 +371,13 @@ const queryTimeSeries: AppBlock = {
                                       description:
                                         "(Part of 'options' - only one field in this group can be set)",
                                     },
-                                    exponential_buckets: {
+                                    exponentialBuckets: {
                                       type: "object",
                                       properties: {
-                                        num_finite_buckets: {
+                                        numFiniteBuckets: {
                                           type: "integer",
                                         },
-                                        growth_factor: {
+                                        growthFactor: {
                                           type: "number",
                                         },
                                         scale: {
@@ -286,7 +388,7 @@ const queryTimeSeries: AppBlock = {
                                       description:
                                         "(Part of 'options' - only one field in this group can be set)",
                                     },
-                                    explicit_buckets: {
+                                    explicitBuckets: {
                                       type: "object",
                                       properties: {
                                         bounds: {
@@ -303,7 +405,7 @@ const queryTimeSeries: AppBlock = {
                                   },
                                   additionalProperties: true,
                                 },
-                                bucket_counts: {
+                                bucketCounts: {
                                   type: "array",
                                   items: {
                                     type: "string",
@@ -328,7 +430,7 @@ const queryTimeSeries: AppBlock = {
                                         items: {
                                           type: "object",
                                           properties: {
-                                            type_url: {
+                                            typeUrl: {
                                               type: "string",
                                             },
                                             value: {
@@ -355,15 +457,15 @@ const queryTimeSeries: AppBlock = {
                         },
                         description: "The values that make up the point.",
                       },
-                      time_interval: {
+                      timeInterval: {
                         type: "object",
                         properties: {
-                          end_time: {
+                          endTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                           },
-                          start_time: {
+                          startTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -387,12 +489,12 @@ const queryTimeSeries: AppBlock = {
             },
             description: "The time series data.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If there are more results than have been returned, then this field is set to a non-empty value.  To see the additional results, use that value as `page_token` in the next call to this method.",
           },
-          partial_errors: {
+          partialErrors: {
             type: "array",
             items: {
               type: "object",
@@ -408,7 +510,7 @@ const queryTimeSeries: AppBlock = {
                   items: {
                     type: "object",
                     properties: {
-                      type_url: {
+                      typeUrl: {
                         type: "string",
                       },
                       value: {

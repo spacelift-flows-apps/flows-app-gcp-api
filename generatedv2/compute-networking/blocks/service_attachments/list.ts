@@ -25,7 +25,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -34,7 +34,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -43,7 +43,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -52,7 +52,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -71,17 +71,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -113,12 +113,12 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                connected_endpoints: {
+                connectedEndpoints: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      consumer_network: {
+                      consumerNetwork: {
                         type: "string",
                         description: "The url of the consumer network.",
                       },
@@ -126,7 +126,7 @@ const list: AppBlock = {
                         type: "string",
                         description: "The url of a connected endpoint.",
                       },
-                      nat_ips: {
+                      natIps: {
                         type: "array",
                         items: {
                           type: "string",
@@ -134,12 +134,12 @@ const list: AppBlock = {
                         description:
                           "NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.",
                       },
-                      propagated_connection_count: {
+                      propagatedConnectionCount: {
                         type: "integer",
                         description:
                           "The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.",
                       },
-                      psc_connection_id: {
+                      pscConnectionId: {
                         type: "string",
                         description: "64-bit integer as string",
                       },
@@ -156,27 +156,27 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] An array of connections for all the consumers connected to this service attachment.",
                 },
-                connection_preference: {
+                connectionPreference: {
                   type: "string",
                   description:
                     "The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules. Check the ConnectionPreference enum for the list of possible values.",
                 },
-                consumer_accept_lists: {
+                consumerAcceptLists: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      connection_limit: {
+                      connectionLimit: {
                         type: "integer",
                         description:
                           "The value of the limit to set. For endpoint_url, the limit should be no more than 1.",
                       },
-                      network_url: {
+                      networkUrl: {
                         type: "string",
                         description:
                           "The network URL for the network to set the limit for.",
                       },
-                      project_id_or_num: {
+                      projectIdOrNum: {
                         type: "string",
                         description:
                           "The project id or number for the project to set the limit for.",
@@ -187,7 +187,7 @@ const list: AppBlock = {
                   description:
                     "Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.",
                 },
-                consumer_reject_lists: {
+                consumerRejectLists: {
                   type: "array",
                   items: {
                     type: "string",
@@ -195,7 +195,7 @@ const list: AppBlock = {
                   description:
                     "Specifies a list of projects or networks that are not allowed to connect to this service attachment. The project can be specified using its project ID or project number and the network can be specified using its URL. A given service attachment can manage connections at either the project or network level. Therefore, both the reject and accept lists for a given service attachment must contain either only projects or only networks.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -205,7 +205,7 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                domain_names: {
+                domainNames: {
                   type: "array",
                   items: {
                     type: "string",
@@ -213,7 +213,7 @@ const list: AppBlock = {
                   description:
                     'If specified, the domain name will be used during the integration between the PSC connected endpoints and the Cloud DNS. For example, this is a valid domain name: "p.mycompany.com.". Current max number of domain names supported is 1.',
                 },
-                enable_proxy_protocol: {
+                enableProxyProtocol: {
                   type: "boolean",
                   description:
                     "If true, enable the proxy protocol which is for supplying client TCP/IP address data in TCP connections that traverse proxies on their way to destination servers.",
@@ -244,7 +244,7 @@ const list: AppBlock = {
                   description:
                     "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
                 },
-                nat_subnets: {
+                natSubnets: {
                   type: "array",
                   items: {
                     type: "string",
@@ -252,17 +252,17 @@ const list: AppBlock = {
                   description:
                     "An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.",
                 },
-                producer_forwarding_rule: {
+                producerForwardingRule: {
                   type: "string",
                   description:
                     "The URL of a forwarding rule with loadBalancingScheme INTERNAL* that is serving the endpoint identified by this service attachment.",
                 },
-                propagated_connection_limit: {
+                propagatedConnectionLimit: {
                   type: "integer",
                   description:
                     "The number of consumer spokes that connected Private Service Connect endpoints can be propagated to through Network Connectivity Center. This limit lets the service producer limit how many propagated Private Service Connect connections can be established to this service attachment from a single consumer.  If the connection preference of the service attachment is ACCEPT_MANUAL, the limit applies to each project or network that is listed in the consumer accept list. If the connection preference of the service attachment is ACCEPT_AUTOMATIC, the limit applies to each project that contains a connected endpoint.  If unspecified, the default propagated connection limit is 250.",
                 },
-                psc_service_attachment_id: {
+                pscServiceAttachmentId: {
                   type: "object",
                   properties: {
                     high: {
@@ -278,7 +278,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] An 128-bit global unique ID of the PSC service attachment.",
                 },
-                reconcile_connections: {
+                reconcileConnections: {
                   type: "boolean",
                   description:
                     "This flag determines whether a consumer accept/reject list change can reconcile the statuses of existing ACCEPTED or REJECTED PSC endpoints.       -  If false, connection policy update will only affect existing PENDING     PSC endpoints. Existing ACCEPTED/REJECTED endpoints will remain untouched     regardless how the connection policy is modified .    -  If true,     update will affect both PENDING and ACCEPTED/REJECTED PSC endpoints. For     example, an ACCEPTED PSC endpoint will be moved to REJECTED if its project     is added to the reject list.   For newly created service attachment, this boolean defaults to false.",
@@ -288,12 +288,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] URL of the region where the service attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for the resource.",
                 },
-                target_service: {
+                targetService: {
                   type: "string",
                   description:
                     "The URL of a service serving the endpoint identified by this service attachment.",
@@ -310,12 +310,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#serviceAttachment for service attachments.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for this resource.",
           },

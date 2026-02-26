@@ -1,5 +1,20 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  dataCrc32c: "data_crc32c",
+  macCrc32c: "mac_crc32c",
+};
+
+const outputMapping = {
+  verified_data_crc32c: "verifiedDataCrc32c",
+  verified_mac_crc32c: "verifiedMacCrc32c",
+  verified_success_integrity: "verifiedSuccessIntegrity",
+  protection_level: "protectionLevel",
+};
 
 const macVerify: AppBlock = {
   name: "Mac Verify",
@@ -29,7 +44,7 @@ const macVerify: AppBlock = {
           },
           required: true,
         },
-        data_crc32c: {
+        dataCrc32c: {
           name: "Data Crc32c",
           description:
             "Optional. An optional CRC32C checksum of the [MacVerifyRequest.data][google.cloud.kms.v1.MacVerifyRequest.data]. If specified, [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will verify the integrity of the received [MacVerifyRequest.data][google.cloud.kms.v1.MacVerifyRequest.data] using this checksum. [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C([MacVerifyRequest.data][google.cloud.kms.v1.MacVerifyRequest.data]) is equal to [MacVerifyRequest.data_crc32c][google.cloud.kms.v1.MacVerifyRequest.data_crc32c], and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
@@ -48,7 +63,7 @@ const macVerify: AppBlock = {
           },
           required: true,
         },
-        mac_crc32c: {
+        macCrc32c: {
           name: "Mac Crc32c",
           description:
             "Optional. An optional CRC32C checksum of the [MacVerifyRequest.mac][google.cloud.kms.v1.MacVerifyRequest.mac]. If specified, [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will verify the integrity of the received [MacVerifyRequest.mac][google.cloud.kms.v1.MacVerifyRequest.mac] using this checksum. [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C([MacVerifyRequest.mac][google.cloud.kms.v1.MacVerifyRequest.mac]) is equal to [MacVerifyRequest.mac_crc32c][google.cloud.kms.v1.MacVerifyRequest.mac_crc32c], and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
@@ -62,17 +77,7 @@ const macVerify: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.data !== undefined)
-          request.data = input.event.inputConfig.data;
-        if (input.event.inputConfig.data_crc32c !== undefined)
-          request.data_crc32c = input.event.inputConfig.data_crc32c;
-        if (input.event.inputConfig.mac !== undefined)
-          request.mac = input.event.inputConfig.mac;
-        if (input.event.inputConfig.mac_crc32c !== undefined)
-          request.mac_crc32c = input.event.inputConfig.mac_crc32c;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.macVerify(request, (err: any, response: any) => {
@@ -86,7 +91,8 @@ const macVerify: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -106,22 +112,22 @@ const macVerify: AppBlock = {
             description:
               "This field indicates whether or not the verification operation for [MacVerifyRequest.mac][google.cloud.kms.v1.MacVerifyRequest.mac] over [MacVerifyRequest.data][google.cloud.kms.v1.MacVerifyRequest.data] was successful.",
           },
-          verified_data_crc32c: {
+          verifiedDataCrc32c: {
             type: "boolean",
             description:
               "Integrity verification field. A flag indicating whether [MacVerifyRequest.data_crc32c][google.cloud.kms.v1.MacVerifyRequest.data_crc32c] was received by [KeyManagementService][google.cloud.kms.v1.KeyManagementService] and used for the integrity verification of the [data][google.cloud.kms.v1.MacVerifyRequest.data]. A false value of this field indicates either that [MacVerifyRequest.data_crc32c][google.cloud.kms.v1.MacVerifyRequest.data_crc32c] was left unset or that it was not delivered to [KeyManagementService][google.cloud.kms.v1.KeyManagementService]. If you've set [MacVerifyRequest.data_crc32c][google.cloud.kms.v1.MacVerifyRequest.data_crc32c] but this field is still false, discard the response and perform a limited number of retries.",
           },
-          verified_mac_crc32c: {
+          verifiedMacCrc32c: {
             type: "boolean",
             description:
               "Integrity verification field. A flag indicating whether [MacVerifyRequest.mac_crc32c][google.cloud.kms.v1.MacVerifyRequest.mac_crc32c] was received by [KeyManagementService][google.cloud.kms.v1.KeyManagementService] and used for the integrity verification of the [data][google.cloud.kms.v1.MacVerifyRequest.mac]. A false value of this field indicates either that [MacVerifyRequest.mac_crc32c][google.cloud.kms.v1.MacVerifyRequest.mac_crc32c] was left unset or that it was not delivered to [KeyManagementService][google.cloud.kms.v1.KeyManagementService]. If you've set [MacVerifyRequest.mac_crc32c][google.cloud.kms.v1.MacVerifyRequest.mac_crc32c] but this field is still false, discard the response and perform a limited number of retries.",
           },
-          verified_success_integrity: {
+          verifiedSuccessIntegrity: {
             type: "boolean",
             description:
               "Integrity verification field. This value is used for the integrity verification of [MacVerifyResponse.success]. If the value of this field contradicts the value of [MacVerifyResponse.success], discard the response and perform a limited number of retries.",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",

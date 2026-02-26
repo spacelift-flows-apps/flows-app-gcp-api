@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagHoldsClient } from "../../lib/grpcClient.ts";
+import { getTagHoldsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  tag_holds: {
+    name: "tagHolds",
+    fields: {
+      help_link: "helpLink",
+      create_time: "createTime",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listTagHolds: AppBlock = {
   name: "List Tag Holds",
@@ -19,7 +35,7 @@ const listTagHolds: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of TagHolds to return in the response. The server allows a maximum of 300 TagHolds to return. If unspecified, the server will use 100 as the default.",
@@ -30,7 +46,7 @@ const listTagHolds: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. A pagination token returned from a previous call to `ListTagHolds` that indicates where this listing should continue from.",
@@ -56,15 +72,7 @@ const listTagHolds: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagHoldsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listTagHolds(request, (err: any, response: any) => {
@@ -78,7 +86,8 @@ const listTagHolds: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -88,7 +97,7 @@ const listTagHolds: AppBlock = {
       type: {
         type: "object",
         properties: {
-          tag_holds: {
+          tagHolds: {
             type: "array",
             items: {
               type: "object",
@@ -108,12 +117,12 @@ const listTagHolds: AppBlock = {
                   description:
                     "Optional. An optional string representing the origin of this request. This field should include human-understandable information to distinguish origins from each other. Must be less than 200 characters. E.g. `migs-35678234`",
                 },
-                help_link: {
+                helpLink: {
                   type: "string",
                   description:
                     "Optional. A URL where an end user can learn more about removing this hold. E.g. `https://cloud.google.com/resource-manager/docs/tags/tags-creating-and-managing`",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -126,7 +135,7 @@ const listTagHolds: AppBlock = {
             },
             description: "A possibly paginated list of TagHolds.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Pagination token.  If the result set is too large to fit in a single response, this token is returned. It encodes the position of the current result cursor. Feeding this value into a new list request with the `page_token` parameter gives the next page of the results.  When `next_page_token` is not filled in, there is no next page and the list returned is the last page in the result set.  Pagination tokens have a limited lifetime.",

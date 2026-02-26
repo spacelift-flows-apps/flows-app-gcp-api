@@ -1,5 +1,28 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  subnetworks: {
+    name: "subnetworks",
+    fields: {
+      ip_cidr_range: "ipCidrRange",
+      secondary_ip_ranges: {
+        name: "secondaryIpRanges",
+        fields: {
+          range_name: "rangeName",
+          ip_cidr_range: "ipCidrRange",
+        },
+      },
+      status_message: "statusMessage",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listUsableSubnetworks: AppBlock = {
   name: "List Usable Subnetworks",
@@ -30,7 +53,7 @@ const listUsableSubnetworks: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "The max number of results per page that should be returned. If the number of available results is larger than `page_size`, a `next_page_token` is returned which can be used to get the next page of results in subsequent requests. Acceptable values are 0 to 500, inclusive. (Default: 500)",
@@ -41,7 +64,7 @@ const listUsableSubnetworks: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set this to the nextPageToken returned by previous list requests to get the next page of results.",
@@ -56,15 +79,7 @@ const listUsableSubnetworks: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listUsableSubnetworks(request, (err: any, response: any) => {
@@ -78,7 +93,8 @@ const listUsableSubnetworks: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -103,22 +119,22 @@ const listUsableSubnetworks: AppBlock = {
                   description:
                     "Network Name. Example: projects/my-project/global/networks/my-network",
                 },
-                ip_cidr_range: {
+                ipCidrRange: {
                   type: "string",
                   description:
                     "The range of internal addresses that are owned by this subnetwork.",
                 },
-                secondary_ip_ranges: {
+                secondaryIpRanges: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      range_name: {
+                      rangeName: {
                         type: "string",
                         description:
                           "The name associated with this subnetwork secondary range, used when adding an alias IP range to a VM instance.",
                       },
-                      ip_cidr_range: {
+                      ipCidrRange: {
                         type: "string",
                         description:
                           "The range of IP addresses belonging to this subnetwork secondary range.",
@@ -141,7 +157,7 @@ const listUsableSubnetworks: AppBlock = {
                   },
                   description: "Secondary IP ranges.",
                 },
-                status_message: {
+                statusMessage: {
                   type: "string",
                   description:
                     "A human readable status message representing the reasons for cases where the caller cannot use the secondary ranges under the subnet. For example if the secondary_ip_ranges is empty due to a permission issue, an insufficient permission message will be given by status_message.",
@@ -154,7 +170,7 @@ const listUsableSubnetworks: AppBlock = {
             description:
               "A list of usable subnetworks in the specified network project.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "This token allows you to get the next page of results for list requests. If the number of results is larger than `page_size`, use the `next_page_token` as a value for the query parameter `page_token` in the next request. The value will become empty when there are no more pages.",

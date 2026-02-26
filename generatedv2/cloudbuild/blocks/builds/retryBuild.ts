@@ -2,7 +2,38 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const retryBuild: AppBlock = {
   name: "Retry Build",
@@ -22,7 +53,7 @@ const retryBuild: AppBlock = {
           },
           required: false,
         },
-        project_id: {
+        projectId: {
           name: "Project Id",
           description: "Required. ID of the project.",
           type: {
@@ -44,13 +75,7 @@ const retryBuild: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.id !== undefined)
-          request.id = input.event.inputConfig.id;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined) {
@@ -70,7 +95,8 @@ const retryBuild: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -86,7 +112,7 @@ const retryBuild: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -113,7 +139,7 @@ const retryBuild: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -132,7 +158,7 @@ const retryBuild: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

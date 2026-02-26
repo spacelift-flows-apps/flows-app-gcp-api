@@ -8,7 +8,7 @@ const get: AppBlock = {
   inputs: {
     default: {
       config: {
-        interconnect_location: {
+        interconnectLocation: {
           name: "Interconnect Location",
           description: "Name of the interconnect location to return.",
           type: {
@@ -20,9 +20,9 @@ const get: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.interconnect_location !== undefined)
+        if (input.event.inputConfig.interconnectLocation !== undefined)
           pathParams["interconnect_location"] = String(
-            input.event.inputConfig.interconnect_location,
+            input.event.inputConfig.interconnectLocation,
           );
 
         const result = await computeFetch({
@@ -48,12 +48,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The postal address of the Point of Presence, each line in the address is separated by a newline character.",
           },
-          availability_zone: {
+          availabilityZone: {
             type: "string",
             description:
               '[Output Only] Availability zone for this InterconnectLocation. Within a metropolitan area (metro), maintenance will not be simultaneously scheduled in more than one availability zone.  Example: "zone1" or "zone2".',
           },
-          available_features: {
+          availableFeatures: {
             type: "array",
             items: {
               type: "string",
@@ -61,7 +61,7 @@ const get: AppBlock = {
             description:
               "[Output only] List of features available at this InterconnectLocation, which can take one of the following values:     - IF_MACSEC    - IF_CROSS_SITE_NETWORK Check the AvailableFeatures enum for the list of possible values.",
           },
-          available_link_types: {
+          availableLinkTypes: {
             type: "array",
             items: {
               type: "string",
@@ -79,12 +79,12 @@ const get: AppBlock = {
             description:
               "[Output Only] Continent for this location, which can take one of the following values:     - AFRICA    - ASIA_PAC    - EUROPE    - NORTH_AMERICA    - SOUTH_AMERICA Check the Continent enum for the list of possible values.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
-          cross_site_interconnect_infos: {
+          crossSiteInterconnectInfos: {
             type: "array",
             items: {
               type: "object",
@@ -107,12 +107,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] An optional description of the resource.",
           },
-          facility_provider: {
+          facilityProvider: {
             type: "string",
             description:
               "Output only. [Output Only] The name of the provider for this facility (e.g., EQUINIX).",
           },
-          facility_provider_facility_id: {
+          facilityProviderFacilityId: {
             type: "string",
             description:
               "Output only. [Output Only] A provider-assigned Identifier for this facility (e.g., Ashburn-DC1).",
@@ -130,26 +130,26 @@ const get: AppBlock = {
             type: "string",
             description: "Output only. [Output Only] Name of the resource.",
           },
-          peeringdb_facility_id: {
+          peeringdbFacilityId: {
             type: "string",
             description:
               "Output only. [Output Only] The peeringdb identifier for this facility (corresponding with a netfac type in peeringdb).",
           },
-          region_infos: {
+          regionInfos: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                expected_rtt_ms: {
+                expectedRttMs: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                l2_forwarding_enabled: {
+                l2ForwardingEnabled: {
                   type: "boolean",
                   description:
                     "Output only. Identifies whether L2 Interconnect Attachments can be created in this region for interconnects that are in this location.",
                 },
-                location_presence: {
+                locationPresence: {
                   type: "string",
                   description:
                     "Output only. Identifies the network presence of this location. Check the LocationPresence enum for the list of possible values.",
@@ -167,12 +167,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] A list of InterconnectLocation.RegionInfo objects, that describe parameters pertaining to the relation between this InterconnectLocation and various Google Cloud regions.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",
           },
-          single_region_production_critical_peer_locations: {
+          singleRegionProductionCriticalPeerLocations: {
             type: "array",
             items: {
               type: "string",
@@ -185,7 +185,7 @@ const get: AppBlock = {
             description:
               "[Output Only] The status of this InterconnectLocation, which can take one of the following values:     - CLOSED: The InterconnectLocation is closed and is unavailable for    provisioning new Interconnects.    - AVAILABLE: The InterconnectLocation is available for provisioning new    Interconnects. Check the Status enum for the list of possible values.",
           },
-          supports_pzs: {
+          supportsPzs: {
             type: "boolean",
             description: "Output only. [Output Only] Reserved for future use.",
           },

@@ -1,5 +1,14 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import { getPublisherClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  next_page_token: "nextPageToken",
+};
 
 const listTopicSubscriptions: AppBlock = {
   name: "List Topic Subscriptions",
@@ -19,7 +28,7 @@ const listTopicSubscriptions: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. Maximum number of subscription names to return.",
@@ -30,7 +39,7 @@ const listTopicSubscriptions: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. The value returned by the last `ListTopicSubscriptionsResponse`; indicates that this is a continuation of a prior `ListTopicSubscriptions` call, and that the system should return the next page of data.",
@@ -45,13 +54,7 @@ const listTopicSubscriptions: AppBlock = {
       onEvent: async (input) => {
         const client = await getPublisherClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.topic !== undefined)
-          request.topic = input.event.inputConfig.topic;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listTopicSubscriptions(request, (err: any, response: any) => {
@@ -65,7 +68,8 @@ const listTopicSubscriptions: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -83,7 +87,7 @@ const listTopicSubscriptions: AppBlock = {
             description:
               "Optional. The names of subscriptions attached to the topic specified in the request.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Optional. If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListTopicSubscriptionsRequest` to get more subscriptions.",

@@ -23,9 +23,7 @@ const deleteMetricDescriptor: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteMetricDescriptor(request, (err: any, response: any) => {

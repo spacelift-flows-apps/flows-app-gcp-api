@@ -1,5 +1,41 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagHoldsClient } from "../../lib/grpcClient.ts";
+import { getTagHoldsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  tagHold: {
+    name: "tag_hold",
+    fields: {
+      helpLink: "help_link",
+    },
+  },
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createTagHold: AppBlock = {
   name: "Create Tag Hold",
@@ -19,7 +55,7 @@ const createTagHold: AppBlock = {
           },
           required: true,
         },
-        tag_hold: {
+        tagHold: {
           name: "Tag Hold",
           description: "Required. The TagHold to be created.",
           type: {
@@ -35,7 +71,7 @@ const createTagHold: AppBlock = {
                 description:
                   "Optional. An optional string representing the origin of this request. This field should include human-understandable information to distinguish origins from each other. Must be less than 200 characters. E.g. `migs-35678234`",
               },
-              help_link: {
+              helpLink: {
                 type: "string",
                 description:
                   "Optional. A URL where an end user can learn more about removing this hold. E.g. `https://cloud.google.com/resource-manager/docs/tags/tags-creating-and-managing`",
@@ -48,7 +84,7 @@ const createTagHold: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "Optional. Set to true to perform the validations necessary for creating the resource, but not actually perform the action.",
@@ -63,13 +99,7 @@ const createTagHold: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagHoldsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.tag_hold !== undefined)
-          request.tag_hold = input.event.inputConfig.tag_hold;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createTagHold(request, (err: any, response: any) => {
@@ -83,7 +113,8 @@ const createTagHold: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -99,7 +130,7 @@ const createTagHold: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -126,7 +157,7 @@ const createTagHold: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -145,7 +176,7 @@ const createTagHold: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

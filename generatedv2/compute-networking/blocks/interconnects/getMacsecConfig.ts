@@ -50,7 +50,7 @@ const getMacsecConfig: AppBlock = {
           result: {
             type: "object",
             properties: {
-              pre_shared_keys: {
+              preSharedKeys: {
                 type: "array",
                 items: {
                   type: "object",
@@ -70,7 +70,7 @@ const getMacsecConfig: AppBlock = {
                       description:
                         "User provided name for this pre-shared key.",
                     },
-                    start_time: {
+                    startTime: {
                       type: "string",
                       description:
                         "User provided timestamp on or after which this key is valid.",

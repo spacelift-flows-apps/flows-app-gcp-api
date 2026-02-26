@@ -1,5 +1,20 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getHsmManagementClient } from "../../lib/grpcClient.ts";
+import { getHsmManagementClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  create_time: "createTime",
+  quorum_auth: {
+    name: "quorumAuth",
+    fields: {
+      total_approver_count: "totalApproverCount",
+      required_approver_count: "requiredApproverCount",
+      two_factor_public_key_pems: "twoFactorPublicKeyPems",
+    },
+  },
+  delete_time: "deleteTime",
+  unrefreshed_duration_until_disable: "unrefreshedDurationUntilDisable",
+  disable_time: "disableTime",
+};
 
 const getSingleTenantHsmInstance: AppBlock = {
   name: "Get Single Tenant Hsm Instance",
@@ -23,9 +38,7 @@ const getSingleTenantHsmInstance: AppBlock = {
       onEvent: async (input) => {
         const client = await getHsmManagementClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getSingleTenantHsmInstance(
@@ -42,7 +55,8 @@ const getSingleTenantHsmInstance: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -57,7 +71,7 @@ const getSingleTenantHsmInstance: AppBlock = {
             description:
               "Identifier. The resource name for this [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] in the format `projects/*/locations/*/singleTenantHsmInstances/*`.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -77,20 +91,20 @@ const getSingleTenantHsmInstance: AppBlock = {
             description:
               "Output only. The state of the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance].",
           },
-          quorum_auth: {
+          quorumAuth: {
             type: "object",
             properties: {
-              total_approver_count: {
+              totalApproverCount: {
                 type: "integer",
                 description:
                   "Required. The total number of approvers. This is the N value used for M of N quorum auth. Must be greater than or equal to 3 and less than or equal to 16.",
               },
-              required_approver_count: {
+              requiredApproverCount: {
                 type: "integer",
                 description:
                   "Output only. The required numbers of approvers. The M value used for M of N quorum auth. Must be greater than or equal to 2 and less than or equal to [total_approver_count][google.cloud.kms.v1.SingleTenantHsmInstance.QuorumAuth.total_approver_count] - 1.",
               },
-              two_factor_public_key_pems: {
+              twoFactorPublicKeyPems: {
                 type: "array",
                 items: {
                   type: "string",
@@ -99,24 +113,24 @@ const getSingleTenantHsmInstance: AppBlock = {
                   "Output only. The public keys associated with the 2FA keys for M of N quorum auth.",
               },
             },
-            required: ["total_approver_count"],
+            required: ["totalApproverCount"],
             description: "Configuration for M of N quorum auth.",
             additionalProperties: true,
           },
-          delete_time: {
+          deleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          unrefreshed_duration_until_disable: {
+          unrefreshedDurationUntilDisable: {
             type: "string",
             description: "Duration string (e.g., '1.5s', '300s')",
           },
-          disable_time: {
+          disableTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
         },
-        required: ["quorum_auth"],
+        required: ["quorumAuth"],
         description:
           "A [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] represents a single-tenant HSM instance. It can be used for creating [CryptoKeys][google.cloud.kms.v1.CryptoKey] with a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [HSM_SINGLE_TENANT][CryptoKeyVersion.ProtectionLevel.HSM_SINGLE_TENANT], as well as performing cryptographic operations using keys created within the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance].",
         additionalProperties: true,

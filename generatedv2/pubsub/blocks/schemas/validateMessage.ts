@@ -83,17 +83,7 @@ const validateMessage: AppBlock = {
       onEvent: async (input) => {
         const client = await getSchemaServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.schema !== undefined)
-          request.schema = input.event.inputConfig.schema;
-        if (input.event.inputConfig.message !== undefined)
-          request.message = input.event.inputConfig.message;
-        if (input.event.inputConfig.encoding !== undefined)
-          request.encoding = input.event.inputConfig.encoding;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.validateMessage(request, (err: any, response: any) => {

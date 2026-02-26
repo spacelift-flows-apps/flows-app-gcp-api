@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  schemas: {
+    name: "schemas",
+    fields: {
+      revision_id: "revisionId",
+      revision_create_time: "revisionCreateTime",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listSchemaRevisions: AppBlock = {
   name: "List Schema Revisions",
@@ -31,7 +47,7 @@ const listSchemaRevisions: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description: "The maximum number of revisions to return per page.",
           type: {
@@ -40,7 +56,7 @@ const listSchemaRevisions: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "The page token, received from a previous ListSchemaRevisions call. Provide this to retrieve the subsequent page.",
@@ -55,15 +71,7 @@ const listSchemaRevisions: AppBlock = {
       onEvent: async (input) => {
         const client = await getSchemaServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.view !== undefined)
-          request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listSchemaRevisions(request, (err: any, response: any) => {
@@ -77,7 +85,8 @@ const listSchemaRevisions: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -107,12 +116,12 @@ const listSchemaRevisions: AppBlock = {
                   description:
                     "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
                 },
-                revision_id: {
+                revisionId: {
                   type: "string",
                   description:
                     "Output only. Immutable. The revision ID of the schema.",
                 },
-                revision_create_time: {
+                revisionCreateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -124,7 +133,7 @@ const listSchemaRevisions: AppBlock = {
             },
             description: "The revisions of the schema.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token that can be sent as `page_token` to retrieve the next page. If this field is empty, there are no subsequent pages.",

@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        instance_group: {
+        instanceGroup: {
           name: "Instance Group",
           description: "Name of the instance group resource to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.instance_group !== undefined)
+        if (input.event.inputConfig.instanceGroup !== undefined)
           pathParams["instance_group"] = String(
-            input.event.inputConfig.instance_group,
+            input.event.inputConfig.instanceGroup,
           );
 
         const result = await computeFetch({
@@ -53,7 +53,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] The creation timestamp for this instance group inRFC3339 text format.",
@@ -82,7 +82,7 @@ const get: AppBlock = {
             description:
               "The name of the instance group. The name must be 1-63 characters long, and comply withRFC1035.",
           },
-          named_ports: {
+          namedPorts: {
             type: "array",
             items: {
               type: "object",
@@ -114,7 +114,7 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The URL of theregion where the instance group is located (for regional resources).",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] The URL for this instance group. The server generates this URL.",

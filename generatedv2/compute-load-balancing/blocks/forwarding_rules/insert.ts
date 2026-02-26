@@ -19,7 +19,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        I_p_address: {
+        IPAddress: {
           name: "I P Address",
           description:
             "IP address for which this forwarding rule accepts traffic. When a client sends traffic to this IP address, the forwarding rule directs the traffic to the referenced target or backendService. While creating a forwarding rule, specifying an IPAddress is required under the following circumstances:      - When the target is set to targetGrpcProxy andvalidateForProxyless is set to true, theIPAddress should be set to 0.0.0.0.    - When the target is a Private Service Connect Google APIs    bundle, you must specify an IPAddress.   Otherwise, you can optionally specify an IP address that references an existing static (reserved) IP address resource. When omitted, Google Cloud assigns an ephemeral IP address.  Use one of the following formats to specify an IP address while creating a forwarding rule:  * IP address number, as in `100.1.2.3` * IPv6 address range, as in `2600:1234::/96` * Full resource URL, as inhttps://www.googleapis.com/compute/v1/projects/project_id/regions/region/addresses/address-name * Partial URL or by name, as in:     - projects/project_id/regions/region/addresses/address-name    - regions/region/addresses/address-name    - global/addresses/address-name    - address-name    The forwarding rule's target or backendService, and in most cases, also the loadBalancingScheme, determine the type of IP address that you can use. For detailed information, see [IP address specifications](https://cloud.google.com/load-balancing/docs/forwarding-rule-concepts#ip_address_specifications).  When reading an IPAddress, the API always returns the IP address number.",
@@ -30,7 +30,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        I_p_protocol: {
+        IPProtocol: {
           name: "I P Protocol",
           description:
             "The IP protocol to which this rule applies.  For protocol forwarding, valid options are TCP, UDP, ESP,AH, SCTP, ICMP andL3_DEFAULT.  The valid IP protocols are different for different load balancing products as described in [Load balancing features](https://cloud.google.com/load-balancing/docs/features#protocols_from_the_load_balancer_to_the_backends). Check the IPProtocolEnum enum for the list of possible values.",
@@ -41,7 +41,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        all_ports: {
+        allPorts: {
           name: "All Ports",
           description:
             "The ports, portRange, and allPorts fields are mutually exclusive. Only packets addressed to ports in the specified range will be forwarded to the backends configured with this forwarding rule.  The allPorts field has the following limitations:     - It requires that the forwarding rule IPProtocol be TCP,    UDP, SCTP, or L3_DEFAULT.    - It's applicable only to the following products: internal passthrough    Network Load Balancers, backend service-based external passthrough Network    Load Balancers, and internal and external protocol forwarding.    - Set this field to true to allow packets addressed to any port or    packets lacking destination port information (for example, UDP fragments    after the first fragment) to be forwarded to the backends configured with    this forwarding rule. The L3_DEFAULT protocol requiresallPorts be set to true.",
@@ -52,7 +52,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        allow_global_access: {
+        allowGlobalAccess: {
           name: "Allow Global Access",
           description:
             "If set to true, clients can access the internal passthrough Network Load Balancers, the regional internal Application Load Balancer, and the regional internal proxy Network Load Balancer from all regions. If false, only allows access from the local region the load balancer is located at. Note that for INTERNAL_MANAGED forwarding rules, this field cannot be changed after the forwarding rule is created.",
@@ -63,7 +63,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        allow_psc_global_access: {
+        allowPscGlobalAccess: {
           name: "Allow Psc Global Access",
           description:
             "This is used in PSC consumer ForwardingRule to control whether the PSC endpoint can be accessed from another region.",
@@ -74,7 +74,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        backend_service: {
+        backendService: {
           name: "Backend Service",
           description:
             "Identifies the backend service to which the forwarding rule sends traffic. Required for internal and external passthrough Network Load Balancers; must be omitted for all other load balancer types.",
@@ -85,7 +85,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        base_forwarding_rule: {
+        baseForwardingRule: {
           name: "Base Forwarding Rule",
           description:
             "Output only. [Output Only] The URL for the corresponding base forwarding rule. By base forwarding rule, we mean the forwarding rule that has the same IP address, protocol, and port settings with the current forwarding rule, but without sourceIPRanges specified. Always empty if the current forwarding rule does not have sourceIPRanges specified.",
@@ -96,7 +96,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -118,7 +118,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        external_managed_backend_bucket_migration_state: {
+        externalManagedBackendBucketMigrationState: {
           name: "External Managed Backend Bucket Migration State",
           description:
             "Specifies the canary migration state for the backend buckets attached to this forwarding rule. Possible values are PREPARE, TEST_BY_PERCENTAGE, and TEST_ALL_TRAFFIC.  To begin the migration from EXTERNAL to EXTERNAL_MANAGED, the state must be changed to PREPARE. The state must be changed to TEST_ALL_TRAFFIC before the loadBalancingScheme can be changed to EXTERNAL_MANAGED. Optionally, the TEST_BY_PERCENTAGE state can be used to migrate traffic to backend buckets attached to this forwarding rule by percentage using externalManagedBackendBucketMigrationTestingPercentage.  Rolling back a migration requires the states to be set in reverse order. So changing the scheme from EXTERNAL_MANAGED to EXTERNAL requires the state to be set to TEST_ALL_TRAFFIC at the same time. Optionally, the TEST_BY_PERCENTAGE state can be used to migrate some traffic back to EXTERNAL or PREPARE can be used to migrate all traffic back to EXTERNAL. Check the ExternalManagedBackendBucketMigrationState enum for the list of possible values.",
@@ -129,7 +129,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        external_managed_backend_bucket_migration_testing_percentage: {
+        externalManagedBackendBucketMigrationTestingPercentage: {
           name: "External Managed Backend Bucket Migration Testing Percentage",
           description:
             "Determines the fraction of requests to backend buckets that should be processed by the global external Application Load Balancer.  The value of this field must be in the range [0, 100].  This value can only be set if the loadBalancingScheme in the BackendService is set to EXTERNAL (when using the classic Application Load Balancer) and the migration state is TEST_BY_PERCENTAGE.",
@@ -161,7 +161,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        ip_collection: {
+        ipCollection: {
           name: "Ip Collection",
           description:
             "Resource reference of a PublicDelegatedPrefix. The PDP must be a sub-PDP in EXTERNAL_IPV6_FORWARDING_RULE_CREATION mode.  Use one of the following formats to specify a sub-PDP when creating an IPv6 NetLB forwarding rule using BYOIP: Full resource URL, as inhttps://www.googleapis.com/compute/v1/projects/project_id/regions/region/publicDelegatedPrefixes/sub-pdp-name Partial URL, as in:     - projects/project_id/regions/region/publicDelegatedPrefixes/sub-pdp-name    - regions/region/publicDelegatedPrefixes/sub-pdp-name",
@@ -172,7 +172,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        ip_version: {
+        ipVersion: {
           name: "Ip Version",
           description:
             "The IP Version that will be used by this forwarding rule.  Valid options are IPV4 or IPV6. Check the IpVersion enum for the list of possible values.",
@@ -183,7 +183,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        is_mirroring_collector: {
+        isMirroringCollector: {
           name: "Is Mirroring Collector",
           description:
             "Indicates whether or not this load balancer can be used as a collector for packet mirroring. To prevent mirroring loops, instances behind this load balancer will not have their traffic mirrored even if aPacketMirroring rule applies to them. This can only be set to true for load balancers that have theirloadBalancingScheme set to INTERNAL.",
@@ -205,7 +205,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        label_fingerprint: {
+        labelFingerprint: {
           name: "Label Fingerprint",
           description:
             "A fingerprint for the labels being applied to this resource, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a ForwardingRule.",
@@ -230,7 +230,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        load_balancing_scheme: {
+        loadBalancingScheme: {
           name: "Load Balancing Scheme",
           description:
             "Specifies the forwarding rule type.  For more information about forwarding rules, refer to Forwarding rule concepts. Check the LoadBalancingScheme enum for the list of possible values.",
@@ -241,7 +241,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        metadata_filters: {
+        metadataFilters: {
           name: "Metadata Filters",
           description:
             "Opaque filter criteria used by load balancer to restrict routing configuration to a limited set of xDS compliant clients. In their xDS requests to load balancer, xDS clients present node metadata. When there is a match, the relevant configuration is made available to those proxies. Otherwise, all the resources (e.g.TargetHttpProxy, UrlMap) referenced by the ForwardingRule are not visible to those proxies.  For each metadataFilter in this list, if itsfilterMatchCriteria is set to MATCH_ANY, at least one of thefilterLabels must match the corresponding label provided in the metadata. If its filterMatchCriteria is set to MATCH_ALL, then all of its filterLabels must match with corresponding labels provided in the metadata. If multiplemetadataFilters are specified, all of them need to be satisfied in order to be considered a match.  metadataFilters specified here will be applifed before those specified in the UrlMap that thisForwardingRule references.  metadataFilters only applies to Loadbalancers that have their loadBalancingScheme set toINTERNAL_SELF_MANAGED.",
@@ -250,7 +250,7 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                filter_labels: {
+                filterLabels: {
                   type: "array",
                   items: {
                     type: "object",
@@ -273,7 +273,7 @@ const insert: AppBlock = {
                   description:
                     "The list of label value pairs that must match labels in the provided metadata based on filterMatchCriteria  This list must not be empty and can have at the most 64 entries.",
                 },
-                filter_match_criteria: {
+                filterMatchCriteria: {
                   type: "string",
                   description:
                     "Specifies how individual filter label matches within the list of filterLabels and contributes toward the overall metadataFilter match.   Supported values are:     - MATCH_ANY: at least one of the filterLabels    must have a matching label in the provided metadata.    - MATCH_ALL: all filterLabels must have    matching labels in the provided metadata. Check the FilterMatchCriteria enum for the list of possible values.",
@@ -310,7 +310,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        network_tier: {
+        networkTier: {
           name: "Network Tier",
           description:
             "This signifies the networking tier used for configuring this load balancer and can only take the following values:PREMIUM, STANDARD.  For regional ForwardingRule, the valid values are PREMIUM andSTANDARD. For GlobalForwardingRule, the valid value isPREMIUM.  If this field is not specified, it is assumed to be PREMIUM. If IPAddress is specified, this value must be equal to the networkTier of the Address. Check the NetworkTier enum for the list of possible values.",
@@ -321,7 +321,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        no_automate_dns_zone: {
+        noAutomateDnsZone: {
           name: "No Automate Dns Zone",
           description:
             "This is used in PSC consumer ForwardingRule to control whether it should try to auto-generate a DNS zone or not. Non-PSC forwarding rules do not use this field. Once set, this field is not mutable.",
@@ -332,7 +332,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        port_range: {
+        portRange: {
           name: "Port Range",
           description:
             "The ports, portRange, and allPorts fields are mutually exclusive. Only packets addressed to ports in the specified range will be forwarded to the backends configured with this forwarding rule.  The portRange field has the following limitations:     - It requires that the forwarding rule IPProtocol be TCP,    UDP, or SCTP, and    - It's applicable only to the following products: external passthrough    Network Load Balancers, internal and external proxy Network Load Balancers,    internal and external Application Load Balancers, external protocol    forwarding, and Classic VPN.    - Some products have restrictions on what ports can be used. See    port specifications for details.    For external forwarding rules, two or more forwarding rules cannot use the same [IPAddress, IPProtocol] pair, and cannot have overlappingportRanges.  For internal forwarding rules within the same VPC network, two or more forwarding rules cannot use the same [IPAddress, IPProtocol] pair, and cannot have overlapping portRanges.  @pattern: \\\\d+(?:-\\\\d+)?",
@@ -357,7 +357,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        psc_connection_id: {
+        pscConnectionId: {
           name: "Psc Connection Id",
           description:
             "[Output Only] The PSC connection id of the PSC forwarding rule.",
@@ -367,7 +367,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        psc_connection_status: {
+        pscConnectionStatus: {
           name: "Psc Connection Status",
           description:
             "Check the PscConnectionStatus enum for the list of possible values.",
@@ -378,7 +378,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description: "[Output Only] Server-defined URL for the resource.",
           type: {
@@ -387,7 +387,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link_with_id: {
+        selfLinkWithId: {
           name: "Self Link With Id",
           description:
             "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
@@ -398,7 +398,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        service_directory_registrations: {
+        serviceDirectoryRegistrations: {
           name: "Service Directory Registrations",
           description:
             "Service Directory resources to register this forwarding rule with. Currently, only supports a single Service Directory resource.",
@@ -417,7 +417,7 @@ const insert: AppBlock = {
                   description:
                     "Service Directory service to register the forwarding rule under.",
                 },
-                service_directory_region: {
+                serviceDirectoryRegion: {
                   type: "string",
                   description:
                     '[Optional] Service Directory region to register this global forwarding rule under. Default to "us-central1". Only used for PSC for Google APIs. All PSC for Google APIs forwarding rules on the same network should use the same Service Directory region.',
@@ -432,7 +432,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        service_label: {
+        serviceLabel: {
           name: "Service Label",
           description:
             "An optional prefix to the service name for this forwarding rule. If specified, the prefix is the first label of the fully qualified service name.  The label must be 1-63 characters long, and comply withRFC1035. Specifically, the label must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.  This field is only used for internal load balancing.",
@@ -443,7 +443,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        service_name: {
+        serviceName: {
           name: "Service Name",
           description:
             "[Output Only] The internal fully qualified service name for this forwarding rule.  This field is only used for internal load balancing.",
@@ -454,7 +454,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        source_ip_ranges: {
+        sourceIpRanges: {
           name: "Source Ip Ranges",
           description:
             "If not empty, this forwarding rule will only forward the traffic when the source IP address matches one of the IP addresses or CIDR ranges set here. Note that a forwarding rule can only have up to 64 source IP ranges, and this field can only be used with a regional forwarding rule whose scheme isEXTERNAL. Each source_ip_range entry should be either an IP address (for example, 1.2.3.4) or a CIDR range (for example, 1.2.3.0/24).",
@@ -490,7 +490,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -507,100 +507,95 @@ const insert: AppBlock = {
           pathParams["region"] = String(input.event.inputConfig.region);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.I_p_address !== undefined)
-          body.I_p_address = input.event.inputConfig.I_p_address;
-        if (input.event.inputConfig.I_p_protocol !== undefined)
-          body.I_p_protocol = input.event.inputConfig.I_p_protocol;
-        if (input.event.inputConfig.all_ports !== undefined)
-          body.all_ports = input.event.inputConfig.all_ports;
-        if (input.event.inputConfig.allow_global_access !== undefined)
-          body.allow_global_access =
-            input.event.inputConfig.allow_global_access;
-        if (input.event.inputConfig.allow_psc_global_access !== undefined)
-          body.allow_psc_global_access =
-            input.event.inputConfig.allow_psc_global_access;
-        if (input.event.inputConfig.backend_service !== undefined)
-          body.backend_service = input.event.inputConfig.backend_service;
-        if (input.event.inputConfig.base_forwarding_rule !== undefined)
-          body.base_forwarding_rule =
-            input.event.inputConfig.base_forwarding_rule;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.IPAddress !== undefined)
+          body.IPAddress = input.event.inputConfig.IPAddress;
+        if (input.event.inputConfig.IPProtocol !== undefined)
+          body.IPProtocol = input.event.inputConfig.IPProtocol;
+        if (input.event.inputConfig.allPorts !== undefined)
+          body.allPorts = input.event.inputConfig.allPorts;
+        if (input.event.inputConfig.allowGlobalAccess !== undefined)
+          body.allowGlobalAccess = input.event.inputConfig.allowGlobalAccess;
+        if (input.event.inputConfig.allowPscGlobalAccess !== undefined)
+          body.allowPscGlobalAccess =
+            input.event.inputConfig.allowPscGlobalAccess;
+        if (input.event.inputConfig.backendService !== undefined)
+          body.backendService = input.event.inputConfig.backendService;
+        if (input.event.inputConfig.baseForwardingRule !== undefined)
+          body.baseForwardingRule = input.event.inputConfig.baseForwardingRule;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
         if (
-          input.event.inputConfig
-            .external_managed_backend_bucket_migration_state !== undefined
-        )
-          body.external_managed_backend_bucket_migration_state =
-            input.event.inputConfig.external_managed_backend_bucket_migration_state;
-        if (
-          input.event.inputConfig
-            .external_managed_backend_bucket_migration_testing_percentage !==
+          input.event.inputConfig.externalManagedBackendBucketMigrationState !==
           undefined
         )
-          body.external_managed_backend_bucket_migration_testing_percentage =
-            input.event.inputConfig.external_managed_backend_bucket_migration_testing_percentage;
+          body.externalManagedBackendBucketMigrationState =
+            input.event.inputConfig.externalManagedBackendBucketMigrationState;
+        if (
+          input.event.inputConfig
+            .externalManagedBackendBucketMigrationTestingPercentage !==
+          undefined
+        )
+          body.externalManagedBackendBucketMigrationTestingPercentage =
+            input.event.inputConfig.externalManagedBackendBucketMigrationTestingPercentage;
         if (input.event.inputConfig.fingerprint !== undefined)
           body.fingerprint = input.event.inputConfig.fingerprint;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.ip_collection !== undefined)
-          body.ip_collection = input.event.inputConfig.ip_collection;
-        if (input.event.inputConfig.ip_version !== undefined)
-          body.ip_version = input.event.inputConfig.ip_version;
-        if (input.event.inputConfig.is_mirroring_collector !== undefined)
-          body.is_mirroring_collector =
-            input.event.inputConfig.is_mirroring_collector;
+        if (input.event.inputConfig.ipCollection !== undefined)
+          body.ipCollection = input.event.inputConfig.ipCollection;
+        if (input.event.inputConfig.ipVersion !== undefined)
+          body.ipVersion = input.event.inputConfig.ipVersion;
+        if (input.event.inputConfig.isMirroringCollector !== undefined)
+          body.isMirroringCollector =
+            input.event.inputConfig.isMirroringCollector;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.label_fingerprint !== undefined)
-          body.label_fingerprint = input.event.inputConfig.label_fingerprint;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
         if (input.event.inputConfig.labels !== undefined)
           body.labels = input.event.inputConfig.labels;
-        if (input.event.inputConfig.load_balancing_scheme !== undefined)
-          body.load_balancing_scheme =
-            input.event.inputConfig.load_balancing_scheme;
-        if (input.event.inputConfig.metadata_filters !== undefined)
-          body.metadata_filters = input.event.inputConfig.metadata_filters;
+        if (input.event.inputConfig.loadBalancingScheme !== undefined)
+          body.loadBalancingScheme =
+            input.event.inputConfig.loadBalancingScheme;
+        if (input.event.inputConfig.metadataFilters !== undefined)
+          body.metadataFilters = input.event.inputConfig.metadataFilters;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.network !== undefined)
           body.network = input.event.inputConfig.network;
-        if (input.event.inputConfig.network_tier !== undefined)
-          body.network_tier = input.event.inputConfig.network_tier;
-        if (input.event.inputConfig.no_automate_dns_zone !== undefined)
-          body.no_automate_dns_zone =
-            input.event.inputConfig.no_automate_dns_zone;
-        if (input.event.inputConfig.port_range !== undefined)
-          body.port_range = input.event.inputConfig.port_range;
+        if (input.event.inputConfig.networkTier !== undefined)
+          body.networkTier = input.event.inputConfig.networkTier;
+        if (input.event.inputConfig.noAutomateDnsZone !== undefined)
+          body.noAutomateDnsZone = input.event.inputConfig.noAutomateDnsZone;
+        if (input.event.inputConfig.portRange !== undefined)
+          body.portRange = input.event.inputConfig.portRange;
         if (input.event.inputConfig.ports !== undefined)
           body.ports = input.event.inputConfig.ports;
-        if (input.event.inputConfig.psc_connection_id !== undefined)
-          body.psc_connection_id = input.event.inputConfig.psc_connection_id;
-        if (input.event.inputConfig.psc_connection_status !== undefined)
-          body.psc_connection_status =
-            input.event.inputConfig.psc_connection_status;
+        if (input.event.inputConfig.pscConnectionId !== undefined)
+          body.pscConnectionId = input.event.inputConfig.pscConnectionId;
+        if (input.event.inputConfig.pscConnectionStatus !== undefined)
+          body.pscConnectionStatus =
+            input.event.inputConfig.pscConnectionStatus;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.self_link_with_id !== undefined)
-          body.self_link_with_id = input.event.inputConfig.self_link_with_id;
-        if (
-          input.event.inputConfig.service_directory_registrations !== undefined
-        )
-          body.service_directory_registrations =
-            input.event.inputConfig.service_directory_registrations;
-        if (input.event.inputConfig.service_label !== undefined)
-          body.service_label = input.event.inputConfig.service_label;
-        if (input.event.inputConfig.service_name !== undefined)
-          body.service_name = input.event.inputConfig.service_name;
-        if (input.event.inputConfig.source_ip_ranges !== undefined)
-          body.source_ip_ranges = input.event.inputConfig.source_ip_ranges;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.selfLinkWithId !== undefined)
+          body.selfLinkWithId = input.event.inputConfig.selfLinkWithId;
+        if (input.event.inputConfig.serviceDirectoryRegistrations !== undefined)
+          body.serviceDirectoryRegistrations =
+            input.event.inputConfig.serviceDirectoryRegistrations;
+        if (input.event.inputConfig.serviceLabel !== undefined)
+          body.serviceLabel = input.event.inputConfig.serviceLabel;
+        if (input.event.inputConfig.serviceName !== undefined)
+          body.serviceName = input.event.inputConfig.serviceName;
+        if (input.event.inputConfig.sourceIpRanges !== undefined)
+          body.sourceIpRanges = input.event.inputConfig.sourceIpRanges;
         if (input.event.inputConfig.subnetwork !== undefined)
           body.subnetwork = input.event.inputConfig.subnetwork;
         if (input.event.inputConfig.target !== undefined)
@@ -626,12 +621,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -640,7 +635,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -658,12 +653,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -718,7 +713,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -736,7 +731,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -747,7 +742,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -757,16 +752,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -803,12 +798,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -817,15 +812,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -845,12 +840,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -865,18 +860,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -889,7 +884,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -900,16 +895,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

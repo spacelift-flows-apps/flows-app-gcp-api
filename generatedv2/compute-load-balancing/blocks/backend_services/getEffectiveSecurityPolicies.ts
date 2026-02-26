@@ -8,7 +8,7 @@ const getEffectiveSecurityPolicies: AppBlock = {
   inputs: {
     default: {
       config: {
-        backend_service: {
+        backendService: {
           name: "Backend Service",
           description: "Name of the Backend Service for this request.",
           type: {
@@ -20,9 +20,9 @@ const getEffectiveSecurityPolicies: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.backend_service !== undefined)
+        if (input.event.inputConfig.backendService !== undefined)
           pathParams["backend_service"] = String(
-            input.event.inputConfig.backend_service,
+            input.event.inputConfig.backendService,
           );
 
         const result = await computeFetch({

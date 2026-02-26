@@ -1,5 +1,222 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getJobsClient, createRoutingMetadata } from "../../lib/grpcClient.ts";
+import {
+  getJobsClient,
+  createRoutingMetadata,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  showDeleted: "show_deleted",
+};
+
+const outputMapping = {
+  jobs: {
+    name: "jobs",
+    fields: {
+      create_time: "createTime",
+      update_time: "updateTime",
+      delete_time: "deleteTime",
+      expire_time: "expireTime",
+      last_modifier: "lastModifier",
+      client_version: "clientVersion",
+      launch_stage: "launchStage",
+      binary_authorization: {
+        name: "binaryAuthorization",
+        fields: {
+          use_default: "useDefault",
+          breakglass_justification: "breakglassJustification",
+        },
+      },
+      template: {
+        name: "template",
+        fields: {
+          task_count: "taskCount",
+          template: {
+            name: "template",
+            fields: {
+              containers: {
+                name: "containers",
+                fields: {
+                  source_code: {
+                    name: "sourceCode",
+                    fields: {
+                      cloud_storage_source: "cloudStorageSource",
+                    },
+                  },
+                  env: {
+                    name: "env",
+                    fields: {
+                      value_source: {
+                        name: "valueSource",
+                        fields: {
+                          secret_key_ref: "secretKeyRef",
+                        },
+                      },
+                    },
+                  },
+                  resources: {
+                    name: "resources",
+                    fields: {
+                      cpu_idle: "cpuIdle",
+                      startup_cpu_boost: "startupCpuBoost",
+                    },
+                  },
+                  ports: {
+                    name: "ports",
+                    fields: {
+                      container_port: "containerPort",
+                    },
+                  },
+                  volume_mounts: {
+                    name: "volumeMounts",
+                    fields: {
+                      mount_path: "mountPath",
+                      sub_path: "subPath",
+                    },
+                  },
+                  working_dir: "workingDir",
+                  liveness_probe: {
+                    name: "livenessProbe",
+                    fields: {
+                      initial_delay_seconds: "initialDelaySeconds",
+                      timeout_seconds: "timeoutSeconds",
+                      period_seconds: "periodSeconds",
+                      failure_threshold: "failureThreshold",
+                      http_get: {
+                        name: "httpGet",
+                        fields: {
+                          http_headers: "httpHeaders",
+                        },
+                      },
+                      tcp_socket: "tcpSocket",
+                    },
+                  },
+                  startup_probe: {
+                    name: "startupProbe",
+                    fields: {
+                      initial_delay_seconds: "initialDelaySeconds",
+                      timeout_seconds: "timeoutSeconds",
+                      period_seconds: "periodSeconds",
+                      failure_threshold: "failureThreshold",
+                      http_get: {
+                        name: "httpGet",
+                        fields: {
+                          http_headers: "httpHeaders",
+                        },
+                      },
+                      tcp_socket: "tcpSocket",
+                    },
+                  },
+                  readiness_probe: {
+                    name: "readinessProbe",
+                    fields: {
+                      initial_delay_seconds: "initialDelaySeconds",
+                      timeout_seconds: "timeoutSeconds",
+                      period_seconds: "periodSeconds",
+                      failure_threshold: "failureThreshold",
+                      http_get: {
+                        name: "httpGet",
+                        fields: {
+                          http_headers: "httpHeaders",
+                        },
+                      },
+                      tcp_socket: "tcpSocket",
+                    },
+                  },
+                  depends_on: "dependsOn",
+                  base_image_uri: "baseImageUri",
+                  build_info: {
+                    name: "buildInfo",
+                    fields: {
+                      function_target: "functionTarget",
+                      source_location: "sourceLocation",
+                    },
+                  },
+                },
+              },
+              volumes: {
+                name: "volumes",
+                fields: {
+                  secret: {
+                    name: "secret",
+                    fields: {
+                      default_mode: "defaultMode",
+                    },
+                  },
+                  cloud_sql_instance: "cloudSqlInstance",
+                  empty_dir: {
+                    name: "emptyDir",
+                    fields: {
+                      size_limit: "sizeLimit",
+                    },
+                  },
+                  nfs: {
+                    name: "nfs",
+                    fields: {
+                      read_only: "readOnly",
+                    },
+                  },
+                  gcs: {
+                    name: "gcs",
+                    fields: {
+                      read_only: "readOnly",
+                      mount_options: "mountOptions",
+                    },
+                  },
+                },
+              },
+              max_retries: "maxRetries",
+              service_account: "serviceAccount",
+              execution_environment: "executionEnvironment",
+              encryption_key: "encryptionKey",
+              vpc_access: {
+                name: "vpcAccess",
+                fields: {
+                  network_interfaces: "networkInterfaces",
+                },
+              },
+              node_selector: "nodeSelector",
+              gpu_zonal_redundancy_disabled: "gpuZonalRedundancyDisabled",
+            },
+          },
+        },
+      },
+      observed_generation: "observedGeneration",
+      terminal_condition: {
+        name: "terminalCondition",
+        fields: {
+          last_transition_time: "lastTransitionTime",
+          revision_reason: "revisionReason",
+          execution_reason: "executionReason",
+        },
+      },
+      conditions: {
+        name: "conditions",
+        fields: {
+          last_transition_time: "lastTransitionTime",
+          revision_reason: "revisionReason",
+          execution_reason: "executionReason",
+        },
+      },
+      execution_count: "executionCount",
+      latest_created_execution: {
+        name: "latestCreatedExecution",
+        fields: {
+          create_time: "createTime",
+          completion_time: "completionTime",
+          delete_time: "deleteTime",
+          completion_status: "completionStatus",
+        },
+      },
+      satisfies_pzs: "satisfiesPzs",
+      start_execution_token: "startExecutionToken",
+      run_execution_token: "runExecutionToken",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listJobs: AppBlock = {
   name: "List Jobs",
@@ -19,7 +236,7 @@ const listJobs: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description: "Maximum number of Jobs to return in this call.",
           type: {
@@ -28,7 +245,7 @@ const listJobs: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "A page token received from a previous call to ListJobs. All other parameters must match.",
@@ -39,7 +256,7 @@ const listJobs: AppBlock = {
           },
           required: false,
         },
-        show_deleted: {
+        showDeleted: {
           name: "Show Deleted",
           description:
             "If true, returns deleted (but unexpired) resources along with active ones.",
@@ -54,15 +271,7 @@ const listJobs: AppBlock = {
       onEvent: async (input) => {
         const client = await getJobsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.show_deleted !== undefined)
-          request.show_deleted = input.event.inputConfig.show_deleted;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.parent !== undefined) {
@@ -82,7 +291,8 @@ const listJobs: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -127,22 +337,22 @@ const listJobs: AppBlock = {
                   description:
                     "Unstructured key value map that may be set by external tools to store and arbitrary metadata. They are not queryable and should be preserved when modifying objects.  <p>Cloud Run API v2 does not support annotations with `run.googleapis.com`, `cloud.googleapis.com`, `serving.knative.dev`, or `autoscaling.knative.dev` namespaces, and they will be rejected on new resources. All system annotations in v1 now have a corresponding field in v2 Job.  <p>This field follows Kubernetes annotations' namespacing, limits, and rules.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                update_time: {
+                updateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                delete_time: {
+                deleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                expire_time: {
+                expireTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -152,7 +362,7 @@ const listJobs: AppBlock = {
                   description:
                     "Output only. Email address of the authenticated creator.",
                 },
-                last_modifier: {
+                lastModifier: {
                   type: "string",
                   description:
                     "Output only. Email address of the last authenticated modifier.",
@@ -161,12 +371,12 @@ const listJobs: AppBlock = {
                   type: "string",
                   description: "Arbitrary identifier for the API client.",
                 },
-                client_version: {
+                clientVersion: {
                   type: "string",
                   description:
                     "Arbitrary version identifier for the API client.",
                 },
-                launch_stage: {
+                launchStage: {
                   type: "string",
                   enum: [
                     "LAUNCH_STAGE_UNSPECIFIED",
@@ -181,10 +391,10 @@ const listJobs: AppBlock = {
                   description:
                     "The launch stage as defined by [Google Cloud Platform Launch Stages](https://cloud.google.com/terms/launch-stages). Cloud Run supports `ALPHA`, `BETA`, and `GA`. If no value is specified, GA is assumed. Set the launch stage to a preview stage on input to allow use of preview features in that stage. On read (or output), describes whether the resource uses preview features.  For example, if ALPHA is provided as input, but only BETA and GA-level features are used, this field will be BETA on output.",
                 },
-                binary_authorization: {
+                binaryAuthorization: {
                   type: "object",
                   properties: {
-                    use_default: {
+                    useDefault: {
                       type: "boolean",
                       description:
                         "Optional. If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled. (Part of 'binauthz_method' - only one field in this group can be set)",
@@ -194,7 +404,7 @@ const listJobs: AppBlock = {
                       description:
                         "Optional. The path to a binary authorization policy. Format: `projects/{project}/platforms/cloudRun/{policy-name}` (Part of 'binauthz_method' - only one field in this group can be set)",
                     },
-                    breakglass_justification: {
+                    breakglassJustification: {
                       type: "string",
                       description:
                         "Optional. If present, indicates to use Breakglass using this justification. If use_default is False, then it must be empty. For more information on breakglass, see https://cloud.google.com/binary-authorization/docs/using-breakglass",
@@ -227,7 +437,7 @@ const listJobs: AppBlock = {
                       description:
                         "Optional. Specifies the maximum desired number of tasks the execution should run at given time. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.",
                     },
-                    task_count: {
+                    taskCount: {
                       type: "integer",
                       description:
                         "Specifies the desired number of tasks the execution should run. Setting to 1 means that parallelism is limited to 1 and the success of that task signals the success of the execution. Defaults to 1.",
@@ -250,10 +460,10 @@ const listJobs: AppBlock = {
                                 description:
                                   "Required. Name of the container image in Dockerhub, Google Artifact Registry, or Google Container Registry. If the host is not provided, Dockerhub is assumed.",
                               },
-                              source_code: {
+                              sourceCode: {
                                 type: "object",
                                 properties: {
-                                  cloud_storage_source: {
+                                  cloudStorageSource: {
                                     type: "object",
                                     properties: {
                                       bucket: {
@@ -310,10 +520,10 @@ const listJobs: AppBlock = {
                                       description:
                                         "Literal value of the environment variable. Defaults to \"\", and the maximum length is 32768 bytes. Variable references are not supported in Cloud Run. (Part of 'values' - only one field in this group can be set)",
                                     },
-                                    value_source: {
+                                    valueSource: {
                                       type: "object",
                                       properties: {
-                                        secret_key_ref: {
+                                        secretKeyRef: {
                                           type: "object",
                                           properties: {
                                             secret: {
@@ -357,12 +567,12 @@ const listJobs: AppBlock = {
                                     description:
                                       "Only `memory`, `cpu` and `nvidia.com/gpu` keys in the map are supported.  <p>Notes:  * The only supported values for CPU are '1', '2', '4', and '8'. Setting 4 CPU requires at least 2Gi of memory. For more information, go to https://cloud.google.com/run/docs/configuring/cpu.   * For supported 'memory' values and syntax, go to  https://cloud.google.com/run/docs/configuring/memory-limits  * The only supported 'nvidia.com/gpu' value is '1'.",
                                   },
-                                  cpu_idle: {
+                                  cpuIdle: {
                                     type: "boolean",
                                     description:
                                       "Determines whether CPU is only allocated during requests (true by default). However, if ResourceRequirements is set, the caller must explicitly set this field to true to preserve the default behavior.",
                                   },
-                                  startup_cpu_boost: {
+                                  startupCpuBoost: {
                                     type: "boolean",
                                     description:
                                       "Determines whether CPU should be boosted on startup of a new container instance above the requested CPU threshold, this can help reduce cold-start latency.",
@@ -382,7 +592,7 @@ const listJobs: AppBlock = {
                                       description:
                                         'If specified, used to specify which protocol to use. Allowed values are "http1" and "h2c".',
                                     },
-                                    container_port: {
+                                    containerPort: {
                                       type: "integer",
                                       description:
                                         "Port number the container listens on. This must be a valid TCP port number, 0 < container_port < 65536.",
@@ -395,7 +605,7 @@ const listJobs: AppBlock = {
                                 description:
                                   "List of ports to expose from the container. Only a single port can be specified. The specified ports must be listening on all interfaces (0.0.0.0) within the container to be accessible.  If omitted, a port number will be chosen and passed to the container through the PORT environment variable for the container to listen on.",
                               },
-                              volume_mounts: {
+                              volumeMounts: {
                                 type: "array",
                                 items: {
                                   type: "object",
@@ -405,18 +615,18 @@ const listJobs: AppBlock = {
                                       description:
                                         "Required. This must match the Name of a Volume.",
                                     },
-                                    mount_path: {
+                                    mountPath: {
                                       type: "string",
                                       description:
                                         "Required. Path within the container at which the volume should be mounted. Must not contain ':'. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run",
                                     },
-                                    sub_path: {
+                                    subPath: {
                                       type: "string",
                                       description:
                                         "Optional. Path within the volume from which the container's volume should be mounted. Defaults to \"\" (volume's root).",
                                     },
                                   },
-                                  required: ["name", "mount_path"],
+                                  required: ["name", "mountPath"],
                                   description:
                                     "VolumeMount describes a mounting of a Volume within a container.",
                                   additionalProperties: true,
@@ -424,35 +634,35 @@ const listJobs: AppBlock = {
                                 description:
                                   "Volume to mount into the container's filesystem.",
                               },
-                              working_dir: {
+                              workingDir: {
                                 type: "string",
                                 description:
                                   "Container's working directory. If not specified, the container runtime's default will be used, which might be configured in the container image.",
                               },
-                              liveness_probe: {
+                              livenessProbe: {
                                 type: "object",
                                 properties: {
-                                  initial_delay_seconds: {
+                                  initialDelaySeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240.",
                                   },
-                                  timeout_seconds: {
+                                  timeoutSeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds.",
                                   },
-                                  period_seconds: {
+                                  periodSeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.",
                                   },
-                                  failure_threshold: {
+                                  failureThreshold: {
                                     type: "integer",
                                     description:
                                       "Optional. Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
                                   },
-                                  http_get: {
+                                  httpGet: {
                                     type: "object",
                                     properties: {
                                       path: {
@@ -460,7 +670,7 @@ const listJobs: AppBlock = {
                                         description:
                                           "Optional. Path to access on the HTTP server. Defaults to '/'.",
                                       },
-                                      http_headers: {
+                                      httpHeaders: {
                                         type: "array",
                                         items: {
                                           type: "object",
@@ -494,7 +704,7 @@ const listJobs: AppBlock = {
                                       "HTTPGetAction describes an action based on HTTP Get requests. (Part of 'probe_type' - only one field in this group can be set)",
                                     additionalProperties: true,
                                   },
-                                  tcp_socket: {
+                                  tcpSocket: {
                                     type: "object",
                                     properties: {
                                       port: {
@@ -530,30 +740,30 @@ const listJobs: AppBlock = {
                                   "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
                                 additionalProperties: true,
                               },
-                              startup_probe: {
+                              startupProbe: {
                                 type: "object",
                                 properties: {
-                                  initial_delay_seconds: {
+                                  initialDelaySeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240.",
                                   },
-                                  timeout_seconds: {
+                                  timeoutSeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds.",
                                   },
-                                  period_seconds: {
+                                  periodSeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.",
                                   },
-                                  failure_threshold: {
+                                  failureThreshold: {
                                     type: "integer",
                                     description:
                                       "Optional. Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
                                   },
-                                  http_get: {
+                                  httpGet: {
                                     type: "object",
                                     properties: {
                                       path: {
@@ -561,7 +771,7 @@ const listJobs: AppBlock = {
                                         description:
                                           "Optional. Path to access on the HTTP server. Defaults to '/'.",
                                       },
-                                      http_headers: {
+                                      httpHeaders: {
                                         type: "array",
                                         items: {
                                           type: "object",
@@ -595,7 +805,7 @@ const listJobs: AppBlock = {
                                       "HTTPGetAction describes an action based on HTTP Get requests. (Part of 'probe_type' - only one field in this group can be set)",
                                     additionalProperties: true,
                                   },
-                                  tcp_socket: {
+                                  tcpSocket: {
                                     type: "object",
                                     properties: {
                                       port: {
@@ -631,30 +841,30 @@ const listJobs: AppBlock = {
                                   "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
                                 additionalProperties: true,
                               },
-                              readiness_probe: {
+                              readinessProbe: {
                                 type: "object",
                                 properties: {
-                                  initial_delay_seconds: {
+                                  initialDelaySeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. Number of seconds after the container has started before the probe is initiated. Defaults to 0 seconds. Minimum value is 0. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240.",
                                   },
-                                  timeout_seconds: {
+                                  timeoutSeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1. Maximum value is 3600. Must be smaller than period_seconds.",
                                   },
-                                  period_seconds: {
+                                  periodSeconds: {
                                     type: "integer",
                                     description:
                                       "Optional. How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Maximum value for liveness probe is 3600. Maximum value for startup probe is 240. Must be greater or equal than timeout_seconds.",
                                   },
-                                  failure_threshold: {
+                                  failureThreshold: {
                                     type: "integer",
                                     description:
                                       "Optional. Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
                                   },
-                                  http_get: {
+                                  httpGet: {
                                     type: "object",
                                     properties: {
                                       path: {
@@ -662,7 +872,7 @@ const listJobs: AppBlock = {
                                         description:
                                           "Optional. Path to access on the HTTP server. Defaults to '/'.",
                                       },
-                                      http_headers: {
+                                      httpHeaders: {
                                         type: "array",
                                         items: {
                                           type: "object",
@@ -696,7 +906,7 @@ const listJobs: AppBlock = {
                                       "HTTPGetAction describes an action based on HTTP Get requests. (Part of 'probe_type' - only one field in this group can be set)",
                                     additionalProperties: true,
                                   },
-                                  tcp_socket: {
+                                  tcpSocket: {
                                     type: "object",
                                     properties: {
                                       port: {
@@ -732,7 +942,7 @@ const listJobs: AppBlock = {
                                   "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
                                 additionalProperties: true,
                               },
-                              depends_on: {
+                              dependsOn: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -740,20 +950,20 @@ const listJobs: AppBlock = {
                                 description:
                                   "Names of the containers that must start before this container.",
                               },
-                              base_image_uri: {
+                              baseImageUri: {
                                 type: "string",
                                 description:
                                   "Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.",
                               },
-                              build_info: {
+                              buildInfo: {
                                 type: "object",
                                 properties: {
-                                  function_target: {
+                                  functionTarget: {
                                     type: "string",
                                     description:
                                       "Output only. Entry point of the function when the image is a Cloud Run function.",
                                   },
-                                  source_location: {
+                                  sourceLocation: {
                                     type: "string",
                                     description:
                                       "Output only. Source code location of the image.",
@@ -817,7 +1027,7 @@ const listJobs: AppBlock = {
                                     description:
                                       "If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.",
                                   },
-                                  default_mode: {
+                                  defaultMode: {
                                     type: "integer",
                                     description:
                                       "Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by  this setting.  Notes  * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.  This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.",
@@ -828,7 +1038,7 @@ const listJobs: AppBlock = {
                                   "The secret's value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. (Part of 'volume_type' - only one field in this group can be set)",
                                 additionalProperties: true,
                               },
-                              cloud_sql_instance: {
+                              cloudSqlInstance: {
                                 type: "object",
                                 properties: {
                                   instances: {
@@ -844,7 +1054,7 @@ const listJobs: AppBlock = {
                                   "Represents a set of Cloud SQL instances. Each one will be available under /cloudsql/[instance]. Visit https://cloud.google.com/sql/docs/mysql/connect-run for more information on how to connect Cloud SQL and Cloud Run. (Part of 'volume_type' - only one field in this group can be set)",
                                 additionalProperties: true,
                               },
-                              empty_dir: {
+                              emptyDir: {
                                 type: "object",
                                 properties: {
                                   medium: {
@@ -853,7 +1063,7 @@ const listJobs: AppBlock = {
                                     description:
                                       "The medium on which the data is stored. Acceptable values today is only MEMORY or none. When none, the default will currently be backed by memory but could change over time. +optional",
                                   },
-                                  size_limit: {
+                                  sizeLimit: {
                                     type: "string",
                                     description:
                                       "Limit on the storage usable by this EmptyDir volume. The size limit is also applicable for memory medium. The maximum usage on memory medium EmptyDir would be the minimum value between the SizeLimit specified here and the sum of memory limits of all containers. The default is nil which means that the limit is undefined. More info: https://cloud.google.com/run/docs/configuring/in-memory-volumes#configure-volume. Info in Kubernetes: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -876,7 +1086,7 @@ const listJobs: AppBlock = {
                                     description:
                                       "Path that is exported by the NFS server.",
                                   },
-                                  read_only: {
+                                  readOnly: {
                                     type: "boolean",
                                     description:
                                       "If true, the volume will be mounted as read only for all mounts.",
@@ -893,12 +1103,12 @@ const listJobs: AppBlock = {
                                     type: "string",
                                     description: "Cloud Storage Bucket name.",
                                   },
-                                  read_only: {
+                                  readOnly: {
                                     type: "boolean",
                                     description:
                                       "If true, the volume will be mounted as read only for all mounts.",
                                   },
-                                  mount_options: {
+                                  mountOptions: {
                                     type: "array",
                                     items: {
                                       type: "string",
@@ -920,7 +1130,7 @@ const listJobs: AppBlock = {
                           description:
                             "Optional. A list of Volumes to make available to containers.",
                         },
-                        max_retries: {
+                        maxRetries: {
                           type: "integer",
                           description:
                             "Number of retries allowed per Task, before marking this Task failed. Defaults to 3.",
@@ -929,12 +1139,12 @@ const listJobs: AppBlock = {
                           type: "string",
                           description: "Duration string (e.g., '1.5s', '300s')",
                         },
-                        service_account: {
+                        serviceAccount: {
                           type: "string",
                           description:
                             "Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project's default service account.",
                         },
-                        execution_environment: {
+                        executionEnvironment: {
                           type: "string",
                           enum: [
                             "EXECUTION_ENVIRONMENT_UNSPECIFIED",
@@ -944,12 +1154,12 @@ const listJobs: AppBlock = {
                           description:
                             "Alternatives for execution environments.",
                         },
-                        encryption_key: {
+                        encryptionKey: {
                           type: "string",
                           description:
                             "A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek",
                         },
-                        vpc_access: {
+                        vpcAccess: {
                           type: "object",
                           properties: {
                             connector: {
@@ -967,7 +1177,7 @@ const listJobs: AppBlock = {
                               description:
                                 "Optional. Traffic VPC egress settings. If not provided, it defaults to PRIVATE_RANGES_ONLY.",
                             },
-                            network_interfaces: {
+                            networkInterfaces: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -1002,7 +1212,7 @@ const listJobs: AppBlock = {
                             "VPC Access settings. For more information on sending traffic to a VPC network, visit https://cloud.google.com/run/docs/configuring/connecting-vpc.",
                           additionalProperties: true,
                         },
-                        node_selector: {
+                        nodeSelector: {
                           type: "object",
                           properties: {
                             accelerator: {
@@ -1015,7 +1225,7 @@ const listJobs: AppBlock = {
                           description: "Hardware constraints configuration.",
                           additionalProperties: true,
                         },
-                        gpu_zonal_redundancy_disabled: {
+                        gpuZonalRedundancyDisabled: {
                           type: "boolean",
                           description:
                             "Optional. True if GPU zonal redundancy is disabled on this task template.",
@@ -1031,11 +1241,11 @@ const listJobs: AppBlock = {
                     "ExecutionTemplate describes the data an execution should have when created from a template.",
                   additionalProperties: true,
                 },
-                observed_generation: {
+                observedGeneration: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                terminal_condition: {
+                terminalCondition: {
                   type: "object",
                   properties: {
                     type: {
@@ -1059,7 +1269,7 @@ const listJobs: AppBlock = {
                       description:
                         "Human readable message indicating details about the current status.",
                     },
-                    last_transition_time: {
+                    lastTransitionTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -1098,7 +1308,7 @@ const listJobs: AppBlock = {
                       description:
                         "Output only. A common (service-level) reason for this condition. (Part of 'reasons' - only one field in this group can be set)",
                     },
-                    revision_reason: {
+                    revisionReason: {
                       type: "string",
                       enum: [
                         "REVISION_REASON_UNDEFINED",
@@ -1118,7 +1328,7 @@ const listJobs: AppBlock = {
                       description:
                         "Output only. A reason for the revision condition. (Part of 'reasons' - only one field in this group can be set)",
                     },
-                    execution_reason: {
+                    executionReason: {
                       type: "string",
                       enum: [
                         "EXECUTION_REASON_UNDEFINED",
@@ -1162,7 +1372,7 @@ const listJobs: AppBlock = {
                         description:
                           "Human readable message indicating details about the current status.",
                       },
-                      last_transition_time: {
+                      lastTransitionTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -1201,7 +1411,7 @@ const listJobs: AppBlock = {
                         description:
                           "Output only. A common (service-level) reason for this condition. (Part of 'reasons' - only one field in this group can be set)",
                       },
-                      revision_reason: {
+                      revisionReason: {
                         type: "string",
                         enum: [
                           "REVISION_REASON_UNDEFINED",
@@ -1221,7 +1431,7 @@ const listJobs: AppBlock = {
                         description:
                           "Output only. A reason for the revision condition. (Part of 'reasons' - only one field in this group can be set)",
                       },
-                      execution_reason: {
+                      executionReason: {
                         type: "string",
                         enum: [
                           "EXECUTION_REASON_UNDEFINED",
@@ -1242,34 +1452,34 @@ const listJobs: AppBlock = {
                   description:
                     "Output only. The Conditions of all other associated sub-resources. They contain additional diagnostics information in case the Job does not reach its desired state. See comments in `reconciling` for additional information on reconciliation process in Cloud Run.",
                 },
-                execution_count: {
+                executionCount: {
                   type: "integer",
                   description:
                     "Output only. Number of executions created for this job.",
                 },
-                latest_created_execution: {
+                latestCreatedExecution: {
                   type: "object",
                   properties: {
                     name: {
                       type: "string",
                       description: "Name of the execution.",
                     },
-                    create_time: {
+                    createTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                     },
-                    completion_time: {
+                    completionTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                     },
-                    delete_time: {
+                    deleteTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                     },
-                    completion_status: {
+                    completionStatus: {
                       type: "string",
                       enum: [
                         "COMPLETION_STATUS_UNSPECIFIED",
@@ -1291,16 +1501,16 @@ const listJobs: AppBlock = {
                   description:
                     "Output only. Returns true if the Job is currently being acted upon by the system to bring it into the desired state.  When a new Job is created, or an existing one is updated, Cloud Run will asynchronously perform all necessary steps to bring the Job to the desired state. This process is called reconciliation. While reconciliation is in process, `observed_generation` and `latest_succeeded_execution`, will have transient values that might mismatch the intended state: Once reconciliation is over (and this field is false), there are two possible outcomes: reconciliation succeeded and the state matches the Job, or there was an error,  and reconciliation failed. This state can be found in `terminal_condition.state`.  If reconciliation succeeded, the following fields will match: `observed_generation` and `generation`, `latest_succeeded_execution` and `latest_created_execution`.  If reconciliation failed, `observed_generation` and `latest_succeeded_execution` will have the state of the last succeeded execution or empty for newly created Job. Additional information on the failure can be found in `terminal_condition` and `conditions`.",
                 },
-                satisfies_pzs: {
+                satisfiesPzs: {
                   type: "boolean",
                   description: "Output only. Reserved for future use.",
                 },
-                start_execution_token: {
+                startExecutionToken: {
                   type: "string",
                   description:
                     "A unique string used as a suffix creating a new execution. The Job will become ready when the execution is successfully started. The sum of job name and token length must be fewer than 63 characters. (Part of 'create_execution' - only one field in this group can be set)",
                 },
-                run_execution_token: {
+                runExecutionToken: {
                   type: "string",
                   description:
                     "A unique string used as a suffix for creating a new execution. The Job will become ready when the execution is successfully completed. The sum of job name and token length must be fewer than 63 characters. (Part of 'create_execution' - only one field in this group can be set)",
@@ -1318,7 +1528,7 @@ const listJobs: AppBlock = {
             },
             description: "The resulting list of Jobs.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token indicating there are more items than page_size. Use it in the next ListJobs request to continue.",

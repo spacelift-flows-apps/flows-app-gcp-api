@@ -1,5 +1,23 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getUptimeCheckServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getUptimeCheckServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  uptime_check_ips: {
+    name: "uptimeCheckIps",
+    fields: {
+      ip_address: "ipAddress",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listUptimeCheckIps: AppBlock = {
   name: "List Uptime Check Ips",
@@ -8,7 +26,7 @@ const listUptimeCheckIps: AppBlock = {
   inputs: {
     default: {
       config: {
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "The maximum number of results to return in a single response. The server may further constrain the maximum number of results returned in a single page. If the page_size is <=0, the server will decide the number of results to be returned. NOTE: this field is not yet implemented",
@@ -19,7 +37,7 @@ const listUptimeCheckIps: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If this field is not empty then it must contain the `nextPageToken` value returned by a previous call to this method.  Using this field causes the method to return more results from the previous method call. NOTE: this field is not yet implemented",
@@ -34,11 +52,7 @@ const listUptimeCheckIps: AppBlock = {
       onEvent: async (input) => {
         const client = await getUptimeCheckServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listUptimeCheckIps(request, (err: any, response: any) => {
@@ -52,7 +66,8 @@ const listUptimeCheckIps: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -62,7 +77,7 @@ const listUptimeCheckIps: AppBlock = {
       type: {
         type: "object",
         properties: {
-          uptime_check_ips: {
+          uptimeCheckIps: {
             type: "array",
             items: {
               type: "object",
@@ -87,7 +102,7 @@ const listUptimeCheckIps: AppBlock = {
                   description:
                     "A more specific location within the region that typically encodes a particular city/town/metro (and its containing state/province or country) within the broader umbrella region category.",
                 },
-                ip_address: {
+                ipAddress: {
                   type: "string",
                   description:
                     "The IP address from which the Uptime check originates. This is a fully specified IP address (not an IP address range). Most IP addresses, as of this publication, are in IPv4 format; however, one should not rely on the IP addresses being in IPv4 format indefinitely, and should support interpreting this field in either IPv4 or IPv6 format.",
@@ -100,7 +115,7 @@ const listUptimeCheckIps: AppBlock = {
             description:
               "The returned list of IP addresses (including region and location) that the checkers run from.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "This field represents the pagination token to retrieve the next page of results. If the value is empty, it means no further results for the request. To retrieve the next page of results, the value of the next_page_token is passed to the subsequent List method call (in the request message's page_token field). NOTE: this field is not yet implemented",

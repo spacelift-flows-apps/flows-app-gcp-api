@@ -1,5 +1,17 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  issues: {
+    name: "issues",
+    fields: {
+      last_observation: "lastObservation",
+      constraint_type: "constraintType",
+      incompatibility_type: "incompatibilityType",
+      documentation_url: "documentationUrl",
+    },
+  },
+};
 
 const checkAutopilotCompatibility: AppBlock = {
   name: "Check Autopilot Compatibility",
@@ -23,9 +35,7 @@ const checkAutopilotCompatibility: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.checkAutopilotCompatibility(
@@ -42,7 +52,8 @@ const checkAutopilotCompatibility: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -57,16 +68,16 @@ const checkAutopilotCompatibility: AppBlock = {
             items: {
               type: "object",
               properties: {
-                last_observation: {
+                lastObservation: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                constraint_type: {
+                constraintType: {
                   type: "string",
                   description: "The constraint type of the issue.",
                 },
-                incompatibility_type: {
+                incompatibilityType: {
                   type: "string",
                   enum: [
                     "UNSPECIFIED",
@@ -84,7 +95,7 @@ const checkAutopilotCompatibility: AppBlock = {
                   description:
                     "The name of the resources which are subject to this issue.",
                 },
-                documentation_url: {
+                documentationUrl: {
                   type: "string",
                   description:
                     "A URL to a public documentation, which addresses resolving this issue.",

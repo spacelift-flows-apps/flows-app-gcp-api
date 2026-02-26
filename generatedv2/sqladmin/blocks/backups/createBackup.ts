@@ -1,5 +1,170 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlBackupsServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlBackupsServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  backup: {
+    name: "backup",
+    fields: {
+      ttlDays: "ttl_days",
+      expiryTime: "expiry_time",
+    },
+  },
+};
+
+const outputMapping = {
+  target_link: "targetLink",
+  insert_time: "insertTime",
+  start_time: "startTime",
+  end_time: "endTime",
+  api_warning: "apiWarning",
+  operation_type: "operationType",
+  import_context: {
+    name: "importContext",
+    fields: {
+      file_type: "fileType",
+      csv_import_options: {
+        name: "csvImportOptions",
+        fields: {
+          escape_character: "escapeCharacter",
+          quote_character: "quoteCharacter",
+          fields_terminated_by: "fieldsTerminatedBy",
+          lines_terminated_by: "linesTerminatedBy",
+        },
+      },
+      import_user: "importUser",
+      bak_import_options: {
+        name: "bakImportOptions",
+        fields: {
+          encryption_options: {
+            name: "encryptionOptions",
+            fields: {
+              cert_path: "certPath",
+              pvk_path: "pvkPath",
+              pvk_password: "pvkPassword",
+              keep_encrypted: "keepEncrypted",
+            },
+          },
+          no_recovery: "noRecovery",
+          recovery_only: "recoveryOnly",
+          bak_type: "bakType",
+          stop_at: "stopAt",
+          stop_at_mark: "stopAtMark",
+        },
+      },
+      sql_import_options: {
+        name: "sqlImportOptions",
+        fields: {
+          postgres_import_options: {
+            name: "postgresImportOptions",
+            fields: {
+              if_exists: "ifExists",
+            },
+          },
+        },
+      },
+      tde_import_options: {
+        name: "tdeImportOptions",
+        fields: {
+          certificate_path: "certificatePath",
+          private_key_path: "privateKeyPath",
+          private_key_password: "privateKeyPassword",
+        },
+      },
+    },
+  },
+  export_context: {
+    name: "exportContext",
+    fields: {
+      sql_export_options: {
+        name: "sqlExportOptions",
+        fields: {
+          schema_only: "schemaOnly",
+          mysql_export_options: {
+            name: "mysqlExportOptions",
+            fields: {
+              master_data: "masterData",
+            },
+          },
+          postgres_export_options: {
+            name: "postgresExportOptions",
+            fields: {
+              if_exists: "ifExists",
+            },
+          },
+        },
+      },
+      csv_export_options: {
+        name: "csvExportOptions",
+        fields: {
+          select_query: "selectQuery",
+          escape_character: "escapeCharacter",
+          quote_character: "quoteCharacter",
+          fields_terminated_by: "fieldsTerminatedBy",
+          lines_terminated_by: "linesTerminatedBy",
+        },
+      },
+      file_type: "fileType",
+      bak_export_options: {
+        name: "bakExportOptions",
+        fields: {
+          stripe_count: "stripeCount",
+          bak_type: "bakType",
+          copy_only: "copyOnly",
+          differential_base: "differentialBase",
+          export_log_start_time: "exportLogStartTime",
+          export_log_end_time: "exportLogEndTime",
+        },
+      },
+      tde_export_options: {
+        name: "tdeExportOptions",
+        fields: {
+          certificate_path: "certificatePath",
+          private_key_path: "privateKeyPath",
+          private_key_password: "privateKeyPassword",
+        },
+      },
+    },
+  },
+  backup_context: {
+    name: "backupContext",
+    fields: {
+      backup_id: "backupId",
+    },
+  },
+  pre_check_major_version_upgrade_context: {
+    name: "preCheckMajorVersionUpgradeContext",
+    fields: {
+      target_database_version: "targetDatabaseVersion",
+      pre_check_response: {
+        name: "preCheckResponse",
+        fields: {
+          message_type: "messageType",
+          actions_required: "actionsRequired",
+        },
+      },
+    },
+  },
+  target_id: "targetId",
+  self_link: "selfLink",
+  target_project: "targetProject",
+  acquire_ssrs_lease_context: {
+    name: "acquireSsrsLeaseContext",
+    fields: {
+      setup_login: "setupLogin",
+      service_login: "serviceLogin",
+      report_database: "reportDatabase",
+    },
+  },
+  sub_operation_type: {
+    name: "subOperationType",
+    fields: {
+      maintenance_type: "maintenanceType",
+    },
+  },
+};
 
 const createBackup: AppBlock = {
   name: "Create Backup",
@@ -38,12 +203,12 @@ const createBackup: AppBlock = {
                 description:
                   "The storage location of the backups. The location can be multi-regional.",
               },
-              ttl_days: {
+              ttlDays: {
                 type: "string",
                 description:
                   "64-bit integer as string (Part of 'expiration' - only one field in this group can be set)",
               },
-              expiry_time: {
+              expiryTime: {
                 type: "string",
                 description:
                   "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z') (Part of 'expiration' - only one field in this group can be set)",
@@ -58,11 +223,7 @@ const createBackup: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlBackupsServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.backup !== undefined)
-          request.backup = input.event.inputConfig.backup;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createBackup(request, (err: any, response: any) => {
@@ -76,7 +237,8 @@ const createBackup: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -90,7 +252,7 @@ const createBackup: AppBlock = {
             type: "string",
             description: "This is always `sql#operation`.",
           },
-          target_link: {
+          targetLink: {
             type: "string",
           },
           status: {
@@ -108,15 +270,15 @@ const createBackup: AppBlock = {
             description:
               "The email address of the user who initiated this operation.",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -157,7 +319,7 @@ const createBackup: AppBlock = {
             description: "Database instance operation errors list wrapper.",
             additionalProperties: true,
           },
-          api_warning: {
+          apiWarning: {
             type: "object",
             properties: {
               code: {
@@ -183,7 +345,7 @@ const createBackup: AppBlock = {
             description: "An Admin API warning message.",
             additionalProperties: true,
           },
-          operation_type: {
+          operationType: {
             type: "string",
             enum: [
               "SQL_OPERATION_TYPE_UNSPECIFIED",
@@ -242,7 +404,7 @@ const createBackup: AppBlock = {
             description:
               "The type of the operation. Valid values are: *  `CREATE` *  `DELETE` *  `UPDATE` *  `RESTART` *  `IMPORT` *  `EXPORT` *  `BACKUP_VOLUME` *  `RESTORE_VOLUME` *  `CREATE_USER` *  `DELETE_USER` *  `CREATE_DATABASE` *  `DELETE_DATABASE`",
           },
-          import_context: {
+          importContext: {
             type: "object",
             properties: {
               uri: {
@@ -259,13 +421,13 @@ const createBackup: AppBlock = {
                 type: "string",
                 description: "This is always `sql#importContext`.",
               },
-              file_type: {
+              fileType: {
                 type: "string",
                 enum: ["SQL_FILE_TYPE_UNSPECIFIED", "SQL", "CSV", "BAK", "TDE"],
                 description:
                   "The file type for the specified uri.\\`SQL`: The file contains SQL statements. \\`CSV`: The file contains CSV data.",
               },
-              csv_import_options: {
+              csvImportOptions: {
                 type: "object",
                 properties: {
                   table: {
@@ -280,22 +442,22 @@ const createBackup: AppBlock = {
                     description:
                       "The columns to which CSV data is imported. If not specified, all columns of the database table are loaded with CSV data.",
                   },
-                  escape_character: {
+                  escapeCharacter: {
                     type: "string",
                     description:
                       "Specifies the character that should appear before a data character that needs to be escaped.",
                   },
-                  quote_character: {
+                  quoteCharacter: {
                     type: "string",
                     description:
                       "Specifies the quoting character to be used when a data value is quoted.",
                   },
-                  fields_terminated_by: {
+                  fieldsTerminatedBy: {
                     type: "string",
                     description:
                       "Specifies the character that separates columns within each row (line) of the file.",
                   },
-                  lines_terminated_by: {
+                  linesTerminatedBy: {
                     type: "string",
                     description:
                       "This is used to separate lines. If a line does not contain all fields, the rest of the columns are set to their default values.",
@@ -304,32 +466,32 @@ const createBackup: AppBlock = {
                 additionalProperties: true,
                 description: "Options for importing data as CSV.",
               },
-              import_user: {
+              importUser: {
                 type: "string",
                 description:
                   "The PostgreSQL user for this import operation. PostgreSQL instances only.",
               },
-              bak_import_options: {
+              bakImportOptions: {
                 type: "object",
                 properties: {
-                  encryption_options: {
+                  encryptionOptions: {
                     type: "object",
                     properties: {
-                      cert_path: {
+                      certPath: {
                         type: "string",
                         description:
                           "Path to the Certificate (.cer) in Cloud Storage, in the form `gs://bucketName/fileName`. The instance must have write permissions to the bucket and read access to the file.",
                       },
-                      pvk_path: {
+                      pvkPath: {
                         type: "string",
                         description:
                           "Path to the Certificate Private Key (.pvk)  in Cloud Storage, in the form `gs://bucketName/fileName`. The instance must have write permissions to the bucket and read access to the file.",
                       },
-                      pvk_password: {
+                      pvkPassword: {
                         type: "string",
                         description: "Password that encrypts the private key",
                       },
-                      keep_encrypted: {
+                      keepEncrypted: {
                         type: "boolean",
                         description:
                           "Optional. Whether the imported file remains encrypted.",
@@ -342,27 +504,27 @@ const createBackup: AppBlock = {
                     description:
                       "Whether or not the backup set being restored is striped. Applies only to Cloud SQL for SQL Server.",
                   },
-                  no_recovery: {
+                  noRecovery: {
                     type: "boolean",
                     description:
                       "Whether or not the backup importing will restore database with NORECOVERY option. Applies only to Cloud SQL for SQL Server.",
                   },
-                  recovery_only: {
+                  recoveryOnly: {
                     type: "boolean",
                     description:
                       'Whether or not the backup importing request will just bring database online without downloading Bak content only one of "no_recovery" and "recovery_only" can be true otherwise error will return. Applies only to Cloud SQL for SQL Server.',
                   },
-                  bak_type: {
+                  bakType: {
                     type: "string",
                     enum: ["BAK_TYPE_UNSPECIFIED", "FULL", "DIFF", "TLOG"],
                     description: "Type of the bak content, FULL or DIFF",
                   },
-                  stop_at: {
+                  stopAt: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                   },
-                  stop_at_mark: {
+                  stopAtMark: {
                     type: "string",
                     description:
                       "Optional. The marked transaction where the import should stop. This field is equivalent to the STOPATMARK keyword and applies to Cloud SQL for SQL Server only.",
@@ -372,7 +534,7 @@ const createBackup: AppBlock = {
                 description:
                   "Import parameters specific to SQL Server .BAK files",
               },
-              sql_import_options: {
+              sqlImportOptions: {
                 type: "object",
                 properties: {
                   threads: {
@@ -385,7 +547,7 @@ const createBackup: AppBlock = {
                     description:
                       "Optional. Whether or not the import should be parallel.",
                   },
-                  postgres_import_options: {
+                  postgresImportOptions: {
                     type: "object",
                     properties: {
                       clean: {
@@ -393,7 +555,7 @@ const createBackup: AppBlock = {
                         description:
                           "Optional. The --clean flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.",
                       },
-                      if_exists: {
+                      ifExists: {
                         type: "boolean",
                         description:
                           "Optional. The --if-exists flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.",
@@ -408,20 +570,20 @@ const createBackup: AppBlock = {
                 description:
                   "Optional. Options for importing data from SQL statements.",
               },
-              tde_import_options: {
+              tdeImportOptions: {
                 type: "object",
                 properties: {
-                  certificate_path: {
+                  certificatePath: {
                     type: "string",
                     description:
                       "Required. Path to the TDE certificate public key in the form gs://bucketName/fileName. The instance must have read access to the file. Applicable only for SQL Server instances.",
                   },
-                  private_key_path: {
+                  privateKeyPath: {
                     type: "string",
                     description:
                       "Required. Path to the TDE certificate private key in the form gs://bucketName/fileName. The instance must have read access to the file. Applicable only for SQL Server instances.",
                   },
-                  private_key_password: {
+                  privateKeyPassword: {
                     type: "string",
                     description:
                       "Required. Password that encrypts the private key.",
@@ -433,9 +595,9 @@ const createBackup: AppBlock = {
                   },
                 },
                 required: [
-                  "certificate_path",
-                  "private_key_path",
-                  "private_key_password",
+                  "certificatePath",
+                  "privateKeyPath",
+                  "privateKeyPassword",
                   "name",
                 ],
                 additionalProperties: true,
@@ -446,7 +608,7 @@ const createBackup: AppBlock = {
             description: "Database instance import context.",
             additionalProperties: true,
           },
-          export_context: {
+          exportContext: {
             type: "object",
             properties: {
               uri: {
@@ -466,7 +628,7 @@ const createBackup: AppBlock = {
                 type: "string",
                 description: "This is always `sql#exportContext`.",
               },
-              sql_export_options: {
+              sqlExportOptions: {
                 type: "object",
                 properties: {
                   tables: {
@@ -477,14 +639,14 @@ const createBackup: AppBlock = {
                     description:
                       "Tables to export, or that were exported, from the specified database. If you specify tables, specify one and only one database. For PostgreSQL instances, you can specify only one table.",
                   },
-                  schema_only: {
+                  schemaOnly: {
                     type: "boolean",
                     description: "Export only schemas.",
                   },
-                  mysql_export_options: {
+                  mysqlExportOptions: {
                     type: "object",
                     properties: {
-                      master_data: {
+                      masterData: {
                         type: "integer",
                         description:
                           "Option to include SQL statement required to set up replication. If set to `1`, the dump file includes a CHANGE MASTER TO statement with the binary log coordinates, and --set-gtid-purged is set to ON. If set to `2`, the CHANGE MASTER TO statement is written as a SQL comment and has no effect. If set to any value other than `1`, --set-gtid-purged is set to OFF.",
@@ -503,7 +665,7 @@ const createBackup: AppBlock = {
                     description:
                       "Optional. Whether or not the export should be parallel.",
                   },
-                  postgres_export_options: {
+                  postgresExportOptions: {
                     type: "object",
                     properties: {
                       clean: {
@@ -511,7 +673,7 @@ const createBackup: AppBlock = {
                         description:
                           "Optional. Use this option to include DROP <code>&lt;object&gt;</code> SQL statements. Use these statements to delete database objects before running the import operation.",
                       },
-                      if_exists: {
+                      ifExists: {
                         type: "boolean",
                         description:
                           "Optional. Option to include an IF EXISTS SQL statement with each DROP statement produced by clean.",
@@ -525,29 +687,29 @@ const createBackup: AppBlock = {
                 additionalProperties: true,
                 description: "Options for exporting data as SQL statements.",
               },
-              csv_export_options: {
+              csvExportOptions: {
                 type: "object",
                 properties: {
-                  select_query: {
+                  selectQuery: {
                     type: "string",
                     description: "The select query used to extract the data.",
                   },
-                  escape_character: {
+                  escapeCharacter: {
                     type: "string",
                     description:
                       "Specifies the character that should appear before a data character that needs to be escaped.",
                   },
-                  quote_character: {
+                  quoteCharacter: {
                     type: "string",
                     description:
                       "Specifies the quoting character to be used when a data value is quoted.",
                   },
-                  fields_terminated_by: {
+                  fieldsTerminatedBy: {
                     type: "string",
                     description:
                       "Specifies the character that separates columns within each row (line) of the file.",
                   },
-                  lines_terminated_by: {
+                  linesTerminatedBy: {
                     type: "string",
                     description:
                       "This is used to separate lines. If a line does not contain all fields, the rest of the columns are set to their default values.",
@@ -557,7 +719,7 @@ const createBackup: AppBlock = {
                 description:
                   "Options for exporting data as CSV. `MySQL` and `PostgreSQL` instances only.",
               },
-              file_type: {
+              fileType: {
                 type: "string",
                 enum: ["SQL_FILE_TYPE_UNSPECIFIED", "SQL", "CSV", "BAK", "TDE"],
                 description: "The file type for the specified uri.",
@@ -566,40 +728,40 @@ const createBackup: AppBlock = {
                 type: "boolean",
                 description: "Whether to perform a serverless export.",
               },
-              bak_export_options: {
+              bakExportOptions: {
                 type: "object",
                 properties: {
                   striped: {
                     type: "boolean",
                     description: "Whether or not the export should be striped.",
                   },
-                  stripe_count: {
+                  stripeCount: {
                     type: "integer",
                     description:
                       "Option for specifying how many stripes to use for the export. If blank, and the value of the striped field is true, the number of stripes is automatically chosen.",
                   },
-                  bak_type: {
+                  bakType: {
                     type: "string",
                     enum: ["BAK_TYPE_UNSPECIFIED", "FULL", "DIFF", "TLOG"],
                     description:
                       "Type of this bak file will be export, FULL or DIFF, SQL Server only",
                   },
-                  copy_only: {
+                  copyOnly: {
                     type: "boolean",
                     description:
                       "Deprecated: copy_only is deprecated. Use differential_base instead",
                   },
-                  differential_base: {
+                  differentialBase: {
                     type: "boolean",
                     description:
                       "Whether or not the backup can be used as a differential base copy_only backup can not be served as differential base",
                   },
-                  export_log_start_time: {
+                  exportLogStartTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                   },
-                  export_log_end_time: {
+                  exportLogEndTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -609,20 +771,20 @@ const createBackup: AppBlock = {
                   "Options for exporting BAK files (SQL Server-only)",
                 additionalProperties: true,
               },
-              tde_export_options: {
+              tdeExportOptions: {
                 type: "object",
                 properties: {
-                  certificate_path: {
+                  certificatePath: {
                     type: "string",
                     description:
                       "Required. Path to the TDE certificate public key in the form gs://bucketName/fileName. The instance must have write access to the bucket. Applicable only for SQL Server instances.",
                   },
-                  private_key_path: {
+                  privateKeyPath: {
                     type: "string",
                     description:
                       "Required. Path to the TDE certificate private key in the form gs://bucketName/fileName. The instance must have write access to the location. Applicable only for SQL Server instances.",
                   },
-                  private_key_password: {
+                  privateKeyPassword: {
                     type: "string",
                     description:
                       "Required. Password that encrypts the private key.",
@@ -634,9 +796,9 @@ const createBackup: AppBlock = {
                   },
                 },
                 required: [
-                  "certificate_path",
-                  "private_key_path",
-                  "private_key_password",
+                  "certificatePath",
+                  "privateKeyPath",
+                  "privateKeyPassword",
                   "name",
                 ],
                 additionalProperties: true,
@@ -647,10 +809,10 @@ const createBackup: AppBlock = {
             description: "Database instance export context.",
             additionalProperties: true,
           },
-          backup_context: {
+          backupContext: {
             type: "object",
             properties: {
-              backup_id: {
+              backupId: {
                 type: "string",
                 description: "64-bit integer as string",
               },
@@ -667,10 +829,10 @@ const createBackup: AppBlock = {
             description: "Backup context.",
             additionalProperties: true,
           },
-          pre_check_major_version_upgrade_context: {
+          preCheckMajorVersionUpgradeContext: {
             type: "object",
             properties: {
-              target_database_version: {
+              targetDatabaseVersion: {
                 type: "string",
                 enum: [
                   "SQL_DATABASE_VERSION_UNSPECIFIED",
@@ -727,7 +889,7 @@ const createBackup: AppBlock = {
                 ],
                 description: "The database engine type and version.",
               },
-              pre_check_response: {
+              preCheckResponse: {
                 type: "array",
                 items: {
                   type: "object",
@@ -736,7 +898,7 @@ const createBackup: AppBlock = {
                       type: "string",
                       description: "The message to be displayed to the user.",
                     },
-                    message_type: {
+                    messageType: {
                       type: "string",
                       enum: [
                         "MESSAGE_TYPE_UNSPECIFIED",
@@ -747,7 +909,7 @@ const createBackup: AppBlock = {
                       description:
                         "The type of message whether it is an info, warning, or error.",
                     },
-                    actions_required: {
+                    actionsRequired: {
                       type: "array",
                       items: {
                         type: "string",
@@ -769,7 +931,7 @@ const createBackup: AppBlock = {
                   "Optional. This is always `sql#preCheckMajorVersionUpgradeContext`.",
               },
             },
-            required: ["target_database_version"],
+            required: ["targetDatabaseVersion"],
             description: "Pre-check major version upgrade context.",
             additionalProperties: true,
           },
@@ -778,33 +940,33 @@ const createBackup: AppBlock = {
             description:
               "An identifier that uniquely identifies the operation. You can use this identifier to retrieve the Operations resource that has information about the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "Name of the resource on which this operation runs.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "The URI of this resource.",
           },
-          target_project: {
+          targetProject: {
             type: "string",
             description:
               "The project ID of the target instance related to this operation.",
           },
-          acquire_ssrs_lease_context: {
+          acquireSsrsLeaseContext: {
             type: "object",
             properties: {
-              setup_login: {
+              setupLogin: {
                 type: "string",
                 description:
                   "The username to be used as the setup login to connect to the database server for SSRS setup.",
               },
-              service_login: {
+              serviceLogin: {
                 type: "string",
                 description:
                   "The username to be used as the service login to connect to the report database for SSRS setup.",
               },
-              report_database: {
+              reportDatabase: {
                 type: "string",
                 description: "The report database to be used for SSRS setup.",
               },
@@ -816,10 +978,10 @@ const createBackup: AppBlock = {
             description: "Acquire SSRS lease context.",
             additionalProperties: true,
           },
-          sub_operation_type: {
+          subOperationType: {
             type: "object",
             properties: {
-              maintenance_type: {
+              maintenanceType: {
                 type: "string",
                 enum: [
                   "SQL_MAINTENANCE_TYPE_UNSPECIFIED",

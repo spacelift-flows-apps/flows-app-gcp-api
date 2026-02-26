@@ -19,7 +19,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        all_instances_config: {
+        allInstancesConfig: {
           name: "All Instances Config",
           description:
             "Specifies configuration that overrides the instance template configuration for the group.",
@@ -57,7 +57,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        auto_healing_policies: {
+        autoHealingPolicies: {
           name: "Auto Healing Policies",
           description:
             "The autohealing policy for this managed instance group. You can specify only one value.",
@@ -66,12 +66,12 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                health_check: {
+                healthCheck: {
                   type: "string",
                   description:
                     "The URL for the health check that signals autohealing.",
                 },
-                initial_delay_sec: {
+                initialDelaySec: {
                   type: "integer",
                   description:
                     "The initial delay is the number of seconds that a new VM takes to initialize and run its startup script. During a VM's initial delay period, the MIG ignores unsuccessful health checks because the VM might be in the startup process. This prevents the MIG from prematurely recreating a VM. If the health check receives a healthy response during the initial delay, it indicates that the startup process is complete and the VM is ready. The value of initial delay must be between 0 and 3600 seconds. The default value is 0.",
@@ -84,7 +84,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        base_instance_name: {
+        baseInstanceName: {
           name: "Base Instance Name",
           description:
             'The base instance name is a prefix that you want to attach to the names of all VMs in a MIG. The maximum character length is 58 and the name must comply with RFC1035 format.  When a VM is created in the group, the MIG appends a hyphen and a random four-character string to the base instance name. If you want the MIG to assign sequential numbers instead of a random string, then end the base instance name with a hyphen followed by one or more hash symbols. The hash symbols indicate the number of digits. For example, a base instance name of "vm-###" results in "vm-001" as a VM name. @pattern [a-z](([-a-z0-9]{0,57})|([-a-z0-9]{0,51}-#{1,10}(\\\\[[0-9]{1,10}\\\\])?))',
@@ -95,7 +95,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] The creation timestamp for this managed instance group inRFC3339 text format.",
@@ -106,7 +106,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        current_actions: {
+        currentActions: {
           name: "Current Actions",
           description:
             "Output only. [Output Only] The list of instance actions and the number of instances in this managed instance group that are scheduled for each of those actions.",
@@ -123,7 +123,7 @@ const insert: AppBlock = {
                 description:
                   "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be created or are currently being created. If the group fails to create any of these instances, it tries again until it creates the instance successfully.  If you have disabled creation retries, this field will not be populated; instead, the creatingWithoutRetries field will be populated.",
               },
-              creating_without_retries: {
+              creatingWithoutRetries: {
                 type: "integer",
                 description:
                   "Output only. [Output Only] The number of instances that the managed instance group will attempt to create. The group attempts to create each instance only once. If the group fails to create any of these instances, it decreases the group's targetSize value accordingly.",
@@ -194,14 +194,14 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        distribution_policy: {
+        distributionPolicy: {
           name: "Distribution Policy",
           description:
             "Policy specifying the intended distribution of managed instances across zones in a regional managed instance group.",
           type: {
             type: "object",
             properties: {
-              target_shape: {
+              targetShape: {
                 type: "string",
                 description:
                   "The distribution shape to which the group converges either proactively or on resize events (depending on the value set inupdatePolicy.instanceRedistributionType). Check the TargetShape enum for the list of possible values.",
@@ -250,14 +250,14 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        instance_flexibility_policy: {
+        instanceFlexibilityPolicy: {
           name: "Instance Flexibility Policy",
           description:
             "Instance flexibility allowing MIG to create VMs from multiple types of machines. Instance flexibility configuration on MIG overrides instance template configuration.",
           type: {
             type: "object",
             properties: {
-              instance_selections: {
+              instanceSelections: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -272,7 +272,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        instance_group: {
+        instanceGroup: {
           name: "Instance Group",
           description:
             "Output only. [Output Only] The URL of the Instance Group resource.",
@@ -283,18 +283,18 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        instance_lifecycle_policy: {
+        instanceLifecyclePolicy: {
           name: "Instance Lifecycle Policy",
           description: "The repair policy for this managed instance group.",
           type: {
             type: "object",
             properties: {
-              default_action_on_failure: {
+              defaultActionOnFailure: {
                 type: "string",
                 description:
                   "The action that a MIG performs on a failed or an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are     - REPAIR (default): MIG automatically repairs a failed or    an unhealthy VM by recreating it. For more information, see About    repairing VMs in a MIG.    - DO_NOTHING: MIG does not repair a failed or an unhealthy    VM. Check the DefaultActionOnFailure enum for the list of possible values.",
               },
-              force_update_on_repair: {
+              forceUpdateOnRepair: {
                 type: "string",
                 description:
                   "A bit indicating whether to forcefully apply the group's latest configuration when repairing a VM. Valid options are:         -  NO (default): If configuration updates are available, they are not      forcefully applied during repair. Instead, configuration updates are      applied according to the group's update policy.       -  YES: If configuration updates are available, they are applied      during repair. Check the ForceUpdateOnRepair enum for the list of possible values.",
@@ -305,7 +305,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        instance_template: {
+        instanceTemplate: {
           name: "Instance Template",
           description:
             "The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, runapplyUpdatesToInstances, or set the group'supdatePolicy.type to PROACTIVE.",
@@ -327,7 +327,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        list_managed_instances_results: {
+        listManagedInstancesResults: {
           name: "List Managed Instances Results",
           description:
             "Pagination behavior of the listManagedInstances API method for this managed instance group. Check the ListManagedInstancesResults enum for the list of possible values.",
@@ -349,7 +349,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        named_ports: {
+        namedPorts: {
           name: "Named Ports",
           description:
             "[Output Only] Named ports configured on the Instance Groups complementary to this Instance Group Manager.",
@@ -377,13 +377,13 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        resource_policies: {
+        resourcePolicies: {
           name: "Resource Policies",
           description: "Resource policies for this managed instance group.",
           type: {
             type: "object",
             properties: {
-              workload_policy: {
+              workloadPolicy: {
                 type: "string",
                 description:
                   "The URL of the workload policy that is specified for this managed instance group. It can be a full or partial URL. For example, the following are all valid URLs to a workload policy:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/resourcePolicies/resourcePolicy       - projects/project/regions/region/resourcePolicies/resourcePolicy       - regions/region/resourcePolicies/resourcePolicy",
@@ -394,7 +394,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzi: {
+        satisfiesPzi: {
           name: "Satisfies Pzi",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -403,7 +403,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzs: {
+        satisfiesPzs: {
           name: "Satisfies Pzs",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -412,7 +412,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] The URL for this managed instance group. The server defines this URL.",
@@ -423,13 +423,13 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        standby_policy: {
+        standbyPolicy: {
           name: "Standby Policy",
           description: "Standby policy for stopped and suspended instances.",
           type: {
             type: "object",
             properties: {
-              initial_delay_sec: {
+              initialDelaySec: {
                 type: "integer",
                 description:
                   "Specifies the number of seconds that the MIG should wait to suspend or stop a VM after that VM was created. The initial delay gives the initialization script the time to prepare your VM for a quick scale out. The value of initial delay must be between 0 and 3600 seconds. The default value is 0.",
@@ -445,14 +445,14 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        stateful_policy: {
+        statefulPolicy: {
           name: "Stateful Policy",
           description:
             "Stateful configuration for this Instanced Group Manager",
           type: {
             type: "object",
             properties: {
-              preserved_state: {
+              preservedState: {
                 type: "object",
                 properties: {
                   disks: {
@@ -463,7 +463,7 @@ const insert: AppBlock = {
                     description:
                       "Disks created on the instances that will be preserved on instance delete, update, etc. This map is keyed with the device names of the disks.",
                   },
-                  external_i_ps: {
+                  externalIPs: {
                     type: "object",
                     additionalProperties: {
                       type: "string",
@@ -471,7 +471,7 @@ const insert: AppBlock = {
                     description:
                       "External network IPs assigned to the instances that will be preserved on instance delete, update, etc. This map is keyed with the network interface name.",
                   },
-                  internal_i_ps: {
+                  internalIPs: {
                     type: "object",
                     additionalProperties: {
                       type: "string",
@@ -497,10 +497,10 @@ const insert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              all_instances_config: {
+              allInstancesConfig: {
                 type: "object",
                 properties: {
-                  current_revision: {
+                  currentRevision: {
                     type: "string",
                     description:
                       "Output only. [Output Only] Current all-instances configuration revision. This value is in RFC3339 text format.",
@@ -520,7 +520,7 @@ const insert: AppBlock = {
                 description:
                   "Output only. [Output Only] The URL of theAutoscaler that targets this instance group manager.",
               },
-              is_stable: {
+              isStable: {
                 type: "boolean",
                 description:
                   "Output only. [Output Only] A bit indicating whether the managed instance group is in a stable state. A stable state means that: none of the instances in the managed instance group is currently undergoing any type of change (for example, creation, restart, or deletion); no future changes are scheduled for instances in the managed instance group; and the managed instance group itself is not being modified.",
@@ -528,15 +528,15 @@ const insert: AppBlock = {
               stateful: {
                 type: "object",
                 properties: {
-                  has_stateful_config: {
+                  hasStatefulConfig: {
                     type: "boolean",
                     description:
                       "Output only. [Output Only] A bit indicating whether the managed instance group has stateful configuration, that is, if you have configured any items in a stateful policy or in per-instance configs. The group might report that it has no stateful configuration even when there is still some preserved state on a managed instance, for example, if you have deleted all PICs but not yet applied those deletions.",
                   },
-                  per_instance_configs: {
+                  perInstanceConfigs: {
                     type: "object",
                     properties: {
-                      all_effective: {
+                      allEffective: {
                         type: "boolean",
                         description:
                           "Output only. A bit indicating if all of the group's per-instance configurations (listed in the output of a listPerInstanceConfigs API call) have status EFFECTIVE or there are no per-instance-configs.",
@@ -551,10 +551,10 @@ const insert: AppBlock = {
                 description:
                   "Output only. [Output Only] Stateful status of the given Instance Group Manager.",
               },
-              version_target: {
+              versionTarget: {
                 type: "object",
                 properties: {
-                  is_reached: {
+                  isReached: {
                     type: "boolean",
                     description:
                       "Output only. [Output Only] A bit indicating whether version target has been reached in this managed instance group, i.e. all instances are in their target version. Instances' target version are specified byversion field on Instance Group Manager.",
@@ -571,7 +571,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        target_pools: {
+        targetPools: {
           name: "Target Pools",
           description:
             "The URLs for all TargetPool resources to which instances in theinstanceGroup field are added. The target pools automatically apply to all of the instances in the managed instance group.",
@@ -585,7 +585,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        target_size: {
+        targetSize: {
           name: "Target Size",
           description:
             "The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.",
@@ -596,7 +596,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        target_stopped_size: {
+        targetStoppedSize: {
           name: "Target Stopped Size",
           description:
             "The target number of stopped instances for this managed instance group. This number changes when you:     - Stop instance using the stopInstances    method or start instances using the startInstances    method.    - Manually change the targetStoppedSize using the update    method.",
@@ -607,7 +607,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        target_suspended_size: {
+        targetSuspendedSize: {
           name: "Target Suspended Size",
           description:
             "The target number of suspended instances for this managed instance group. This number changes when you:     - Suspend instance using the suspendInstances    method or resume instances using the resumeInstances    method.    - Manually change the targetSuspendedSize using the update    method.",
@@ -618,18 +618,18 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        update_policy: {
+        updatePolicy: {
           name: "Update Policy",
           description: "The update policy for this managed instance group.",
           type: {
             type: "object",
             properties: {
-              instance_redistribution_type: {
+              instanceRedistributionType: {
                 type: "string",
                 description:
                   "The instance redistribution policy for regional managed instance groups. Valid values are:     - PROACTIVE (default): The group attempts to maintain an    even distribution of VM instances across zones in the region.    - NONE: For non-autoscaled groups, proactive    redistribution is disabled. Check the InstanceRedistributionType enum for the list of possible values.",
               },
-              max_surge: {
+              maxSurge: {
                 type: "object",
                 properties: {
                   calculated: {
@@ -652,7 +652,7 @@ const insert: AppBlock = {
                   "Encapsulates numeric value that can be either absolute or relative.",
                 additionalProperties: true,
               },
-              max_unavailable: {
+              maxUnavailable: {
                 type: "object",
                 properties: {
                   calculated: {
@@ -675,17 +675,17 @@ const insert: AppBlock = {
                   "Encapsulates numeric value that can be either absolute or relative.",
                 additionalProperties: true,
               },
-              minimal_action: {
+              minimalAction: {
                 type: "string",
                 description:
                   "Minimal action to be taken on an instance. Use this option to minimize disruption as much as possible or to apply a more disruptive action than is necessary.     - To limit disruption as much as possible, set the minimal action toREFRESH. If your update requires a more disruptive action,    Compute Engine performs the necessary action to execute the update.    - To apply a more disruptive action than is strictly necessary, set the    minimal action to RESTART or REPLACE. For    example, Compute Engine does not need to restart a VM to change its    metadata. But if your application reads instance metadata only when a VM    is restarted, you can set the minimal action to RESTART in    order to pick up metadata changes. Check the MinimalAction enum for the list of possible values.",
               },
-              most_disruptive_allowed_action: {
+              mostDisruptiveAllowedAction: {
                 type: "string",
                 description:
                   "Most disruptive action that is allowed to be taken on an instance. You can specify either NONE to forbid any actions,REFRESH to avoid restarting the VM and to limit disruption as much as possible. RESTART to allow actions that can be applied without instance replacing or REPLACE to allow all possible actions. If the Updater determines that the minimal update action needed is more disruptive than most disruptive allowed action you specify it will not perform the update at all. Check the MostDisruptiveAllowedAction enum for the list of possible values.",
               },
-              replacement_method: {
+              replacementMethod: {
                 type: "string",
                 description:
                   "What action should be used to replace instances. See minimal_action.REPLACE Check the ReplacementMethod enum for the list of possible values.",
@@ -710,7 +710,7 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                instance_template: {
+                instanceTemplate: {
                   type: "string",
                   description:
                     "The URL of the instance template that is specified for this managed instance group. The group uses this template to create new instances in the managed instance group until the `targetSize` for this version is reached. The templates for existing instances in the group do not change unless you run recreateInstances, runapplyUpdatesToInstances, or set the group'supdatePolicy.type to PROACTIVE; in those cases, existing instances are updated until the `targetSize` for this version is reached.",
@@ -720,7 +720,7 @@ const insert: AppBlock = {
                   description:
                     "Name of the version. Unique among all versions in the scope of this managed instance group.",
                 },
-                target_size: {
+                targetSize: {
                   type: "object",
                   properties: {
                     calculated: {
@@ -762,7 +762,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -779,79 +779,74 @@ const insert: AppBlock = {
           pathParams["region"] = String(input.event.inputConfig.region);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.all_instances_config !== undefined)
-          body.all_instances_config =
-            input.event.inputConfig.all_instances_config;
-        if (input.event.inputConfig.auto_healing_policies !== undefined)
-          body.auto_healing_policies =
-            input.event.inputConfig.auto_healing_policies;
-        if (input.event.inputConfig.base_instance_name !== undefined)
-          body.base_instance_name = input.event.inputConfig.base_instance_name;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
-        if (input.event.inputConfig.current_actions !== undefined)
-          body.current_actions = input.event.inputConfig.current_actions;
+        if (input.event.inputConfig.allInstancesConfig !== undefined)
+          body.allInstancesConfig = input.event.inputConfig.allInstancesConfig;
+        if (input.event.inputConfig.autoHealingPolicies !== undefined)
+          body.autoHealingPolicies =
+            input.event.inputConfig.autoHealingPolicies;
+        if (input.event.inputConfig.baseInstanceName !== undefined)
+          body.baseInstanceName = input.event.inputConfig.baseInstanceName;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.currentActions !== undefined)
+          body.currentActions = input.event.inputConfig.currentActions;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.distribution_policy !== undefined)
-          body.distribution_policy =
-            input.event.inputConfig.distribution_policy;
+        if (input.event.inputConfig.distributionPolicy !== undefined)
+          body.distributionPolicy = input.event.inputConfig.distributionPolicy;
         if (input.event.inputConfig.fingerprint !== undefined)
           body.fingerprint = input.event.inputConfig.fingerprint;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.instance_flexibility_policy !== undefined)
-          body.instance_flexibility_policy =
-            input.event.inputConfig.instance_flexibility_policy;
-        if (input.event.inputConfig.instance_group !== undefined)
-          body.instance_group = input.event.inputConfig.instance_group;
-        if (input.event.inputConfig.instance_lifecycle_policy !== undefined)
-          body.instance_lifecycle_policy =
-            input.event.inputConfig.instance_lifecycle_policy;
-        if (input.event.inputConfig.instance_template !== undefined)
-          body.instance_template = input.event.inputConfig.instance_template;
+        if (input.event.inputConfig.instanceFlexibilityPolicy !== undefined)
+          body.instanceFlexibilityPolicy =
+            input.event.inputConfig.instanceFlexibilityPolicy;
+        if (input.event.inputConfig.instanceGroup !== undefined)
+          body.instanceGroup = input.event.inputConfig.instanceGroup;
+        if (input.event.inputConfig.instanceLifecyclePolicy !== undefined)
+          body.instanceLifecyclePolicy =
+            input.event.inputConfig.instanceLifecyclePolicy;
+        if (input.event.inputConfig.instanceTemplate !== undefined)
+          body.instanceTemplate = input.event.inputConfig.instanceTemplate;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (
-          input.event.inputConfig.list_managed_instances_results !== undefined
-        )
-          body.list_managed_instances_results =
-            input.event.inputConfig.list_managed_instances_results;
+        if (input.event.inputConfig.listManagedInstancesResults !== undefined)
+          body.listManagedInstancesResults =
+            input.event.inputConfig.listManagedInstancesResults;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.named_ports !== undefined)
-          body.named_ports = input.event.inputConfig.named_ports;
+        if (input.event.inputConfig.namedPorts !== undefined)
+          body.namedPorts = input.event.inputConfig.namedPorts;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.resource_policies !== undefined)
-          body.resource_policies = input.event.inputConfig.resource_policies;
-        if (input.event.inputConfig.satisfies_pzi !== undefined)
-          body.satisfies_pzi = input.event.inputConfig.satisfies_pzi;
-        if (input.event.inputConfig.satisfies_pzs !== undefined)
-          body.satisfies_pzs = input.event.inputConfig.satisfies_pzs;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.standby_policy !== undefined)
-          body.standby_policy = input.event.inputConfig.standby_policy;
-        if (input.event.inputConfig.stateful_policy !== undefined)
-          body.stateful_policy = input.event.inputConfig.stateful_policy;
+        if (input.event.inputConfig.resourcePolicies !== undefined)
+          body.resourcePolicies = input.event.inputConfig.resourcePolicies;
+        if (input.event.inputConfig.satisfiesPzi !== undefined)
+          body.satisfiesPzi = input.event.inputConfig.satisfiesPzi;
+        if (input.event.inputConfig.satisfiesPzs !== undefined)
+          body.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.standbyPolicy !== undefined)
+          body.standbyPolicy = input.event.inputConfig.standbyPolicy;
+        if (input.event.inputConfig.statefulPolicy !== undefined)
+          body.statefulPolicy = input.event.inputConfig.statefulPolicy;
         if (input.event.inputConfig.status !== undefined)
           body.status = input.event.inputConfig.status;
-        if (input.event.inputConfig.target_pools !== undefined)
-          body.target_pools = input.event.inputConfig.target_pools;
-        if (input.event.inputConfig.target_size !== undefined)
-          body.target_size = input.event.inputConfig.target_size;
-        if (input.event.inputConfig.target_stopped_size !== undefined)
-          body.target_stopped_size =
-            input.event.inputConfig.target_stopped_size;
-        if (input.event.inputConfig.target_suspended_size !== undefined)
-          body.target_suspended_size =
-            input.event.inputConfig.target_suspended_size;
-        if (input.event.inputConfig.update_policy !== undefined)
-          body.update_policy = input.event.inputConfig.update_policy;
+        if (input.event.inputConfig.targetPools !== undefined)
+          body.targetPools = input.event.inputConfig.targetPools;
+        if (input.event.inputConfig.targetSize !== undefined)
+          body.targetSize = input.event.inputConfig.targetSize;
+        if (input.event.inputConfig.targetStoppedSize !== undefined)
+          body.targetStoppedSize = input.event.inputConfig.targetStoppedSize;
+        if (input.event.inputConfig.targetSuspendedSize !== undefined)
+          body.targetSuspendedSize =
+            input.event.inputConfig.targetSuspendedSize;
+        if (input.event.inputConfig.updatePolicy !== undefined)
+          body.updatePolicy = input.event.inputConfig.updatePolicy;
         if (input.event.inputConfig.versions !== undefined)
           body.versions = input.event.inputConfig.versions;
         if (input.event.inputConfig.zone !== undefined)
@@ -877,12 +872,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -891,7 +886,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -909,12 +904,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -969,7 +964,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -987,7 +982,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -998,7 +993,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -1008,16 +1003,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -1054,12 +1049,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -1068,15 +1063,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -1096,12 +1091,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -1116,18 +1111,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -1140,7 +1135,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -1151,16 +1146,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

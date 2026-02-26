@@ -1,5 +1,22 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  accountId: "account_id",
+  serviceAccount: {
+    name: "service_account",
+    fields: {
+      displayName: "display_name",
+    },
+  },
+};
+
+const outputMapping = {
+  project_id: "projectId",
+  unique_id: "uniqueId",
+  display_name: "displayName",
+  oauth2_client_id: "oauth2ClientId",
+};
 
 const createServiceAccount: AppBlock = {
   name: "Create Service Account",
@@ -19,7 +36,7 @@ const createServiceAccount: AppBlock = {
           },
           required: true,
         },
-        account_id: {
+        accountId: {
           name: "Account Id",
           description:
             "Required. The account id that is used to generate the service account email address and a stable unique id. It is unique within a project, must be 6-30 characters long, and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])` to comply with RFC1035.",
@@ -30,7 +47,7 @@ const createServiceAccount: AppBlock = {
           },
           required: true,
         },
-        service_account: {
+        serviceAccount: {
           name: "Service Account",
           description:
             "The [ServiceAccount][google.iam.admin.v1.ServiceAccount] resource to create. Currently, only the following values are user assignable: `display_name` and `description`.",
@@ -42,7 +59,7 @@ const createServiceAccount: AppBlock = {
                 description:
                   "The resource name of the service account.  Use one of the following formats:  * `projects/{PROJECT_ID}/serviceAccounts/{EMAIL_ADDRESS}` * `projects/{PROJECT_ID}/serviceAccounts/{UNIQUE_ID}`  As an alternative, you can use the `-` wildcard character instead of the project ID:  * `projects/-/serviceAccounts/{EMAIL_ADDRESS}` * `projects/-/serviceAccounts/{UNIQUE_ID}`  When possible, avoid using the `-` wildcard character, because it can cause response messages to contain misleading error codes. For example, if you try to get the service account `projects/-/serviceAccounts/fake@example.com`, which does not exist, the response contains an HTTP `403 Forbidden` error instead of a `404 Not Found` error.",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   "Optional. A user-specified, human-readable name for the service account. The maximum length is 100 UTF-8 bytes.",
@@ -67,13 +84,7 @@ const createServiceAccount: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.account_id !== undefined)
-          request.account_id = input.event.inputConfig.account_id;
-        if (input.event.inputConfig.service_account !== undefined)
-          request.service_account = input.event.inputConfig.service_account;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createServiceAccount(request, (err: any, response: any) => {
@@ -87,7 +98,8 @@ const createServiceAccount: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -102,12 +114,12 @@ const createServiceAccount: AppBlock = {
             description:
               "The resource name of the service account.  Use one of the following formats:  * `projects/{PROJECT_ID}/serviceAccounts/{EMAIL_ADDRESS}` * `projects/{PROJECT_ID}/serviceAccounts/{UNIQUE_ID}`  As an alternative, you can use the `-` wildcard character instead of the project ID:  * `projects/-/serviceAccounts/{EMAIL_ADDRESS}` * `projects/-/serviceAccounts/{UNIQUE_ID}`  When possible, avoid using the `-` wildcard character, because it can cause response messages to contain misleading error codes. For example, if you try to get the service account `projects/-/serviceAccounts/fake@example.com`, which does not exist, the response contains an HTTP `403 Forbidden` error instead of a `404 Not Found` error.",
           },
-          project_id: {
+          projectId: {
             type: "string",
             description:
               "Output only. The ID of the project that owns the service account.",
           },
-          unique_id: {
+          uniqueId: {
             type: "string",
             description:
               "Output only. The unique, stable numeric ID for the service account.  Each service account retains its unique ID even if you delete the service account. For example, if you delete a service account, then create a new service account with the same name, the new service account has a different unique ID than the deleted service account.",
@@ -117,7 +129,7 @@ const createServiceAccount: AppBlock = {
             description:
               "Output only. The email address of the service account.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "Optional. A user-specified, human-readable name for the service account. The maximum length is 100 UTF-8 bytes.",
@@ -131,7 +143,7 @@ const createServiceAccount: AppBlock = {
             description:
               "Optional. A user-specified, human-readable description of the service account. The maximum length is 256 UTF-8 bytes.",
           },
-          oauth2_client_id: {
+          oauth2ClientId: {
             type: "string",
             description:
               "Output only. The OAuth 2.0 client ID for the service account.",

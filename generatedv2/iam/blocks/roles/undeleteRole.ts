@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  included_permissions: "includedPermissions",
+};
 
 const undeleteRole: AppBlock = {
   name: "Undelete Role",
@@ -32,11 +36,7 @@ const undeleteRole: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.etag !== undefined)
-          request.etag = input.event.inputConfig.etag;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.undeleteRole(request, (err: any, response: any) => {
@@ -50,7 +50,8 @@ const undeleteRole: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -74,7 +75,7 @@ const undeleteRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          included_permissions: {
+          includedPermissions: {
             type: "array",
             items: {
               type: "string",

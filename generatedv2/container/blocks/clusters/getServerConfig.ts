@@ -1,5 +1,25 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+};
+
+const outputMapping = {
+  default_cluster_version: "defaultClusterVersion",
+  valid_node_versions: "validNodeVersions",
+  default_image_type: "defaultImageType",
+  valid_image_types: "validImageTypes",
+  valid_master_versions: "validMasterVersions",
+  channels: {
+    name: "channels",
+    fields: {
+      default_version: "defaultVersion",
+      valid_versions: "validVersions",
+      upgrade_target_version: "upgradeTargetVersion",
+    },
+  },
+};
 
 const getServerConfig: AppBlock = {
   name: "Get Server Config",
@@ -8,7 +28,7 @@ const getServerConfig: AppBlock = {
   inputs: {
     default: {
       config: {
-        project_id: {
+        projectId: {
           name: "Project Id",
           description:
             "Deprecated. The Google Developers Console [project ID or project number](https://cloud.google.com/resource-manager/docs/creating-managing-projects). This field has been deprecated and replaced by the name field.",
@@ -45,13 +65,7 @@ const getServerConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.zone !== undefined)
-          request.zone = input.event.inputConfig.zone;
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getServerConfig(request, (err: any, response: any) => {
@@ -65,7 +79,8 @@ const getServerConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -75,12 +90,12 @@ const getServerConfig: AppBlock = {
       type: {
         type: "object",
         properties: {
-          default_cluster_version: {
+          defaultClusterVersion: {
             type: "string",
             description:
               "Version of Kubernetes the service deploys by default.",
           },
-          valid_node_versions: {
+          validNodeVersions: {
             type: "array",
             items: {
               type: "string",
@@ -88,18 +103,18 @@ const getServerConfig: AppBlock = {
             description:
               "List of valid node upgrade target versions, in descending order.",
           },
-          default_image_type: {
+          defaultImageType: {
             type: "string",
             description: "Default image type.",
           },
-          valid_image_types: {
+          validImageTypes: {
             type: "array",
             items: {
               type: "string",
             },
             description: "List of valid image types.",
           },
-          valid_master_versions: {
+          validMasterVersions: {
             type: "array",
             items: {
               type: "string",
@@ -123,19 +138,19 @@ const getServerConfig: AppBlock = {
                   description:
                     "The release channel this configuration applies to.",
                 },
-                default_version: {
+                defaultVersion: {
                   type: "string",
                   description:
                     "The default version for newly created clusters on the channel.",
                 },
-                valid_versions: {
+                validVersions: {
                   type: "array",
                   items: {
                     type: "string",
                   },
                   description: "List of valid versions for the channel.",
                 },
-                upgrade_target_version: {
+                upgradeTargetVersion: {
                   type: "string",
                   description:
                     "The auto upgrade target version for clusters on the channel.",

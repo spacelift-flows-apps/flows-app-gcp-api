@@ -1487,21 +1487,21 @@
               }
             },
             {
-              "name": ".google.api.field_behavior",
-              "number": 1052,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "api.FieldBehavior",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.resource_reference",
               "number": 1055,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.ResourceReference",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.field_behavior",
+              "number": 1052,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "api.FieldBehavior",
               "options": {
                 "packed": false
               }
@@ -1972,20 +1972,20 @@
               }
             },
             {
-              "name": ".google.api.http",
-              "number": 72295728,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "api.HttpRule",
+              "name": ".google.api.method_signature",
+              "number": 1051,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
               "options": {
                 "packed": false
               }
             },
             {
-              "name": ".google.api.method_signature",
-              "number": 1051,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
+              "name": ".google.api.http",
+              "number": 72295728,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.HttpRule",
               "options": {
                 "packed": false
               }
@@ -4268,6 +4268,104 @@
       "package": "google.api",
       "messageType": [
         {
+          "name": "ResourceDescriptor",
+          "field": [
+            {
+              "name": "type",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "pattern",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "name_field",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "history",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "History"
+            },
+            {
+              "name": "plural",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "singular",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "style",
+              "number": 10,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "Style"
+            }
+          ],
+          "enumType": [
+            {
+              "name": "History",
+              "value": [
+                {
+                  "name": "HISTORY_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ORIGINALLY_SINGLE_PATTERN",
+                  "number": 1
+                },
+                {
+                  "name": "FUTURE_MULTI_PATTERN",
+                  "number": 2
+                }
+              ]
+            },
+            {
+              "name": "Style",
+              "value": [
+                {
+                  "name": "STYLE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "DECLARATIVE_FRIENDLY",
+                  "number": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ResourceReference",
+          "field": [
+            {
+              "name": "type",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "child_type",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
           "name": "CommonLanguageSettings",
           "field": [
             {
@@ -4791,104 +4889,6 @@
           ]
         },
         {
-          "name": "ResourceDescriptor",
-          "field": [
-            {
-              "name": "type",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "pattern",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "name_field",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "history",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "History"
-            },
-            {
-              "name": "plural",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "singular",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "style",
-              "number": 10,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "Style"
-            }
-          ],
-          "enumType": [
-            {
-              "name": "History",
-              "value": [
-                {
-                  "name": "HISTORY_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "ORIGINALLY_SINGLE_PATTERN",
-                  "number": 1
-                },
-                {
-                  "name": "FUTURE_MULTI_PATTERN",
-                  "number": 2
-                }
-              ]
-            },
-            {
-              "name": "Style",
-              "value": [
-                {
-                  "name": "STYLE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "DECLARATIVE_FRIENDLY",
-                  "number": 1
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "ResourceReference",
-          "field": [
-            {
-              "name": "type",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "child_type",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
           "name": "Http",
           "field": [
             {
@@ -5004,6 +5004,47 @@
       ],
       "enumType": [
         {
+          "name": "FieldBehavior",
+          "value": [
+            {
+              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "OPTIONAL",
+              "number": 1
+            },
+            {
+              "name": "REQUIRED",
+              "number": 2
+            },
+            {
+              "name": "OUTPUT_ONLY",
+              "number": 3
+            },
+            {
+              "name": "INPUT_ONLY",
+              "number": 4
+            },
+            {
+              "name": "IMMUTABLE",
+              "number": 5
+            },
+            {
+              "name": "UNORDERED_LIST",
+              "number": 6
+            },
+            {
+              "name": "NON_EMPTY_DEFAULT",
+              "number": 7
+            },
+            {
+              "name": "IDENTIFIER",
+              "number": 8
+            }
+          ]
+        },
+        {
           "name": "ClientLibraryOrganization",
           "value": [
             {
@@ -5058,47 +5099,6 @@
           ]
         },
         {
-          "name": "FieldBehavior",
-          "value": [
-            {
-              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
-              "number": 0
-            },
-            {
-              "name": "OPTIONAL",
-              "number": 1
-            },
-            {
-              "name": "REQUIRED",
-              "number": 2
-            },
-            {
-              "name": "OUTPUT_ONLY",
-              "number": 3
-            },
-            {
-              "name": "INPUT_ONLY",
-              "number": 4
-            },
-            {
-              "name": "IMMUTABLE",
-              "number": 5
-            },
-            {
-              "name": "UNORDERED_LIST",
-              "number": 6
-            },
-            {
-              "name": "NON_EMPTY_DEFAULT",
-              "number": 7
-            },
-            {
-              "name": "IDENTIFIER",
-              "number": 8
-            }
-          ]
-        },
-        {
           "name": "LaunchStage",
           "value": [
             {
@@ -5138,12 +5138,39 @@
       ],
       "extension": [
         {
-          "name": "http",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 72295728,
+          "name": "resource_reference",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1055,
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
-          "typeName": "HttpRule"
+          "typeName": "ResourceReference"
+        },
+        {
+          "name": "resource_definition",
+          "extendee": ".google.protobuf.FileOptions",
+          "number": 1053,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceDescriptor"
+        },
+        {
+          "name": "resource",
+          "extendee": ".google.protobuf.MessageOptions",
+          "number": 1053,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceDescriptor"
+        },
+        {
+          "name": "field_behavior",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1052,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior",
+          "options": {
+            "packed": false
+          }
         },
         {
           "name": "method_signature",
@@ -5174,46 +5201,19 @@
           "type": "TYPE_STRING"
         },
         {
-          "name": "field_behavior",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1052,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_ENUM",
-          "typeName": "FieldBehavior",
-          "options": {
-            "packed": false
-          }
-        },
-        {
-          "name": "resource_reference",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1055,
+          "name": "http",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 72295728,
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
-          "typeName": "ResourceReference"
-        },
-        {
-          "name": "resource_definition",
-          "extendee": ".google.protobuf.FileOptions",
-          "number": 1053,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_MESSAGE",
-          "typeName": "ResourceDescriptor"
-        },
-        {
-          "name": "resource",
-          "extendee": ".google.protobuf.MessageOptions",
-          "number": 1053,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "ResourceDescriptor"
+          "typeName": "HttpRule"
         }
       ],
       "options": {
         "javaPackage": "com.google.api",
-        "javaOuterClassname": "LaunchStageProto",
+        "javaOuterClassname": "HttpProto",
         "javaMultipleFiles": true,
-        "goPackage": "google.golang.org/genproto/googleapis/api;api",
+        "goPackage": "google.golang.org/genproto/googleapis/api/annotations;annotations",
         "objcClassPrefix": "GAPI"
       },
       "syntax": "proto3"

@@ -1,5 +1,24 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  fullResourceName: "full_resource_name",
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  permissions: {
+    name: "permissions",
+    fields: {
+      only_in_predefined_roles: "onlyInPredefinedRoles",
+      custom_roles_support_level: "customRolesSupportLevel",
+      api_disabled: "apiDisabled",
+      primary_permission: "primaryPermission",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const queryTestablePermissions: AppBlock = {
   name: "Query Testable Permissions",
@@ -8,7 +27,7 @@ const queryTestablePermissions: AppBlock = {
   inputs: {
     default: {
       config: {
-        full_resource_name: {
+        fullResourceName: {
           name: "Full Resource Name",
           description:
             "Required. The full resource name to query from the list of testable permissions.  The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
@@ -19,7 +38,7 @@ const queryTestablePermissions: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional limit on the number of permissions to include in the response.  The default is 100, and the maximum is 1,000.",
@@ -30,7 +49,7 @@ const queryTestablePermissions: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional pagination token returned in an earlier QueryTestablePermissionsRequest.",
@@ -45,14 +64,7 @@ const queryTestablePermissions: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.full_resource_name !== undefined)
-          request.full_resource_name =
-            input.event.inputConfig.full_resource_name;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.queryTestablePermissions(
@@ -69,7 +81,8 @@ const queryTestablePermissions: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -97,7 +110,7 @@ const queryTestablePermissions: AppBlock = {
                   description:
                     "A brief description of what this Permission is used for. This permission can ONLY be used in predefined roles.",
                 },
-                only_in_predefined_roles: {
+                onlyInPredefinedRoles: {
                   type: "boolean",
                 },
                 stage: {
@@ -105,17 +118,17 @@ const queryTestablePermissions: AppBlock = {
                   enum: ["ALPHA", "BETA", "GA", "DEPRECATED"],
                   description: "The current launch stage of the permission.",
                 },
-                custom_roles_support_level: {
+                customRolesSupportLevel: {
                   type: "string",
                   enum: ["SUPPORTED", "TESTING", "NOT_SUPPORTED"],
                   description: "The current custom role support level.",
                 },
-                api_disabled: {
+                apiDisabled: {
                   type: "boolean",
                   description:
                     "The service API associated with the permission is not enabled.",
                 },
-                primary_permission: {
+                primaryPermission: {
                   type: "string",
                   description:
                     "The preferred name for this permission. If present, then this permission is an alias of, and equivalent to, the listed primary_permission.",
@@ -126,7 +139,7 @@ const queryTestablePermissions: AppBlock = {
             },
             description: "The Permissions testable on the requested resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "To retrieve the next page of results, set `QueryTestableRolesRequest.page_token` to this value.",

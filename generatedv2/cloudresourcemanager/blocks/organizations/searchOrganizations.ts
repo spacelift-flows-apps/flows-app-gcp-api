@@ -1,5 +1,24 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getOrganizationsClient } from "../../lib/grpcClient.ts";
+import { getOrganizationsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  organizations: {
+    name: "organizations",
+    fields: {
+      display_name: "displayName",
+      directory_customer_id: "directoryCustomerId",
+      create_time: "createTime",
+      update_time: "updateTime",
+      delete_time: "deleteTime",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const searchOrganizations: AppBlock = {
   name: "Search Organizations",
@@ -8,7 +27,7 @@ const searchOrganizations: AppBlock = {
   inputs: {
     default: {
       config: {
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of organizations to return in the response. The server can return fewer organizations than requested. If unspecified, server picks an appropriate default.",
@@ -19,7 +38,7 @@ const searchOrganizations: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. A pagination token returned from a previous call to `SearchOrganizations` that indicates from where listing should continue.",
@@ -45,13 +64,7 @@ const searchOrganizations: AppBlock = {
       onEvent: async (input) => {
         const client = await getOrganizationsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.query !== undefined)
-          request.query = input.event.inputConfig.query;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.searchOrganizations(request, (err: any, response: any) => {
@@ -65,7 +78,8 @@ const searchOrganizations: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -85,12 +99,12 @@ const searchOrganizations: AppBlock = {
                   description:
                     'Output only. The resource name of the organization. This is the organization\'s relative path in the API. Its format is "organizations/[organization_id]". For example, "organizations/1234".',
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     'Output only. A human-readable string that refers to the organization in the Google Cloud Console. This string is set by the server and cannot be changed. The string will be set to the primary domain (for example, "google.com") of the Google Workspace customer that owns the organization.',
                 },
-                directory_customer_id: {
+                directoryCustomerId: {
                   type: "string",
                   description:
                     "Immutable. The G Suite / Workspace customer id used in the Directory API.",
@@ -101,17 +115,17 @@ const searchOrganizations: AppBlock = {
                   description:
                     "Output only. The organization's current lifecycle state.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                update_time: {
+                updateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                delete_time: {
+                deleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -129,7 +143,7 @@ const searchOrganizations: AppBlock = {
             description:
               "The list of Organizations that matched the search query, possibly paginated.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A pagination token to be used to retrieve the next page of results. If the result is too large to fit within the page size specified in the request, this field will be set with a token that can be used to fetch the next page of results. If this field is empty, it indicates that this response contains the last page of results.",

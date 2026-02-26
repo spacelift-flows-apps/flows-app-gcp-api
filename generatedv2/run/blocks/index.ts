@@ -9,17 +9,6 @@ import instances_getInstance from "./instances/getInstance.ts";
 import instances_listInstances from "./instances/listInstances.ts";
 import instances_stopInstance from "./instances/stopInstance.ts";
 import instances_startInstance from "./instances/startInstance.ts";
-import revisions_getRevision from "./revisions/getRevision.ts";
-import revisions_listRevisions from "./revisions/listRevisions.ts";
-import revisions_deleteRevision from "./revisions/deleteRevision.ts";
-import services_createService from "./services/createService.ts";
-import services_getService from "./services/getService.ts";
-import services_listServices from "./services/listServices.ts";
-import services_updateService from "./services/updateService.ts";
-import services_deleteService from "./services/deleteService.ts";
-import iam_servicesGetIamPolicy from "./iam/servicesGetIamPolicy.ts";
-import iam_servicesSetIamPolicy from "./iam/servicesSetIamPolicy.ts";
-import iam_servicesTestIamPermissions from "./iam/servicesTestIamPermissions.ts";
 import jobs_createJob from "./jobs/createJob.ts";
 import jobs_getJob from "./jobs/getJob.ts";
 import jobs_listJobs from "./jobs/listJobs.ts";
@@ -29,6 +18,17 @@ import jobs_runJob from "./jobs/runJob.ts";
 import iam_jobsGetIamPolicy from "./iam/jobsGetIamPolicy.ts";
 import iam_jobsSetIamPolicy from "./iam/jobsSetIamPolicy.ts";
 import iam_jobsTestIamPermissions from "./iam/jobsTestIamPermissions.ts";
+import services_createService from "./services/createService.ts";
+import services_getService from "./services/getService.ts";
+import services_listServices from "./services/listServices.ts";
+import services_updateService from "./services/updateService.ts";
+import services_deleteService from "./services/deleteService.ts";
+import iam_servicesGetIamPolicy from "./iam/servicesGetIamPolicy.ts";
+import iam_servicesSetIamPolicy from "./iam/servicesSetIamPolicy.ts";
+import iam_servicesTestIamPermissions from "./iam/servicesTestIamPermissions.ts";
+import revisions_getRevision from "./revisions/getRevision.ts";
+import revisions_listRevisions from "./revisions/listRevisions.ts";
+import revisions_deleteRevision from "./revisions/deleteRevision.ts";
 import tasks_getTask from "./tasks/getTask.ts";
 import tasks_listTasks from "./tasks/listTasks.ts";
 import worker_pools_createWorkerPool from "./worker_pools/createWorkerPool.ts";
@@ -52,17 +52,6 @@ export const blocks = {
   instances_listInstances: instances_listInstances,
   instances_stopInstance: instances_stopInstance,
   instances_startInstance: instances_startInstance,
-  revisions_getRevision: revisions_getRevision,
-  revisions_listRevisions: revisions_listRevisions,
-  revisions_deleteRevision: revisions_deleteRevision,
-  services_createService: services_createService,
-  services_getService: services_getService,
-  services_listServices: services_listServices,
-  services_updateService: services_updateService,
-  services_deleteService: services_deleteService,
-  iam_servicesGetIamPolicy: iam_servicesGetIamPolicy,
-  iam_servicesSetIamPolicy: iam_servicesSetIamPolicy,
-  iam_servicesTestIamPermissions: iam_servicesTestIamPermissions,
   jobs_createJob: jobs_createJob,
   jobs_getJob: jobs_getJob,
   jobs_listJobs: jobs_listJobs,
@@ -72,6 +61,17 @@ export const blocks = {
   iam_jobsGetIamPolicy: iam_jobsGetIamPolicy,
   iam_jobsSetIamPolicy: iam_jobsSetIamPolicy,
   iam_jobsTestIamPermissions: iam_jobsTestIamPermissions,
+  services_createService: services_createService,
+  services_getService: services_getService,
+  services_listServices: services_listServices,
+  services_updateService: services_updateService,
+  services_deleteService: services_deleteService,
+  iam_servicesGetIamPolicy: iam_servicesGetIamPolicy,
+  iam_servicesSetIamPolicy: iam_servicesSetIamPolicy,
+  iam_servicesTestIamPermissions: iam_servicesTestIamPermissions,
+  revisions_getRevision: revisions_getRevision,
+  revisions_listRevisions: revisions_listRevisions,
+  revisions_deleteRevision: revisions_deleteRevision,
   tasks_getTask: tasks_getTask,
   tasks_listTasks: tasks_listTasks,
   worker_pools_createWorkerPool: worker_pools_createWorkerPool,

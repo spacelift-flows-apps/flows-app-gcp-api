@@ -1,5 +1,10 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import { getSubscriberClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ackIds: "ack_ids",
+  ackDeadlineSeconds: "ack_deadline_seconds",
+};
 
 const modifyAckDeadline: AppBlock = {
   name: "Modify Ack Deadline",
@@ -19,7 +24,7 @@ const modifyAckDeadline: AppBlock = {
           },
           required: true,
         },
-        ack_ids: {
+        ackIds: {
           name: "Ack Ids",
           description: "Required. List of acknowledgment IDs.",
           type: {
@@ -31,7 +36,7 @@ const modifyAckDeadline: AppBlock = {
           },
           required: true,
         },
-        ack_deadline_seconds: {
+        ackDeadlineSeconds: {
           name: "Ack Deadline Seconds",
           description:
             "Required. The new ack deadline with respect to the time this request was sent to the Pub/Sub system. For example, if the value is 10, the new ack deadline will expire 10 seconds after the `ModifyAckDeadline` call was made. Specifying zero might immediately make the message available for delivery to another subscriber client. This typically results in an increase in the rate of message redeliveries (that is, duplicates). The minimum deadline you can specify is 0 seconds. The maximum deadline you can specify in a single request is 600 seconds (10 minutes).",
@@ -46,14 +51,7 @@ const modifyAckDeadline: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.subscription !== undefined)
-          request.subscription = input.event.inputConfig.subscription;
-        if (input.event.inputConfig.ack_ids !== undefined)
-          request.ack_ids = input.event.inputConfig.ack_ids;
-        if (input.event.inputConfig.ack_deadline_seconds !== undefined)
-          request.ack_deadline_seconds =
-            input.event.inputConfig.ack_deadline_seconds;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.modifyAckDeadline(request, (err: any, response: any) => {

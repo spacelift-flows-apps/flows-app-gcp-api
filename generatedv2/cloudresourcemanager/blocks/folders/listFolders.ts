@@ -1,5 +1,24 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFoldersClient } from "../../lib/grpcClient.ts";
+import { getFoldersClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  showDeleted: "show_deleted",
+};
+
+const outputMapping = {
+  folders: {
+    name: "folders",
+    fields: {
+      display_name: "displayName",
+      create_time: "createTime",
+      update_time: "updateTime",
+      delete_time: "deleteTime",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listFolders: AppBlock = {
   name: "List Folders",
@@ -19,7 +38,7 @@ const listFolders: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of folders to return in the response. The server can return fewer folders than requested. If unspecified, server picks an appropriate default.",
@@ -30,7 +49,7 @@ const listFolders: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. A pagination token returned from a previous call to `ListFolders` that indicates where this listing should continue from.",
@@ -41,7 +60,7 @@ const listFolders: AppBlock = {
           },
           required: false,
         },
-        show_deleted: {
+        showDeleted: {
           name: "Show Deleted",
           description:
             "Optional. Controls whether folders in the [DELETE_REQUESTED][google.cloud.resourcemanager.v3.Folder.State.DELETE_REQUESTED] state should be returned. Defaults to false.",
@@ -56,15 +75,7 @@ const listFolders: AppBlock = {
       onEvent: async (input) => {
         const client = await getFoldersClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.show_deleted !== undefined)
-          request.show_deleted = input.event.inputConfig.show_deleted;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listFolders(request, (err: any, response: any) => {
@@ -78,7 +89,8 @@ const listFolders: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -103,7 +115,7 @@ const listFolders: AppBlock = {
                   description:
                     "Required. The folder's parent's resource name. Updates to the folder's parent must be performed using [MoveFolder][google.cloud.resourcemanager.v3.Folders.MoveFolder].",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "The folder's display name. A folder's display name must be unique amongst its siblings. For example, no two folders with the same parent can share the same display name. The display name must start and end with a letter or digit, may contain letters, digits, spaces, hyphens and underscores and can be no longer than 30 characters. This is captured by the regular expression: `[\\p{L}\\p{N}]([\\p{L}\\p{N}_- ]{0,28}[\\p{L}\\p{N}])?`.",
@@ -114,17 +126,17 @@ const listFolders: AppBlock = {
                   description:
                     "Output only. The lifecycle state of the folder. Updates to the state must be performed using [DeleteFolder][google.cloud.resourcemanager.v3.Folders.DeleteFolder] and [UndeleteFolder][google.cloud.resourcemanager.v3.Folders.UndeleteFolder].",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                update_time: {
+                updateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                delete_time: {
+                deleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -143,7 +155,7 @@ const listFolders: AppBlock = {
             description:
               "A possibly paginated list of folders that are direct descendants of the specified parent resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A pagination token returned from a previous call to `ListFolders` that indicates from where listing should continue.",

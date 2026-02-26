@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  included_permissions: "includedPermissions",
+};
 
 const getRole: AppBlock = {
   name: "Get Role",
@@ -23,9 +27,7 @@ const getRole: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getRole(request, (err: any, response: any) => {
@@ -39,7 +41,8 @@ const getRole: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -63,7 +66,7 @@ const getRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          included_permissions: {
+          includedPermissions: {
             type: "array",
             items: {
               type: "string",

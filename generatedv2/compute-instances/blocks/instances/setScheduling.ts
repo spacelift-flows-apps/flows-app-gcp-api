@@ -24,7 +24,7 @@ const setScheduling: AppBlock = {
           },
           required: true,
         },
-        automatic_restart: {
+        automaticRestart: {
           name: "Automatic Restart",
           description:
             "Specifies whether the instance should be automatically restarted if it is terminated by Compute Engine (not terminated by a user). You can only set the automatic restart option for standard instances.Preemptible instances cannot be automatically restarted.  By default, this is set to true so an instance is automatically restarted if it is terminated by Compute Engine.",
@@ -35,7 +35,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        availability_domain: {
+        availabilityDomain: {
           name: "Availability Domain",
           description:
             "Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.",
@@ -46,7 +46,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        host_error_timeout_seconds: {
+        hostErrorTimeoutSeconds: {
           name: "Host Error Timeout Seconds",
           description:
             "Specify the time in seconds for host error detection, the value must be within the range of [90, 330] with the increment of 30, if unset, the default behavior of host error recovery will be used.",
@@ -57,7 +57,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        instance_termination_action: {
+        instanceTerminationAction: {
           name: "Instance Termination Action",
           description:
             "Specifies the termination action for the instance. Check the InstanceTerminationAction enum for the list of possible values.",
@@ -68,7 +68,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        local_ssd_recovery_timeout: {
+        localSsdRecoveryTimeout: {
           name: "Local Ssd Recovery Timeout",
           description:
             "Specifies the maximum amount of time a Local Ssd Vm should wait while recovery of the Local Ssd state is attempted. Its value should be in between 0 and 168 hours with hour granularity and the default value being 1 hour.",
@@ -91,7 +91,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        location_hint: {
+        locationHint: {
           name: "Location Hint",
           description:
             "An opaque location hint used to place the instance close to other resources. This field is for use by internal tools that use the public API.",
@@ -102,7 +102,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        max_run_duration: {
+        maxRunDuration: {
           name: "Max Run Duration",
           description:
             "Specifies the max run duration for the given instance. If specified, the instance termination action will be performed at the end of the run duration.",
@@ -125,7 +125,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        min_node_cpus: {
+        minNodeCpus: {
           name: "Min Node Cpus",
           description:
             "The minimum number of virtual CPUs this instance will consume when running on a sole-tenant node.",
@@ -136,7 +136,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        node_affinities: {
+        nodeAffinities: {
           name: "Node Affinities",
           description:
             "A set of node affinity and anti-affinity configurations. Refer toConfiguring node affinity for more information. Overrides reservationAffinity.",
@@ -172,7 +172,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        on_host_maintenance: {
+        onHostMaintenance: {
           name: "On Host Maintenance",
           description:
             "Defines the maintenance behavior for this instance. For standard instances, the default behavior is MIGRATE. Forpreemptible instances, the default and only possible behavior is TERMINATE. For more information, see  Set  VM host maintenance policy. Check the OnHostMaintenance enum for the list of possible values.",
@@ -183,13 +183,13 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        on_instance_stop_action: {
+        onInstanceStopAction: {
           name: "On Instance Stop Action",
           description: "On Instance Stop Action field",
           type: {
             type: "object",
             properties: {
-              discard_local_ssd: {
+              discardLocalSsd: {
                 type: "boolean",
                 description:
                   "If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.",
@@ -212,7 +212,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        provisioning_model: {
+        provisioningModel: {
           name: "Provisioning Model",
           description:
             "Specifies the provisioning model of the instance. Check the ProvisioningModel enum for the list of possible values.",
@@ -223,7 +223,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        skip_guest_os_shutdown: {
+        skipGuestOsShutdown: {
           name: "Skip Guest Os Shutdown",
           description:
             "Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.",
@@ -234,7 +234,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        termination_time: {
+        terminationTime: {
           name: "Termination Time",
           description:
             "Specifies the timestamp, when the instance will be terminated, inRFC3339 text format. If specified, the instance termination action will be performed at the termination time.",
@@ -245,7 +245,7 @@ const setScheduling: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -264,46 +264,44 @@ const setScheduling: AppBlock = {
           pathParams["instance"] = String(input.event.inputConfig.instance);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.automatic_restart !== undefined)
-          body.automatic_restart = input.event.inputConfig.automatic_restart;
-        if (input.event.inputConfig.availability_domain !== undefined)
-          body.availability_domain =
-            input.event.inputConfig.availability_domain;
-        if (input.event.inputConfig.host_error_timeout_seconds !== undefined)
-          body.host_error_timeout_seconds =
-            input.event.inputConfig.host_error_timeout_seconds;
-        if (input.event.inputConfig.instance_termination_action !== undefined)
-          body.instance_termination_action =
-            input.event.inputConfig.instance_termination_action;
-        if (input.event.inputConfig.local_ssd_recovery_timeout !== undefined)
-          body.local_ssd_recovery_timeout =
-            input.event.inputConfig.local_ssd_recovery_timeout;
-        if (input.event.inputConfig.location_hint !== undefined)
-          body.location_hint = input.event.inputConfig.location_hint;
-        if (input.event.inputConfig.max_run_duration !== undefined)
-          body.max_run_duration = input.event.inputConfig.max_run_duration;
-        if (input.event.inputConfig.min_node_cpus !== undefined)
-          body.min_node_cpus = input.event.inputConfig.min_node_cpus;
-        if (input.event.inputConfig.node_affinities !== undefined)
-          body.node_affinities = input.event.inputConfig.node_affinities;
-        if (input.event.inputConfig.on_host_maintenance !== undefined)
-          body.on_host_maintenance =
-            input.event.inputConfig.on_host_maintenance;
-        if (input.event.inputConfig.on_instance_stop_action !== undefined)
-          body.on_instance_stop_action =
-            input.event.inputConfig.on_instance_stop_action;
+        if (input.event.inputConfig.automaticRestart !== undefined)
+          body.automaticRestart = input.event.inputConfig.automaticRestart;
+        if (input.event.inputConfig.availabilityDomain !== undefined)
+          body.availabilityDomain = input.event.inputConfig.availabilityDomain;
+        if (input.event.inputConfig.hostErrorTimeoutSeconds !== undefined)
+          body.hostErrorTimeoutSeconds =
+            input.event.inputConfig.hostErrorTimeoutSeconds;
+        if (input.event.inputConfig.instanceTerminationAction !== undefined)
+          body.instanceTerminationAction =
+            input.event.inputConfig.instanceTerminationAction;
+        if (input.event.inputConfig.localSsdRecoveryTimeout !== undefined)
+          body.localSsdRecoveryTimeout =
+            input.event.inputConfig.localSsdRecoveryTimeout;
+        if (input.event.inputConfig.locationHint !== undefined)
+          body.locationHint = input.event.inputConfig.locationHint;
+        if (input.event.inputConfig.maxRunDuration !== undefined)
+          body.maxRunDuration = input.event.inputConfig.maxRunDuration;
+        if (input.event.inputConfig.minNodeCpus !== undefined)
+          body.minNodeCpus = input.event.inputConfig.minNodeCpus;
+        if (input.event.inputConfig.nodeAffinities !== undefined)
+          body.nodeAffinities = input.event.inputConfig.nodeAffinities;
+        if (input.event.inputConfig.onHostMaintenance !== undefined)
+          body.onHostMaintenance = input.event.inputConfig.onHostMaintenance;
+        if (input.event.inputConfig.onInstanceStopAction !== undefined)
+          body.onInstanceStopAction =
+            input.event.inputConfig.onInstanceStopAction;
         if (input.event.inputConfig.preemptible !== undefined)
           body.preemptible = input.event.inputConfig.preemptible;
-        if (input.event.inputConfig.provisioning_model !== undefined)
-          body.provisioning_model = input.event.inputConfig.provisioning_model;
-        if (input.event.inputConfig.skip_guest_os_shutdown !== undefined)
-          body.skip_guest_os_shutdown =
-            input.event.inputConfig.skip_guest_os_shutdown;
-        if (input.event.inputConfig.termination_time !== undefined)
-          body.termination_time = input.event.inputConfig.termination_time;
+        if (input.event.inputConfig.provisioningModel !== undefined)
+          body.provisioningModel = input.event.inputConfig.provisioningModel;
+        if (input.event.inputConfig.skipGuestOsShutdown !== undefined)
+          body.skipGuestOsShutdown =
+            input.event.inputConfig.skipGuestOsShutdown;
+        if (input.event.inputConfig.terminationTime !== undefined)
+          body.terminationTime = input.event.inputConfig.terminationTime;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -325,12 +323,12 @@ const setScheduling: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -339,7 +337,7 @@ const setScheduling: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -357,12 +355,12 @@ const setScheduling: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -417,7 +415,7 @@ const setScheduling: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -435,7 +433,7 @@ const setScheduling: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -446,7 +444,7 @@ const setScheduling: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -456,16 +454,16 @@ const setScheduling: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -502,12 +500,12 @@ const setScheduling: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -516,15 +514,15 @@ const setScheduling: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -544,12 +542,12 @@ const setScheduling: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -564,18 +562,18 @@ const setScheduling: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -588,7 +586,7 @@ const setScheduling: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -599,16 +597,16 @@ const setScheduling: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

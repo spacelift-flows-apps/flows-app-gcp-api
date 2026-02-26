@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFunctionServiceClient } from "../../lib/grpcClient.ts";
+import { getFunctionServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  download_url: "downloadUrl",
+};
 
 const generateDownloadUrl: AppBlock = {
   name: "Generate Download Url",
@@ -23,9 +27,7 @@ const generateDownloadUrl: AppBlock = {
       onEvent: async (input) => {
         const client = await getFunctionServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.generateDownloadUrl(request, (err: any, response: any) => {
@@ -39,7 +41,8 @@ const generateDownloadUrl: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -49,7 +52,7 @@ const generateDownloadUrl: AppBlock = {
       type: {
         type: "object",
         properties: {
-          download_url: {
+          downloadUrl: {
             type: "string",
             description:
               "The generated Google Cloud Storage signed URL that should be used for function source code download.",

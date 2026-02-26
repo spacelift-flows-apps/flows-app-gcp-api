@@ -1,5 +1,22 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getGroupServiceClient } from "../../lib/grpcClient.ts";
+import { getGroupServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  interval: {
+    name: "interval",
+    fields: {
+      endTime: "end_time",
+      startTime: "start_time",
+    },
+  },
+};
+
+const outputMapping = {
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listGroupMembers: AppBlock = {
   name: "List Group Members",
@@ -19,7 +36,7 @@ const listGroupMembers: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "A positive number that is the maximum number of results to return.",
@@ -30,7 +47,7 @@ const listGroupMembers: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If this field is not empty then it must contain the `next_page_token` value returned by a previous call to this method.  Using this field causes the method to return additional results from the previous method call.",
@@ -59,11 +76,11 @@ const listGroupMembers: AppBlock = {
           type: {
             type: "object",
             properties: {
-              end_time: {
+              endTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              start_time: {
+              startTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -78,17 +95,7 @@ const listGroupMembers: AppBlock = {
       onEvent: async (input) => {
         const client = await getGroupServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.interval !== undefined)
-          request.interval = input.event.inputConfig.interval;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listGroupMembers(request, (err: any, response: any) => {
@@ -102,7 +109,8 @@ const listGroupMembers: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -131,12 +139,12 @@ const listGroupMembers: AppBlock = {
             },
             description: "A set of monitored resources in the group.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If there are more results than have been returned, then this field is set to a non-empty value.  To see the additional results, use that value as `page_token` in the next call to this method.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description: "The total number of elements matching this request.",
           },

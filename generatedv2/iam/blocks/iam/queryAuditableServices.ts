@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  fullResourceName: "full_resource_name",
+};
 
 const queryAuditableServices: AppBlock = {
   name: "Query Auditable Services",
@@ -8,7 +12,7 @@ const queryAuditableServices: AppBlock = {
   inputs: {
     default: {
       config: {
-        full_resource_name: {
+        fullResourceName: {
           name: "Full Resource Name",
           description:
             "Required. The full resource name to query from the list of auditable services.  The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
@@ -23,10 +27,7 @@ const queryAuditableServices: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.full_resource_name !== undefined)
-          request.full_resource_name =
-            input.event.inputConfig.full_resource_name;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.queryAuditableServices(request, (err: any, response: any) => {

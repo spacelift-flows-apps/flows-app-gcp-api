@@ -1,5 +1,31 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getHsmManagementClient } from "../../lib/grpcClient.ts";
+import { getHsmManagementClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const executeSingleTenantHsmInstanceProposal: AppBlock = {
   name: "Execute Single Tenant Hsm Instance Proposal",
@@ -23,9 +49,7 @@ const executeSingleTenantHsmInstanceProposal: AppBlock = {
       onEvent: async (input) => {
         const client = await getHsmManagementClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.executeSingleTenantHsmInstanceProposal(
@@ -42,7 +66,8 @@ const executeSingleTenantHsmInstanceProposal: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -58,7 +83,7 @@ const executeSingleTenantHsmInstanceProposal: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -85,7 +110,7 @@ const executeSingleTenantHsmInstanceProposal: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -104,7 +129,7 @@ const executeSingleTenantHsmInstanceProposal: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

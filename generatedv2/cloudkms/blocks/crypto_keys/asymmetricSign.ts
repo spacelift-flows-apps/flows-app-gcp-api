@@ -1,5 +1,20 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  digestCrc32c: "digest_crc32c",
+  dataCrc32c: "data_crc32c",
+};
+
+const outputMapping = {
+  signature_crc32c: "signatureCrc32c",
+  verified_digest_crc32c: "verifiedDigestCrc32c",
+  verified_data_crc32c: "verifiedDataCrc32c",
+  protection_level: "protectionLevel",
+};
 
 const asymmetricSign: AppBlock = {
   name: "Asymmetric Sign",
@@ -48,7 +63,7 @@ const asymmetricSign: AppBlock = {
           },
           required: false,
         },
-        digest_crc32c: {
+        digestCrc32c: {
           name: "Digest Crc32c",
           description:
             "Optional. An optional CRC32C checksum of the [AsymmetricSignRequest.digest][google.cloud.kms.v1.AsymmetricSignRequest.digest]. If specified, [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will verify the integrity of the received [AsymmetricSignRequest.digest][google.cloud.kms.v1.AsymmetricSignRequest.digest] using this checksum. [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C([AsymmetricSignRequest.digest][google.cloud.kms.v1.AsymmetricSignRequest.digest]) is equal to [AsymmetricSignRequest.digest_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.digest_crc32c], and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
@@ -68,7 +83,7 @@ const asymmetricSign: AppBlock = {
           },
           required: false,
         },
-        data_crc32c: {
+        dataCrc32c: {
           name: "Data Crc32c",
           description:
             "Optional. An optional CRC32C checksum of the [AsymmetricSignRequest.data][google.cloud.kms.v1.AsymmetricSignRequest.data]. If specified, [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will verify the integrity of the received [AsymmetricSignRequest.data][google.cloud.kms.v1.AsymmetricSignRequest.data] using this checksum. [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C([AsymmetricSignRequest.data][google.cloud.kms.v1.AsymmetricSignRequest.data]) is equal to [AsymmetricSignRequest.data_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.data_crc32c], and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
@@ -82,17 +97,7 @@ const asymmetricSign: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.digest !== undefined)
-          request.digest = input.event.inputConfig.digest;
-        if (input.event.inputConfig.digest_crc32c !== undefined)
-          request.digest_crc32c = input.event.inputConfig.digest_crc32c;
-        if (input.event.inputConfig.data !== undefined)
-          request.data = input.event.inputConfig.data;
-        if (input.event.inputConfig.data_crc32c !== undefined)
-          request.data_crc32c = input.event.inputConfig.data_crc32c;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.asymmetricSign(request, (err: any, response: any) => {
@@ -106,7 +111,8 @@ const asymmetricSign: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -120,11 +126,11 @@ const asymmetricSign: AppBlock = {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          signature_crc32c: {
+          signatureCrc32c: {
             type: "string",
             description: "64-bit integer as string",
           },
-          verified_digest_crc32c: {
+          verifiedDigestCrc32c: {
             type: "boolean",
             description:
               "Integrity verification field. A flag indicating whether [AsymmetricSignRequest.digest_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.digest_crc32c] was received by [KeyManagementService][google.cloud.kms.v1.KeyManagementService] and used for the integrity verification of the [digest][google.cloud.kms.v1.AsymmetricSignRequest.digest]. A false value of this field indicates either that [AsymmetricSignRequest.digest_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.digest_crc32c] was left unset or that it was not delivered to [KeyManagementService][google.cloud.kms.v1.KeyManagementService]. If you've set [AsymmetricSignRequest.digest_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.digest_crc32c] but this field is still false, discard the response and perform a limited number of retries.",
@@ -134,12 +140,12 @@ const asymmetricSign: AppBlock = {
             description:
               "The resource name of the [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] used for signing. Check this field to verify that the intended resource was used for signing.",
           },
-          verified_data_crc32c: {
+          verifiedDataCrc32c: {
             type: "boolean",
             description:
               "Integrity verification field. A flag indicating whether [AsymmetricSignRequest.data_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.data_crc32c] was received by [KeyManagementService][google.cloud.kms.v1.KeyManagementService] and used for the integrity verification of the [data][google.cloud.kms.v1.AsymmetricSignRequest.data]. A false value of this field indicates either that [AsymmetricSignRequest.data_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.data_crc32c] was left unset or that it was not delivered to [KeyManagementService][google.cloud.kms.v1.KeyManagementService]. If you've set [AsymmetricSignRequest.data_crc32c][google.cloud.kms.v1.AsymmetricSignRequest.data_crc32c] but this field is still false, discard the response and perform a limited number of retries.",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",

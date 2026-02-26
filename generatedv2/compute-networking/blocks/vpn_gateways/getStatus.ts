@@ -16,7 +16,7 @@ const getStatus: AppBlock = {
           },
           required: true,
         },
-        vpn_gateway: {
+        vpnGateway: {
           name: "Vpn Gateway",
           description: "Name of the VPN gateway to return.",
           type: {
@@ -30,9 +30,9 @@ const getStatus: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
           pathParams["region"] = String(input.event.inputConfig.region);
-        if (input.event.inputConfig.vpn_gateway !== undefined)
+        if (input.event.inputConfig.vpnGateway !== undefined)
           pathParams["vpn_gateway"] = String(
-            input.event.inputConfig.vpn_gateway,
+            input.event.inputConfig.vpnGateway,
           );
 
         const result = await computeFetch({
@@ -56,17 +56,17 @@ const getStatus: AppBlock = {
           result: {
             type: "object",
             properties: {
-              vpn_connections: {
+              vpnConnections: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    peer_external_gateway: {
+                    peerExternalGateway: {
                       type: "string",
                       description:
                         "Output only. URL reference to the peer external VPN gateways to which the VPN tunnels in this VPN connection are connected. This field is mutually exclusive with peer_gcp_gateway.",
                     },
-                    peer_gcp_gateway: {
+                    peerGcpGateway: {
                       type: "string",
                       description:
                         "Output only. URL reference to the peer side VPN gateways to which the VPN tunnels in this VPN connection are connected. This field is mutually exclusive with peer_gcp_gateway.",
@@ -79,7 +79,7 @@ const getStatus: AppBlock = {
                           description:
                             "Indicates the high availability requirement state for the VPN connection. Valid values are CONNECTION_REDUNDANCY_MET,CONNECTION_REDUNDANCY_NOT_MET. Check the State enum for the list of possible values.",
                         },
-                        unsatisfied_reason: {
+                        unsatisfiedReason: {
                           type: "string",
                           description:
                             "Indicates the reason why the VPN connection does not meet the high availability redundancy criteria/requirement. Valid values is INCOMPLETE_TUNNELS_COVERAGE. Check the UnsatisfiedReason enum for the list of possible values.",
@@ -94,17 +94,17 @@ const getStatus: AppBlock = {
                       items: {
                         type: "object",
                         properties: {
-                          local_gateway_interface: {
+                          localGatewayInterface: {
                             type: "integer",
                             description:
                               "Output only. The VPN gateway interface this VPN tunnel is associated with.",
                           },
-                          peer_gateway_interface: {
+                          peerGatewayInterface: {
                             type: "integer",
                             description:
                               "Output only. The peer gateway interface this VPN tunnel is connected to, the peer gateway could either be an external VPN gateway or a Google Cloud VPN gateway.",
                           },
-                          tunnel_url: {
+                          tunnelUrl: {
                             type: "string",
                             description:
                               "Output only. URL reference to the VPN tunnel.",

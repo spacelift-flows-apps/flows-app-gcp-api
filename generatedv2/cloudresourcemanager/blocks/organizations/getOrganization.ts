@@ -1,5 +1,13 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getOrganizationsClient } from "../../lib/grpcClient.ts";
+import { getOrganizationsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  display_name: "displayName",
+  directory_customer_id: "directoryCustomerId",
+  create_time: "createTime",
+  update_time: "updateTime",
+  delete_time: "deleteTime",
+};
 
 const getOrganization: AppBlock = {
   name: "Get Organization",
@@ -23,9 +31,7 @@ const getOrganization: AppBlock = {
       onEvent: async (input) => {
         const client = await getOrganizationsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getOrganization(request, (err: any, response: any) => {
@@ -39,7 +45,8 @@ const getOrganization: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -54,12 +61,12 @@ const getOrganization: AppBlock = {
             description:
               'Output only. The resource name of the organization. This is the organization\'s relative path in the API. Its format is "organizations/[organization_id]". For example, "organizations/1234".',
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               'Output only. A human-readable string that refers to the organization in the Google Cloud Console. This string is set by the server and cannot be changed. The string will be set to the primary domain (for example, "google.com") of the Google Workspace customer that owns the organization.',
           },
-          directory_customer_id: {
+          directoryCustomerId: {
             type: "string",
             description:
               "Immutable. The G Suite / Workspace customer id used in the Directory API.",
@@ -70,15 +77,15 @@ const getOrganization: AppBlock = {
             description:
               "Output only. The organization's current lifecycle state.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          update_time: {
+          updateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          delete_time: {
+          deleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

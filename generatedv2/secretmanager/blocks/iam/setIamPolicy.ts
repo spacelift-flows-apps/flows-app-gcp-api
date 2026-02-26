@@ -1,5 +1,44 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSecretManagerServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSecretManagerServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  policy: {
+    name: "policy",
+    fields: {
+      auditConfigs: {
+        name: "audit_configs",
+        fields: {
+          auditLogConfigs: {
+            name: "audit_log_configs",
+            fields: {
+              logType: "log_type",
+              exemptedMembers: "exempted_members",
+            },
+          },
+        },
+      },
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  audit_configs: {
+    name: "auditConfigs",
+    fields: {
+      audit_log_configs: {
+        name: "auditLogConfigs",
+        fields: {
+          log_type: "logType",
+          exempted_members: "exemptedMembers",
+        },
+      },
+    },
+  },
+};
 
 const setIamPolicy: AppBlock = {
   name: "Set IAM Policy",
@@ -61,7 +100,7 @@ const setIamPolicy: AppBlock = {
                   additionalProperties: true,
                 },
               },
-              audit_configs: {
+              auditConfigs: {
                 type: "array",
                 items: {
                   type: "object",
@@ -69,12 +108,12 @@ const setIamPolicy: AppBlock = {
                     service: {
                       type: "string",
                     },
-                    audit_log_configs: {
+                    auditLogConfigs: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          log_type: {
+                          logType: {
                             type: "string",
                             enum: [
                               "LOG_TYPE_UNSPECIFIED",
@@ -83,7 +122,7 @@ const setIamPolicy: AppBlock = {
                               "DATA_READ",
                             ],
                           },
-                          exempted_members: {
+                          exemptedMembers: {
                             type: "array",
                             items: {
                               type: "string",
@@ -106,7 +145,7 @@ const setIamPolicy: AppBlock = {
           },
           required: false,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description: "Update Mask field",
           type: {
@@ -120,13 +159,7 @@ const setIamPolicy: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.resource !== undefined)
-          request.resource = input.event.inputConfig.resource;
-        if (input.event.inputConfig.policy !== undefined)
-          request.policy = input.event.inputConfig.policy;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.setIamPolicy(request, (err: any, response: any) => {
@@ -140,7 +173,8 @@ const setIamPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -189,7 +223,7 @@ const setIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          audit_configs: {
+          auditConfigs: {
             type: "array",
             items: {
               type: "object",
@@ -197,12 +231,12 @@ const setIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                audit_log_configs: {
+                auditLogConfigs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      log_type: {
+                      logType: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -211,7 +245,7 @@ const setIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exempted_members: {
+                      exemptedMembers: {
                         type: "array",
                         items: {
                           type: "string",

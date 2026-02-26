@@ -8,7 +8,7 @@ const listAssociations: AppBlock = {
   inputs: {
     default: {
       config: {
-        target_resource: {
+        targetResource: {
           name: "Target Resource",
           description:
             "The target resource to list associations. It is an organization, or a folder.",
@@ -23,9 +23,9 @@ const listAssociations: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.target_resource !== undefined)
+        if (input.event.inputConfig.targetResource !== undefined)
           queryParams["targetResource"] = String(
-            input.event.inputConfig.target_resource,
+            input.event.inputConfig.targetResource,
           );
 
         const result = await computeFetch({
@@ -52,17 +52,17 @@ const listAssociations: AppBlock = {
             items: {
               type: "object",
               properties: {
-                attachment_id: {
+                attachmentId: {
                   type: "string",
                   description:
                     "The resource that the security policy is attached to.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The display name of the security policy of the association.",
                 },
-                excluded_folders: {
+                excludedFolders: {
                   type: "array",
                   items: {
                     type: "string",
@@ -70,7 +70,7 @@ const listAssociations: AppBlock = {
                   description:
                     "A list of folders to exclude from the security policy.",
                 },
-                excluded_projects: {
+                excludedProjects: {
                   type: "array",
                   items: {
                     type: "string",
@@ -82,12 +82,12 @@ const listAssociations: AppBlock = {
                   type: "string",
                   description: "The name for an association.",
                 },
-                security_policy_id: {
+                securityPolicyId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The security policy ID of the association.",
                 },
-                short_name: {
+                shortName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The short name of the security policy of the association.",

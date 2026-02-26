@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  fullResourceName: "full_resource_name",
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  roles: {
+    name: "roles",
+    fields: {
+      included_permissions: "includedPermissions",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const queryGrantableRoles: AppBlock = {
   name: "Query Grantable Roles",
@@ -8,7 +24,7 @@ const queryGrantableRoles: AppBlock = {
   inputs: {
     default: {
       config: {
-        full_resource_name: {
+        fullResourceName: {
           name: "Full Resource Name",
           description:
             "Required. The full resource name to query from the list of grantable roles.  The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
@@ -29,7 +45,7 @@ const queryGrantableRoles: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional limit on the number of roles to include in the response.  The default is 300, and the maximum is 1,000.",
@@ -40,7 +56,7 @@ const queryGrantableRoles: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional pagination token returned in an earlier QueryGrantableRolesResponse.",
@@ -55,16 +71,7 @@ const queryGrantableRoles: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.full_resource_name !== undefined)
-          request.full_resource_name =
-            input.event.inputConfig.full_resource_name;
-        if (input.event.inputConfig.view !== undefined)
-          request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.queryGrantableRoles(request, (err: any, response: any) => {
@@ -78,7 +85,8 @@ const queryGrantableRoles: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -108,7 +116,7 @@ const queryGrantableRoles: AppBlock = {
                   description:
                     "Optional. A human-readable description for the role.",
                 },
-                included_permissions: {
+                includedPermissions: {
                   type: "array",
                   items: {
                     type: "string",
@@ -144,7 +152,7 @@ const queryGrantableRoles: AppBlock = {
             },
             description: "The list of matching roles.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "To retrieve the next page of results, set `QueryGrantableRolesRequest.page_token` to this value.",

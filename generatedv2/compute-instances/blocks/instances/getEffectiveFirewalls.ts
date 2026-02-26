@@ -24,7 +24,7 @@ const getEffectiveFirewalls: AppBlock = {
           },
           required: true,
         },
-        network_interface: {
+        networkInterface: {
           name: "Network Interface",
           description:
             "The name of the network interface to get the effective firewalls.",
@@ -43,9 +43,9 @@ const getEffectiveFirewalls: AppBlock = {
           pathParams["instance"] = String(input.event.inputConfig.instance);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.network_interface !== undefined)
+        if (input.event.inputConfig.networkInterface !== undefined)
           queryParams["networkInterface"] = String(
-            input.event.inputConfig.network_interface,
+            input.event.inputConfig.networkInterface,
           );
 
         const result = await computeFetch({
@@ -67,12 +67,12 @@ const getEffectiveFirewalls: AppBlock = {
       type: {
         type: "object",
         properties: {
-          firewall_policys: {
+          firewallPolicys: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Deprecated, please use short name instead. The display name of the firewall policy.",
@@ -82,7 +82,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "Output only. [Output Only] The name of the firewall policy.",
                 },
-                packet_mirroring_rules: {
+                packetMirroringRules: {
                   type: "array",
                   items: {
                     type: "object",
@@ -107,7 +107,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "Denotes whether the firewall policy rule is disabled. When set to true, the firewall policy rule is not enforced and traffic behaves as if it did not exist. If this is unspecified, the firewall policy rule will be enabled.",
                       },
-                      enable_logging: {
+                      enableLogging: {
                         type: "boolean",
                         description:
                           'Denotes whether to enable logging for a particular rule. If logging is enabled, logs will be exported to the configured export destination in Stackdriver. Logs may be exported to BigQuery or Pub/Sub. Note: you cannot enable logging on "goto_next" rules.',
@@ -120,7 +120,7 @@ const getEffectiveFirewalls: AppBlock = {
                       match: {
                         type: "object",
                         properties: {
-                          dest_address_groups: {
+                          destAddressGroups: {
                             type: "array",
                             items: {
                               type: "string",
@@ -128,7 +128,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Address groups which should be matched against the traffic destination. Maximum number of destination address groups is 10.",
                           },
-                          dest_fqdns: {
+                          destFqdns: {
                             type: "array",
                             items: {
                               type: "string",
@@ -136,7 +136,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Fully Qualified Domain Name (FQDN) which should be matched against traffic destination. Maximum number of destination fqdn allowed is 100.",
                           },
-                          dest_ip_ranges: {
+                          destIpRanges: {
                             type: "array",
                             items: {
                               type: "string",
@@ -144,17 +144,17 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "CIDR IP address range. Maximum number of destination CIDR IP ranges allowed is 5000.",
                           },
-                          dest_network_context: {
+                          destNetworkContext: {
                             type: "string",
                             description:
                               "Network context of the traffic destination. Allowed values are:        - UNSPECIFIED      - INTERNET      - NON_INTERNET Check the DestNetworkContext enum for the list of possible values.",
                           },
-                          dest_network_type: {
+                          destNetworkType: {
                             type: "string",
                             description:
                               "Network type of the traffic destination. Allowed values are:        - UNSPECIFIED      - INTERNET      - NON_INTERNET Check the DestNetworkType enum for the list of possible values.",
                           },
-                          dest_region_codes: {
+                          destRegionCodes: {
                             type: "array",
                             items: {
                               type: "string",
@@ -162,7 +162,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               'Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex."US" Maximum number of dest region codes allowed is 5000.',
                           },
-                          dest_threat_intelligences: {
+                          destThreatIntelligences: {
                             type: "array",
                             items: {
                               type: "string",
@@ -170,12 +170,12 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Names of Network Threat Intelligence lists. The IPs in these lists will be matched against traffic destination.",
                           },
-                          layer4_configs: {
+                          layer4Configs: {
                             type: "array",
                             items: {
                               type: "object",
                               properties: {
-                                ip_protocol: {
+                                ipProtocol: {
                                   type: "string",
                                   description:
                                     "The IP protocol to which this rule applies. The protocol type is required when creating a firewall rule. This value can either be one of the following well known protocol strings (tcp,udp, icmp, esp,ah, ipip, sctp), or the IP protocol number.",
@@ -194,7 +194,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Pairs of IP protocols and ports that the rule should match.",
                           },
-                          src_address_groups: {
+                          srcAddressGroups: {
                             type: "array",
                             items: {
                               type: "string",
@@ -202,7 +202,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Address groups which should be matched against the traffic source. Maximum number of source address groups is 10.",
                           },
-                          src_fqdns: {
+                          srcFqdns: {
                             type: "array",
                             items: {
                               type: "string",
@@ -210,7 +210,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Fully Qualified Domain Name (FQDN) which should be matched against traffic source. Maximum number of source fqdn allowed is 100.",
                           },
-                          src_ip_ranges: {
+                          srcIpRanges: {
                             type: "array",
                             items: {
                               type: "string",
@@ -218,17 +218,17 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "CIDR IP address range. Maximum number of source CIDR IP ranges allowed is 5000.",
                           },
-                          src_network_context: {
+                          srcNetworkContext: {
                             type: "string",
                             description:
                               "Network context of the traffic source. Allowed values are:        - UNSPECIFIED      - INTERNET      - INTRA_VPC      - NON_INTERNET      - VPC_NETWORKS Check the SrcNetworkContext enum for the list of possible values.",
                           },
-                          src_network_type: {
+                          srcNetworkType: {
                             type: "string",
                             description:
                               "Network type of the traffic source. Allowed values are:        - UNSPECIFIED      - INTERNET      - INTRA_VPC      - NON_INTERNET      - VPC_NETWORKS Check the SrcNetworkType enum for the list of possible values.",
                           },
-                          src_networks: {
+                          srcNetworks: {
                             type: "array",
                             items: {
                               type: "string",
@@ -236,7 +236,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Networks of the traffic source. It can be either a full or partial url.",
                           },
-                          src_region_codes: {
+                          srcRegionCodes: {
                             type: "array",
                             items: {
                               type: "string",
@@ -244,7 +244,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               'Region codes whose IP addresses will be used to match for source of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex."US" Maximum number of source region codes allowed is 5000.',
                           },
-                          src_secure_tags: {
+                          srcSecureTags: {
                             type: "array",
                             items: {
                               type: "object",
@@ -265,7 +265,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "List of secure tag values, which should be matched at the source of the traffic. For INGRESS rule, if all the srcSecureTag are INEFFECTIVE, and there is no srcIpRange, this rule will be ignored. Maximum number of source tag values allowed is 256.",
                           },
-                          src_threat_intelligences: {
+                          srcThreatIntelligences: {
                             type: "array",
                             items: {
                               type: "string",
@@ -283,22 +283,22 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "An integer indicating the priority of a rule in the list. The priority must be a positive value between 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the highest priority and 2147483647 is the lowest priority.",
                       },
-                      rule_name: {
+                      ruleName: {
                         type: "string",
                         description:
                           "An optional name for the rule. This field is not a unique identifier and can be updated.",
                       },
-                      rule_tuple_count: {
+                      ruleTupleCount: {
                         type: "integer",
                         description:
                           "Output only. [Output Only] Calculation of the complexity of a single firewall policy rule.",
                       },
-                      security_profile_group: {
+                      securityProfileGroup: {
                         type: "string",
                         description:
                           "A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of 'apply_security_profile_group' or 'mirror'. Cannot be specified for other actions.",
                       },
-                      target_resources: {
+                      targetResources: {
                         type: "array",
                         items: {
                           type: "string",
@@ -306,7 +306,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "A list of network resource URLs to which this rule applies.  This field allows you to control which network's VMs get this rule.  If this field is left blank, all VMs within the organization will receive the rule.",
                       },
-                      target_secure_tags: {
+                      targetSecureTags: {
                         type: "array",
                         items: {
                           type: "object",
@@ -327,7 +327,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "A list of secure tags that controls which instances the firewall rule applies to. If targetSecureTag are specified, then the firewall rule applies only to instances in the VPC network that have one of those EFFECTIVE secure tags, if all the target_secure_tag are in INEFFECTIVE state, then this rule will be ignored.targetSecureTag may not be set at the same time astargetServiceAccounts. If neither targetServiceAccounts nortargetSecureTag are specified, the firewall rule applies to all instances on the specified network. Maximum number of target label tags allowed is 256.",
                       },
-                      target_service_accounts: {
+                      targetServiceAccounts: {
                         type: "array",
                         items: {
                           type: "string",
@@ -335,7 +335,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "A list of service accounts indicating the sets of instances that are applied with this rule.",
                       },
-                      tls_inspect: {
+                      tlsInspect: {
                         type: "boolean",
                         description:
                           "Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = 'apply_security_profile_group' and cannot be set for other actions.",
@@ -378,7 +378,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "Denotes whether the firewall policy rule is disabled. When set to true, the firewall policy rule is not enforced and traffic behaves as if it did not exist. If this is unspecified, the firewall policy rule will be enabled.",
                       },
-                      enable_logging: {
+                      enableLogging: {
                         type: "boolean",
                         description:
                           'Denotes whether to enable logging for a particular rule. If logging is enabled, logs will be exported to the configured export destination in Stackdriver. Logs may be exported to BigQuery or Pub/Sub. Note: you cannot enable logging on "goto_next" rules.',
@@ -391,7 +391,7 @@ const getEffectiveFirewalls: AppBlock = {
                       match: {
                         type: "object",
                         properties: {
-                          dest_address_groups: {
+                          destAddressGroups: {
                             type: "array",
                             items: {
                               type: "string",
@@ -399,7 +399,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Address groups which should be matched against the traffic destination. Maximum number of destination address groups is 10.",
                           },
-                          dest_fqdns: {
+                          destFqdns: {
                             type: "array",
                             items: {
                               type: "string",
@@ -407,7 +407,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Fully Qualified Domain Name (FQDN) which should be matched against traffic destination. Maximum number of destination fqdn allowed is 100.",
                           },
-                          dest_ip_ranges: {
+                          destIpRanges: {
                             type: "array",
                             items: {
                               type: "string",
@@ -415,17 +415,17 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "CIDR IP address range. Maximum number of destination CIDR IP ranges allowed is 5000.",
                           },
-                          dest_network_context: {
+                          destNetworkContext: {
                             type: "string",
                             description:
                               "Network context of the traffic destination. Allowed values are:        - UNSPECIFIED      - INTERNET      - NON_INTERNET Check the DestNetworkContext enum for the list of possible values.",
                           },
-                          dest_network_type: {
+                          destNetworkType: {
                             type: "string",
                             description:
                               "Network type of the traffic destination. Allowed values are:        - UNSPECIFIED      - INTERNET      - NON_INTERNET Check the DestNetworkType enum for the list of possible values.",
                           },
-                          dest_region_codes: {
+                          destRegionCodes: {
                             type: "array",
                             items: {
                               type: "string",
@@ -433,7 +433,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               'Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex."US" Maximum number of dest region codes allowed is 5000.',
                           },
-                          dest_threat_intelligences: {
+                          destThreatIntelligences: {
                             type: "array",
                             items: {
                               type: "string",
@@ -441,12 +441,12 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Names of Network Threat Intelligence lists. The IPs in these lists will be matched against traffic destination.",
                           },
-                          layer4_configs: {
+                          layer4Configs: {
                             type: "array",
                             items: {
                               type: "object",
                               properties: {
-                                ip_protocol: {
+                                ipProtocol: {
                                   type: "string",
                                   description:
                                     "The IP protocol to which this rule applies. The protocol type is required when creating a firewall rule. This value can either be one of the following well known protocol strings (tcp,udp, icmp, esp,ah, ipip, sctp), or the IP protocol number.",
@@ -465,7 +465,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Pairs of IP protocols and ports that the rule should match.",
                           },
-                          src_address_groups: {
+                          srcAddressGroups: {
                             type: "array",
                             items: {
                               type: "string",
@@ -473,7 +473,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Address groups which should be matched against the traffic source. Maximum number of source address groups is 10.",
                           },
-                          src_fqdns: {
+                          srcFqdns: {
                             type: "array",
                             items: {
                               type: "string",
@@ -481,7 +481,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Fully Qualified Domain Name (FQDN) which should be matched against traffic source. Maximum number of source fqdn allowed is 100.",
                           },
-                          src_ip_ranges: {
+                          srcIpRanges: {
                             type: "array",
                             items: {
                               type: "string",
@@ -489,17 +489,17 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "CIDR IP address range. Maximum number of source CIDR IP ranges allowed is 5000.",
                           },
-                          src_network_context: {
+                          srcNetworkContext: {
                             type: "string",
                             description:
                               "Network context of the traffic source. Allowed values are:        - UNSPECIFIED      - INTERNET      - INTRA_VPC      - NON_INTERNET      - VPC_NETWORKS Check the SrcNetworkContext enum for the list of possible values.",
                           },
-                          src_network_type: {
+                          srcNetworkType: {
                             type: "string",
                             description:
                               "Network type of the traffic source. Allowed values are:        - UNSPECIFIED      - INTERNET      - INTRA_VPC      - NON_INTERNET      - VPC_NETWORKS Check the SrcNetworkType enum for the list of possible values.",
                           },
-                          src_networks: {
+                          srcNetworks: {
                             type: "array",
                             items: {
                               type: "string",
@@ -507,7 +507,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "Networks of the traffic source. It can be either a full or partial url.",
                           },
-                          src_region_codes: {
+                          srcRegionCodes: {
                             type: "array",
                             items: {
                               type: "string",
@@ -515,7 +515,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               'Region codes whose IP addresses will be used to match for source of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex."US" Maximum number of source region codes allowed is 5000.',
                           },
-                          src_secure_tags: {
+                          srcSecureTags: {
                             type: "array",
                             items: {
                               type: "object",
@@ -536,7 +536,7 @@ const getEffectiveFirewalls: AppBlock = {
                             description:
                               "List of secure tag values, which should be matched at the source of the traffic. For INGRESS rule, if all the srcSecureTag are INEFFECTIVE, and there is no srcIpRange, this rule will be ignored. Maximum number of source tag values allowed is 256.",
                           },
-                          src_threat_intelligences: {
+                          srcThreatIntelligences: {
                             type: "array",
                             items: {
                               type: "string",
@@ -554,22 +554,22 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "An integer indicating the priority of a rule in the list. The priority must be a positive value between 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the highest priority and 2147483647 is the lowest priority.",
                       },
-                      rule_name: {
+                      ruleName: {
                         type: "string",
                         description:
                           "An optional name for the rule. This field is not a unique identifier and can be updated.",
                       },
-                      rule_tuple_count: {
+                      ruleTupleCount: {
                         type: "integer",
                         description:
                           "Output only. [Output Only] Calculation of the complexity of a single firewall policy rule.",
                       },
-                      security_profile_group: {
+                      securityProfileGroup: {
                         type: "string",
                         description:
                           "A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of 'apply_security_profile_group' or 'mirror'. Cannot be specified for other actions.",
                       },
-                      target_resources: {
+                      targetResources: {
                         type: "array",
                         items: {
                           type: "string",
@@ -577,7 +577,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "A list of network resource URLs to which this rule applies.  This field allows you to control which network's VMs get this rule.  If this field is left blank, all VMs within the organization will receive the rule.",
                       },
-                      target_secure_tags: {
+                      targetSecureTags: {
                         type: "array",
                         items: {
                           type: "object",
@@ -598,7 +598,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "A list of secure tags that controls which instances the firewall rule applies to. If targetSecureTag are specified, then the firewall rule applies only to instances in the VPC network that have one of those EFFECTIVE secure tags, if all the target_secure_tag are in INEFFECTIVE state, then this rule will be ignored.targetSecureTag may not be set at the same time astargetServiceAccounts. If neither targetServiceAccounts nortargetSecureTag are specified, the firewall rule applies to all instances on the specified network. Maximum number of target label tags allowed is 256.",
                       },
-                      target_service_accounts: {
+                      targetServiceAccounts: {
                         type: "array",
                         items: {
                           type: "string",
@@ -606,7 +606,7 @@ const getEffectiveFirewalls: AppBlock = {
                         description:
                           "A list of service accounts indicating the sets of instances that are applied with this rule.",
                       },
-                      tls_inspect: {
+                      tlsInspect: {
                         type: "boolean",
                         description:
                           "Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = 'apply_security_profile_group' and cannot be set for other actions.",
@@ -619,7 +619,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "[Output Only] The rules that apply to the instance. Only rules that target the specific VM instance are returned if target service accounts or target secure tags are specified in the rules.",
                 },
-                short_name: {
+                shortName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The short name of the firewall policy.",
@@ -645,7 +645,7 @@ const getEffectiveFirewalls: AppBlock = {
                   items: {
                     type: "object",
                     properties: {
-                      I_p_protocol: {
+                      IPProtocol: {
                         type: "string",
                         description:
                           "The IP protocol to which this rule applies. The protocol type is required when creating a firewall rule. This value can either be one of the following well known protocol strings (tcp, udp,icmp, esp, ah, ipip,sctp) or the IP protocol number.",
@@ -664,7 +664,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "The list of ALLOW rules specified by this firewall. Each rule specifies a protocol and port-range tuple that describes a permitted connection.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -674,7 +674,7 @@ const getEffectiveFirewalls: AppBlock = {
                   items: {
                     type: "object",
                     properties: {
-                      I_p_protocol: {
+                      IPProtocol: {
                         type: "string",
                         description:
                           "The IP protocol to which this rule applies. The protocol type is required when creating a firewall rule. This value can either be one of the following well known protocol strings (tcp, udp,icmp, esp, ah, ipip,sctp) or the IP protocol number.",
@@ -698,7 +698,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this field when you create the resource.",
                 },
-                destination_ranges: {
+                destinationRanges: {
                   type: "array",
                   items: {
                     type: "string",
@@ -725,7 +725,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of the resource. Always compute#firewall for firewall rules.",
                 },
-                log_config: {
+                logConfig: {
                   type: "object",
                   properties: {
                     enable: {
@@ -756,7 +756,7 @@ const getEffectiveFirewalls: AppBlock = {
                 params: {
                   type: "object",
                   properties: {
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -773,12 +773,12 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "Priority for this rule. This is an integer between `0` and `65535`, both inclusive. The default value is `1000`. Relative priorities determine which rule takes effect if multiple rules apply. Lower values indicate higher priority. For example, a rule with priority `0` has higher precedence than a rule with priority `1`. DENY rules take precedence over ALLOW rules if they have equal priority. Note that VPC networks have implied rules with a priority of `65535`. To avoid conflicts with the implied rules, use a priority number less than `65535`.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "[Output Only] Server-defined URL for the resource.",
                 },
-                source_ranges: {
+                sourceRanges: {
                   type: "array",
                   items: {
                     type: "string",
@@ -786,7 +786,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "If source ranges are specified, the firewall rule applies only to traffic that has a source IP address in these ranges. These ranges must be expressed inCIDR format. One or both of sourceRanges and sourceTags may be set. If both fields are set, the rule applies to traffic that has a source IP address within sourceRanges OR a source IP from a resource with a matching tag listed in thesourceTags field. The connection does not need to match both fields for the rule to apply. Both IPv4 and IPv6 are supported.",
                 },
-                source_service_accounts: {
+                sourceServiceAccounts: {
                   type: "array",
                   items: {
                     type: "string",
@@ -794,7 +794,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "If source service accounts are specified, the firewall rules apply only to traffic originating from an instance with a service account in this list. Source service accounts cannot be used to control traffic to an instance's external IP address because service accounts are associated with an instance, not an IP address.sourceRanges can be set at the same time assourceServiceAccounts. If both are set, the firewall applies to traffic that has a source IP address within the sourceRanges OR a source IP that belongs to an instance with service account listed insourceServiceAccount. The connection does not need to match both fields for the firewall to apply.sourceServiceAccounts cannot be used at the same time assourceTags or targetTags.",
                 },
-                source_tags: {
+                sourceTags: {
                   type: "array",
                   items: {
                     type: "string",
@@ -802,7 +802,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "If source tags are specified, the firewall rule applies only to traffic with source IPs that match the primary network interfaces of VM instances that have the tag and are in the same VPC network. Source tags cannot be used to control traffic to an instance's external IP address, it only applies to traffic between instances in the same virtual network. Because tags are associated with instances, not IP addresses. One or both of sourceRanges and sourceTags may be set. If both fields are set, the firewall applies to traffic that has a source IP address within sourceRanges OR a source IP from a resource with a matching tag listed in the sourceTags field. The connection does not need to match both fields for the firewall to apply.",
                 },
-                target_service_accounts: {
+                targetServiceAccounts: {
                   type: "array",
                   items: {
                     type: "string",
@@ -810,7 +810,7 @@ const getEffectiveFirewalls: AppBlock = {
                   description:
                     "A list of service accounts indicating sets of instances located in the network that may make network connections as specified inallowed[].targetServiceAccounts cannot be used at the same time astargetTags or sourceTags. If neither targetServiceAccounts nor targetTags are specified, the firewall rule applies to all instances on the specified network.",
                 },
-                target_tags: {
+                targetTags: {
                   type: "array",
                   items: {
                     type: "string",

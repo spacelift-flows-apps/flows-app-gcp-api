@@ -1,5 +1,19 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getEkmServiceClient } from "../../lib/grpcClient.ts";
+import { getEkmServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ekmConfig: {
+    name: "ekm_config",
+    fields: {
+      defaultEkmConnection: "default_ekm_connection",
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  default_ekm_connection: "defaultEkmConnection",
+};
 
 const updateEkmConfig: AppBlock = {
   name: "Update Ekm Config",
@@ -8,14 +22,14 @@ const updateEkmConfig: AppBlock = {
   inputs: {
     default: {
       config: {
-        ekm_config: {
+        ekmConfig: {
           name: "Ekm Config",
           description:
             "Required. [EkmConfig][google.cloud.kms.v1.EkmConfig] with updated values.",
           type: {
             type: "object",
             properties: {
-              default_ekm_connection: {
+              defaultEkmConnection: {
                 type: "string",
                 description:
                   "Optional. Resource name of the default [EkmConnection][google.cloud.kms.v1.EkmConnection]. Setting this field to the empty string removes the default.",
@@ -27,7 +41,7 @@ const updateEkmConfig: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Required. List of fields to be updated in this request.",
@@ -42,11 +56,7 @@ const updateEkmConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getEkmServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.ekm_config !== undefined)
-          request.ekm_config = input.event.inputConfig.ekm_config;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateEkmConfig(request, (err: any, response: any) => {
@@ -60,7 +70,8 @@ const updateEkmConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -75,7 +86,7 @@ const updateEkmConfig: AppBlock = {
             description:
               "Output only. The resource name for the [EkmConfig][google.cloud.kms.v1.EkmConfig] in the format `projects/*/locations/*/ekmConfig`.",
           },
-          default_ekm_connection: {
+          defaultEkmConnection: {
             type: "string",
             description:
               "Optional. Resource name of the default [EkmConnection][google.cloud.kms.v1.EkmConnection]. Setting this field to the empty string removes the default.",

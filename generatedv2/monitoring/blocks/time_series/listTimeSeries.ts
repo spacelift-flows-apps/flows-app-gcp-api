@@ -1,5 +1,123 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getMetricServiceClient } from "../../lib/grpcClient.ts";
+import { getMetricServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  interval: {
+    name: "interval",
+    fields: {
+      endTime: "end_time",
+      startTime: "start_time",
+    },
+  },
+  aggregation: {
+    name: "aggregation",
+    fields: {
+      alignmentPeriod: "alignment_period",
+      perSeriesAligner: "per_series_aligner",
+      crossSeriesReducer: "cross_series_reducer",
+      groupByFields: "group_by_fields",
+    },
+  },
+  secondaryAggregation: {
+    name: "secondary_aggregation",
+    fields: {
+      alignmentPeriod: "alignment_period",
+      perSeriesAligner: "per_series_aligner",
+      crossSeriesReducer: "cross_series_reducer",
+      groupByFields: "group_by_fields",
+    },
+  },
+  orderBy: "order_by",
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  time_series: {
+    name: "timeSeries",
+    fields: {
+      metadata: {
+        name: "metadata",
+        fields: {
+          system_labels: "systemLabels",
+          user_labels: "userLabels",
+        },
+      },
+      metric_kind: "metricKind",
+      value_type: "valueType",
+      points: {
+        name: "points",
+        fields: {
+          interval: {
+            name: "interval",
+            fields: {
+              end_time: "endTime",
+              start_time: "startTime",
+            },
+          },
+          value: {
+            name: "value",
+            fields: {
+              bool_value: "boolValue",
+              int64_value: "int64Value",
+              double_value: "doubleValue",
+              string_value: "stringValue",
+              distribution_value: {
+                name: "distributionValue",
+                fields: {
+                  sum_of_squared_deviation: "sumOfSquaredDeviation",
+                  bucket_options: {
+                    name: "bucketOptions",
+                    fields: {
+                      linear_buckets: {
+                        name: "linearBuckets",
+                        fields: {
+                          num_finite_buckets: "numFiniteBuckets",
+                        },
+                      },
+                      exponential_buckets: {
+                        name: "exponentialBuckets",
+                        fields: {
+                          num_finite_buckets: "numFiniteBuckets",
+                          growth_factor: "growthFactor",
+                        },
+                      },
+                      explicit_buckets: "explicitBuckets",
+                    },
+                  },
+                  bucket_counts: "bucketCounts",
+                  exemplars: {
+                    name: "exemplars",
+                    fields: {
+                      attachments: {
+                        name: "attachments",
+                        fields: {
+                          type_url: "typeUrl",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  next_page_token: "nextPageToken",
+  execution_errors: {
+    name: "executionErrors",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+};
 
 const listTimeSeries: AppBlock = {
   name: "List Time Series",
@@ -37,11 +155,11 @@ const listTimeSeries: AppBlock = {
           type: {
             type: "object",
             properties: {
-              end_time: {
+              endTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              start_time: {
+              startTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -59,11 +177,11 @@ const listTimeSeries: AppBlock = {
           type: {
             type: "object",
             properties: {
-              alignment_period: {
+              alignmentPeriod: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              per_series_aligner: {
+              perSeriesAligner: {
                 type: "string",
                 enum: [
                   "ALIGN_NONE",
@@ -89,7 +207,7 @@ const listTimeSeries: AppBlock = {
                 description:
                   "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
               },
-              cross_series_reducer: {
+              crossSeriesReducer: {
                 type: "string",
                 enum: [
                   "REDUCE_NONE",
@@ -110,7 +228,7 @@ const listTimeSeries: AppBlock = {
                 description:
                   "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
               },
-              group_by_fields: {
+              groupByFields: {
                 type: "array",
                 items: {
                   type: "string",
@@ -125,18 +243,18 @@ const listTimeSeries: AppBlock = {
           },
           required: false,
         },
-        secondary_aggregation: {
+        secondaryAggregation: {
           name: "Secondary Aggregation",
           description:
             "Apply a second aggregation after `aggregation` is applied. May only be specified if `aggregation` is specified.",
           type: {
             type: "object",
             properties: {
-              alignment_period: {
+              alignmentPeriod: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              per_series_aligner: {
+              perSeriesAligner: {
                 type: "string",
                 enum: [
                   "ALIGN_NONE",
@@ -162,7 +280,7 @@ const listTimeSeries: AppBlock = {
                 description:
                   "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
               },
-              cross_series_reducer: {
+              crossSeriesReducer: {
                 type: "string",
                 enum: [
                   "REDUCE_NONE",
@@ -183,7 +301,7 @@ const listTimeSeries: AppBlock = {
                 description:
                   "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
               },
-              group_by_fields: {
+              groupByFields: {
                 type: "array",
                 items: {
                   type: "string",
@@ -198,7 +316,7 @@ const listTimeSeries: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             "Unsupported: must be left blank. The points in each time series are currently returned in reverse time order (most recent to oldest).",
@@ -221,7 +339,7 @@ const listTimeSeries: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "A positive number that is the maximum number of results to return. If `page_size` is empty or more than 100,000 results, the effective `page_size` is 100,000 results. If `view` is set to `FULL`, this is the maximum number of `Points` returned. If `view` is set to `HEADERS`, this is the maximum number of `TimeSeries` returned.",
@@ -232,7 +350,7 @@ const listTimeSeries: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If this field is not empty then it must contain the `nextPageToken` value returned by a previous call to this method.  Using this field causes the method to return additional results from the previous method call.",
@@ -247,26 +365,7 @@ const listTimeSeries: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.interval !== undefined)
-          request.interval = input.event.inputConfig.interval;
-        if (input.event.inputConfig.aggregation !== undefined)
-          request.aggregation = input.event.inputConfig.aggregation;
-        if (input.event.inputConfig.secondary_aggregation !== undefined)
-          request.secondary_aggregation =
-            input.event.inputConfig.secondary_aggregation;
-        if (input.event.inputConfig.order_by !== undefined)
-          request.order_by = input.event.inputConfig.order_by;
-        if (input.event.inputConfig.view !== undefined)
-          request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listTimeSeries(request, (err: any, response: any) => {
@@ -280,7 +379,8 @@ const listTimeSeries: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -290,7 +390,7 @@ const listTimeSeries: AppBlock = {
       type: {
         type: "object",
         properties: {
-          time_series: {
+          timeSeries: {
             type: "array",
             items: {
               type: "object",
@@ -332,11 +432,11 @@ const listTimeSeries: AppBlock = {
                 metadata: {
                   type: "object",
                   properties: {
-                    system_labels: {
+                    systemLabels: {
                       type: "object",
                       additionalProperties: true,
                     },
-                    user_labels: {
+                    userLabels: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -347,7 +447,7 @@ const listTimeSeries: AppBlock = {
                   description:
                     "Output only. The associated monitored resource metadata. When reading a time series, this field will include metadata labels that are explicitly named in the reduction. When creating a time series, this field is ignored.",
                 },
-                metric_kind: {
+                metricKind: {
                   type: "string",
                   enum: [
                     "METRIC_KIND_UNSPECIFIED",
@@ -358,7 +458,7 @@ const listTimeSeries: AppBlock = {
                   description:
                     "The metric kind of the time series. When listing time series, this metric kind might be different from the metric kind of the associated metric if this time series is an alignment or reduction of other time series.  When creating a time series, this field is optional. If present, it must be the same as the metric kind of the associated metric. If the associated metric's descriptor must be auto-created, then this field specifies the metric kind of the new descriptor and must be either `GAUGE` (the default) or `CUMULATIVE`.",
                 },
-                value_type: {
+                valueType: {
                   type: "string",
                   enum: [
                     "VALUE_TYPE_UNSPECIFIED",
@@ -380,12 +480,12 @@ const listTimeSeries: AppBlock = {
                       interval: {
                         type: "object",
                         properties: {
-                          end_time: {
+                          endTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                           },
-                          start_time: {
+                          startTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -398,27 +498,27 @@ const listTimeSeries: AppBlock = {
                       value: {
                         type: "object",
                         properties: {
-                          bool_value: {
+                          boolValue: {
                             type: "boolean",
                             description:
                               "A Boolean value: `true` or `false`. (Part of 'value' - only one field in this group can be set)",
                           },
-                          int64_value: {
+                          int64Value: {
                             type: "string",
                             description:
                               "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                           },
-                          double_value: {
+                          doubleValue: {
                             type: "number",
                             description:
                               "A 64-bit double-precision floating-point number. Its magnitude is approximately &plusmn;10<sup>&plusmn;300</sup> and it has 16 significant digits of precision. (Part of 'value' - only one field in this group can be set)",
                           },
-                          string_value: {
+                          stringValue: {
                             type: "string",
                             description:
                               "A variable-length string value. (Part of 'value' - only one field in this group can be set)",
                           },
-                          distribution_value: {
+                          distributionValue: {
                             type: "object",
                             properties: {
                               count: {
@@ -428,7 +528,7 @@ const listTimeSeries: AppBlock = {
                               mean: {
                                 type: "number",
                               },
-                              sum_of_squared_deviation: {
+                              sumOfSquaredDeviation: {
                                 type: "number",
                               },
                               range: {
@@ -445,13 +545,13 @@ const listTimeSeries: AppBlock = {
                                   "Range of numerical values within `min` and `max`.",
                                 additionalProperties: true,
                               },
-                              bucket_options: {
+                              bucketOptions: {
                                 type: "object",
                                 properties: {
-                                  linear_buckets: {
+                                  linearBuckets: {
                                     type: "object",
                                     properties: {
-                                      num_finite_buckets: {
+                                      numFiniteBuckets: {
                                         type: "integer",
                                       },
                                       width: {
@@ -465,13 +565,13 @@ const listTimeSeries: AppBlock = {
                                     description:
                                       "(Part of 'options' - only one field in this group can be set)",
                                   },
-                                  exponential_buckets: {
+                                  exponentialBuckets: {
                                     type: "object",
                                     properties: {
-                                      num_finite_buckets: {
+                                      numFiniteBuckets: {
                                         type: "integer",
                                       },
-                                      growth_factor: {
+                                      growthFactor: {
                                         type: "number",
                                       },
                                       scale: {
@@ -482,7 +582,7 @@ const listTimeSeries: AppBlock = {
                                     description:
                                       "(Part of 'options' - only one field in this group can be set)",
                                   },
-                                  explicit_buckets: {
+                                  explicitBuckets: {
                                     type: "object",
                                     properties: {
                                       bounds: {
@@ -499,7 +599,7 @@ const listTimeSeries: AppBlock = {
                                 },
                                 additionalProperties: true,
                               },
-                              bucket_counts: {
+                              bucketCounts: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -524,7 +624,7 @@ const listTimeSeries: AppBlock = {
                                       items: {
                                         type: "object",
                                         properties: {
-                                          type_url: {
+                                          typeUrl: {
                                             type: "string",
                                           },
                                           value: {
@@ -573,12 +673,12 @@ const listTimeSeries: AppBlock = {
             description:
               "One or more time series that match the filter included in the request.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If there are more results than have been returned, then this field is set to a non-empty value.  To see the additional results, use that value as `page_token` in the next call to this method.",
           },
-          execution_errors: {
+          executionErrors: {
             type: "array",
             items: {
               type: "object",
@@ -594,7 +694,7 @@ const listTimeSeries: AppBlock = {
                   items: {
                     type: "object",
                     properties: {
-                      type_url: {
+                      typeUrl: {
                         type: "string",
                       },
                       value: {

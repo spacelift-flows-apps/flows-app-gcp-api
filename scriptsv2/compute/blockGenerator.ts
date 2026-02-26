@@ -28,8 +28,10 @@ export function generateRestBlockSource(block: ComputeGeneratedBlock): string {
   );
   for (const p of block.pathParams) {
     if (p === "project") continue;
+    const field = rpc.requestType.fields.find((f) => f.name === p);
+    const configKey = field?.jsonName ?? p;
     pathLines.push(
-      `        if (input.event.inputConfig.${p} !== undefined) pathParams["${p}"] = String(input.event.inputConfig.${p});`,
+      `        if (input.event.inputConfig.${configKey} !== undefined) pathParams["${p}"] = String(input.event.inputConfig.${configKey});`,
     );
   }
 
@@ -38,11 +40,11 @@ export function generateRestBlockSource(block: ComputeGeneratedBlock): string {
   if (block.queryParams.length > 0) {
     queryLines.push("        const queryParams: Record<string, string> = {};");
     for (const q of block.queryParams) {
-      // Find the field to get its jsonName for the query parameter key
       const field = rpc.requestType.fields.find((f) => f.name === q);
+      const configKey = field?.jsonName ?? q;
       const queryKey = field?.jsonName ?? q;
       queryLines.push(
-        `        if (input.event.inputConfig.${q} !== undefined) queryParams["${queryKey}"] = String(input.event.inputConfig.${q});`,
+        `        if (input.event.inputConfig.${configKey} !== undefined) queryParams["${queryKey}"] = String(input.event.inputConfig.${configKey});`,
       );
     }
   }
@@ -58,7 +60,7 @@ export function generateRestBlockSource(block: ComputeGeneratedBlock): string {
       bodyLines.push("        const body: Record<string, any> = {};");
       for (const bf of bodyFields) {
         bodyLines.push(
-          `        if (input.event.inputConfig.${bf.name} !== undefined) body.${bf.name} = input.event.inputConfig.${bf.name};`,
+          `        if (input.event.inputConfig.${bf.jsonName} !== undefined) body.${bf.jsonName} = input.event.inputConfig.${bf.jsonName};`,
         );
       }
     }
@@ -135,11 +137,13 @@ function buildInputConfig(
   for (const paramName of block.pathParams) {
     if (paramName === "project") continue;
     const field = rpc.requestType.fields.find((f) => f.name === paramName);
+    const configKey = field?.jsonName ?? paramName;
+    // Humanize from snake_case name (explicit word boundaries)
     const humanName = paramName
       .split("_")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
-    config[paramName] = {
+    config[configKey] = {
       name: humanName,
       description: field?.comment || `${humanName} for this request.`,
       type: { type: "string" },
@@ -161,11 +165,13 @@ function buildInputConfig(
   // Query params
   for (const qName of block.queryParams) {
     const field = rpc.requestType.fields.find((f) => f.name === qName);
+    const configKey = field?.jsonName ?? qName;
+    // Humanize from snake_case name (explicit word boundaries)
     const humanName = qName
       .split("_")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
-    config[qName] = {
+    config[configKey] = {
       name: humanName,
       description: field?.comment || `${humanName} parameter.`,
       type: { type: "string" },

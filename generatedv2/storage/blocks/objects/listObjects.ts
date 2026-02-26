@@ -2,7 +2,87 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  includeTrailingDelimiter: "include_trailing_delimiter",
+  readMask: "read_mask",
+  lexicographicStart: "lexicographic_start",
+  lexicographicEnd: "lexicographic_end",
+  softDeleted: "soft_deleted",
+  includeFoldersAsPrefixes: "include_folders_as_prefixes",
+  matchGlob: "match_glob",
+};
+
+const outputMapping = {
+  objects: {
+    name: "objects",
+    fields: {
+      restore_token: "restoreToken",
+      storage_class: "storageClass",
+      content_encoding: "contentEncoding",
+      content_disposition: "contentDisposition",
+      cache_control: "cacheControl",
+      acl: {
+        name: "acl",
+        fields: {
+          entity_alt: "entityAlt",
+          entity_id: "entityId",
+          project_team: {
+            name: "projectTeam",
+            fields: {
+              project_number: "projectNumber",
+            },
+          },
+        },
+      },
+      content_language: "contentLanguage",
+      delete_time: "deleteTime",
+      finalize_time: "finalizeTime",
+      content_type: "contentType",
+      create_time: "createTime",
+      component_count: "componentCount",
+      checksums: {
+        name: "checksums",
+        fields: {
+          md5_hash: "md5Hash",
+        },
+      },
+      update_time: "updateTime",
+      kms_key: "kmsKey",
+      update_storage_class_time: "updateStorageClassTime",
+      temporary_hold: "temporaryHold",
+      retention_expire_time: "retentionExpireTime",
+      event_based_hold: "eventBasedHold",
+      owner: {
+        name: "owner",
+        fields: {
+          entity_id: "entityId",
+        },
+      },
+      customer_encryption: {
+        name: "customerEncryption",
+        fields: {
+          encryption_algorithm: "encryptionAlgorithm",
+          key_sha256_bytes: "keySha256Bytes",
+        },
+      },
+      custom_time: "customTime",
+      soft_delete_time: "softDeleteTime",
+      hard_delete_time: "hardDeleteTime",
+      retention: {
+        name: "retention",
+        fields: {
+          retain_until_time: "retainUntilTime",
+        },
+      },
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listObjects: AppBlock = {
   name: "List Objects",
@@ -22,7 +102,7 @@ const listObjects: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. Maximum number of `items` plus `prefixes` to return in a single page of responses. As duplicate `prefixes` are omitted, fewer total results might be returned than requested. The service uses this parameter or 1,000 items, whichever is smaller.",
@@ -33,7 +113,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. A previously-returned page token representing part of the larger set of results to view.",
@@ -55,7 +135,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        include_trailing_delimiter: {
+        includeTrailingDelimiter: {
           name: "Include Trailing Delimiter",
           description:
             "Optional. If true, objects that end in exactly one instance of `delimiter` has their metadata included in `items` in addition to `prefixes`.",
@@ -88,7 +168,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        read_mask: {
+        readMask: {
           name: "Read Mask",
           description:
             "Mask specifying which fields to read from each result. If no mask is specified, defaults to all fields except `items.acl` and `items.owner`. `*` might be used to mean all fields.",
@@ -99,7 +179,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        lexicographic_start: {
+        lexicographicStart: {
           name: "Lexicographic Start",
           description:
             "Optional. Filter results to objects whose names are lexicographically equal to or after `lexicographic_start`. If `lexicographic_end` is also set, the objects listed have names between `lexicographic_start` (inclusive) and `lexicographic_end` (exclusive).",
@@ -110,7 +190,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        lexicographic_end: {
+        lexicographicEnd: {
           name: "Lexicographic End",
           description:
             "Optional. Filter results to objects whose names are lexicographically before `lexicographic_end`. If `lexicographic_start` is also set, the objects listed have names between `lexicographic_start` (inclusive) and `lexicographic_end` (exclusive).",
@@ -121,7 +201,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        soft_deleted: {
+        softDeleted: {
           name: "Soft Deleted",
           description:
             "Optional. If true, only list all soft-deleted versions of the object. Soft delete policy is required to set this option.",
@@ -132,7 +212,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        include_folders_as_prefixes: {
+        includeFoldersAsPrefixes: {
           name: "Include Folders As Prefixes",
           description:
             "Optional. If true, includes folders and managed folders (besides objects) in the returned `prefixes`. Requires `delimiter` to be set to '/'.",
@@ -143,7 +223,7 @@ const listObjects: AppBlock = {
           },
           required: false,
         },
-        match_glob: {
+        matchGlob: {
           name: "Match Glob",
           description:
             "Optional. Filter results to objects and prefixes that match this glob pattern. See [List objects using glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob) for the full syntax.",
@@ -169,38 +249,7 @@ const listObjects: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.delimiter !== undefined)
-          request.delimiter = input.event.inputConfig.delimiter;
-        if (input.event.inputConfig.include_trailing_delimiter !== undefined)
-          request.include_trailing_delimiter =
-            input.event.inputConfig.include_trailing_delimiter;
-        if (input.event.inputConfig.prefix !== undefined)
-          request.prefix = input.event.inputConfig.prefix;
-        if (input.event.inputConfig.versions !== undefined)
-          request.versions = input.event.inputConfig.versions;
-        if (input.event.inputConfig.read_mask !== undefined)
-          request.read_mask = input.event.inputConfig.read_mask;
-        if (input.event.inputConfig.lexicographic_start !== undefined)
-          request.lexicographic_start =
-            input.event.inputConfig.lexicographic_start;
-        if (input.event.inputConfig.lexicographic_end !== undefined)
-          request.lexicographic_end = input.event.inputConfig.lexicographic_end;
-        if (input.event.inputConfig.soft_deleted !== undefined)
-          request.soft_deleted = input.event.inputConfig.soft_deleted;
-        if (input.event.inputConfig.include_folders_as_prefixes !== undefined)
-          request.include_folders_as_prefixes =
-            input.event.inputConfig.include_folders_as_prefixes;
-        if (input.event.inputConfig.match_glob !== undefined)
-          request.match_glob = input.event.inputConfig.match_glob;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.parent !== undefined)
@@ -218,7 +267,8 @@ const listObjects: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -252,7 +302,7 @@ const listObjects: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                restore_token: {
+                restoreToken: {
                   type: "string",
                   description:
                     "Output only. Restore token used to differentiate deleted objects with the same name and generation. This field is output only, and only set for deleted objects in HNS buckets.",
@@ -261,7 +311,7 @@ const listObjects: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                storage_class: {
+                storageClass: {
                   type: "string",
                   description: "Optional. Storage class of the object.",
                 },
@@ -269,17 +319,17 @@ const listObjects: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                content_encoding: {
+                contentEncoding: {
                   type: "string",
                   description:
                     "Optional. Content-Encoding of the object data, matching [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)",
                 },
-                content_disposition: {
+                contentDisposition: {
                   type: "string",
                   description:
                     "Optional. Content-Disposition of the object data, matching [RFC 6266](https://tools.ietf.org/html/rfc6266).",
                 },
-                cache_control: {
+                cacheControl: {
                   type: "string",
                   description:
                     "Optional. Cache-Control directive for the object data, matching [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2). If omitted, and the object is accessible to all anonymous users, the default is `public, max-age=3600`.",
@@ -304,12 +354,12 @@ const listObjects: AppBlock = {
                         description:
                           "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                       },
-                      entity_alt: {
+                      entityAlt: {
                         type: "string",
                         description:
                           "Output only. The alternative entity format, if exists. For project entities, `project-{team}-{projectid}` format is returned in the response.",
                       },
-                      entity_id: {
+                      entityId: {
                         type: "string",
                         description: "Optional. The ID for the entity, if any.",
                       },
@@ -328,10 +378,10 @@ const listObjects: AppBlock = {
                         description:
                           "Optional. The domain associated with the entity, if any.",
                       },
-                      project_team: {
+                      projectTeam: {
                         type: "object",
                         properties: {
-                          project_number: {
+                          projectNumber: {
                             type: "string",
                             description: "Optional. The project number.",
                           },
@@ -351,32 +401,32 @@ const listObjects: AppBlock = {
                   description:
                     "Optional. Access controls on the object. If `iam_config.uniform_bucket_level_access` is enabled on the parent bucket, requests to set, read, or modify acl is an error.",
                 },
-                content_language: {
+                contentLanguage: {
                   type: "string",
                   description:
                     "Optional. Content-Language of the object data, matching [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).",
                 },
-                delete_time: {
+                deleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                finalize_time: {
+                finalizeTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                content_type: {
+                contentType: {
                   type: "string",
                   description:
                     "Optional. Content-Type of the object data, matching [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5). If an object is stored without a Content-Type, it is served as `application/octet-stream`.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                component_count: {
+                componentCount: {
                   type: "integer",
                   description:
                     "Output only. Number of underlying components that make up this object. Components are accumulated by compose operations.",
@@ -389,7 +439,7 @@ const listObjects: AppBlock = {
                       description:
                         "CRC32C digest of the object data. Computed by the Cloud Storage service for all written objects. If set in a WriteObjectRequest, service validates that the stored object matches this checksum.",
                     },
-                    md5_hash: {
+                    md5Hash: {
                       type: "string",
                       description: "Base64-encoded bytes",
                     },
@@ -398,27 +448,27 @@ const listObjects: AppBlock = {
                     "Message used for storing full (not subrange) object checksums.",
                   additionalProperties: true,
                 },
-                update_time: {
+                updateTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                kms_key: {
+                kmsKey: {
                   type: "string",
                   description:
                     "Optional. Cloud KMS Key used to encrypt this object, if the object is encrypted by such a key.",
                 },
-                update_storage_class_time: {
+                updateStorageClassTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                temporary_hold: {
+                temporaryHold: {
                   type: "boolean",
                   description:
                     "Optional. Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.  A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
                 },
-                retention_expire_time: {
+                retentionExpireTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -446,7 +496,7 @@ const listObjects: AppBlock = {
                   description: "All contexts of an object grouped by type.",
                   additionalProperties: true,
                 },
-                event_based_hold: {
+                eventBasedHold: {
                   type: "boolean",
                   description:
                     "Whether an object is under event-based hold. An event-based hold is a way to force the retention of an object until after some event occurs. Once the hold is released by explicitly setting this field to `false`, the object becomes subject to any bucket-level retention policy, except that the retention duration is calculated from the time the event based hold was lifted, rather than the time the object was created.  In a `WriteObject` request, not setting this field implies that the value should be taken from the parent bucket's `default_event_based_hold` field. In a response, this field is always set to `true` or `false`.",
@@ -459,7 +509,7 @@ const listObjects: AppBlock = {
                       description:
                         "Optional. The entity, in the form `user-`*userId*.",
                     },
-                    entity_id: {
+                    entityId: {
                       type: "string",
                       description: "Optional. The ID for the entity.",
                     },
@@ -467,14 +517,14 @@ const listObjects: AppBlock = {
                   description: "The owner of a specific resource.",
                   additionalProperties: true,
                 },
-                customer_encryption: {
+                customerEncryption: {
                   type: "object",
                   properties: {
-                    encryption_algorithm: {
+                    encryptionAlgorithm: {
                       type: "string",
                       description: "Optional. The encryption algorithm.",
                     },
-                    key_sha256_bytes: {
+                    keySha256Bytes: {
                       type: "string",
                       description: "Base64-encoded bytes",
                     },
@@ -483,17 +533,17 @@ const listObjects: AppBlock = {
                     "Describes the customer-supplied encryption key mechanism used to store an object's data at rest.",
                   additionalProperties: true,
                 },
-                custom_time: {
+                customTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                soft_delete_time: {
+                softDeleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                hard_delete_time: {
+                hardDeleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -506,7 +556,7 @@ const listObjects: AppBlock = {
                       enum: ["MODE_UNSPECIFIED", "UNLOCKED", "LOCKED"],
                       description: "Optional. The mode of the Retention.",
                     },
-                    retain_until_time: {
+                    retainUntilTime: {
                       type: "string",
                       description:
                         "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -530,7 +580,7 @@ const listObjects: AppBlock = {
             description:
               "The list of prefixes of objects matching-but-not-listed up to and including the requested delimiter.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results.",

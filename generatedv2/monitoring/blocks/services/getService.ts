@@ -1,5 +1,90 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getServiceMonitoringServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getServiceMonitoringServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  display_name: "displayName",
+  app_engine: {
+    name: "appEngine",
+    fields: {
+      module_id: "moduleId",
+    },
+  },
+  cloud_endpoints: "cloudEndpoints",
+  cluster_istio: {
+    name: "clusterIstio",
+    fields: {
+      cluster_name: "clusterName",
+      service_namespace: "serviceNamespace",
+      service_name: "serviceName",
+    },
+  },
+  mesh_istio: {
+    name: "meshIstio",
+    fields: {
+      mesh_uid: "meshUid",
+      service_namespace: "serviceNamespace",
+      service_name: "serviceName",
+    },
+  },
+  istio_canonical_service: {
+    name: "istioCanonicalService",
+    fields: {
+      mesh_uid: "meshUid",
+      canonical_service_namespace: "canonicalServiceNamespace",
+      canonical_service: "canonicalService",
+    },
+  },
+  cloud_run: {
+    name: "cloudRun",
+    fields: {
+      service_name: "serviceName",
+    },
+  },
+  gke_namespace: {
+    name: "gkeNamespace",
+    fields: {
+      project_id: "projectId",
+      cluster_name: "clusterName",
+      namespace_name: "namespaceName",
+    },
+  },
+  gke_workload: {
+    name: "gkeWorkload",
+    fields: {
+      project_id: "projectId",
+      cluster_name: "clusterName",
+      namespace_name: "namespaceName",
+      top_level_controller_type: "topLevelControllerType",
+      top_level_controller_name: "topLevelControllerName",
+    },
+  },
+  gke_service: {
+    name: "gkeService",
+    fields: {
+      project_id: "projectId",
+      cluster_name: "clusterName",
+      namespace_name: "namespaceName",
+      service_name: "serviceName",
+    },
+  },
+  basic_service: {
+    name: "basicService",
+    fields: {
+      service_type: "serviceType",
+      service_labels: "serviceLabels",
+    },
+  },
+  telemetry: {
+    name: "telemetry",
+    fields: {
+      resource_name: "resourceName",
+    },
+  },
+  user_labels: "userLabels",
+};
 
 const getService: AppBlock = {
   name: "Get Service",
@@ -25,9 +110,7 @@ const getService: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getService(request, (err: any, response: any) => {
@@ -41,7 +124,8 @@ const getService: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -56,7 +140,7 @@ const getService: AppBlock = {
             description:
               "Identifier. Resource name for this Service. The format is:      projects/[PROJECT_ID_OR_NUMBER]/services/[SERVICE_ID]",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description: "Name used for UI elements listing this Service.",
           },
@@ -67,10 +151,10 @@ const getService: AppBlock = {
               "Use a custom service to designate a service that you want to monitor when none of the other service types (like App Engine, Cloud Run, or a GKE type) matches your intended service. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          app_engine: {
+          appEngine: {
             type: "object",
             properties: {
-              module_id: {
+              moduleId: {
                 type: "string",
                 description:
                   "The ID of the App Engine module underlying this service. Corresponds to the `module_id` resource label in the [`gae_app` monitored resource](https://cloud.google.com/monitoring/api/resources#tag_gae_app).",
@@ -80,7 +164,7 @@ const getService: AppBlock = {
               "App Engine service. Learn more at https://cloud.google.com/appengine. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          cloud_endpoints: {
+          cloudEndpoints: {
             type: "object",
             properties: {
               service: {
@@ -93,7 +177,7 @@ const getService: AppBlock = {
               "Cloud Endpoints service. Learn more at https://cloud.google.com/endpoints. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          cluster_istio: {
+          clusterIstio: {
             type: "object",
             properties: {
               location: {
@@ -101,17 +185,17 @@ const getService: AppBlock = {
                 description:
                   "The location of the Kubernetes cluster in which this Istio service is defined. Corresponds to the `location` resource label in `k8s_cluster` resources.",
               },
-              cluster_name: {
+              clusterName: {
                 type: "string",
                 description:
                   "The name of the Kubernetes cluster in which this Istio service is defined. Corresponds to the `cluster_name` resource label in `k8s_cluster` resources.",
               },
-              service_namespace: {
+              serviceNamespace: {
                 type: "string",
                 description:
                   "The namespace of the Istio service underlying this service. Corresponds to the `destination_service_namespace` metric label in Istio metrics.",
               },
-              service_name: {
+              serviceName: {
                 type: "string",
                 description:
                   "The name of the Istio service underlying this service. Corresponds to the `destination_service_name` metric label in Istio metrics.",
@@ -121,20 +205,20 @@ const getService: AppBlock = {
               "Istio service scoped to a single Kubernetes cluster. Learn more at https://istio.io. Clusters running OSS Istio will have their services ingested as this type. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          mesh_istio: {
+          meshIstio: {
             type: "object",
             properties: {
-              mesh_uid: {
+              meshUid: {
                 type: "string",
                 description:
                   "Identifier for the mesh in which this Istio service is defined. Corresponds to the `mesh_uid` metric label in Istio metrics.",
               },
-              service_namespace: {
+              serviceNamespace: {
                 type: "string",
                 description:
                   "The namespace of the Istio service underlying this service. Corresponds to the `destination_service_namespace` metric label in Istio metrics.",
               },
-              service_name: {
+              serviceName: {
                 type: "string",
                 description:
                   "The name of the Istio service underlying this service. Corresponds to the `destination_service_name` metric label in Istio metrics.",
@@ -144,20 +228,20 @@ const getService: AppBlock = {
               "Istio service scoped to an Istio mesh. Anthos clusters running ASM < 1.6.8 will have their services ingested as this type. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          istio_canonical_service: {
+          istioCanonicalService: {
             type: "object",
             properties: {
-              mesh_uid: {
+              meshUid: {
                 type: "string",
                 description:
                   "Identifier for the Istio mesh in which this canonical service is defined. Corresponds to the `mesh_uid` metric label in [Istio metrics](https://cloud.google.com/monitoring/api/metrics_istio).",
               },
-              canonical_service_namespace: {
+              canonicalServiceNamespace: {
                 type: "string",
                 description:
                   "The namespace of the canonical service underlying this service. Corresponds to the `destination_canonical_service_namespace` metric label in [Istio metrics](https://cloud.google.com/monitoring/api/metrics_istio).",
               },
-              canonical_service: {
+              canonicalService: {
                 type: "string",
                 description:
                   "The name of the canonical service underlying this service. Corresponds to the `destination_canonical_service_name` metric label in label in [Istio metrics](https://cloud.google.com/monitoring/api/metrics_istio).",
@@ -167,10 +251,10 @@ const getService: AppBlock = {
               "Canonical service scoped to an Istio mesh. Anthos clusters running ASM >= 1.6.8 will have their services ingested as this type. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          cloud_run: {
+          cloudRun: {
             type: "object",
             properties: {
-              service_name: {
+              serviceName: {
                 type: "string",
                 description:
                   "The name of the Cloud Run service. Corresponds to the `service_name` resource label in the [`cloud_run_revision` monitored resource](https://cloud.google.com/monitoring/api/resources#tag_cloud_run_revision).",
@@ -185,10 +269,10 @@ const getService: AppBlock = {
               "Cloud Run service. Learn more at https://cloud.google.com/run. (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          gke_namespace: {
+          gkeNamespace: {
             type: "object",
             properties: {
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Output only. The project this resource lives in. For legacy services migrated from the `Custom` type, this may be a distinct project from the one parenting the service itself.",
@@ -198,11 +282,11 @@ const getService: AppBlock = {
                 description:
                   "The location of the parent cluster. This may be a zone or region.",
               },
-              cluster_name: {
+              clusterName: {
                 type: "string",
                 description: "The name of the parent cluster.",
               },
-              namespace_name: {
+              namespaceName: {
                 type: "string",
                 description: "The name of this namespace.",
               },
@@ -211,10 +295,10 @@ const getService: AppBlock = {
               "GKE Namespace. The field names correspond to the resource metadata labels on monitored resources that fall under a namespace (for example, `k8s_container` or `k8s_pod`). (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          gke_workload: {
+          gkeWorkload: {
             type: "object",
             properties: {
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Output only. The project this resource lives in. For legacy services migrated from the `Custom` type, this may be a distinct project from the one parenting the service itself.",
@@ -224,20 +308,20 @@ const getService: AppBlock = {
                 description:
                   "The location of the parent cluster. This may be a zone or region.",
               },
-              cluster_name: {
+              clusterName: {
                 type: "string",
                 description: "The name of the parent cluster.",
               },
-              namespace_name: {
+              namespaceName: {
                 type: "string",
                 description: "The name of the parent namespace.",
               },
-              top_level_controller_type: {
+              topLevelControllerType: {
                 type: "string",
                 description:
                   'The type of this workload (for example, "Deployment" or "DaemonSet")',
               },
-              top_level_controller_name: {
+              topLevelControllerName: {
                 type: "string",
                 description: "The name of this workload.",
               },
@@ -246,10 +330,10 @@ const getService: AppBlock = {
               "A GKE Workload (Deployment, StatefulSet, etc). The field names correspond to the metadata labels on monitored resources that fall under a workload (for example, `k8s_container` or `k8s_pod`). (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          gke_service: {
+          gkeService: {
             type: "object",
             properties: {
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Output only. The project this resource lives in. For legacy services migrated from the `Custom` type, this may be a distinct project from the one parenting the service itself.",
@@ -259,15 +343,15 @@ const getService: AppBlock = {
                 description:
                   "The location of the parent cluster. This may be a zone or region.",
               },
-              cluster_name: {
+              clusterName: {
                 type: "string",
                 description: "The name of the parent cluster.",
               },
-              namespace_name: {
+              namespaceName: {
                 type: "string",
                 description: "The name of the parent namespace.",
               },
-              service_name: {
+              serviceName: {
                 type: "string",
                 description: "The name of this service.",
               },
@@ -276,15 +360,15 @@ const getService: AppBlock = {
               "GKE Service. The \"service\" here represents a [Kubernetes service object](https://kubernetes.io/docs/concepts/services-networking/service). The field names correspond to the resource labels on [`k8s_service` monitored resources](https://cloud.google.com/monitoring/api/resources#tag_k8s_service). (Part of 'identifier' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          basic_service: {
+          basicService: {
             type: "object",
             properties: {
-              service_type: {
+              serviceType: {
                 type: "string",
                 description:
                   "The type of service that this basic service defines, e.g. APP_ENGINE service type. Documentation and valid values [here](https://cloud.google.com/stackdriver/docs/solutions/slo-monitoring/api/api-structures#basic-svc-w-basic-sli).",
               },
-              service_labels: {
+              serviceLabels: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -300,7 +384,7 @@ const getService: AppBlock = {
           telemetry: {
             type: "object",
             properties: {
-              resource_name: {
+              resourceName: {
                 type: "string",
                 description:
                   "The full name of the resource that defines this service. Formatted as described in https://cloud.google.com/apis/design/resource_names.",
@@ -310,7 +394,7 @@ const getService: AppBlock = {
               "Configuration for how to query telemetry on a Service.",
             additionalProperties: true,
           },
-          user_labels: {
+          userLabels: {
             type: "object",
             additionalProperties: {
               type: "string",

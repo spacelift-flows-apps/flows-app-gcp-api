@@ -1,5 +1,27 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getMetricServiceClient } from "../../lib/grpcClient.ts";
+import { getMetricServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  resource_descriptors: {
+    name: "resourceDescriptors",
+    fields: {
+      display_name: "displayName",
+      labels: {
+        name: "labels",
+        fields: {
+          value_type: "valueType",
+        },
+      },
+      launch_stage: "launchStage",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listMonitoredResourceDescriptors: AppBlock = {
   name: "List Monitored Resource Descriptors",
@@ -30,7 +52,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "A positive number that is the maximum number of results to return.",
@@ -41,7 +63,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If this field is not empty then it must contain the `nextPageToken` value returned by a previous call to this method.  Using this field causes the method to return additional results from the previous method call.",
@@ -56,15 +78,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listMonitoredResourceDescriptors(
@@ -81,7 +95,8 @@ const listMonitoredResourceDescriptors: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -91,7 +106,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
       type: {
         type: "object",
         properties: {
-          resource_descriptors: {
+          resourceDescriptors: {
             type: "array",
             items: {
               type: "object",
@@ -102,7 +117,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
                 type: {
                   type: "string",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                 },
                 description: {
@@ -116,7 +131,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
                       key: {
                         type: "string",
                       },
-                      value_type: {
+                      valueType: {
                         type: "string",
                         enum: ["STRING", "BOOL", "INT64"],
                       },
@@ -127,7 +142,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
                     additionalProperties: true,
                   },
                 },
-                launch_stage: {
+                launchStage: {
                   type: "string",
                   enum: [
                     "LAUNCH_STAGE_UNSPECIFIED",
@@ -146,7 +161,7 @@ const listMonitoredResourceDescriptors: AppBlock = {
             description:
               "The monitored resource descriptors that are available to this project and that match `filter`, if present.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If there are more results than have been returned, then this field is set to a non-empty value.  To see the additional results, use that value as `page_token` in the next call to this method.",

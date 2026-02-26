@@ -8,7 +8,7 @@ const patchRule: AppBlock = {
   inputs: {
     default: {
       config: {
-        security_policy: {
+        securityPolicy: {
           name: "Security Policy",
           description: "Name of the security policy to update.",
           type: {
@@ -38,23 +38,23 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        header_action: {
+        headerAction: {
           name: "Header Action",
           description:
             "Optional, additional actions that are performed on headers. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
           type: {
             type: "object",
             properties: {
-              request_headers_to_adds: {
+              requestHeadersToAdds: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    header_name: {
+                    headerName: {
                       type: "string",
                       description: "The name of the header to set.",
                     },
-                    header_value: {
+                    headerValue: {
                       type: "string",
                       description: "The value to set the named header to.",
                     },
@@ -92,7 +92,7 @@ const patchRule: AppBlock = {
               config: {
                 type: "object",
                 properties: {
-                  src_ip_ranges: {
+                  srcIpRanges: {
                     type: "array",
                     items: {
                       type: "string",
@@ -133,13 +133,13 @@ const patchRule: AppBlock = {
                   'Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec.  Example (Comparison):      title: "Summary size limit"     description: "Determines if a summary is less than 100 chars"     expression: "document.summary.size() < 100"  Example (Equality):      title: "Requestor is owner"     description: "Determines if requestor is the document owner"     expression: "document.owner == request.auth.claims.email"  Example (Logic):      title: "Public documents"     description: "Determine whether the document should be publicly visible"     expression: "document.type != \'private\' && document.type != \'internal\'"  Example (Data Manipulation):      title: "Notification string"     description: "Create a notification string with a timestamp."     expression: "\'New message received at \' + string(document.create_time)"  The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.',
                 additionalProperties: true,
               },
-              expr_options: {
+              exprOptions: {
                 type: "object",
                 properties: {
-                  recaptcha_options: {
+                  recaptchaOptions: {
                     type: "object",
                     properties: {
-                      action_token_site_keys: {
+                      actionTokenSiteKeys: {
                         type: "array",
                         items: {
                           type: "string",
@@ -147,7 +147,7 @@ const patchRule: AppBlock = {
                         description:
                           "A list of site keys to be used during the validation of reCAPTCHA action-tokens. The provided site keys need to be created from reCAPTCHA API under the same project where the security policy is created.",
                       },
-                      session_token_site_keys: {
+                      sessionTokenSiteKeys: {
                         type: "array",
                         items: {
                           type: "string",
@@ -165,7 +165,7 @@ const patchRule: AppBlock = {
                 description:
                   "The configuration options available when specifying a user defined CEVAL expression (i.e., 'expr').",
               },
-              versioned_expr: {
+              versionedExpr: {
                 type: "string",
                 description:
                   "Preconfigured versioned expression. If this field is specified, config must also be specified. Available preconfigured expressions along with their requirements are: SRC_IPS_V1 - must specify the corresponding src_ip_range field in config. Check the VersionedExpr enum for the list of possible values.",
@@ -177,14 +177,14 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        network_match: {
+        networkMatch: {
           name: "Network Match",
           description:
             "A match condition that incoming packets are evaluated against for CLOUD_ARMOR_NETWORK security policies. If it matches, the corresponding 'action' is enforced.  The match criteria for a rule consists of built-in match fields (like 'srcIpRanges') and potentially multiple user-defined match fields ('userDefinedFields').  Field values may be extracted directly from the packet or derived from it (e.g. 'srcRegionCodes'). Some fields may not be present in every packet (e.g. 'srcPorts'). A user-defined field is only present if the base header is found in the packet and the entire field is in bounds.  Each match field may specify which values can match it, listing one or more ranges, prefixes, or exact values that are considered a match for the field. A field value must be present in order to match a specified match field. If no match values are specified for a match field, then any field value is considered to match it, and it's not required to be present. For strings specifying '*' is also equivalent to match all.  For a packet to match a rule, all specified match fields must match the corresponding field values derived from the packet.  Example:  networkMatch:   srcIpRanges:   - \"192.0.2.0/24\"   - \"198.51.100.0/24\"   userDefinedFields:   - name: \"ipv4_fragment_offset\"     values:     - \"1-0x1fff\"  The above match condition matches packets with a source IP in 192.0.2.0/24 or 198.51.100.0/24 and a user-defined field named \"ipv4_fragment_offset\" with a value between 1 and 0x1fff inclusive.",
           type: {
             type: "object",
             properties: {
-              dest_ip_ranges: {
+              destIpRanges: {
                 type: "array",
                 items: {
                   type: "string",
@@ -192,7 +192,7 @@ const patchRule: AppBlock = {
                 description:
                   "Destination IPv4/IPv6 addresses or CIDR prefixes, in standard text format.",
               },
-              dest_ports: {
+              destPorts: {
                 type: "array",
                 items: {
                   type: "string",
@@ -200,7 +200,7 @@ const patchRule: AppBlock = {
                 description:
                   'Destination port numbers for TCP/UDP/SCTP. Each element can be a 16-bit unsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
               },
-              ip_protocols: {
+              ipProtocols: {
                 type: "array",
                 items: {
                   type: "string",
@@ -208,7 +208,7 @@ const patchRule: AppBlock = {
                 description:
                   'IPv4 protocol / IPv6 next header (after extension headers). Each element can be an 8-bit unsigned decimal number (e.g. "6"), range (e.g. "253-254"), or one of the following protocol names: "tcp", "udp", "icmp", "esp", "ah", "ipip", or "sctp".',
               },
-              src_asns: {
+              srcAsns: {
                 type: "array",
                 items: {
                   type: "integer",
@@ -216,7 +216,7 @@ const patchRule: AppBlock = {
                 description:
                   "BGP Autonomous System Number associated with the source IP address.",
               },
-              src_ip_ranges: {
+              srcIpRanges: {
                 type: "array",
                 items: {
                   type: "string",
@@ -224,7 +224,7 @@ const patchRule: AppBlock = {
                 description:
                   "Source IPv4/IPv6 addresses or CIDR prefixes, in standard text format.",
               },
-              src_ports: {
+              srcPorts: {
                 type: "array",
                 items: {
                   type: "string",
@@ -232,7 +232,7 @@ const patchRule: AppBlock = {
                 description:
                   'Source port numbers for TCP/UDP/SCTP. Each element can be a 16-bit unsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
               },
-              src_region_codes: {
+              srcRegionCodes: {
                 type: "array",
                 items: {
                   type: "string",
@@ -240,7 +240,7 @@ const patchRule: AppBlock = {
                 description:
                   "Two-letter ISO 3166-1 alpha-2 country code associated with the source IP address.",
               },
-              user_defined_fields: {
+              userDefinedFields: {
                 type: "array",
                 items: {
                   type: "object",
@@ -271,7 +271,7 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        preconfigured_waf_config: {
+        preconfiguredWafConfig: {
           name: "Preconfigured Waf Config",
           description:
             "Preconfigured WAF configuration to be applied for the rule. If the rule does not evaluate preconfigured WAF rules, i.e., if evaluatePreconfiguredWaf() is not used, this field will have no effect.",
@@ -283,7 +283,7 @@ const patchRule: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    request_cookies_to_exclude: {
+                    requestCookiesToExclude: {
                       type: "array",
                       items: {
                         type: "object",
@@ -303,7 +303,7 @@ const patchRule: AppBlock = {
                       description:
                         "A list of request cookie names whose value will be excluded from inspection during preconfigured WAF evaluation.",
                     },
-                    request_headers_to_exclude: {
+                    requestHeadersToExclude: {
                       type: "array",
                       items: {
                         type: "object",
@@ -323,7 +323,7 @@ const patchRule: AppBlock = {
                       description:
                         "A list of request header names whose value will be excluded from inspection during preconfigured WAF evaluation.",
                     },
-                    request_query_params_to_exclude: {
+                    requestQueryParamsToExclude: {
                       type: "array",
                       items: {
                         type: "object",
@@ -343,7 +343,7 @@ const patchRule: AppBlock = {
                       description:
                         "A list of request query parameter names whose value will be excluded from inspection during preconfigured WAF evaluation. Note that the parameter can be in the query string or in the POST body.",
                     },
-                    request_uris_to_exclude: {
+                    requestUrisToExclude: {
                       type: "array",
                       items: {
                         type: "object",
@@ -363,7 +363,7 @@ const patchRule: AppBlock = {
                       description:
                         "A list of request URIs from the request line to be excluded from inspection during preconfigured WAF evaluation. When specifying this field, the query or fragment part should be excluded.",
                     },
-                    target_rule_ids: {
+                    targetRuleIds: {
                       type: "array",
                       items: {
                         type: "string",
@@ -371,7 +371,7 @@ const patchRule: AppBlock = {
                       description:
                         "A list of target rule IDs under the WAF rule set to apply the preconfigured WAF exclusion. If omitted, it refers to all the rule IDs under the WAF rule set.",
                     },
-                    target_rule_set: {
+                    targetRuleSet: {
                       type: "string",
                       description:
                         "Target WAF rule set to apply the preconfigured WAF exclusion.",
@@ -407,19 +407,19 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        rate_limit_options: {
+        rateLimitOptions: {
           name: "Rate Limit Options",
           description:
             'Must be specified if the action is "rate_based_ban" or "throttle" or "fairshare". Cannot be specified for any other actions.',
           type: {
             type: "object",
             properties: {
-              ban_duration_sec: {
+              banDurationSec: {
                 type: "integer",
                 description:
                   'Can only be specified if the action for the rule is "rate_based_ban". If specified, determines the time (in seconds) the traffic will continue to be banned by the rate limit after the rate falls below the threshold.',
               },
-              ban_threshold: {
+              banThreshold: {
                 type: "object",
                 properties: {
                   count: {
@@ -427,7 +427,7 @@ const patchRule: AppBlock = {
                     description:
                       "Number of HTTP(S) requests for calculating the threshold.",
                   },
-                  interval_sec: {
+                  intervalSec: {
                     type: "integer",
                     description:
                       "Interval over which the threshold is computed.",
@@ -437,27 +437,27 @@ const patchRule: AppBlock = {
                 description:
                   "Can only be specified if the action for the rule is \"rate_based_ban\". If specified, the key will be banned for the configured 'ban_duration_sec' when the number of requests that exceed the 'rate_limit_threshold' also exceed this 'ban_threshold'.",
               },
-              conform_action: {
+              conformAction: {
                 type: "string",
                 description:
                   'Action to take for requests that are under the configured rate limit threshold. Valid option is "allow" only.',
               },
-              enforce_on_key: {
+              enforceOnKey: {
                 type: "string",
                 description:
                   'Determines the key to enforce the rate_limit_threshold on. Possible values are:     - ALL: A single rate limit threshold is applied to all    the requests matching this rule. This is the default value if    "enforceOnKey" is not configured.    - IP: The source IP address of    the request is the key. Each IP has this limit enforced    separately.    - HTTP_HEADER: The value of the HTTP    header whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the header value. If no    such header is present in the request, the key type defaults toALL.    - XFF_IP: The first IP address (i.e. the    originating client IP address) specified in the list of IPs under    X-Forwarded-For HTTP header. If no such header is present or the value    is not a valid IP, the key defaults to the source IP address of    the request i.e. key type IP.    - HTTP_COOKIE: The value of the HTTP    cookie whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the cookie value. If no    such cookie is present in the request, the key type defaults toALL.    - HTTP_PATH: The URL path of the HTTP request. The key    value is truncated to the first 128 bytes.    - SNI: Server name indication in the TLS session of the    HTTPS request. The key value is truncated to the first 128 bytes. The    key type defaults to ALL on a HTTP session.    - REGION_CODE: The country/region from which the request    originates.    - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the    client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the    key type defaults to ALL.    - USER_IP: The IP address of the originating client,    which is resolved based on "userIpRequestHeaders" configured with the    security policy. If there is no "userIpRequestHeaders" configuration or    an IP address cannot be resolved from it, the key type defaults toIP.  - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. For "fairshare" action, this value is limited to ALL i.e. a single rate limit threshold is enforced for all the requests matching the rule. Check the EnforceOnKey enum for the list of possible values.',
               },
-              enforce_on_key_configs: {
+              enforceOnKeyConfigs: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    enforce_on_key_name: {
+                    enforceOnKeyName: {
                       type: "string",
                       description:
                         "Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.",
                     },
-                    enforce_on_key_type: {
+                    enforceOnKeyType: {
                       type: "string",
                       description:
                         'Determines the key to enforce the rate_limit_threshold on. Possible values are:     - ALL: A single rate limit threshold is applied to all    the requests matching this rule. This is the default value if    "enforceOnKeyConfigs" is not configured.    - IP: The source IP address of    the request is the key. Each IP has this limit enforced    separately.    - HTTP_HEADER: The value of the HTTP    header whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the header value. If no    such header is present in the request, the key type defaults toALL.    - XFF_IP: The first IP address (i.e. the    originating client IP address) specified in the list of IPs under    X-Forwarded-For HTTP header. If no such header is present or the    value is not a valid IP, the key defaults to the source IP address of    the request i.e. key type IP.    - HTTP_COOKIE: The value of the HTTP    cookie whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the cookie value. If no    such cookie is present in the request, the key type defaults toALL.    - HTTP_PATH: The URL path of the HTTP request. The key    value is truncated to the first 128 bytes.    - SNI: Server name indication in the TLS session of    the HTTPS request. The key value is truncated to the first 128 bytes.    The key type defaults to ALL on a HTTP session.    - REGION_CODE: The country/region from which the    request originates.    - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the    client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the    key type defaults to ALL.    - USER_IP: The IP address of the originating client,    which is resolved based on "userIpRequestHeaders" configured with the    security policy. If there is no "userIpRequestHeaders" configuration    or an IP address cannot be resolved from it, the key type defaults toIP.  - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. Check the EnforceOnKeyType enum for the list of possible values.',
@@ -468,17 +468,17 @@ const patchRule: AppBlock = {
                 description:
                   "If specified, any combination of values of enforce_on_key_type/enforce_on_key_name is treated as the key on which ratelimit threshold/action is enforced. You can specify up to 3 enforce_on_key_configs. If enforce_on_key_configs is specified, enforce_on_key must not be specified.",
               },
-              enforce_on_key_name: {
+              enforceOnKeyName: {
                 type: "string",
                 description:
                   "Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.",
               },
-              exceed_action: {
+              exceedAction: {
                 type: "string",
                 description:
                   "Action to take for requests that are above the configured rate limit threshold, to either deny with a specified HTTP response code, or redirect to a different endpoint. Valid options are `deny(STATUS)`, where valid values for `STATUS` are 403, 404, 429, and 502, and `redirect`, where the redirect parameters come from `exceedRedirectOptions` below. The `redirect` action is only supported in Global Security Policies of type CLOUD_ARMOR.",
               },
-              exceed_redirect_options: {
+              exceedRedirectOptions: {
                 type: "object",
                 properties: {
                   target: {
@@ -496,7 +496,7 @@ const patchRule: AppBlock = {
                 description:
                   "Parameters defining the redirect action that is used as the exceed action. Cannot be specified if the exceed action is not redirect. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
               },
-              rate_limit_threshold: {
+              rateLimitThreshold: {
                 type: "object",
                 properties: {
                   count: {
@@ -504,7 +504,7 @@ const patchRule: AppBlock = {
                     description:
                       "Number of HTTP(S) requests for calculating the threshold.",
                   },
-                  interval_sec: {
+                  intervalSec: {
                     type: "integer",
                     description:
                       "Interval over which the threshold is computed.",
@@ -520,7 +520,7 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        redirect_options: {
+        redirectOptions: {
           name: "Redirect Options",
           description:
             "Parameters defining the redirect action. Cannot be specified for any other actions. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
@@ -544,7 +544,7 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Indicates fields to be cleared as part of this request.",
@@ -553,7 +553,7 @@ const patchRule: AppBlock = {
           },
           required: false,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description: "If true, the request will not be committed.",
           type: {
@@ -565,46 +565,46 @@ const patchRule: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.security_policy !== undefined)
+        if (input.event.inputConfig.securityPolicy !== undefined)
           pathParams["security_policy"] = String(
-            input.event.inputConfig.security_policy,
+            input.event.inputConfig.securityPolicy,
           );
 
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.priority !== undefined)
           queryParams["priority"] = String(input.event.inputConfig.priority);
-        if (input.event.inputConfig.update_mask !== undefined)
+        if (input.event.inputConfig.updateMask !== undefined)
           queryParams["updateMask"] = String(
-            input.event.inputConfig.update_mask,
+            input.event.inputConfig.updateMask,
           );
-        if (input.event.inputConfig.validate_only !== undefined)
+        if (input.event.inputConfig.validateOnly !== undefined)
           queryParams["validateOnly"] = String(
-            input.event.inputConfig.validate_only,
+            input.event.inputConfig.validateOnly,
           );
         const body: Record<string, any> = {};
         if (input.event.inputConfig.action !== undefined)
           body.action = input.event.inputConfig.action;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.header_action !== undefined)
-          body.header_action = input.event.inputConfig.header_action;
+        if (input.event.inputConfig.headerAction !== undefined)
+          body.headerAction = input.event.inputConfig.headerAction;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.match !== undefined)
           body.match = input.event.inputConfig.match;
-        if (input.event.inputConfig.network_match !== undefined)
-          body.network_match = input.event.inputConfig.network_match;
-        if (input.event.inputConfig.preconfigured_waf_config !== undefined)
-          body.preconfigured_waf_config =
-            input.event.inputConfig.preconfigured_waf_config;
+        if (input.event.inputConfig.networkMatch !== undefined)
+          body.networkMatch = input.event.inputConfig.networkMatch;
+        if (input.event.inputConfig.preconfiguredWafConfig !== undefined)
+          body.preconfiguredWafConfig =
+            input.event.inputConfig.preconfiguredWafConfig;
         if (input.event.inputConfig.preview !== undefined)
           body.preview = input.event.inputConfig.preview;
         if (input.event.inputConfig.priority !== undefined)
           body.priority = input.event.inputConfig.priority;
-        if (input.event.inputConfig.rate_limit_options !== undefined)
-          body.rate_limit_options = input.event.inputConfig.rate_limit_options;
-        if (input.event.inputConfig.redirect_options !== undefined)
-          body.redirect_options = input.event.inputConfig.redirect_options;
+        if (input.event.inputConfig.rateLimitOptions !== undefined)
+          body.rateLimitOptions = input.event.inputConfig.rateLimitOptions;
+        if (input.event.inputConfig.redirectOptions !== undefined)
+          body.redirectOptions = input.event.inputConfig.redirectOptions;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -626,12 +626,12 @@ const patchRule: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -640,7 +640,7 @@ const patchRule: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -658,12 +658,12 @@ const patchRule: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -718,7 +718,7 @@ const patchRule: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -736,7 +736,7 @@ const patchRule: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -747,7 +747,7 @@ const patchRule: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -757,16 +757,16 @@ const patchRule: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -803,12 +803,12 @@ const patchRule: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -817,15 +817,15 @@ const patchRule: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -845,12 +845,12 @@ const patchRule: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -865,18 +865,18 @@ const patchRule: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -889,7 +889,7 @@ const patchRule: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -900,16 +900,16 @@ const patchRule: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

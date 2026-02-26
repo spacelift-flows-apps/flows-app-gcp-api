@@ -1,5 +1,41 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFoldersClient } from "../../lib/grpcClient.ts";
+import { getFoldersClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  folder: {
+    name: "folder",
+    fields: {
+      displayName: "display_name",
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const updateFolder: AppBlock = {
   name: "Update Folder",
@@ -20,7 +56,7 @@ const updateFolder: AppBlock = {
                 description:
                   "Required. The folder's parent's resource name. Updates to the folder's parent must be performed using [MoveFolder][google.cloud.resourcemanager.v3.Folders.MoveFolder].",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   "The folder's display name. A folder's display name must be unique amongst its siblings. For example, no two folders with the same parent can share the same display name. The display name must start and end with a letter or digit, may contain letters, digits, spaces, hyphens and underscores and can be no longer than 30 characters. This is captured by the regular expression: `[\\p{L}\\p{N}]([\\p{L}\\p{N}_- ]{0,28}[\\p{L}\\p{N}])?`.",
@@ -33,7 +69,7 @@ const updateFolder: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Required. Fields to be updated. Only the `display_name` can be updated.",
@@ -48,11 +84,7 @@ const updateFolder: AppBlock = {
       onEvent: async (input) => {
         const client = await getFoldersClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.folder !== undefined)
-          request.folder = input.event.inputConfig.folder;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateFolder(request, (err: any, response: any) => {
@@ -66,7 +98,8 @@ const updateFolder: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -82,7 +115,7 @@ const updateFolder: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -109,7 +142,7 @@ const updateFolder: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -128,7 +161,7 @@ const updateFolder: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

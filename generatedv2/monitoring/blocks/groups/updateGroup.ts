@@ -1,5 +1,23 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getGroupServiceClient } from "../../lib/grpcClient.ts";
+import { getGroupServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  group: {
+    name: "group",
+    fields: {
+      displayName: "display_name",
+      parentName: "parent_name",
+      isCluster: "is_cluster",
+    },
+  },
+  validateOnly: "validate_only",
+};
+
+const outputMapping = {
+  display_name: "displayName",
+  parent_name: "parentName",
+  is_cluster: "isCluster",
+};
 
 const updateGroup: AppBlock = {
   name: "Update Group",
@@ -20,12 +38,12 @@ const updateGroup: AppBlock = {
                 description:
                   "Output only. The name of this group. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  When creating a group, this field is ignored and a new name is created consisting of the project specified in the call to `CreateGroup` and a unique `[GROUP_ID]` that is generated automatically.",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   "A user-assigned name for this group, used only for display purposes.",
               },
-              parent_name: {
+              parentName: {
                 type: "string",
                 description:
                   'The name of the group\'s parent, if it has one. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  For groups with no parent, `parent_name` is the empty string, `""`.',
@@ -35,7 +53,7 @@ const updateGroup: AppBlock = {
                 description:
                   "The filter used to determine which monitored resources belong to this group.",
               },
-              is_cluster: {
+              isCluster: {
                 type: "boolean",
                 description:
                   "If true, the members of this group are considered to be a cluster. The system can perform additional analysis on groups that are clusters.",
@@ -47,7 +65,7 @@ const updateGroup: AppBlock = {
           },
           required: true,
         },
-        validate_only: {
+        validateOnly: {
           name: "Validate Only",
           description:
             "If true, validate this request but do not update the existing group.",
@@ -62,11 +80,7 @@ const updateGroup: AppBlock = {
       onEvent: async (input) => {
         const client = await getGroupServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.group !== undefined)
-          request.group = input.event.inputConfig.group;
-        if (input.event.inputConfig.validate_only !== undefined)
-          request.validate_only = input.event.inputConfig.validate_only;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateGroup(request, (err: any, response: any) => {
@@ -80,7 +94,8 @@ const updateGroup: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -95,12 +110,12 @@ const updateGroup: AppBlock = {
             description:
               "Output only. The name of this group. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  When creating a group, this field is ignored and a new name is created consisting of the project specified in the call to `CreateGroup` and a unique `[GROUP_ID]` that is generated automatically.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "A user-assigned name for this group, used only for display purposes.",
           },
-          parent_name: {
+          parentName: {
             type: "string",
             description:
               'The name of the group\'s parent, if it has one. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  For groups with no parent, `parent_name` is the empty string, `""`.',
@@ -110,7 +125,7 @@ const updateGroup: AppBlock = {
             description:
               "The filter used to determine which monitored resources belong to this group.",
           },
-          is_cluster: {
+          isCluster: {
             type: "boolean",
             description:
               "If true, the members of this group are considered to be a cluster. The system can perform additional analysis on groups that are clusters.",

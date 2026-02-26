@@ -34,11 +34,7 @@ const deleteGroup: AppBlock = {
       onEvent: async (input) => {
         const client = await getGroupServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.recursive !== undefined)
-          request.recursive = input.event.inputConfig.recursive;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteGroup(request, (err: any, response: any) => {

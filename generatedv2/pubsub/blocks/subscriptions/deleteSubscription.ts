@@ -23,9 +23,7 @@ const deleteSubscription: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.subscription !== undefined)
-          request.subscription = input.event.inputConfig.subscription;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteSubscription(request, (err: any, response: any) => {

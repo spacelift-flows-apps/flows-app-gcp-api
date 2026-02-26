@@ -8,7 +8,7 @@ const getHealth: AppBlock = {
   inputs: {
     default: {
       config: {
-        backend_service: {
+        backendService: {
           name: "Backend Service",
           description:
             "Name of the BackendService resource to which the queried instance belongs.",
@@ -32,9 +32,9 @@ const getHealth: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.backend_service !== undefined)
+        if (input.event.inputConfig.backendService !== undefined)
           pathParams["backend_service"] = String(
-            input.event.inputConfig.backend_service,
+            input.event.inputConfig.backendService,
           );
 
         const body: Record<string, any> = {};
@@ -68,7 +68,7 @@ const getHealth: AppBlock = {
             description:
               "Metadata defined as annotations on the network endpoint group.",
           },
-          health_status: {
+          healthStatus: {
             type: "array",
             items: {
               type: "object",
@@ -81,17 +81,17 @@ const getHealth: AppBlock = {
                   description:
                     "Metadata defined as annotations for network endpoint.",
                 },
-                forwarding_rule: {
+                forwardingRule: {
                   type: "string",
                   description:
                     "URL of the forwarding rule associated with the health status of the instance.",
                 },
-                forwarding_rule_ip: {
+                forwardingRuleIp: {
                   type: "string",
                   description:
                     "A forwarding rule IP address assigned to this instance.",
                 },
-                health_state: {
+                healthState: {
                   type: "string",
                   description:
                     "Health state of the IPv4 address of the instance. Check the HealthState enum for the list of possible values.",
@@ -100,15 +100,15 @@ const getHealth: AppBlock = {
                   type: "string",
                   description: "URL of the instance resource.",
                 },
-                ip_address: {
+                ipAddress: {
                   type: "string",
                   description:
                     "For target pool based Network Load Balancing, it indicates the forwarding rule's IP address assigned to this instance. For other types of load balancing, the field indicates VM internal ip.",
                 },
-                ipv6_address: {
+                ipv6Address: {
                   type: "string",
                 },
-                ipv6_health_state: {
+                ipv6HealthState: {
                   type: "string",
                   description:
                     "Health state of the IPv6 address of the instance. Check the Ipv6HealthState enum for the list of possible values.",
@@ -121,7 +121,7 @@ const getHealth: AppBlock = {
                 weight: {
                   type: "string",
                 },
-                weight_error: {
+                weightError: {
                   type: "string",
                   description:
                     "Check the WeightError enum for the list of possible values.",

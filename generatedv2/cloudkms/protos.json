@@ -5,19 +5,13 @@
       "package": "google.protobuf",
       "messageType": [
         {
-          "name": "Duration",
+          "name": "FieldMask",
           "field": [
             {
-              "name": "seconds",
+              "name": "paths",
               "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64"
-            },
-            {
-              "name": "nanos",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
             }
           ]
         },
@@ -37,6 +31,26 @@
               "type": "TYPE_INT32"
             }
           ]
+        },
+        {
+          "name": "Duration",
+          "field": [
+            {
+              "name": "seconds",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64"
+            },
+            {
+              "name": "nanos",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            }
+          ]
+        },
+        {
+          "name": "Empty"
         },
         {
           "name": "DoubleValue",
@@ -136,20 +150,6 @@
               "type": "TYPE_BYTES"
             }
           ]
-        },
-        {
-          "name": "FieldMask",
-          "field": [
-            {
-              "name": "paths",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "Empty"
         },
         {
           "name": "Any",
@@ -2071,20 +2071,20 @@
               }
             },
             {
-              "name": ".google.api.method_signature",
-              "number": 1051,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.http",
               "number": 72295728,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.HttpRule",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.method_signature",
+              "number": 1051,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
               "options": {
                 "packed": false
               }
@@ -2956,6 +2956,1333 @@
               "number": 2,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "UpdateAutokeyConfigRequest",
+          "field": [
+            {
+              "name": "autokey_config",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "AutokeyConfig",
+              "options": {}
+            },
+            {
+              "name": "update_mask",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "GetAutokeyConfigRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "AutokeyConfig",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "key_project",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "state",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "State",
+              "options": {}
+            },
+            {
+              "name": "etag",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "key_project_resolution_mode",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "KeyProjectResolutionMode",
+              "options": {}
+            }
+          ],
+          "enumType": [
+            {
+              "name": "State",
+              "value": [
+                {
+                  "name": "STATE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ACTIVE",
+                  "number": 1
+                },
+                {
+                  "name": "KEY_PROJECT_DELETED",
+                  "number": 2
+                },
+                {
+                  "name": "UNINITIALIZED",
+                  "number": 3
+                },
+                {
+                  "name": "KEY_PROJECT_PERMISSION_DENIED",
+                  "number": 4
+                }
+              ]
+            },
+            {
+              "name": "KeyProjectResolutionMode",
+              "value": [
+                {
+                  "name": "KEY_PROJECT_RESOLUTION_MODE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "DEDICATED_KEY_PROJECT",
+                  "number": 1
+                },
+                {
+                  "name": "RESOURCE_PROJECT",
+                  "number": 2
+                },
+                {
+                  "name": "DISABLED",
+                  "number": 3
+                }
+              ]
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "ShowEffectiveAutokeyConfigRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ShowEffectiveAutokeyConfigResponse",
+          "field": [
+            {
+              "name": "key_project",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "ListEkmConnectionsRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "page_size",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "page_token",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "filter",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "order_by",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ListEkmConnectionsResponse",
+          "field": [
+            {
+              "name": "ekm_connections",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "EkmConnection"
+            },
+            {
+              "name": "next_page_token",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "total_size",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            }
+          ]
+        },
+        {
+          "name": "GetEkmConnectionRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "CreateEkmConnectionRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "ekm_connection_id",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "ekm_connection",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "EkmConnection",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "UpdateEkmConnectionRequest",
+          "field": [
+            {
+              "name": "ekm_connection",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "EkmConnection",
+              "options": {}
+            },
+            {
+              "name": "update_mask",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "GetEkmConfigRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "UpdateEkmConfigRequest",
+          "field": [
+            {
+              "name": "ekm_config",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "EkmConfig",
+              "options": {}
+            },
+            {
+              "name": "update_mask",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "Certificate",
+          "field": [
+            {
+              "name": "raw_der",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BYTES",
+              "options": {}
+            },
+            {
+              "name": "parsed",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            },
+            {
+              "name": "issuer",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "subject",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "subject_alternative_dns_names",
+              "number": 5,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "not_before_time",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "not_after_time",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "serial_number",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "sha256_fingerprint",
+              "number": 9,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "EkmConnection",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "create_time",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "service_resolvers",
+              "number": 3,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "ServiceResolver",
+              "options": {}
+            },
+            {
+              "name": "etag",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "key_management_mode",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "KeyManagementMode",
+              "options": {}
+            },
+            {
+              "name": "crypto_space_path",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "ServiceResolver",
+              "field": [
+                {
+                  "name": "service_directory_service",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                },
+                {
+                  "name": "endpoint_filter",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                },
+                {
+                  "name": "hostname",
+                  "number": 3,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                },
+                {
+                  "name": "server_certificates",
+                  "number": 4,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "Certificate",
+                  "options": {}
+                }
+              ]
+            }
+          ],
+          "enumType": [
+            {
+              "name": "KeyManagementMode",
+              "value": [
+                {
+                  "name": "KEY_MANAGEMENT_MODE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "MANUAL",
+                  "number": 1
+                },
+                {
+                  "name": "CLOUD_KMS",
+                  "number": 2
+                }
+              ]
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "EkmConfig",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "default_ekm_connection",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "VerifyConnectivityRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "VerifyConnectivityResponse"
+        },
+        {
+          "name": "SingleTenantHsmInstance",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "create_time",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "state",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "State",
+              "options": {}
+            },
+            {
+              "name": "quorum_auth",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "QuorumAuth",
+              "options": {}
+            },
+            {
+              "name": "delete_time",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "unrefreshed_duration_until_disable",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration",
+              "options": {}
+            },
+            {
+              "name": "disable_time",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "QuorumAuth",
+              "field": [
+                {
+                  "name": "total_approver_count",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_INT32",
+                  "options": {}
+                },
+                {
+                  "name": "required_approver_count",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_INT32",
+                  "options": {}
+                },
+                {
+                  "name": "two_factor_public_key_pems",
+                  "number": 3,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            }
+          ],
+          "enumType": [
+            {
+              "name": "State",
+              "value": [
+                {
+                  "name": "STATE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "CREATING",
+                  "number": 1
+                },
+                {
+                  "name": "PENDING_TWO_FACTOR_AUTH_REGISTRATION",
+                  "number": 2
+                },
+                {
+                  "name": "ACTIVE",
+                  "number": 3
+                },
+                {
+                  "name": "DISABLING",
+                  "number": 4
+                },
+                {
+                  "name": "DISABLED",
+                  "number": 5
+                },
+                {
+                  "name": "DELETING",
+                  "number": 6
+                },
+                {
+                  "name": "DELETED",
+                  "number": 7
+                },
+                {
+                  "name": "FAILED",
+                  "number": 8
+                }
+              ]
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "SingleTenantHsmInstanceProposal",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "create_time",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "state",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "State",
+              "options": {}
+            },
+            {
+              "name": "failure_reason",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "quorum_parameters",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "QuorumParameters",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "required_action_quorum_parameters",
+              "number": 14,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RequiredActionQuorumParameters",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "expire_time",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "oneofIndex": 1
+            },
+            {
+              "name": "ttl",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration",
+              "options": {},
+              "oneofIndex": 1
+            },
+            {
+              "name": "delete_time",
+              "number": 15,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "purge_time",
+              "number": 16,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "register_two_factor_auth_keys",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RegisterTwoFactorAuthKeys",
+              "oneofIndex": 2
+            },
+            {
+              "name": "disable_single_tenant_hsm_instance",
+              "number": 9,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "DisableSingleTenantHsmInstance",
+              "oneofIndex": 2
+            },
+            {
+              "name": "enable_single_tenant_hsm_instance",
+              "number": 10,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnableSingleTenantHsmInstance",
+              "oneofIndex": 2
+            },
+            {
+              "name": "delete_single_tenant_hsm_instance",
+              "number": 11,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "DeleteSingleTenantHsmInstance",
+              "oneofIndex": 2
+            },
+            {
+              "name": "add_quorum_member",
+              "number": 12,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "AddQuorumMember",
+              "oneofIndex": 2
+            },
+            {
+              "name": "remove_quorum_member",
+              "number": 13,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RemoveQuorumMember",
+              "oneofIndex": 2
+            },
+            {
+              "name": "refresh_single_tenant_hsm_instance",
+              "number": 17,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RefreshSingleTenantHsmInstance",
+              "oneofIndex": 2
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "QuorumParameters",
+              "field": [
+                {
+                  "name": "required_approver_count",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_INT32",
+                  "options": {}
+                },
+                {
+                  "name": "challenges",
+                  "number": 2,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "Challenge",
+                  "options": {}
+                },
+                {
+                  "name": "approved_two_factor_public_key_pems",
+                  "number": 3,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            },
+            {
+              "name": "RequiredActionQuorumParameters",
+              "field": [
+                {
+                  "name": "required_challenges",
+                  "number": 1,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "Challenge",
+                  "options": {}
+                },
+                {
+                  "name": "required_approver_count",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_INT32",
+                  "options": {}
+                },
+                {
+                  "name": "quorum_challenges",
+                  "number": 3,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "Challenge",
+                  "options": {}
+                },
+                {
+                  "name": "approved_two_factor_public_key_pems",
+                  "number": 4,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            },
+            {
+              "name": "RegisterTwoFactorAuthKeys",
+              "field": [
+                {
+                  "name": "required_approver_count",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_INT32",
+                  "options": {}
+                },
+                {
+                  "name": "two_factor_public_key_pems",
+                  "number": 2,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            },
+            {
+              "name": "DisableSingleTenantHsmInstance"
+            },
+            {
+              "name": "EnableSingleTenantHsmInstance"
+            },
+            {
+              "name": "DeleteSingleTenantHsmInstance"
+            },
+            {
+              "name": "AddQuorumMember",
+              "field": [
+                {
+                  "name": "two_factor_public_key_pem",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            },
+            {
+              "name": "RemoveQuorumMember",
+              "field": [
+                {
+                  "name": "two_factor_public_key_pem",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            },
+            {
+              "name": "RefreshSingleTenantHsmInstance"
+            }
+          ],
+          "enumType": [
+            {
+              "name": "State",
+              "value": [
+                {
+                  "name": "STATE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "CREATING",
+                  "number": 1
+                },
+                {
+                  "name": "PENDING",
+                  "number": 2
+                },
+                {
+                  "name": "APPROVED",
+                  "number": 3
+                },
+                {
+                  "name": "RUNNING",
+                  "number": 4
+                },
+                {
+                  "name": "SUCCEEDED",
+                  "number": 5
+                },
+                {
+                  "name": "FAILED",
+                  "number": 6
+                },
+                {
+                  "name": "DELETED",
+                  "number": 7
+                }
+              ]
+            }
+          ],
+          "options": {},
+          "oneofDecl": [
+            {
+              "name": "approval_parameters"
+            },
+            {
+              "name": "expiration"
+            },
+            {
+              "name": "operation"
+            }
+          ]
+        },
+        {
+          "name": "Challenge",
+          "field": [
+            {
+              "name": "challenge",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BYTES",
+              "options": {}
+            },
+            {
+              "name": "public_key_pem",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ChallengeReply",
+          "field": [
+            {
+              "name": "signed_challenge",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BYTES",
+              "options": {}
+            },
+            {
+              "name": "public_key_pem",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ListSingleTenantHsmInstancesRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "page_size",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "page_token",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "filter",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "order_by",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "show_deleted",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ListSingleTenantHsmInstancesResponse",
+          "field": [
+            {
+              "name": "single_tenant_hsm_instances",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SingleTenantHsmInstance"
+            },
+            {
+              "name": "next_page_token",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "total_size",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            }
+          ]
+        },
+        {
+          "name": "GetSingleTenantHsmInstanceRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "CreateSingleTenantHsmInstanceRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "single_tenant_hsm_instance_id",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "single_tenant_hsm_instance",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SingleTenantHsmInstance",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "CreateSingleTenantHsmInstanceMetadata"
+        },
+        {
+          "name": "CreateSingleTenantHsmInstanceProposalRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "single_tenant_hsm_instance_proposal_id",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "single_tenant_hsm_instance_proposal",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SingleTenantHsmInstanceProposal",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "CreateSingleTenantHsmInstanceProposalMetadata"
+        },
+        {
+          "name": "GetSingleTenantHsmInstanceProposalRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ApproveSingleTenantHsmInstanceProposalRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "quorum_reply",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "QuorumReply",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "required_action_quorum_reply",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RequiredActionQuorumReply",
+              "options": {},
+              "oneofIndex": 0
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "QuorumReply",
+              "field": [
+                {
+                  "name": "challenge_replies",
+                  "number": 1,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "ChallengeReply",
+                  "options": {}
+                }
+              ]
+            },
+            {
+              "name": "RequiredActionQuorumReply",
+              "field": [
+                {
+                  "name": "required_challenge_replies",
+                  "number": 1,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "ChallengeReply",
+                  "options": {}
+                },
+                {
+                  "name": "quorum_challenge_replies",
+                  "number": 2,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "ChallengeReply",
+                  "options": {}
+                }
+              ]
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "approval_payload"
+            }
+          ]
+        },
+        {
+          "name": "ApproveSingleTenantHsmInstanceProposalResponse"
+        },
+        {
+          "name": "ExecuteSingleTenantHsmInstanceProposalRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ExecuteSingleTenantHsmInstanceProposalResponse"
+        },
+        {
+          "name": "ExecuteSingleTenantHsmInstanceProposalMetadata"
+        },
+        {
+          "name": "ListSingleTenantHsmInstanceProposalsRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "page_size",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "page_token",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "filter",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "order_by",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "show_deleted",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ListSingleTenantHsmInstanceProposalsResponse",
+          "field": [
+            {
+              "name": "single_tenant_hsm_instance_proposals",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "SingleTenantHsmInstanceProposal"
+            },
+            {
+              "name": "next_page_token",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "total_size",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            }
+          ]
+        },
+        {
+          "name": "DeleteSingleTenantHsmInstanceProposalRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
             }
           ]
         },
@@ -3935,965 +5262,6 @@
             }
           ],
           "options": {}
-        },
-        {
-          "name": "UpdateAutokeyConfigRequest",
-          "field": [
-            {
-              "name": "autokey_config",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "AutokeyConfig",
-              "options": {}
-            },
-            {
-              "name": "update_mask",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.FieldMask",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "GetAutokeyConfigRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "AutokeyConfig",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "key_project",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "state",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "State",
-              "options": {}
-            },
-            {
-              "name": "etag",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "key_project_resolution_mode",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "KeyProjectResolutionMode",
-              "options": {}
-            }
-          ],
-          "enumType": [
-            {
-              "name": "State",
-              "value": [
-                {
-                  "name": "STATE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "ACTIVE",
-                  "number": 1
-                },
-                {
-                  "name": "KEY_PROJECT_DELETED",
-                  "number": 2
-                },
-                {
-                  "name": "UNINITIALIZED",
-                  "number": 3
-                },
-                {
-                  "name": "KEY_PROJECT_PERMISSION_DENIED",
-                  "number": 4
-                }
-              ]
-            },
-            {
-              "name": "KeyProjectResolutionMode",
-              "value": [
-                {
-                  "name": "KEY_PROJECT_RESOLUTION_MODE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "DEDICATED_KEY_PROJECT",
-                  "number": 1
-                },
-                {
-                  "name": "RESOURCE_PROJECT",
-                  "number": 2
-                },
-                {
-                  "name": "DISABLED",
-                  "number": 3
-                }
-              ]
-            }
-          ],
-          "options": {}
-        },
-        {
-          "name": "ShowEffectiveAutokeyConfigRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ShowEffectiveAutokeyConfigResponse",
-          "field": [
-            {
-              "name": "key_project",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "SingleTenantHsmInstance",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "create_time",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "state",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "State",
-              "options": {}
-            },
-            {
-              "name": "quorum_auth",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "QuorumAuth",
-              "options": {}
-            },
-            {
-              "name": "delete_time",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "unrefreshed_duration_until_disable",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration",
-              "options": {}
-            },
-            {
-              "name": "disable_time",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "QuorumAuth",
-              "field": [
-                {
-                  "name": "total_approver_count",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_INT32",
-                  "options": {}
-                },
-                {
-                  "name": "required_approver_count",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_INT32",
-                  "options": {}
-                },
-                {
-                  "name": "two_factor_public_key_pems",
-                  "number": 3,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            }
-          ],
-          "enumType": [
-            {
-              "name": "State",
-              "value": [
-                {
-                  "name": "STATE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "CREATING",
-                  "number": 1
-                },
-                {
-                  "name": "PENDING_TWO_FACTOR_AUTH_REGISTRATION",
-                  "number": 2
-                },
-                {
-                  "name": "ACTIVE",
-                  "number": 3
-                },
-                {
-                  "name": "DISABLING",
-                  "number": 4
-                },
-                {
-                  "name": "DISABLED",
-                  "number": 5
-                },
-                {
-                  "name": "DELETING",
-                  "number": 6
-                },
-                {
-                  "name": "DELETED",
-                  "number": 7
-                },
-                {
-                  "name": "FAILED",
-                  "number": 8
-                }
-              ]
-            }
-          ],
-          "options": {}
-        },
-        {
-          "name": "SingleTenantHsmInstanceProposal",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "create_time",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "state",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "State",
-              "options": {}
-            },
-            {
-              "name": "failure_reason",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "quorum_parameters",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "QuorumParameters",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "required_action_quorum_parameters",
-              "number": 14,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RequiredActionQuorumParameters",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "expire_time",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "oneofIndex": 1
-            },
-            {
-              "name": "ttl",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration",
-              "options": {},
-              "oneofIndex": 1
-            },
-            {
-              "name": "delete_time",
-              "number": 15,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "purge_time",
-              "number": 16,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "register_two_factor_auth_keys",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RegisterTwoFactorAuthKeys",
-              "oneofIndex": 2
-            },
-            {
-              "name": "disable_single_tenant_hsm_instance",
-              "number": 9,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "DisableSingleTenantHsmInstance",
-              "oneofIndex": 2
-            },
-            {
-              "name": "enable_single_tenant_hsm_instance",
-              "number": 10,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "EnableSingleTenantHsmInstance",
-              "oneofIndex": 2
-            },
-            {
-              "name": "delete_single_tenant_hsm_instance",
-              "number": 11,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "DeleteSingleTenantHsmInstance",
-              "oneofIndex": 2
-            },
-            {
-              "name": "add_quorum_member",
-              "number": 12,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "AddQuorumMember",
-              "oneofIndex": 2
-            },
-            {
-              "name": "remove_quorum_member",
-              "number": 13,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RemoveQuorumMember",
-              "oneofIndex": 2
-            },
-            {
-              "name": "refresh_single_tenant_hsm_instance",
-              "number": 17,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RefreshSingleTenantHsmInstance",
-              "oneofIndex": 2
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "QuorumParameters",
-              "field": [
-                {
-                  "name": "required_approver_count",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_INT32",
-                  "options": {}
-                },
-                {
-                  "name": "challenges",
-                  "number": 2,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "Challenge",
-                  "options": {}
-                },
-                {
-                  "name": "approved_two_factor_public_key_pems",
-                  "number": 3,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            },
-            {
-              "name": "RequiredActionQuorumParameters",
-              "field": [
-                {
-                  "name": "required_challenges",
-                  "number": 1,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "Challenge",
-                  "options": {}
-                },
-                {
-                  "name": "required_approver_count",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_INT32",
-                  "options": {}
-                },
-                {
-                  "name": "quorum_challenges",
-                  "number": 3,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "Challenge",
-                  "options": {}
-                },
-                {
-                  "name": "approved_two_factor_public_key_pems",
-                  "number": 4,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            },
-            {
-              "name": "RegisterTwoFactorAuthKeys",
-              "field": [
-                {
-                  "name": "required_approver_count",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_INT32",
-                  "options": {}
-                },
-                {
-                  "name": "two_factor_public_key_pems",
-                  "number": 2,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            },
-            {
-              "name": "DisableSingleTenantHsmInstance"
-            },
-            {
-              "name": "EnableSingleTenantHsmInstance"
-            },
-            {
-              "name": "DeleteSingleTenantHsmInstance"
-            },
-            {
-              "name": "AddQuorumMember",
-              "field": [
-                {
-                  "name": "two_factor_public_key_pem",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            },
-            {
-              "name": "RemoveQuorumMember",
-              "field": [
-                {
-                  "name": "two_factor_public_key_pem",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            },
-            {
-              "name": "RefreshSingleTenantHsmInstance"
-            }
-          ],
-          "enumType": [
-            {
-              "name": "State",
-              "value": [
-                {
-                  "name": "STATE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "CREATING",
-                  "number": 1
-                },
-                {
-                  "name": "PENDING",
-                  "number": 2
-                },
-                {
-                  "name": "APPROVED",
-                  "number": 3
-                },
-                {
-                  "name": "RUNNING",
-                  "number": 4
-                },
-                {
-                  "name": "SUCCEEDED",
-                  "number": 5
-                },
-                {
-                  "name": "FAILED",
-                  "number": 6
-                },
-                {
-                  "name": "DELETED",
-                  "number": 7
-                }
-              ]
-            }
-          ],
-          "options": {},
-          "oneofDecl": [
-            {
-              "name": "approval_parameters"
-            },
-            {
-              "name": "expiration"
-            },
-            {
-              "name": "operation"
-            }
-          ]
-        },
-        {
-          "name": "Challenge",
-          "field": [
-            {
-              "name": "challenge",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BYTES",
-              "options": {}
-            },
-            {
-              "name": "public_key_pem",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ChallengeReply",
-          "field": [
-            {
-              "name": "signed_challenge",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BYTES",
-              "options": {}
-            },
-            {
-              "name": "public_key_pem",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ListSingleTenantHsmInstancesRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "page_size",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "page_token",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "filter",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "order_by",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "show_deleted",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ListSingleTenantHsmInstancesResponse",
-          "field": [
-            {
-              "name": "single_tenant_hsm_instances",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SingleTenantHsmInstance"
-            },
-            {
-              "name": "next_page_token",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "total_size",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            }
-          ]
-        },
-        {
-          "name": "GetSingleTenantHsmInstanceRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "CreateSingleTenantHsmInstanceRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "single_tenant_hsm_instance_id",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "single_tenant_hsm_instance",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SingleTenantHsmInstance",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "CreateSingleTenantHsmInstanceMetadata"
-        },
-        {
-          "name": "CreateSingleTenantHsmInstanceProposalRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "single_tenant_hsm_instance_proposal_id",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "single_tenant_hsm_instance_proposal",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SingleTenantHsmInstanceProposal",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "CreateSingleTenantHsmInstanceProposalMetadata"
-        },
-        {
-          "name": "GetSingleTenantHsmInstanceProposalRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ApproveSingleTenantHsmInstanceProposalRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "quorum_reply",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "QuorumReply",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "required_action_quorum_reply",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RequiredActionQuorumReply",
-              "options": {},
-              "oneofIndex": 0
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "QuorumReply",
-              "field": [
-                {
-                  "name": "challenge_replies",
-                  "number": 1,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "ChallengeReply",
-                  "options": {}
-                }
-              ]
-            },
-            {
-              "name": "RequiredActionQuorumReply",
-              "field": [
-                {
-                  "name": "required_challenge_replies",
-                  "number": 1,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "ChallengeReply",
-                  "options": {}
-                },
-                {
-                  "name": "quorum_challenge_replies",
-                  "number": 2,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "ChallengeReply",
-                  "options": {}
-                }
-              ]
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "approval_payload"
-            }
-          ]
-        },
-        {
-          "name": "ApproveSingleTenantHsmInstanceProposalResponse"
-        },
-        {
-          "name": "ExecuteSingleTenantHsmInstanceProposalRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ExecuteSingleTenantHsmInstanceProposalResponse"
-        },
-        {
-          "name": "ExecuteSingleTenantHsmInstanceProposalMetadata"
-        },
-        {
-          "name": "ListSingleTenantHsmInstanceProposalsRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "page_size",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "page_token",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "filter",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "order_by",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "show_deleted",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ListSingleTenantHsmInstanceProposalsResponse",
-          "field": [
-            {
-              "name": "single_tenant_hsm_instance_proposals",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "SingleTenantHsmInstanceProposal"
-            },
-            {
-              "name": "next_page_token",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "total_size",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            }
-          ]
-        },
-        {
-          "name": "DeleteSingleTenantHsmInstanceProposalRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
         },
         {
           "name": "ListKeyRingsRequest",
@@ -6426,374 +6794,6 @@
         },
         {
           "name": "DeleteCryptoKeyVersionMetadata"
-        },
-        {
-          "name": "ListEkmConnectionsRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "page_size",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "page_token",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "filter",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "order_by",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ListEkmConnectionsResponse",
-          "field": [
-            {
-              "name": "ekm_connections",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "EkmConnection"
-            },
-            {
-              "name": "next_page_token",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "total_size",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            }
-          ]
-        },
-        {
-          "name": "GetEkmConnectionRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "CreateEkmConnectionRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "ekm_connection_id",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "ekm_connection",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "EkmConnection",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "UpdateEkmConnectionRequest",
-          "field": [
-            {
-              "name": "ekm_connection",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "EkmConnection",
-              "options": {}
-            },
-            {
-              "name": "update_mask",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.FieldMask",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "GetEkmConfigRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "UpdateEkmConfigRequest",
-          "field": [
-            {
-              "name": "ekm_config",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "EkmConfig",
-              "options": {}
-            },
-            {
-              "name": "update_mask",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.FieldMask",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "Certificate",
-          "field": [
-            {
-              "name": "raw_der",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BYTES",
-              "options": {}
-            },
-            {
-              "name": "parsed",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            },
-            {
-              "name": "issuer",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "subject",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "subject_alternative_dns_names",
-              "number": 5,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "not_before_time",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "not_after_time",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "serial_number",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "sha256_fingerprint",
-              "number": 9,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "EkmConnection",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "create_time",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "service_resolvers",
-              "number": 3,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "ServiceResolver",
-              "options": {}
-            },
-            {
-              "name": "etag",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "key_management_mode",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "KeyManagementMode",
-              "options": {}
-            },
-            {
-              "name": "crypto_space_path",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "ServiceResolver",
-              "field": [
-                {
-                  "name": "service_directory_service",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                },
-                {
-                  "name": "endpoint_filter",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                },
-                {
-                  "name": "hostname",
-                  "number": 3,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                },
-                {
-                  "name": "server_certificates",
-                  "number": 4,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "Certificate",
-                  "options": {}
-                }
-              ]
-            }
-          ],
-          "enumType": [
-            {
-              "name": "KeyManagementMode",
-              "value": [
-                {
-                  "name": "KEY_MANAGEMENT_MODE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "MANUAL",
-                  "number": 1
-                },
-                {
-                  "name": "CLOUD_KMS",
-                  "number": 2
-                }
-              ]
-            }
-          ],
-          "options": {}
-        },
-        {
-          "name": "EkmConfig",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "default_ekm_connection",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ],
-          "options": {}
-        },
-        {
-          "name": "VerifyConnectivityRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "VerifyConnectivityResponse"
         }
       ],
       "enumType": [
@@ -6924,6 +6924,54 @@
               "name": "ShowEffectiveAutokeyConfig",
               "inputType": ".google.cloud.kms.v1.ShowEffectiveAutokeyConfigRequest",
               "outputType": ".google.cloud.kms.v1.ShowEffectiveAutokeyConfigResponse",
+              "options": {}
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "EkmService",
+          "method": [
+            {
+              "name": "ListEkmConnections",
+              "inputType": ".google.cloud.kms.v1.ListEkmConnectionsRequest",
+              "outputType": ".google.cloud.kms.v1.ListEkmConnectionsResponse",
+              "options": {}
+            },
+            {
+              "name": "GetEkmConnection",
+              "inputType": ".google.cloud.kms.v1.GetEkmConnectionRequest",
+              "outputType": ".google.cloud.kms.v1.EkmConnection",
+              "options": {}
+            },
+            {
+              "name": "CreateEkmConnection",
+              "inputType": ".google.cloud.kms.v1.CreateEkmConnectionRequest",
+              "outputType": ".google.cloud.kms.v1.EkmConnection",
+              "options": {}
+            },
+            {
+              "name": "UpdateEkmConnection",
+              "inputType": ".google.cloud.kms.v1.UpdateEkmConnectionRequest",
+              "outputType": ".google.cloud.kms.v1.EkmConnection",
+              "options": {}
+            },
+            {
+              "name": "GetEkmConfig",
+              "inputType": ".google.cloud.kms.v1.GetEkmConfigRequest",
+              "outputType": ".google.cloud.kms.v1.EkmConfig",
+              "options": {}
+            },
+            {
+              "name": "UpdateEkmConfig",
+              "inputType": ".google.cloud.kms.v1.UpdateEkmConfigRequest",
+              "outputType": ".google.cloud.kms.v1.EkmConfig",
+              "options": {}
+            },
+            {
+              "name": "VerifyConnectivity",
+              "inputType": ".google.cloud.kms.v1.VerifyConnectivityRequest",
+              "outputType": ".google.cloud.kms.v1.VerifyConnectivityResponse",
               "options": {}
             }
           ],
@@ -7192,59 +7240,11 @@
             }
           ],
           "options": {}
-        },
-        {
-          "name": "EkmService",
-          "method": [
-            {
-              "name": "ListEkmConnections",
-              "inputType": ".google.cloud.kms.v1.ListEkmConnectionsRequest",
-              "outputType": ".google.cloud.kms.v1.ListEkmConnectionsResponse",
-              "options": {}
-            },
-            {
-              "name": "GetEkmConnection",
-              "inputType": ".google.cloud.kms.v1.GetEkmConnectionRequest",
-              "outputType": ".google.cloud.kms.v1.EkmConnection",
-              "options": {}
-            },
-            {
-              "name": "CreateEkmConnection",
-              "inputType": ".google.cloud.kms.v1.CreateEkmConnectionRequest",
-              "outputType": ".google.cloud.kms.v1.EkmConnection",
-              "options": {}
-            },
-            {
-              "name": "UpdateEkmConnection",
-              "inputType": ".google.cloud.kms.v1.UpdateEkmConnectionRequest",
-              "outputType": ".google.cloud.kms.v1.EkmConnection",
-              "options": {}
-            },
-            {
-              "name": "GetEkmConfig",
-              "inputType": ".google.cloud.kms.v1.GetEkmConfigRequest",
-              "outputType": ".google.cloud.kms.v1.EkmConfig",
-              "options": {}
-            },
-            {
-              "name": "UpdateEkmConfig",
-              "inputType": ".google.cloud.kms.v1.UpdateEkmConfigRequest",
-              "outputType": ".google.cloud.kms.v1.EkmConfig",
-              "options": {}
-            },
-            {
-              "name": "VerifyConnectivity",
-              "inputType": ".google.cloud.kms.v1.VerifyConnectivityRequest",
-              "outputType": ".google.cloud.kms.v1.VerifyConnectivityResponse",
-              "options": {}
-            }
-          ],
-          "options": {}
         }
       ],
       "options": {
         "javaPackage": "com.google.cloud.kms.v1",
-        "javaOuterClassname": "EkmServiceProto",
+        "javaOuterClassname": "KmsProto",
         "javaMultipleFiles": true,
         "goPackage": "cloud.google.com/go/kms/apiv1/kmspb;kmspb",
         "csharpNamespace": "Google.Cloud.Kms.V1",
@@ -7993,47 +7993,6 @@
       ],
       "enumType": [
         {
-          "name": "FieldBehavior",
-          "value": [
-            {
-              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
-              "number": 0
-            },
-            {
-              "name": "OPTIONAL",
-              "number": 1
-            },
-            {
-              "name": "REQUIRED",
-              "number": 2
-            },
-            {
-              "name": "OUTPUT_ONLY",
-              "number": 3
-            },
-            {
-              "name": "INPUT_ONLY",
-              "number": 4
-            },
-            {
-              "name": "IMMUTABLE",
-              "number": 5
-            },
-            {
-              "name": "UNORDERED_LIST",
-              "number": 6
-            },
-            {
-              "name": "NON_EMPTY_DEFAULT",
-              "number": 7
-            },
-            {
-              "name": "IDENTIFIER",
-              "number": 8
-            }
-          ]
-        },
-        {
           "name": "ClientLibraryOrganization",
           "value": [
             {
@@ -8088,6 +8047,47 @@
           ]
         },
         {
+          "name": "FieldBehavior",
+          "value": [
+            {
+              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "OPTIONAL",
+              "number": 1
+            },
+            {
+              "name": "REQUIRED",
+              "number": 2
+            },
+            {
+              "name": "OUTPUT_ONLY",
+              "number": 3
+            },
+            {
+              "name": "INPUT_ONLY",
+              "number": 4
+            },
+            {
+              "name": "IMMUTABLE",
+              "number": 5
+            },
+            {
+              "name": "UNORDERED_LIST",
+              "number": 6
+            },
+            {
+              "name": "NON_EMPTY_DEFAULT",
+              "number": 7
+            },
+            {
+              "name": "IDENTIFIER",
+              "number": 8
+            }
+          ]
+        },
+        {
           "name": "LaunchStage",
           "value": [
             {
@@ -8127,15 +8127,12 @@
       ],
       "extension": [
         {
-          "name": "field_behavior",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1052,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_ENUM",
-          "typeName": "FieldBehavior",
-          "options": {
-            "packed": false
-          }
+          "name": "http",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 72295728,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "HttpRule"
         },
         {
           "name": "method_signature",
@@ -8166,12 +8163,15 @@
           "type": "TYPE_STRING"
         },
         {
-          "name": "http",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 72295728,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "HttpRule"
+          "name": "field_behavior",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1052,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior",
+          "options": {
+            "packed": false
+          }
         },
         {
           "name": "resource_reference",
@@ -8200,9 +8200,9 @@
       ],
       "options": {
         "javaPackage": "com.google.api",
-        "javaOuterClassname": "HttpProto",
+        "javaOuterClassname": "LaunchStageProto",
         "javaMultipleFiles": true,
-        "goPackage": "google.golang.org/genproto/googleapis/api/annotations;annotations",
+        "goPackage": "google.golang.org/genproto/googleapis/api;api",
         "objcClassPrefix": "GAPI"
       },
       "syntax": "proto3"

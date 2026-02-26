@@ -58,17 +58,17 @@ const getRouterStatus: AppBlock = {
           result: {
             type: "object",
             properties: {
-              best_routes: {
+              bestRoutes: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    as_paths: {
+                    asPaths: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          as_lists: {
+                          asLists: {
                             type: "array",
                             items: {
                               type: "integer",
@@ -76,7 +76,7 @@ const getRouterStatus: AppBlock = {
                             description:
                               "[Output Only] The AS numbers of the AS Path.",
                           },
-                          path_segment_type: {
+                          pathSegmentType: {
                             type: "string",
                             description:
                               "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
@@ -86,7 +86,7 @@ const getRouterStatus: AppBlock = {
                       },
                       description: "Output only. [Output Only] AS path.",
                     },
-                    creation_timestamp: {
+                    creationTimestamp: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -96,7 +96,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         "An optional description of this resource. Provide this field when you create the resource.",
                     },
-                    dest_range: {
+                    destRange: {
                       type: "string",
                       description:
                         "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
@@ -120,62 +120,62 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Fully-qualified URL of the network that this route applies to.",
                     },
-                    next_hop_gateway: {
+                    nextHopGateway: {
                       type: "string",
                       description:
                         "The URL to a gateway that should handle matching packets. You can only specify the internet gateway using a full or partial valid URL: projects/project/global/gateways/default-internet-gateway",
                     },
-                    next_hop_hub: {
+                    nextHopHub: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
                     },
-                    next_hop_ilb: {
+                    nextHopIlb: {
                       type: "string",
                       description:
                         "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule    - regions/region/forwardingRules/forwardingRule   If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses:         - 10.128.0.56       - 2001:db8::2d9:51:0:0       - 2001:db8:0:0:2d9:51:0:0   IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                     },
-                    next_hop_instance: {
+                    nextHopInstance: {
                       type: "string",
                       description:
                         "The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
                     },
-                    next_hop_inter_region_cost: {
+                    nextHopInterRegionCost: {
                       type: "integer",
                       description:
                         "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
                     },
-                    next_hop_interconnect_attachment: {
+                    nextHopInterconnectAttachment: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
                     },
-                    next_hop_ip: {
+                    nextHopIp: {
                       type: "string",
                       description:
                         "The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                     },
-                    next_hop_med: {
+                    nextHopMed: {
                       type: "integer",
                       description:
                         "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
                     },
-                    next_hop_network: {
+                    nextHopNetwork: {
                       type: "string",
                       description:
                         "The URL of the local network if it should handle matching packets.",
                     },
-                    next_hop_origin: {
+                    nextHopOrigin: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
                     },
-                    next_hop_peering: {
+                    nextHopPeering: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
                     },
-                    next_hop_vpn_tunnel: {
+                    nextHopVpnTunnel: {
                       type: "string",
                       description:
                         "The URL to a VpnTunnel that should handle matching packets.",
@@ -183,7 +183,7 @@ const getRouterStatus: AppBlock = {
                     params: {
                       type: "object",
                       properties: {
-                        resource_manager_tags: {
+                        resourceManagerTags: {
                           type: "object",
                           additionalProperties: {
                             type: "string",
@@ -200,17 +200,17 @@ const getRouterStatus: AppBlock = {
                       description:
                         "The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.",
                     },
-                    route_status: {
+                    routeStatus: {
                       type: "string",
                       description:
                         "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
                     },
-                    route_type: {
+                    routeType: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
                     },
-                    self_link: {
+                    selfLink: {
                       type: "string",
                       description:
                         "[Output Only] Server-defined fully-qualified URL for this resource.",
@@ -273,17 +273,17 @@ const getRouterStatus: AppBlock = {
                 description:
                   "A list of the best dynamic routes for this Cloud Router's Virtual Private Cloud (VPC) network in the same region as this Cloud Router.  Lists all of the best routes per prefix that are programmed into this region's VPC data plane.  When global dynamic routing mode is turned on in the VPC network, this list can include cross-region dynamic routes from Cloud Routers in other regions.",
               },
-              best_routes_for_router: {
+              bestRoutesForRouter: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    as_paths: {
+                    asPaths: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          as_lists: {
+                          asLists: {
                             type: "array",
                             items: {
                               type: "integer",
@@ -291,7 +291,7 @@ const getRouterStatus: AppBlock = {
                             description:
                               "[Output Only] The AS numbers of the AS Path.",
                           },
-                          path_segment_type: {
+                          pathSegmentType: {
                             type: "string",
                             description:
                               "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
@@ -301,7 +301,7 @@ const getRouterStatus: AppBlock = {
                       },
                       description: "Output only. [Output Only] AS path.",
                     },
-                    creation_timestamp: {
+                    creationTimestamp: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -311,7 +311,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         "An optional description of this resource. Provide this field when you create the resource.",
                     },
-                    dest_range: {
+                    destRange: {
                       type: "string",
                       description:
                         "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
@@ -335,62 +335,62 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Fully-qualified URL of the network that this route applies to.",
                     },
-                    next_hop_gateway: {
+                    nextHopGateway: {
                       type: "string",
                       description:
                         "The URL to a gateway that should handle matching packets. You can only specify the internet gateway using a full or partial valid URL: projects/project/global/gateways/default-internet-gateway",
                     },
-                    next_hop_hub: {
+                    nextHopHub: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
                     },
-                    next_hop_ilb: {
+                    nextHopIlb: {
                       type: "string",
                       description:
                         "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule    - regions/region/forwardingRules/forwardingRule   If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses:         - 10.128.0.56       - 2001:db8::2d9:51:0:0       - 2001:db8:0:0:2d9:51:0:0   IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                     },
-                    next_hop_instance: {
+                    nextHopInstance: {
                       type: "string",
                       description:
                         "The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
                     },
-                    next_hop_inter_region_cost: {
+                    nextHopInterRegionCost: {
                       type: "integer",
                       description:
                         "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
                     },
-                    next_hop_interconnect_attachment: {
+                    nextHopInterconnectAttachment: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
                     },
-                    next_hop_ip: {
+                    nextHopIp: {
                       type: "string",
                       description:
                         "The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                     },
-                    next_hop_med: {
+                    nextHopMed: {
                       type: "integer",
                       description:
                         "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
                     },
-                    next_hop_network: {
+                    nextHopNetwork: {
                       type: "string",
                       description:
                         "The URL of the local network if it should handle matching packets.",
                     },
-                    next_hop_origin: {
+                    nextHopOrigin: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
                     },
-                    next_hop_peering: {
+                    nextHopPeering: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
                     },
-                    next_hop_vpn_tunnel: {
+                    nextHopVpnTunnel: {
                       type: "string",
                       description:
                         "The URL to a VpnTunnel that should handle matching packets.",
@@ -398,7 +398,7 @@ const getRouterStatus: AppBlock = {
                     params: {
                       type: "object",
                       properties: {
-                        resource_manager_tags: {
+                        resourceManagerTags: {
                           type: "object",
                           additionalProperties: {
                             type: "string",
@@ -415,17 +415,17 @@ const getRouterStatus: AppBlock = {
                       description:
                         "The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.",
                     },
-                    route_status: {
+                    routeStatus: {
                       type: "string",
                       description:
                         "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
                     },
-                    route_type: {
+                    routeType: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
                     },
-                    self_link: {
+                    selfLink: {
                       type: "string",
                       description:
                         "[Output Only] Server-defined fully-qualified URL for this resource.",
@@ -488,22 +488,22 @@ const getRouterStatus: AppBlock = {
                 description:
                   "A list of the best BGP routes learned by this Cloud Router.  It is possible that routes listed might not be programmed into the data plane, if the Google Cloud control plane finds a more optimal route for a prefix than a route learned by this Cloud Router.",
               },
-              bgp_peer_status: {
+              bgpPeerStatus: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    advertised_routes: {
+                    advertisedRoutes: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          as_paths: {
+                          asPaths: {
                             type: "array",
                             items: {
                               type: "object",
                               properties: {
-                                as_lists: {
+                                asLists: {
                                   type: "array",
                                   items: {
                                     type: "integer",
@@ -511,7 +511,7 @@ const getRouterStatus: AppBlock = {
                                   description:
                                     "[Output Only] The AS numbers of the AS Path.",
                                 },
-                                path_segment_type: {
+                                pathSegmentType: {
                                   type: "string",
                                   description:
                                     "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
@@ -521,7 +521,7 @@ const getRouterStatus: AppBlock = {
                             },
                             description: "Output only. [Output Only] AS path.",
                           },
-                          creation_timestamp: {
+                          creationTimestamp: {
                             type: "string",
                             description:
                               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -531,7 +531,7 @@ const getRouterStatus: AppBlock = {
                             description:
                               "An optional description of this resource. Provide this field when you create the resource.",
                           },
-                          dest_range: {
+                          destRange: {
                             type: "string",
                             description:
                               "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
@@ -555,62 +555,62 @@ const getRouterStatus: AppBlock = {
                             description:
                               "Fully-qualified URL of the network that this route applies to.",
                           },
-                          next_hop_gateway: {
+                          nextHopGateway: {
                             type: "string",
                             description:
                               "The URL to a gateway that should handle matching packets. You can only specify the internet gateway using a full or partial valid URL: projects/project/global/gateways/default-internet-gateway",
                           },
-                          next_hop_hub: {
+                          nextHopHub: {
                             type: "string",
                             description:
                               "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
                           },
-                          next_hop_ilb: {
+                          nextHopIlb: {
                             type: "string",
                             description:
                               "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule    - regions/region/forwardingRules/forwardingRule   If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses:         - 10.128.0.56       - 2001:db8::2d9:51:0:0       - 2001:db8:0:0:2d9:51:0:0   IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                           },
-                          next_hop_instance: {
+                          nextHopInstance: {
                             type: "string",
                             description:
                               "The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
                           },
-                          next_hop_inter_region_cost: {
+                          nextHopInterRegionCost: {
                             type: "integer",
                             description:
                               "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
                           },
-                          next_hop_interconnect_attachment: {
+                          nextHopInterconnectAttachment: {
                             type: "string",
                             description:
                               "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
                           },
-                          next_hop_ip: {
+                          nextHopIp: {
                             type: "string",
                             description:
                               "The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
                           },
-                          next_hop_med: {
+                          nextHopMed: {
                             type: "integer",
                             description:
                               "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
                           },
-                          next_hop_network: {
+                          nextHopNetwork: {
                             type: "string",
                             description:
                               "The URL of the local network if it should handle matching packets.",
                           },
-                          next_hop_origin: {
+                          nextHopOrigin: {
                             type: "string",
                             description:
                               "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
                           },
-                          next_hop_peering: {
+                          nextHopPeering: {
                             type: "string",
                             description:
                               "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
                           },
-                          next_hop_vpn_tunnel: {
+                          nextHopVpnTunnel: {
                             type: "string",
                             description:
                               "The URL to a VpnTunnel that should handle matching packets.",
@@ -618,7 +618,7 @@ const getRouterStatus: AppBlock = {
                           params: {
                             type: "object",
                             properties: {
-                              resource_manager_tags: {
+                              resourceManagerTags: {
                                 type: "object",
                                 additionalProperties: {
                                   type: "string",
@@ -635,17 +635,17 @@ const getRouterStatus: AppBlock = {
                             description:
                               "The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.",
                           },
-                          route_status: {
+                          routeStatus: {
                             type: "string",
                             description:
                               "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
                           },
-                          route_type: {
+                          routeType: {
                             type: "string",
                             description:
                               "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
                           },
-                          self_link: {
+                          selfLink: {
                             type: "string",
                             description:
                               "[Output Only] Server-defined fully-qualified URL for this resource.",
@@ -708,37 +708,37 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Routes that were advertised to the remote BGP peer",
                     },
-                    bfd_status: {
+                    bfdStatus: {
                       type: "object",
                       properties: {
-                        bfd_session_initialization_mode: {
+                        bfdSessionInitializationMode: {
                           type: "string",
                           description:
                             "The BFD session initialization mode for this BGP peer. If set to ACTIVE, the Cloud Router will initiate the BFD session for this BGP peer. If set to PASSIVE, the Cloud Router will wait for the peer router to initiate the BFD session for this BGP peer. If set to DISABLED, BFD is disabled for this BGP peer. Check the BfdSessionInitializationMode enum for the list of possible values.",
                         },
-                        config_update_timestamp_micros: {
+                        configUpdateTimestampMicros: {
                           type: "string",
                           description: "64-bit integer as string",
                         },
-                        control_packet_counts: {
+                        controlPacketCounts: {
                           type: "object",
                           properties: {
-                            num_rx: {
+                            numRx: {
                               type: "integer",
                               description:
                                 "Number of packets received since the beginning of the current BFD session.",
                             },
-                            num_rx_rejected: {
+                            numRxRejected: {
                               type: "integer",
                               description:
                                 "Number of packets received that were rejected because of errors since the beginning of the current BFD session.",
                             },
-                            num_rx_successful: {
+                            numRxSuccessful: {
                               type: "integer",
                               description:
                                 "Number of packets received that were successfully processed since the beginning of the current BFD session.",
                             },
-                            num_tx: {
+                            numTx: {
                               type: "integer",
                               description:
                                 "Number of packets transmitted since the beginning of the current BFD session.",
@@ -748,12 +748,12 @@ const getRouterStatus: AppBlock = {
                           description:
                             "Control packet counts for the current BFD session.",
                         },
-                        control_packet_intervals: {
+                        controlPacketIntervals: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              avg_ms: {
+                              avgMs: {
                                 type: "string",
                                 description: "64-bit integer as string",
                               },
@@ -762,15 +762,15 @@ const getRouterStatus: AppBlock = {
                                 description:
                                   "From how long ago in the past these intervals were observed. Check the Duration enum for the list of possible values.",
                               },
-                              max_ms: {
+                              maxMs: {
                                 type: "string",
                                 description: "64-bit integer as string",
                               },
-                              min_ms: {
+                              minMs: {
                                 type: "string",
                                 description: "64-bit integer as string",
                               },
-                              num_intervals: {
+                              numIntervals: {
                                 type: "string",
                                 description: "64-bit integer as string",
                               },
@@ -786,30 +786,30 @@ const getRouterStatus: AppBlock = {
                           description:
                             "Inter-packet time interval statistics for control packets.",
                         },
-                        local_diagnostic: {
+                        localDiagnostic: {
                           type: "string",
                           description:
                             "The diagnostic code specifies the local system's reason for the last change in session state. This allows remote systems to determine the reason that the previous session failed, for example. These diagnostic codes are specified in section 4.1 ofRFC5880 Check the LocalDiagnostic enum for the list of possible values.",
                         },
-                        local_state: {
+                        localState: {
                           type: "string",
                           description:
                             "The current BFD session state as seen by the transmitting system. These states are specified in section 4.1 ofRFC5880 Check the LocalState enum for the list of possible values.",
                         },
-                        negotiated_local_control_tx_interval_ms: {
+                        negotiatedLocalControlTxIntervalMs: {
                           type: "integer",
                           description:
                             "Negotiated transmit interval for control packets.",
                         },
-                        rx_packet: {
+                        rxPacket: {
                           type: "object",
                           properties: {
-                            authentication_present: {
+                            authenticationPresent: {
                               type: "boolean",
                               description:
                                 "The Authentication Present bit of the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            control_plane_independent: {
+                            controlPlaneIndependent: {
                               type: "boolean",
                               description:
                                 "The Control Plane Independent bit of the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -834,17 +834,17 @@ const getRouterStatus: AppBlock = {
                               description:
                                 "The length of the BFD Control packet in bytes. This is specified in section 4.1 ofRFC5880",
                             },
-                            min_echo_rx_interval_ms: {
+                            minEchoRxIntervalMs: {
                               type: "integer",
                               description:
                                 "The Required Min Echo RX Interval value in the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            min_rx_interval_ms: {
+                            minRxIntervalMs: {
                               type: "integer",
                               description:
                                 "The Required Min RX Interval value in the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            min_tx_interval_ms: {
+                            minTxIntervalMs: {
                               type: "integer",
                               description:
                                 "The Desired Min TX Interval value in the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -859,7 +859,7 @@ const getRouterStatus: AppBlock = {
                               description:
                                 "The multipoint bit of the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            my_discriminator: {
+                            myDiscriminator: {
                               type: "integer",
                               description:
                                 "The My Discriminator value in the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -879,7 +879,7 @@ const getRouterStatus: AppBlock = {
                               description:
                                 "The version number of the BFD protocol, as specified in section 4.1 ofRFC5880.",
                             },
-                            your_discriminator: {
+                            yourDiscriminator: {
                               type: "integer",
                               description:
                                 "The Your Discriminator value in the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -889,15 +889,15 @@ const getRouterStatus: AppBlock = {
                           description:
                             "The most recent Rx control packet for this BFD session.",
                         },
-                        tx_packet: {
+                        txPacket: {
                           type: "object",
                           properties: {
-                            authentication_present: {
+                            authenticationPresent: {
                               type: "boolean",
                               description:
                                 "The Authentication Present bit of the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            control_plane_independent: {
+                            controlPlaneIndependent: {
                               type: "boolean",
                               description:
                                 "The Control Plane Independent bit of the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -922,17 +922,17 @@ const getRouterStatus: AppBlock = {
                               description:
                                 "The length of the BFD Control packet in bytes. This is specified in section 4.1 ofRFC5880",
                             },
-                            min_echo_rx_interval_ms: {
+                            minEchoRxIntervalMs: {
                               type: "integer",
                               description:
                                 "The Required Min Echo RX Interval value in the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            min_rx_interval_ms: {
+                            minRxIntervalMs: {
                               type: "integer",
                               description:
                                 "The Required Min RX Interval value in the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            min_tx_interval_ms: {
+                            minTxIntervalMs: {
                               type: "integer",
                               description:
                                 "The Desired Min TX Interval value in the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -947,7 +947,7 @@ const getRouterStatus: AppBlock = {
                               description:
                                 "The multipoint bit of the BFD packet. This is specified in section 4.1 ofRFC5880",
                             },
-                            my_discriminator: {
+                            myDiscriminator: {
                               type: "integer",
                               description:
                                 "The My Discriminator value in the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -967,7 +967,7 @@ const getRouterStatus: AppBlock = {
                               description:
                                 "The version number of the BFD protocol, as specified in section 4.1 ofRFC5880.",
                             },
-                            your_discriminator: {
+                            yourDiscriminator: {
                               type: "integer",
                               description:
                                 "The Your Discriminator value in the BFD packet. This is specified in section 4.1 ofRFC5880",
@@ -977,7 +977,7 @@ const getRouterStatus: AppBlock = {
                           description:
                             "The most recent Tx control packet for this BFD session.",
                         },
-                        uptime_ms: {
+                        uptimeMs: {
                           type: "string",
                           description: "64-bit integer as string",
                         },
@@ -985,37 +985,37 @@ const getRouterStatus: AppBlock = {
                       description: "Next free: 15",
                       additionalProperties: true,
                     },
-                    enable_ipv4: {
+                    enableIpv4: {
                       type: "boolean",
                       description:
                         "Output only. Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.",
                     },
-                    enable_ipv6: {
+                    enableIpv6: {
                       type: "boolean",
                       description:
                         "Output only. Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.",
                     },
-                    ip_address: {
+                    ipAddress: {
                       type: "string",
                       description:
                         "Output only. IP address of the local BGP interface.",
                     },
-                    ipv4_nexthop_address: {
+                    ipv4NexthopAddress: {
                       type: "string",
                       description:
                         "Output only. IPv4 address of the local BGP interface.",
                     },
-                    ipv6_nexthop_address: {
+                    ipv6NexthopAddress: {
                       type: "string",
                       description:
                         "Output only. IPv6 address of the local BGP interface.",
                     },
-                    linked_vpn_tunnel: {
+                    linkedVpnTunnel: {
                       type: "string",
                       description:
                         "Output only. URL of the VPN tunnel that this BGP peer controls.",
                     },
-                    md5_auth_enabled: {
+                    md5AuthEnabled: {
                       type: "boolean",
                       description:
                         "Informs whether MD5 authentication is enabled on this BGP peer.",
@@ -1025,27 +1025,27 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Output only. Name of this BGP peer. Unique within the Routers resource.",
                     },
-                    num_learned_routes: {
+                    numLearnedRoutes: {
                       type: "integer",
                       description:
                         "Output only. Number of routes learned from the remote BGP Peer.",
                     },
-                    peer_ip_address: {
+                    peerIpAddress: {
                       type: "string",
                       description:
                         "Output only. IP address of the remote BGP interface.",
                     },
-                    peer_ipv4_nexthop_address: {
+                    peerIpv4NexthopAddress: {
                       type: "string",
                       description:
                         "Output only. IPv4 address of the remote BGP interface.",
                     },
-                    peer_ipv6_nexthop_address: {
+                    peerIpv6NexthopAddress: {
                       type: "string",
                       description:
                         "Output only. IPv6 address of the remote BGP interface.",
                     },
-                    router_appliance_instance: {
+                    routerApplianceInstance: {
                       type: "string",
                       description:
                         "Output only. [Output only] URI of the VM instance that is used as third-party router appliances such as Next Gen Firewalls, Virtual Routers, or Router Appliances. The VM instance is the peer side of the BGP session.",
@@ -1060,7 +1060,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Output only. Status of the BGP peer: {UP, DOWN} Check the Status enum for the list of possible values.",
                     },
-                    status_reason: {
+                    statusReason: {
                       type: "string",
                       description:
                         "Indicates why particular status was returned. Check the StatusReason enum for the list of possible values.",
@@ -1070,7 +1070,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Output only. Time this session has been up. Format:  14 years, 51 weeks, 6 days, 23 hours, 59 minutes, 59 seconds",
                     },
-                    uptime_seconds: {
+                    uptimeSeconds: {
                       type: "string",
                       description:
                         "Output only. Time this session has been up, in seconds. Format:  145",
@@ -1079,12 +1079,12 @@ const getRouterStatus: AppBlock = {
                   additionalProperties: true,
                 },
               },
-              nat_status: {
+              natStatus: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    auto_allocated_nat_ips: {
+                    autoAllocatedNatIps: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1092,7 +1092,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         'Output only. A list of IPs auto-allocated for NAT. Example: ["1.1.1.1", "129.2.16.89"]',
                     },
-                    drain_auto_allocated_nat_ips: {
+                    drainAutoAllocatedNatIps: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1100,7 +1100,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         'Output only. A list of IPs auto-allocated for NAT that are in drain mode. Example: ["1.1.1.1", "179.12.26.133"].',
                     },
-                    drain_user_allocated_nat_ips: {
+                    drainUserAllocatedNatIps: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1108,7 +1108,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         'Output only. A list of IPs user-allocated for NAT that are in drain mode. Example: ["1.1.1.1", "179.12.26.133"].',
                     },
-                    min_extra_nat_ips_needed: {
+                    minExtraNatIpsNeeded: {
                       type: "integer",
                       description:
                         "Output only. The number of extra IPs to allocate. This will be greater than 0 only if user-specified IPs are NOT enough to allow all configured VMs to use NAT. This value is meaningful only when auto-allocation of NAT IPs is *not* used.",
@@ -1117,17 +1117,17 @@ const getRouterStatus: AppBlock = {
                       type: "string",
                       description: "Output only. Unique name of this NAT.",
                     },
-                    num_vm_endpoints_with_nat_mappings: {
+                    numVmEndpointsWithNatMappings: {
                       type: "integer",
                       description:
                         "Output only. Number of VM endpoints (i.e., Nics) that can use NAT.",
                     },
-                    rule_status: {
+                    ruleStatus: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          active_nat_ips: {
+                          activeNatIps: {
                             type: "array",
                             items: {
                               type: "string",
@@ -1135,7 +1135,7 @@ const getRouterStatus: AppBlock = {
                             description:
                               'Output only. A list of active IPs for NAT. Example: ["1.1.1.1", "179.12.26.133"].',
                           },
-                          drain_nat_ips: {
+                          drainNatIps: {
                             type: "array",
                             items: {
                               type: "string",
@@ -1143,17 +1143,17 @@ const getRouterStatus: AppBlock = {
                             description:
                               'Output only. A list of IPs for NAT that are in drain mode. Example: ["1.1.1.1", "179.12.26.133"].',
                           },
-                          min_extra_ips_needed: {
+                          minExtraIpsNeeded: {
                             type: "integer",
                             description:
                               "Output only. The number of extra IPs to allocate. This will be greater than 0 only if the existing IPs in this NAT Rule are NOT enough to allow all configured VMs to use NAT.",
                           },
-                          num_vm_endpoints_with_nat_mappings: {
+                          numVmEndpointsWithNatMappings: {
                             type: "integer",
                             description:
                               "Output only. Number of VM endpoints (i.e., NICs) that have NAT Mappings from this NAT Rule.",
                           },
-                          rule_number: {
+                          ruleNumber: {
                             type: "integer",
                             description:
                               "Output only. Rule number of the rule.",
@@ -1165,7 +1165,7 @@ const getRouterStatus: AppBlock = {
                       },
                       description: "Status of rules in this NAT.",
                     },
-                    user_allocated_nat_ip_resources: {
+                    userAllocatedNatIpResources: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1173,7 +1173,7 @@ const getRouterStatus: AppBlock = {
                       description:
                         "Output only. A list of fully qualified URLs of reserved IP address resources.",
                     },
-                    user_allocated_nat_ips: {
+                    userAllocatedNatIps: {
                       type: "array",
                       items: {
                         type: "string",

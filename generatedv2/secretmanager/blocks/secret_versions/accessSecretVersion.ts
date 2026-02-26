@@ -1,5 +1,17 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSecretManagerServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSecretManagerServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  payload: {
+    name: "payload",
+    fields: {
+      data_crc32c: "dataCrc32c",
+    },
+  },
+};
 
 const accessSecretVersion: AppBlock = {
   name: "Access Secret Version",
@@ -23,9 +35,7 @@ const accessSecretVersion: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.accessSecretVersion(request, (err: any, response: any) => {
@@ -39,7 +49,8 @@ const accessSecretVersion: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -61,7 +72,7 @@ const accessSecretVersion: AppBlock = {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              data_crc32c: {
+              dataCrc32c: {
                 type: "string",
                 description: "64-bit integer as string",
               },

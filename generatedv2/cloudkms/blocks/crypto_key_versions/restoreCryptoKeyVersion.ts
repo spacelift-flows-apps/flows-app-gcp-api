@@ -1,5 +1,42 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  protection_level: "protectionLevel",
+  attestation: {
+    name: "attestation",
+    fields: {
+      cert_chains: {
+        name: "certChains",
+        fields: {
+          cavium_certs: "caviumCerts",
+          google_card_certs: "googleCardCerts",
+          google_partition_certs: "googlePartitionCerts",
+        },
+      },
+    },
+  },
+  create_time: "createTime",
+  generate_time: "generateTime",
+  destroy_time: "destroyTime",
+  destroy_event_time: "destroyEventTime",
+  import_job: "importJob",
+  import_time: "importTime",
+  import_failure_reason: "importFailureReason",
+  generation_failure_reason: "generationFailureReason",
+  external_destruction_failure_reason: "externalDestructionFailureReason",
+  external_protection_level_options: {
+    name: "externalProtectionLevelOptions",
+    fields: {
+      external_key_uri: "externalKeyUri",
+      ekm_connection_key_path: "ekmConnectionKeyPath",
+    },
+  },
+  reimport_eligible: "reimportEligible",
+};
 
 const restoreCryptoKeyVersion: AppBlock = {
   name: "Restore Crypto Key Version",
@@ -23,9 +60,7 @@ const restoreCryptoKeyVersion: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.restoreCryptoKeyVersion(request, (err: any, response: any) => {
@@ -39,7 +74,8 @@ const restoreCryptoKeyVersion: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -72,7 +108,7 @@ const restoreCryptoKeyVersion: AppBlock = {
             description:
               "The current state of the [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion].",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",
@@ -155,10 +191,10 @@ const restoreCryptoKeyVersion: AppBlock = {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              cert_chains: {
+              certChains: {
                 type: "object",
                 properties: {
-                  cavium_certs: {
+                  caviumCerts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -166,7 +202,7 @@ const restoreCryptoKeyVersion: AppBlock = {
                     description:
                       "Cavium certificate chain corresponding to the attestation.",
                   },
-                  google_card_certs: {
+                  googleCardCerts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -174,7 +210,7 @@ const restoreCryptoKeyVersion: AppBlock = {
                     description:
                       "Google card certificate chain corresponding to the attestation.",
                   },
-                  google_partition_certs: {
+                  googlePartitionCerts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -192,55 +228,55 @@ const restoreCryptoKeyVersion: AppBlock = {
               "Contains an HSM-generated attestation about a key operation. For more information, see [Verifying attestations] (https://cloud.google.com/kms/docs/attest-key).",
             additionalProperties: true,
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          generate_time: {
+          generateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          destroy_time: {
+          destroyTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          destroy_event_time: {
+          destroyEventTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          import_job: {
+          importJob: {
             type: "string",
             description:
               "Output only. The name of the [ImportJob][google.cloud.kms.v1.ImportJob] used in the most recent import of this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion]. Only present if the underlying key material was imported.",
           },
-          import_time: {
+          importTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          import_failure_reason: {
+          importFailureReason: {
             type: "string",
             description:
               "Output only. The root cause of the most recent import failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [IMPORT_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.IMPORT_FAILED].",
           },
-          generation_failure_reason: {
+          generationFailureReason: {
             type: "string",
             description:
               "Output only. The root cause of the most recent generation failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [GENERATION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.GENERATION_FAILED].",
           },
-          external_destruction_failure_reason: {
+          externalDestructionFailureReason: {
             type: "string",
             description:
               "Output only. The root cause of the most recent external destruction failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [EXTERNAL_DESTRUCTION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.EXTERNAL_DESTRUCTION_FAILED].",
           },
-          external_protection_level_options: {
+          externalProtectionLevelOptions: {
             type: "object",
             properties: {
-              external_key_uri: {
+              externalKeyUri: {
                 type: "string",
                 description:
                   "The URI for an external resource that this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] represents.",
               },
-              ekm_connection_key_path: {
+              ekmConnectionKeyPath: {
                 type: "string",
                 description:
                   'The path to the external key material on the EKM when using [EkmConnection][google.cloud.kms.v1.EkmConnection] e.g., "v0/my/key". Set this field instead of external_key_uri when using an [EkmConnection][google.cloud.kms.v1.EkmConnection].',
@@ -250,7 +286,7 @@ const restoreCryptoKeyVersion: AppBlock = {
               "ExternalProtectionLevelOptions stores a group of additional fields for configuring a [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] that are specific to the [EXTERNAL][google.cloud.kms.v1.ProtectionLevel.EXTERNAL] protection level and [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC] protection levels.",
             additionalProperties: true,
           },
-          reimport_eligible: {
+          reimportEligible: {
             type: "boolean",
             description:
               "Output only. Whether or not this key version is eligible for reimport, by being specified as a target in [ImportCryptoKeyVersionRequest.crypto_key_version][google.cloud.kms.v1.ImportCryptoKeyVersionRequest.crypto_key_version].",

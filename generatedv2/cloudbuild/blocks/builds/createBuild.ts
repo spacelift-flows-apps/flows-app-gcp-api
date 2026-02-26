@@ -2,7 +2,182 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  build: {
+    name: "build",
+    fields: {
+      source: {
+        name: "source",
+        fields: {
+          storageSource: {
+            name: "storage_source",
+            fields: {
+              sourceFetcher: "source_fetcher",
+            },
+          },
+          repoSource: {
+            name: "repo_source",
+            fields: {
+              projectId: "project_id",
+              repoName: "repo_name",
+              branchName: "branch_name",
+              tagName: "tag_name",
+              commitSha: "commit_sha",
+              invertRegex: "invert_regex",
+            },
+          },
+          gitSource: "git_source",
+          storageSourceManifest: "storage_source_manifest",
+          connectedRepository: "connected_repository",
+        },
+      },
+      steps: {
+        name: "steps",
+        fields: {
+          waitFor: "wait_for",
+          secretEnv: "secret_env",
+          allowFailure: "allow_failure",
+          allowExitCodes: "allow_exit_codes",
+          automapSubstitutions: "automap_substitutions",
+        },
+      },
+      queueTtl: "queue_ttl",
+      artifacts: {
+        name: "artifacts",
+        fields: {
+          mavenArtifacts: {
+            name: "maven_artifacts",
+            fields: {
+              artifactId: "artifact_id",
+              groupId: "group_id",
+            },
+          },
+          goModules: {
+            name: "go_modules",
+            fields: {
+              repositoryName: "repository_name",
+              repositoryLocation: "repository_location",
+              repositoryProjectId: "repository_project_id",
+              sourcePath: "source_path",
+              modulePath: "module_path",
+              moduleVersion: "module_version",
+            },
+          },
+          pythonPackages: "python_packages",
+          npmPackages: {
+            name: "npm_packages",
+            fields: {
+              packagePath: "package_path",
+            },
+          },
+        },
+      },
+      logsBucket: "logs_bucket",
+      options: {
+        name: "options",
+        fields: {
+          sourceProvenanceHash: "source_provenance_hash",
+          requestedVerifyOption: "requested_verify_option",
+          machineType: "machine_type",
+          diskSizeGb: "disk_size_gb",
+          substitutionOption: "substitution_option",
+          dynamicSubstitutions: "dynamic_substitutions",
+          automapSubstitutions: "automap_substitutions",
+          logStreamingOption: "log_streaming_option",
+          workerPool: "worker_pool",
+          secretEnv: "secret_env",
+          defaultLogsBucketBehavior: "default_logs_bucket_behavior",
+          enableStructuredLogging: "enable_structured_logging",
+        },
+      },
+      secrets: {
+        name: "secrets",
+        fields: {
+          kmsKeyName: "kms_key_name",
+          secretEnv: "secret_env",
+        },
+      },
+      serviceAccount: "service_account",
+      availableSecrets: {
+        name: "available_secrets",
+        fields: {
+          secretManager: {
+            name: "secret_manager",
+            fields: {
+              versionName: "version_name",
+            },
+          },
+          inline: {
+            name: "inline",
+            fields: {
+              kmsKeyName: "kms_key_name",
+              envMap: "env_map",
+            },
+          },
+        },
+      },
+      gitConfig: {
+        name: "git_config",
+        fields: {
+          http: {
+            name: "http",
+            fields: {
+              proxySecretVersionName: "proxy_secret_version_name",
+            },
+          },
+        },
+      },
+      dependencies: {
+        name: "dependencies",
+        fields: {
+          gitSource: {
+            name: "git_source",
+            fields: {
+              repository: {
+                name: "repository",
+                fields: {
+                  developerConnect: "developer_connect",
+                },
+              },
+              recurseSubmodules: "recurse_submodules",
+              destPath: "dest_path",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createBuild: AppBlock = {
   name: "Create Build",
@@ -22,7 +197,7 @@ const createBuild: AppBlock = {
           },
           required: false,
         },
-        project_id: {
+        projectId: {
           name: "Project Id",
           description: "Required. ID of the project.",
           type: {
@@ -40,7 +215,7 @@ const createBuild: AppBlock = {
               source: {
                 type: "object",
                 properties: {
-                  storage_source: {
+                  storageSource: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -57,7 +232,7 @@ const createBuild: AppBlock = {
                         type: "string",
                         description: "64-bit integer as string",
                       },
-                      source_fetcher: {
+                      sourceFetcher: {
                         type: "string",
                         enum: [
                           "SOURCE_FETCHER_UNSPECIFIED",
@@ -73,30 +248,30 @@ const createBuild: AppBlock = {
                       "Location of the source in an archive file in Cloud Storage. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  repo_source: {
+                  repoSource: {
                     type: "object",
                     properties: {
-                      project_id: {
+                      projectId: {
                         type: "string",
                         description:
                           "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
                       },
-                      repo_name: {
+                      repoName: {
                         type: "string",
                         description:
                           "Required. Name of the Cloud Source Repository.",
                       },
-                      branch_name: {
+                      branchName: {
                         type: "string",
                         description:
                           "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                       },
-                      tag_name: {
+                      tagName: {
                         type: "string",
                         description:
                           "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                       },
-                      commit_sha: {
+                      commitSha: {
                         type: "string",
                         description:
                           "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -106,7 +281,7 @@ const createBuild: AppBlock = {
                         description:
                           "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -120,12 +295,12 @@ const createBuild: AppBlock = {
                           "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
                       },
                     },
-                    required: ["repo_name"],
+                    required: ["repoName"],
                     description:
                       "Location of the source in a Google Cloud Source Repository. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  git_source: {
+                  gitSource: {
                     type: "object",
                     properties: {
                       url: {
@@ -149,7 +324,7 @@ const createBuild: AppBlock = {
                       "Location of the source in any accessible Git repository. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  storage_source_manifest: {
+                  storageSourceManifest: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -172,7 +347,7 @@ const createBuild: AppBlock = {
                       "Location of the source manifest in Cloud Storage. This feature is in Preview; see description [here](https://github.com/GoogleCloudPlatform/cloud-builders/tree/master/gcs-fetcher). (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  connected_repository: {
+                  connectedRepository: {
                     type: "object",
                     properties: {
                       repository: {
@@ -237,7 +412,7 @@ const createBuild: AppBlock = {
                       description:
                         "Unique identifier for this build step, used in `wait_for` to reference this build step as a dependency.",
                     },
-                    wait_for: {
+                    waitFor: {
                       type: "array",
                       items: {
                         type: "string",
@@ -250,7 +425,7 @@ const createBuild: AppBlock = {
                       description:
                         "Entrypoint to be used instead of the build step image's default entrypoint. If unset, the image's default entrypoint is used.",
                     },
-                    secret_env: {
+                    secretEnv: {
                       type: "array",
                       items: {
                         type: "string",
@@ -285,12 +460,12 @@ const createBuild: AppBlock = {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
-                    allow_failure: {
+                    allowFailure: {
                       type: "boolean",
                       description:
                         "Allow this build step to fail without failing the entire build.  If false, the entire build will fail if this step fails. Otherwise, the build will succeed, but this step will still have a failure status. Error information will be reported in the failure_detail field.",
                     },
-                    allow_exit_codes: {
+                    allowExitCodes: {
                       type: "array",
                       items: {
                         type: "integer",
@@ -303,7 +478,7 @@ const createBuild: AppBlock = {
                       description:
                         "A shell script to be executed in the step.  When script is provided, the user cannot specify the entrypoint or args.",
                     },
-                    automap_substitutions: {
+                    automapSubstitutions: {
                       type: "boolean",
                       description:
                         "Option to include built-in and custom substitutions as env variables for this build step. This option will override the global option in BuildOption.",
@@ -327,7 +502,7 @@ const createBuild: AppBlock = {
                 description:
                   "A list of images to be pushed upon the successful completion of all build steps.  The images are pushed using the builder service account's credentials.  The digests of the pushed images will be stored in the `Build` resource's results field.  If any of the images fail to be pushed, the build status is marked `FAILURE`.",
               },
-              queue_ttl: {
+              queueTtl: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
@@ -363,7 +538,7 @@ const createBuild: AppBlock = {
                       "Files in the workspace to upload to Cloud Storage upon successful completion of all build steps.",
                     additionalProperties: true,
                   },
-                  maven_artifacts: {
+                  mavenArtifacts: {
                     type: "array",
                     items: {
                       type: "object",
@@ -378,12 +553,12 @@ const createBuild: AppBlock = {
                           description:
                             "Optional. Path to an artifact in the build's workspace to be uploaded to Artifact Registry. This can be either an absolute path, e.g. /workspace/my-app/target/my-app-1.0.SNAPSHOT.jar or a relative path from /workspace, e.g. my-app/target/my-app-1.0.SNAPSHOT.jar.",
                         },
-                        artifact_id: {
+                        artifactId: {
                           type: "string",
                           description:
                             "Maven `artifactId` value used when uploading the artifact to Artifact Registry.",
                         },
-                        group_id: {
+                        groupId: {
                           type: "string",
                           description:
                             "Maven `groupId` value used when uploading the artifact to Artifact Registry.",
@@ -401,37 +576,37 @@ const createBuild: AppBlock = {
                     description:
                       "A list of Maven artifacts to be uploaded to Artifact Registry upon successful completion of all build steps.  Artifacts in the workspace matching specified paths globs will be uploaded to the specified Artifact Registry repository using the builder service account's credentials.  If any artifacts fail to be pushed, the build is marked FAILURE.",
                   },
-                  go_modules: {
+                  goModules: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        repository_name: {
+                        repositoryName: {
                           type: "string",
                           description:
                             "Optional. Artifact Registry repository name.  Specified Go modules will be zipped and uploaded to Artifact Registry with this location as a prefix. e.g. my-go-repo",
                         },
-                        repository_location: {
+                        repositoryLocation: {
                           type: "string",
                           description:
                             "Optional. Location of the Artifact Registry repository. i.e. us-east1 Defaults to the build’s location.",
                         },
-                        repository_project_id: {
+                        repositoryProjectId: {
                           type: "string",
                           description:
                             "Optional. Project ID of the Artifact Registry repository. Defaults to the build project.",
                         },
-                        source_path: {
+                        sourcePath: {
                           type: "string",
                           description:
                             "Optional. Source path of the go.mod file in the build's workspace. If not specified, this will default to the current directory. e.g. ~/code/go/mypackage",
                         },
-                        module_path: {
+                        modulePath: {
                           type: "string",
                           description:
                             'Optional. The Go module\'s "module path". e.g. example.com/foo/v2',
                         },
-                        module_version: {
+                        moduleVersion: {
                           type: "string",
                           description:
                             "Optional. The Go module's semantic version in the form vX.Y.Z. e.g. v0.1.1 Pre-release identifiers can also be added by appending a dash and dot separated ASCII alphanumeric characters and hyphens. e.g. v0.2.3-alpha.x.12m.5",
@@ -444,7 +619,7 @@ const createBuild: AppBlock = {
                     description:
                       "Optional. A list of Go modules to be uploaded to Artifact Registry upon successful completion of all build steps.  If any objects fail to be pushed, the build is marked FAILURE.",
                   },
-                  python_packages: {
+                  pythonPackages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -470,7 +645,7 @@ const createBuild: AppBlock = {
                     description:
                       "A list of Python packages to be uploaded to Artifact Registry upon successful completion of all build steps.  The build service account credentials will be used to perform the upload.  If any objects fail to be pushed, the build is marked FAILURE.",
                   },
-                  npm_packages: {
+                  npmPackages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -480,7 +655,7 @@ const createBuild: AppBlock = {
                           description:
                             'Artifact Registry repository, in the form "https://$REGION-npm.pkg.dev/$PROJECT/$REPOSITORY"  Npm package in the workspace specified by path will be zipped and uploaded to Artifact Registry with this location as a prefix.',
                         },
-                        package_path: {
+                        packagePath: {
                           type: "string",
                           description:
                             "Optional. Path to the package.json. e.g. workspace/path/to/package  Only one of `archive` or `package_path` can be specified.",
@@ -498,7 +673,7 @@ const createBuild: AppBlock = {
                   "Artifacts produced by a build that should be uploaded upon successful completion of all build steps.",
                 additionalProperties: true,
               },
-              logs_bucket: {
+              logsBucket: {
                 type: "string",
                 description:
                   "Cloud Storage bucket where logs should be written (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)). Logs file names will be of the format `${logs_bucket}/log-${build_id}.txt`.",
@@ -506,7 +681,7 @@ const createBuild: AppBlock = {
               options: {
                 type: "object",
                 properties: {
-                  source_provenance_hash: {
+                  sourceProvenanceHash: {
                     type: "array",
                     items: {
                       type: "string",
@@ -514,12 +689,12 @@ const createBuild: AppBlock = {
                     },
                     description: "Requested hash for SourceProvenance.",
                   },
-                  requested_verify_option: {
+                  requestedVerifyOption: {
                     type: "string",
                     enum: ["NOT_VERIFIED", "VERIFIED"],
                     description: "Requested verifiability options.",
                   },
-                  machine_type: {
+                  machineType: {
                     type: "string",
                     enum: [
                       "UNSPECIFIED",
@@ -532,33 +707,33 @@ const createBuild: AppBlock = {
                     description:
                       "Compute Engine machine type on which to run the build.",
                   },
-                  disk_size_gb: {
+                  diskSizeGb: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
-                  substitution_option: {
+                  substitutionOption: {
                     type: "string",
                     enum: ["MUST_MATCH", "ALLOW_LOOSE"],
                     description:
                       "Option to specify behavior when there is an error in the substitution checks.  NOTE: this is always set to ALLOW_LOOSE for triggered builds and cannot be overridden in the build configuration file.",
                   },
-                  dynamic_substitutions: {
+                  dynamicSubstitutions: {
                     type: "boolean",
                     description:
                       "Option to specify whether or not to apply bash style string operations to the substitutions.  NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.",
                   },
-                  automap_substitutions: {
+                  automapSubstitutions: {
                     type: "boolean",
                     description:
                       "Option to include built-in and custom substitutions as env variables for all build steps.",
                   },
-                  log_streaming_option: {
+                  logStreamingOption: {
                     type: "string",
                     enum: ["STREAM_DEFAULT", "STREAM_ON", "STREAM_OFF"],
                     description:
                       "Option to define build log streaming behavior to Cloud Storage.",
                   },
-                  worker_pool: {
+                  workerPool: {
                     type: "string",
                     description:
                       "This field deprecated; please use `pool.name` instead.",
@@ -597,7 +772,7 @@ const createBuild: AppBlock = {
                     description:
                       'A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value.  The elements are of the form "KEY=VALUE" for the environment variable "KEY" being given the value "VALUE".',
                   },
-                  secret_env: {
+                  secretEnv: {
                     type: "array",
                     items: {
                       type: "string",
@@ -628,7 +803,7 @@ const createBuild: AppBlock = {
                     description:
                       "Global list of volumes to mount for ALL build steps  Each volume is created as an empty volume prior to starting the build process. Upon completion of the build, volumes and their contents are discarded. Global volume names and paths cannot conflict with the volumes defined a build step.  Using a global volume in a build with only one step is not valid as it is indicative of a build request with an incorrect configuration.",
                   },
-                  default_logs_bucket_behavior: {
+                  defaultLogsBucketBehavior: {
                     type: "string",
                     enum: [
                       "DEFAULT_LOGS_BUCKET_BEHAVIOR_UNSPECIFIED",
@@ -638,7 +813,7 @@ const createBuild: AppBlock = {
                     description:
                       "Optional. Option to specify how default logs buckets are setup.",
                   },
-                  enable_structured_logging: {
+                  enableStructuredLogging: {
                     type: "boolean",
                     description:
                       "Optional. Option to specify whether structured logging is enabled.  If true, JSON-formatted logs are parsed as structured logs.",
@@ -668,12 +843,12 @@ const createBuild: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         "Cloud KMS key name to use to decrypt these envs.",
                     },
-                    secret_env: {
+                    secretEnv: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -689,20 +864,20 @@ const createBuild: AppBlock = {
                 description:
                   "Secrets to decrypt using Cloud Key Management Service. Note: Secret Manager is the recommended technique for managing sensitive data with Cloud Build. Use `available_secrets` to configure builds to access secrets from Secret Manager. For instructions, see: https://cloud.google.com/cloud-build/docs/securing-builds/use-secrets",
               },
-              service_account: {
+              serviceAccount: {
                 type: "string",
                 description:
                   "IAM service account whose credentials will be used at build runtime. Must be of the format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}`. ACCOUNT can be email address or uniqueId of the service account.",
               },
-              available_secrets: {
+              availableSecrets: {
                 type: "object",
                 properties: {
-                  secret_manager: {
+                  secretManager: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        version_name: {
+                        versionName: {
                           type: "string",
                           description:
                             "Resource name of the SecretVersion. In format: projects/*/secrets/*/versions/*",
@@ -725,12 +900,12 @@ const createBuild: AppBlock = {
                     items: {
                       type: "object",
                       properties: {
-                        kms_key_name: {
+                        kmsKeyName: {
                           type: "string",
                           description:
                             "Resource name of Cloud KMS crypto key to decrypt the encrypted value. In format: projects/*/locations/*/keyRings/*/cryptoKeys/*",
                         },
-                        env_map: {
+                        envMap: {
                           type: "object",
                           additionalProperties: {
                             type: "string",
@@ -750,13 +925,13 @@ const createBuild: AppBlock = {
                 description: "Secrets and secret environment variables.",
                 additionalProperties: true,
               },
-              git_config: {
+              gitConfig: {
                 type: "object",
                 properties: {
                   http: {
                     type: "object",
                     properties: {
-                      proxy_secret_version_name: {
+                      proxySecretVersionName: {
                         type: "string",
                         description:
                           "SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `[protocol://][user[:password]@]proxyhost[:port]`.",
@@ -780,7 +955,7 @@ const createBuild: AppBlock = {
                       description:
                         "If set to true disable all dependency fetching (ignoring the default source as well). (Part of 'dep' - only one field in this group can be set)",
                     },
-                    git_source: {
+                    gitSource: {
                       type: "object",
                       properties: {
                         repository: {
@@ -791,7 +966,7 @@ const createBuild: AppBlock = {
                               description:
                                 "Location of the Git repository. (Part of 'repotype' - only one field in this group can be set)",
                             },
-                            developer_connect: {
+                            developerConnect: {
                               type: "string",
                               description:
                                 "The Developer Connect Git repository link formatted as `projects/*/locations/*/connections/*/gitRepositoryLink/*` (Part of 'repotype' - only one field in this group can be set)",
@@ -805,7 +980,7 @@ const createBuild: AppBlock = {
                           description:
                             "Required. The revision that we will fetch the repo at.",
                         },
-                        recurse_submodules: {
+                        recurseSubmodules: {
                           type: "boolean",
                           description:
                             "Optional. True if submodules should be fetched too (default false).",
@@ -814,13 +989,13 @@ const createBuild: AppBlock = {
                           type: "string",
                           description: "64-bit integer as string",
                         },
-                        dest_path: {
+                        destPath: {
                           type: "string",
                           description:
                             "Required. Where should the files be placed on the worker.",
                         },
                       },
-                      required: ["repository", "revision", "dest_path"],
+                      required: ["repository", "revision", "destPath"],
                       description:
                         "Represents a git repository as a build dependency. (Part of 'dep' - only one field in this group can be set)",
                       additionalProperties: true,
@@ -844,13 +1019,7 @@ const createBuild: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.build !== undefined)
-          request.build = input.event.inputConfig.build;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.parent !== undefined) {
@@ -870,7 +1039,8 @@ const createBuild: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -886,7 +1056,7 @@ const createBuild: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -913,7 +1083,7 @@ const createBuild: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -932,7 +1102,7 @@ const createBuild: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

@@ -1,5 +1,10 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  revision_id: "revisionId",
+  revision_create_time: "revisionCreateTime",
+};
 
 const getSchema: AppBlock = {
   name: "Get Schema",
@@ -35,11 +40,7 @@ const getSchema: AppBlock = {
       onEvent: async (input) => {
         const client = await getSchemaServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.view !== undefined)
-          request.view = input.event.inputConfig.view;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getSchema(request, (err: any, response: any) => {
@@ -53,7 +54,8 @@ const getSchema: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -78,12 +80,12 @@ const getSchema: AppBlock = {
             description:
               "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
-          revision_id: {
+          revisionId: {
             type: "string",
             description:
               "Output only. Immutable. The revision ID of the schema.",
           },
-          revision_create_time: {
+          revisionCreateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

@@ -1,5 +1,24 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  publicKeyFormat: "public_key_format",
+};
+
+const outputMapping = {
+  pem_crc32c: "pemCrc32c",
+  protection_level: "protectionLevel",
+  public_key_format: "publicKeyFormat",
+  public_key: {
+    name: "publicKey",
+    fields: {
+      crc32c_checksum: "crc32cChecksum",
+    },
+  },
+};
 
 const getPublicKey: AppBlock = {
   name: "Get Public Key",
@@ -19,7 +38,7 @@ const getPublicKey: AppBlock = {
           },
           required: true,
         },
-        public_key_format: {
+        publicKeyFormat: {
           name: "Public Key Format",
           description:
             "Optional. The [PublicKey][google.cloud.kms.v1.PublicKey] format specified by the user. This field is required for PQC algorithms. If specified, the public key will be exported through the [public_key][google.cloud.kms.v1.PublicKey.public_key] field in the requested format. Otherwise, the [pem][google.cloud.kms.v1.PublicKey.pem] field will be populated for non-PQC algorithms, and an error will be returned for PQC algorithms.",
@@ -41,11 +60,7 @@ const getPublicKey: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.public_key_format !== undefined)
-          request.public_key_format = input.event.inputConfig.public_key_format;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getPublicKey(request, (err: any, response: any) => {
@@ -59,7 +74,8 @@ const getPublicKey: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -128,7 +144,7 @@ const getPublicKey: AppBlock = {
             description:
               "The [Algorithm][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm] associated with this key.",
           },
-          pem_crc32c: {
+          pemCrc32c: {
             type: "string",
             description: "64-bit integer as string",
           },
@@ -137,7 +153,7 @@ const getPublicKey: AppBlock = {
             description:
               "The [name][google.cloud.kms.v1.CryptoKeyVersion.name] of the [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] public key. Provided here for verification.  NOTE: This field is in Beta.",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",
@@ -150,7 +166,7 @@ const getPublicKey: AppBlock = {
             description:
               "[ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] specifies how cryptographic operations are performed. For more information, see [Protection levels] (https://cloud.google.com/kms/docs/algorithms#protection_levels).",
           },
-          public_key_format: {
+          publicKeyFormat: {
             type: "string",
             enum: [
               "PUBLIC_KEY_FORMAT_UNSPECIFIED",
@@ -162,14 +178,14 @@ const getPublicKey: AppBlock = {
             description:
               "The [PublicKey][google.cloud.kms.v1.PublicKey] format specified by the customer through the [public_key_format][google.cloud.kms.v1.GetPublicKeyRequest.public_key_format] field.",
           },
-          public_key: {
+          publicKey: {
             type: "object",
             properties: {
               data: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              crc32c_checksum: {
+              crc32cChecksum: {
                 type: "string",
                 description: "64-bit integer as string",
               },

@@ -1,5 +1,16 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  refType: "ref_type",
+};
+
+const outputMapping = {
+  ref_names: "refNames",
+};
 
 const fetchGitRefs: AppBlock = {
   name: "Fetch Git Refs",
@@ -19,7 +30,7 @@ const fetchGitRefs: AppBlock = {
           },
           required: true,
         },
-        ref_type: {
+        refType: {
           name: "Ref Type",
           description: "Type of refs to fetch",
           type: {
@@ -33,11 +44,7 @@ const fetchGitRefs: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.repository !== undefined)
-          request.repository = input.event.inputConfig.repository;
-        if (input.event.inputConfig.ref_type !== undefined)
-          request.ref_type = input.event.inputConfig.ref_type;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.fetchGitRefs(request, (err: any, response: any) => {
@@ -51,7 +58,8 @@ const fetchGitRefs: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -61,7 +69,7 @@ const fetchGitRefs: AppBlock = {
       type: {
         type: "object",
         properties: {
-          ref_names: {
+          refNames: {
             type: "array",
             items: {
               type: "string",

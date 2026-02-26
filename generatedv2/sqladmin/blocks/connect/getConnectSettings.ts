@@ -1,5 +1,70 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlConnectServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlConnectServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  readTime: "read_time",
+};
+
+const outputMapping = {
+  server_ca_cert: {
+    name: "serverCaCert",
+    fields: {
+      cert_serial_number: "certSerialNumber",
+      create_time: "createTime",
+      common_name: "commonName",
+      expiration_time: "expirationTime",
+      sha1_fingerprint: "sha1Fingerprint",
+      self_link: "selfLink",
+    },
+  },
+  ip_addresses: {
+    name: "ipAddresses",
+    fields: {
+      ip_address: "ipAddress",
+      time_to_retire: "timeToRetire",
+    },
+  },
+  database_version: "databaseVersion",
+  backend_type: "backendType",
+  psc_enabled: "pscEnabled",
+  dns_name: "dnsName",
+  server_ca_mode: "serverCaMode",
+  custom_subject_alternative_names: "customSubjectAlternativeNames",
+  dns_names: {
+    name: "dnsNames",
+    fields: {
+      connection_type: "connectionType",
+      dns_scope: "dnsScope",
+      record_manager: "recordManager",
+    },
+  },
+  node_count: "nodeCount",
+  nodes: {
+    name: "nodes",
+    fields: {
+      ip_addresses: {
+        name: "ipAddresses",
+        fields: {
+          ip_address: "ipAddress",
+          time_to_retire: "timeToRetire",
+        },
+      },
+      dns_name: "dnsName",
+      dns_names: {
+        name: "dnsNames",
+        fields: {
+          connection_type: "connectionType",
+          dns_scope: "dnsScope",
+          record_manager: "recordManager",
+        },
+      },
+    },
+  },
+  mdx_protocol_support: "mdxProtocolSupport",
+};
 
 const getConnectSettings: AppBlock = {
   name: "Get Connect Settings",
@@ -29,7 +94,7 @@ const getConnectSettings: AppBlock = {
           },
           required: false,
         },
-        read_time: {
+        readTime: {
           name: "Read Time",
           description:
             "Optional. Optional snapshot read timestamp to trade freshness for performance.",
@@ -43,13 +108,7 @@ const getConnectSettings: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlConnectServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.read_time !== undefined)
-          request.read_time = input.event.inputConfig.read_time;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getConnectSettings(request, (err: any, response: any) => {
@@ -63,7 +122,8 @@ const getConnectSettings: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -77,14 +137,14 @@ const getConnectSettings: AppBlock = {
             type: "string",
             description: "This is always `sql#connectSettings`.",
           },
-          server_ca_cert: {
+          serverCaCert: {
             type: "object",
             properties: {
               kind: {
                 type: "string",
                 description: "This is always `sql#sslCert`.",
               },
-              cert_serial_number: {
+              certSerialNumber: {
                 type: "string",
                 description:
                   "Serial number, as extracted from the certificate.",
@@ -93,20 +153,20 @@ const getConnectSettings: AppBlock = {
                 type: "string",
                 description: "PEM representation.",
               },
-              create_time: {
+              createTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              common_name: {
+              commonName: {
                 type: "string",
                 description:
                   "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
               },
-              expiration_time: {
+              expirationTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              sha1_fingerprint: {
+              sha1Fingerprint: {
                 type: "string",
                 description: "Sha1 Fingerprint.",
               },
@@ -114,7 +174,7 @@ const getConnectSettings: AppBlock = {
                 type: "string",
                 description: "Name of the database instance.",
               },
-              self_link: {
+              selfLink: {
                 type: "string",
                 description: "The URI of this resource.",
               },
@@ -122,7 +182,7 @@ const getConnectSettings: AppBlock = {
             description: "SslCerts Resource",
             additionalProperties: true,
           },
-          ip_addresses: {
+          ipAddresses: {
             type: "array",
             items: {
               type: "object",
@@ -139,11 +199,11 @@ const getConnectSettings: AppBlock = {
                   description:
                     "The type of this IP address. A `PRIMARY` address is a public address that can accept incoming connections. A `PRIVATE` address is a private address that can accept incoming connections. An `OUTGOING` address is the source address of connections originating from the instance, if supported.",
                 },
-                ip_address: {
+                ipAddress: {
                   type: "string",
                   description: "The IP address assigned.",
                 },
-                time_to_retire: {
+                timeToRetire: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -159,7 +219,7 @@ const getConnectSettings: AppBlock = {
             description:
               "The cloud region for the instance. For example, `us-central1`, `europe-west1`. The region cannot be changed after instance creation.",
           },
-          database_version: {
+          databaseVersion: {
             type: "string",
             enum: [
               "SQL_DATABASE_VERSION_UNSPECIFIED",
@@ -216,7 +276,7 @@ const getConnectSettings: AppBlock = {
             ],
             description: "The database engine type and version.",
           },
-          backend_type: {
+          backendType: {
             type: "string",
             enum: [
               "SQL_BACKEND_TYPE_UNSPECIFIED",
@@ -227,16 +287,16 @@ const getConnectSettings: AppBlock = {
             description:
               "`SECOND_GEN`: Cloud SQL database instance. `EXTERNAL`: A database server that is not managed by Google. This property is read-only; use the `tier` property in the `settings` object to determine the database type.",
           },
-          psc_enabled: {
+          pscEnabled: {
             type: "boolean",
             description:
               "Whether PSC connectivity is enabled for this instance.",
           },
-          dns_name: {
+          dnsName: {
             type: "string",
             description: "The dns name of the instance.",
           },
-          server_ca_mode: {
+          serverCaMode: {
             type: "string",
             enum: [
               "CA_MODE_UNSPECIFIED",
@@ -247,7 +307,7 @@ const getConnectSettings: AppBlock = {
             description:
               "Specify what type of CA is used for the server certificate.",
           },
-          custom_subject_alternative_names: {
+          customSubjectAlternativeNames: {
             type: "array",
             items: {
               type: "string",
@@ -255,7 +315,7 @@ const getConnectSettings: AppBlock = {
             description:
               "Custom subject alternative names for the server certificate.",
           },
-          dns_names: {
+          dnsNames: {
             type: "array",
             items: {
               type: "object",
@@ -264,7 +324,7 @@ const getConnectSettings: AppBlock = {
                   type: "string",
                   description: "Output only. The DNS name.",
                 },
-                connection_type: {
+                connectionType: {
                   type: "string",
                   enum: [
                     "CONNECTION_TYPE_UNSPECIFIED",
@@ -275,13 +335,13 @@ const getConnectSettings: AppBlock = {
                   description:
                     "Output only. The connection type of the DNS name.",
                 },
-                dns_scope: {
+                dnsScope: {
                   type: "string",
                   enum: ["DNS_SCOPE_UNSPECIFIED", "INSTANCE", "CLUSTER"],
                   description:
                     "Output only. The scope that the DNS name applies to.",
                 },
-                record_manager: {
+                recordManager: {
                   type: "string",
                   enum: [
                     "RECORD_MANAGER_UNSPECIFIED",
@@ -297,7 +357,7 @@ const getConnectSettings: AppBlock = {
             description:
               "Output only. The list of DNS names used by this instance.",
           },
-          node_count: {
+          nodeCount: {
             type: "integer",
             description: "The number of read pool nodes in a read pool.",
           },
@@ -311,7 +371,7 @@ const getConnectSettings: AppBlock = {
                   description:
                     "Output only. The name of the read pool node. Doesn't include the project ID.",
                 },
-                ip_addresses: {
+                ipAddresses: {
                   type: "array",
                   items: {
                     type: "object",
@@ -328,11 +388,11 @@ const getConnectSettings: AppBlock = {
                         description:
                           "The type of this IP address. A `PRIMARY` address is a public address that can accept incoming connections. A `PRIVATE` address is a private address that can accept incoming connections. An `OUTGOING` address is the source address of connections originating from the instance, if supported.",
                       },
-                      ip_address: {
+                      ipAddress: {
                         type: "string",
                         description: "The IP address assigned.",
                       },
-                      time_to_retire: {
+                      timeToRetire: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -344,12 +404,12 @@ const getConnectSettings: AppBlock = {
                   description:
                     "Output only. Mappings containing IP addresses that can be used to connect to the read pool node.",
                 },
-                dns_name: {
+                dnsName: {
                   type: "string",
                   description:
                     "Output only. The DNS name of the read pool node.",
                 },
-                dns_names: {
+                dnsNames: {
                   type: "array",
                   items: {
                     type: "object",
@@ -358,7 +418,7 @@ const getConnectSettings: AppBlock = {
                         type: "string",
                         description: "Output only. The DNS name.",
                       },
-                      connection_type: {
+                      connectionType: {
                         type: "string",
                         enum: [
                           "CONNECTION_TYPE_UNSPECIFIED",
@@ -369,13 +429,13 @@ const getConnectSettings: AppBlock = {
                         description:
                           "Output only. The connection type of the DNS name.",
                       },
-                      dns_scope: {
+                      dnsScope: {
                         type: "string",
                         enum: ["DNS_SCOPE_UNSPECIFIED", "INSTANCE", "CLUSTER"],
                         description:
                           "Output only. The scope that the DNS name applies to.",
                       },
-                      record_manager: {
+                      recordManager: {
                         type: "string",
                         enum: [
                           "RECORD_MANAGER_UNSPECIFIED",
@@ -399,7 +459,7 @@ const getConnectSettings: AppBlock = {
             description:
               "Output only. Entries containing information about each read pool node of the read pool.",
           },
-          mdx_protocol_support: {
+          mdxProtocolSupport: {
             type: "array",
             items: {
               type: "string",

@@ -35,7 +35,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        auto_delete: {
+        autoDelete: {
           name: "Auto Delete",
           description:
             "Specifies whether the disk will be auto-deleted when the instance is deleted (but not when the disk is detached from the instance).",
@@ -57,7 +57,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        device_name: {
+        deviceName: {
           name: "Device Name",
           description:
             "Specifies a unique device name of your choice that is reflected into the/dev/disk/by-id/google-* tree of a Linux operating system running within the instance. This name can be used to reference the device for mounting, resizing, and so on, from within the instance.  If not specified, the server chooses a default device name to apply to this disk, in the form persistent-disk-x, where x is a number assigned by Google Compute Engine. This field is only applicable for persistent disks.",
@@ -68,29 +68,29 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        disk_encryption_key: {
+        diskEncryptionKey: {
           name: "Disk Encryption Key",
           description:
             "Encrypts or decrypts a disk using acustomer-supplied encryption key.  If you are creating a new disk, this field encrypts the new disk using an encryption key that you provide. If you are attaching an existing disk that is already encrypted, this field decrypts the disk using the customer-supplied encryption key.  If you encrypt a disk using a customer-supplied key, you must provide the same key again when you attempt to use this resource at a later time. For example, you must provide the key when you create a snapshot or an image from the disk or when you attach the disk to a virtual machine instance.  If you do not provide an encryption key, then the disk will be encrypted using an automatically generated key and you do not need to provide a key to use the disk later.  Note:  Instance templates do not storecustomer-supplied encryption keys, so you cannot use your own keys to encrypt disks in amanaged instance group.  You cannot create VMs that have disks with customer-supplied keys using the bulk insert method.",
           type: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
-              kms_key_service_account: {
+              kmsKeyServiceAccount: {
                 type: "string",
                 description:
                   'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              raw_key: {
+              rawKey: {
                 type: "string",
                 description:
                   'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              rsa_encrypted_key: {
+              rsaEncryptedKey: {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -107,7 +107,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        disk_size_gb: {
+        diskSizeGb: {
           name: "Disk Size Gb",
           description: "The size of the disk in GB.",
           type: {
@@ -116,7 +116,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        force_attach: {
+        forceAttach: {
           name: "Force Attach",
           description:
             "Whether to force attach the regional disk even if it's currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.",
@@ -125,7 +125,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        guest_os_features: {
+        guestOsFeatures: {
           name: "Guest Os Features",
           description:
             "A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
@@ -159,7 +159,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        initialize_params: {
+        initializeParams: {
           name: "Initialize Params",
           description:
             "[Input Only] Specifies the parameters for a new disk that will be created alongside the new instance. Use initialization parameters to create boot disks or local SSDs attached to the new instance.  This property is mutually exclusive with the source property; you can only define one or the other, but not both.",
@@ -176,21 +176,21 @@ const attachDisk: AppBlock = {
                 description:
                   "An optional description. Provide this property when creating the disk.",
               },
-              disk_name: {
+              diskName: {
                 type: "string",
                 description:
                   "Specifies the disk name. If not specified, the default is to use the name of the instance. If a disk with the same name already exists in the given region, the existing disk is attached to the new instance and the new disk is not created.",
               },
-              disk_size_gb: {
+              diskSizeGb: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              disk_type: {
+              diskType: {
                 type: "string",
                 description:
                   "Specifies the disk type to use to create the instance. If not specified, the default is pd-standard, specified using the full URL. For example:  https://www.googleapis.com/compute/v1/projects/project/zones/zone/diskTypes/pd-standard   For a full list of acceptable values, seePersistent disk types. If you specify this field when creating a VM, you can provide either the full or partial URL. For example, the following values are valid:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/diskTypes/diskType    - projects/project/zones/zone/diskTypes/diskType    - zones/zone/diskTypes/diskType   If you specify this field when creating or updating an instance template or all-instances configuration, specify the type of the disk, not the URL. For example: pd-standard.",
               },
-              enable_confidential_compute: {
+              enableConfidentialCompute: {
                 type: "boolean",
                 description:
                   "Whether this disk is using confidential compute mode.",
@@ -211,20 +211,20 @@ const attachDisk: AppBlock = {
                 description:
                   "A list of publicly visible licenses. Reserved for Google's use.",
               },
-              on_update_action: {
+              onUpdateAction: {
                 type: "string",
                 description:
                   "Specifies which action to take on instance update with this disk. Default is to use the existing disk. Check the OnUpdateAction enum for the list of possible values.",
               },
-              provisioned_iops: {
+              provisionedIops: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              provisioned_throughput: {
+              provisionedThroughput: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              replica_zones: {
+              replicaZones: {
                 type: "array",
                 items: {
                   type: "string",
@@ -232,7 +232,7 @@ const attachDisk: AppBlock = {
                 description:
                   "Required for each regional disk associated with the instance. Specify the URLs of the zones where the disk should be replicated to. You must provide exactly two replica zones, and one zone must be the same as the instance zone.",
               },
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -240,7 +240,7 @@ const attachDisk: AppBlock = {
                 description:
                   "Resource manager tags to be bound to the disk. Tag keys and values have the same definition as resource manager tags. Keys and values can be either in numeric format, such as `tagKeys/{tag_key_id}` and `tagValues/456` or in namespaced format such as `{org_id|project_id}/{tag_key_short_name}` and `{tag_value_short_name}`. The field is ignored (both PUT & PATCH) when empty.",
               },
-              resource_policies: {
+              resourcePolicies: {
                 type: "array",
                 items: {
                   type: "string",
@@ -248,30 +248,30 @@ const attachDisk: AppBlock = {
                 description:
                   "Resource policies applied to this disk for automatic snapshot creations. Specified using the full or partial URL. For instance template, specify only the resource policy name.",
               },
-              source_image: {
+              sourceImage: {
                 type: "string",
                 description:
                   "The source image to create this disk. When creating a new instance boot disk, one of initializeParams.sourceImage orinitializeParams.sourceSnapshot or disks.source is required.  To create a disk with one of the public operating system images, specify the image by its family name. For example, specifyfamily/debian-9 to use the latest Debian 9 image:  projects/debian-cloud/global/images/family/debian-9   Alternatively, use a specific version of a public operating system image:  projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD   To create a disk with a custom image that you created, specify the image name in the following format:  global/images/my-custom-image   You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name:  global/images/family/my-image-family   If the source image is deleted later, this field will not be set.",
               },
-              source_image_encryption_key: {
+              sourceImageEncryptionKey: {
                 type: "object",
                 properties: {
-                  kms_key_name: {
+                  kmsKeyName: {
                     type: "string",
                     description:
                       'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                   },
-                  kms_key_service_account: {
+                  kmsKeyServiceAccount: {
                     type: "string",
                     description:
                       'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                   },
-                  raw_key: {
+                  rawKey: {
                     type: "string",
                     description:
                       'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                   },
-                  rsa_encrypted_key: {
+                  rsaEncryptedKey: {
                     type: "string",
                     description:
                       'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -286,30 +286,30 @@ const attachDisk: AppBlock = {
                 description:
                   "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.  InstanceTemplate and InstancePropertiesPatch do not storecustomer-supplied encryption keys, so you cannot create disks for instances in a managed instance group if the source images are encrypted with your own keys.",
               },
-              source_snapshot: {
+              sourceSnapshot: {
                 type: "string",
                 description:
                   "The source snapshot to create this disk. When creating a new instance boot disk, one of initializeParams.sourceSnapshot orinitializeParams.sourceImage or disks.source is required.  To create a disk with a snapshot that you created, specify the snapshot name in the following format:  global/snapshots/my-backup   If the source snapshot is deleted later, this field will not be set.  Note: You cannot create VMs in bulk using a snapshot as the source. Use an image instead when you create VMs using the bulk insert method.",
               },
-              source_snapshot_encryption_key: {
+              sourceSnapshotEncryptionKey: {
                 type: "object",
                 properties: {
-                  kms_key_name: {
+                  kmsKeyName: {
                     type: "string",
                     description:
                       'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                   },
-                  kms_key_service_account: {
+                  kmsKeyServiceAccount: {
                     type: "string",
                     description:
                       'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                   },
-                  raw_key: {
+                  rawKey: {
                     type: "string",
                     description:
                       'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                   },
-                  rsa_encrypted_key: {
+                  rsaEncryptedKey: {
                     type: "string",
                     description:
                       'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -324,7 +324,7 @@ const attachDisk: AppBlock = {
                 description:
                   "Thecustomer-supplied encryption key of the source snapshot.",
               },
-              storage_pool: {
+              storagePool: {
                 type: "string",
                 description:
                   "The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/storagePools/storagePool      - projects/project/zones/zone/storagePools/storagePool    - zones/zone/storagePools/storagePool",
@@ -383,7 +383,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        saved_state: {
+        savedState: {
           name: "Saved State",
           description:
             "Output only. For LocalSSD disks on VM Instances in STOPPED or SUSPENDED state, this field is set to PRESERVED if the LocalSSD data has been saved to a persistent location by customer request.  (see the discard_local_ssd option on Stop/Suspend). Read-only in the api. Check the SavedState enum for the list of possible values.",
@@ -394,7 +394,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        shielded_instance_initial_state: {
+        shieldedInstanceInitialState: {
           name: "Shielded Instance Initial State",
           description:
             "Output only. [Output Only] shielded vm initial state stored on disk",
@@ -410,7 +410,7 @@ const attachDisk: AppBlock = {
                       type: "string",
                       description: "The raw content in the secure keys file.",
                     },
-                    file_type: {
+                    fileType: {
                       type: "string",
                       description:
                         "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -429,7 +429,7 @@ const attachDisk: AppBlock = {
                       type: "string",
                       description: "The raw content in the secure keys file.",
                     },
-                    file_type: {
+                    fileType: {
                       type: "string",
                       description:
                         "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -448,7 +448,7 @@ const attachDisk: AppBlock = {
                       type: "string",
                       description: "The raw content in the secure keys file.",
                     },
-                    file_type: {
+                    fileType: {
                       type: "string",
                       description:
                         "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -465,7 +465,7 @@ const attachDisk: AppBlock = {
                     type: "string",
                     description: "The raw content in the secure keys file.",
                   },
-                  file_type: {
+                  fileType: {
                     type: "string",
                     description:
                       "The file type of source file. Check the FileType enum for the list of possible values.",
@@ -503,7 +503,7 @@ const attachDisk: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -522,34 +522,33 @@ const attachDisk: AppBlock = {
           pathParams["instance"] = String(input.event.inputConfig.instance);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.force_attach !== undefined)
+        if (input.event.inputConfig.forceAttach !== undefined)
           queryParams["forceAttach"] = String(
-            input.event.inputConfig.force_attach,
+            input.event.inputConfig.forceAttach,
           );
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
         if (input.event.inputConfig.architecture !== undefined)
           body.architecture = input.event.inputConfig.architecture;
-        if (input.event.inputConfig.auto_delete !== undefined)
-          body.auto_delete = input.event.inputConfig.auto_delete;
+        if (input.event.inputConfig.autoDelete !== undefined)
+          body.autoDelete = input.event.inputConfig.autoDelete;
         if (input.event.inputConfig.boot !== undefined)
           body.boot = input.event.inputConfig.boot;
-        if (input.event.inputConfig.device_name !== undefined)
-          body.device_name = input.event.inputConfig.device_name;
-        if (input.event.inputConfig.disk_encryption_key !== undefined)
-          body.disk_encryption_key =
-            input.event.inputConfig.disk_encryption_key;
-        if (input.event.inputConfig.disk_size_gb !== undefined)
-          body.disk_size_gb = input.event.inputConfig.disk_size_gb;
-        if (input.event.inputConfig.force_attach !== undefined)
-          body.force_attach = input.event.inputConfig.force_attach;
-        if (input.event.inputConfig.guest_os_features !== undefined)
-          body.guest_os_features = input.event.inputConfig.guest_os_features;
+        if (input.event.inputConfig.deviceName !== undefined)
+          body.deviceName = input.event.inputConfig.deviceName;
+        if (input.event.inputConfig.diskEncryptionKey !== undefined)
+          body.diskEncryptionKey = input.event.inputConfig.diskEncryptionKey;
+        if (input.event.inputConfig.diskSizeGb !== undefined)
+          body.diskSizeGb = input.event.inputConfig.diskSizeGb;
+        if (input.event.inputConfig.forceAttach !== undefined)
+          body.forceAttach = input.event.inputConfig.forceAttach;
+        if (input.event.inputConfig.guestOsFeatures !== undefined)
+          body.guestOsFeatures = input.event.inputConfig.guestOsFeatures;
         if (input.event.inputConfig.index !== undefined)
           body.index = input.event.inputConfig.index;
-        if (input.event.inputConfig.initialize_params !== undefined)
-          body.initialize_params = input.event.inputConfig.initialize_params;
+        if (input.event.inputConfig.initializeParams !== undefined)
+          body.initializeParams = input.event.inputConfig.initializeParams;
         if (input.event.inputConfig.interface !== undefined)
           body.interface = input.event.inputConfig.interface;
         if (input.event.inputConfig.kind !== undefined)
@@ -558,13 +557,11 @@ const attachDisk: AppBlock = {
           body.licenses = input.event.inputConfig.licenses;
         if (input.event.inputConfig.mode !== undefined)
           body.mode = input.event.inputConfig.mode;
-        if (input.event.inputConfig.saved_state !== undefined)
-          body.saved_state = input.event.inputConfig.saved_state;
-        if (
-          input.event.inputConfig.shielded_instance_initial_state !== undefined
-        )
-          body.shielded_instance_initial_state =
-            input.event.inputConfig.shielded_instance_initial_state;
+        if (input.event.inputConfig.savedState !== undefined)
+          body.savedState = input.event.inputConfig.savedState;
+        if (input.event.inputConfig.shieldedInstanceInitialState !== undefined)
+          body.shieldedInstanceInitialState =
+            input.event.inputConfig.shieldedInstanceInitialState;
         if (input.event.inputConfig.source !== undefined)
           body.source = input.event.inputConfig.source;
         if (input.event.inputConfig.type !== undefined)
@@ -590,12 +587,12 @@ const attachDisk: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -604,7 +601,7 @@ const attachDisk: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -622,12 +619,12 @@ const attachDisk: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -682,7 +679,7 @@ const attachDisk: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -700,7 +697,7 @@ const attachDisk: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -711,7 +708,7 @@ const attachDisk: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -721,16 +718,16 @@ const attachDisk: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -767,12 +764,12 @@ const attachDisk: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -781,15 +778,15 @@ const attachDisk: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -809,12 +806,12 @@ const attachDisk: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -829,18 +826,18 @@ const attachDisk: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -853,7 +850,7 @@ const attachDisk: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -864,16 +861,16 @@ const attachDisk: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

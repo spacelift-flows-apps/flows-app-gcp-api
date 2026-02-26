@@ -30,7 +30,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          storage_location: {
+          storageLocation: {
             type: "object",
             properties: {
               locations: {

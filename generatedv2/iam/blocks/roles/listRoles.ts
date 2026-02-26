@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  showDeleted: "show_deleted",
+};
+
+const outputMapping = {
+  roles: {
+    name: "roles",
+    fields: {
+      included_permissions: "includedPermissions",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listRoles: AppBlock = {
   name: "List Roles",
@@ -19,7 +35,7 @@ const listRoles: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional limit on the number of roles to include in the response.  The default is 300, and the maximum is 1,000.",
@@ -30,7 +46,7 @@ const listRoles: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional pagination token returned in an earlier ListRolesResponse.",
@@ -52,7 +68,7 @@ const listRoles: AppBlock = {
           },
           required: false,
         },
-        show_deleted: {
+        showDeleted: {
           name: "Show Deleted",
           description: "Include Roles that have been deleted.",
           type: {
@@ -65,17 +81,7 @@ const listRoles: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.view !== undefined)
-          request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.show_deleted !== undefined)
-          request.show_deleted = input.event.inputConfig.show_deleted;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listRoles(request, (err: any, response: any) => {
@@ -89,7 +95,8 @@ const listRoles: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -119,7 +126,7 @@ const listRoles: AppBlock = {
                   description:
                     "Optional. A human-readable description for the role.",
                 },
-                included_permissions: {
+                includedPermissions: {
                   type: "array",
                   items: {
                     type: "string",
@@ -155,7 +162,7 @@ const listRoles: AppBlock = {
             },
             description: "The Roles defined on this resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "To retrieve the next page of results, set `ListRolesRequest.page_token` to this value.",

@@ -16,7 +16,7 @@ const patch: AppBlock = {
           },
           required: true,
         },
-        aai_enabled: {
+        aaiEnabled: {
           name: "Aai Enabled",
           description:
             "Enable or disable the application awareness feature on this Cloud Interconnect.",
@@ -27,7 +27,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        admin_enabled: {
+        adminEnabled: {
           name: "Admin Enabled",
           description:
             "Administrative status of the interconnect. When this is set to true, the Interconnect is functional and can carry traffic. When set to false, no packets can be carried over the interconnect and no BGP routes are exchanged over it. By default, the status is set to true.",
@@ -38,17 +38,17 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        application_aware_interconnect: {
+        applicationAwareInterconnect: {
           name: "Application Aware Interconnect",
           description:
             "Configuration information for application awareness on this Cloud Interconnect.",
           type: {
             type: "object",
             properties: {
-              bandwidth_percentage_policy: {
+              bandwidthPercentagePolicy: {
                 type: "object",
                 properties: {
-                  bandwidth_percentages: {
+                  bandwidthPercentages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -58,7 +58,7 @@ const patch: AppBlock = {
                           description:
                             "Bandwidth percentage for a specific traffic class.",
                         },
-                        traffic_class: {
+                        trafficClass: {
                           type: "string",
                           description:
                             "TrafficClass whose bandwidth percentage is being specified. Check the TrafficClass enum for the list of possible values.",
@@ -74,12 +74,12 @@ const patch: AppBlock = {
                 },
                 additionalProperties: true,
               },
-              profile_description: {
+              profileDescription: {
                 type: "string",
                 description:
                   "Description for the application awareness profile on this Cloud Interconnect.",
               },
-              shape_average_percentages: {
+              shapeAveragePercentages: {
                 type: "array",
                 items: {
                   type: "object",
@@ -89,7 +89,7 @@ const patch: AppBlock = {
                       description:
                         "Bandwidth percentage for a specific traffic class.",
                     },
-                    traffic_class: {
+                    trafficClass: {
                       type: "string",
                       description:
                         "TrafficClass whose bandwidth percentage is being specified. Check the TrafficClass enum for the list of possible values.",
@@ -102,7 +102,7 @@ const patch: AppBlock = {
                 description:
                   "Optional field to specify a list of shape average percentages to be applied in conjunction with StrictPriorityPolicy or BandwidthPercentagePolicy.",
               },
-              strict_priority_policy: {
+              strictPriorityPolicy: {
                 type: "object",
                 properties: {},
                 description: "Specify configuration for StrictPriorityPolicy.",
@@ -115,7 +115,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        available_features: {
+        availableFeatures: {
           name: "Available Features",
           description:
             "[Output only] List of features available for this Interconnect connection, which can take one of the following values:     - IF_MACSEC: If present, then the Interconnect connection is    provisioned on MACsec capable hardware ports. If not present, then the    Interconnect connection is provisioned on non-MACsec capable ports. Any    attempt to enable MACsec will fail.    - IF_CROSS_SITE_NETWORK: If present, then the Interconnect connection is    provisioned exclusively for Cross-Site Networking. Any attempt to configure    VLAN attachments will fail. If not present, then the Interconnect    connection is not provisioned for Cross-Site Networking. Any attempt to use    it for Cross-Site Networking will fail. Check the AvailableFeatures enum for the list of possible values.",
@@ -129,7 +129,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        circuit_infos: {
+        circuitInfos: {
           name: "Circuit Infos",
           description:
             "Output only. [Output Only] A list of CircuitInfo objects, that describe the individual circuits in this LAG.",
@@ -138,16 +138,16 @@ const patch: AppBlock = {
             items: {
               type: "object",
               properties: {
-                customer_demarc_id: {
+                customerDemarcId: {
                   type: "string",
                   description: "Customer-side demarc ID for this circuit.",
                 },
-                google_circuit_id: {
+                googleCircuitId: {
                   type: "string",
                   description:
                     "Google-assigned unique ID for this circuit. Assigned at circuit turn-up.",
                 },
-                google_demarc_id: {
+                googleDemarcId: {
                   type: "string",
                   description:
                     "Google-side demarc ID for this circuit. Assigned at circuit turn-up and provided by Google to the customer in the LOA.",
@@ -162,7 +162,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -173,7 +173,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        customer_name: {
+        customerName: {
           name: "Customer Name",
           description:
             "Customer name, to put in the Letter of Authorization as the party authorized to request a crossconnect.",
@@ -195,7 +195,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        expected_outages: {
+        expectedOutages: {
           name: "Expected Outages",
           description:
             "Output only. [Output Only] A list of outages expected for this Interconnect.",
@@ -204,7 +204,7 @@ const patch: AppBlock = {
             items: {
               type: "object",
               properties: {
-                affected_circuits: {
+                affectedCircuits: {
                   type: "array",
                   items: {
                     type: "string",
@@ -216,11 +216,11 @@ const patch: AppBlock = {
                   type: "string",
                   description: "A description about the purpose of the outage.",
                 },
-                end_time: {
+                endTime: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                issue_type: {
+                issueType: {
                   type: "string",
                   description:
                     'Form this outage is expected to take, which can take one of the following values:     - OUTAGE: The Interconnect may be completely out of service for    some or all of the specified window.    - PARTIAL_OUTAGE: Some circuits comprising the Interconnect as a whole    should remain up, but with reduced bandwidth.   Note that the versions of this enum prefixed with "IT_" have been deprecated in favor of the unprefixed values. Check the IssueType enum for the list of possible values.',
@@ -235,7 +235,7 @@ const patch: AppBlock = {
                   description:
                     "The party that generated this notification, which can take the following value:     - GOOGLE: this notification as generated by Google.   Note that the value of NSRC_GOOGLE has been deprecated in favor of GOOGLE. Check the Source enum for the list of possible values.",
                 },
-                start_time: {
+                startTime: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
@@ -254,7 +254,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        google_ip_address: {
+        googleIpAddress: {
           name: "Google Ip Address",
           description:
             "Output only. [Output Only] IP address configured on the Google side of the Interconnect link. This can be used only for ping tests.",
@@ -265,7 +265,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        google_reference_id: {
+        googleReferenceId: {
           name: "Google Reference Id",
           description:
             "Output only. [Output Only] Google reference ID to be used when raising support tickets with Google or otherwise to debug backend connectivity issues.",
@@ -286,7 +286,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        interconnect_attachments: {
+        interconnectAttachments: {
           name: "Interconnect Attachments",
           description:
             "Output only. [Output Only] A list of the URLs of all InterconnectAttachments configured to use  this Interconnect.",
@@ -300,7 +300,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        interconnect_groups: {
+        interconnectGroups: {
           name: "Interconnect Groups",
           description:
             "Output only. [Output Only] URLs of InterconnectGroups that include this Interconnect. Order is arbitrary and items are unique.",
@@ -314,7 +314,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        interconnect_type: {
+        interconnectType: {
           name: "Interconnect Type",
           description:
             "Type of interconnect, which can take one of the following values:     - PARTNER: A partner-managed interconnection shared between customers    though a partner.    - DEDICATED: A dedicated physical interconnection with the    customer.   Note that a value IT_PRIVATE has been deprecated in favor of DEDICATED. Check the InterconnectType enum for the list of possible values.",
@@ -336,7 +336,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        label_fingerprint: {
+        labelFingerprint: {
           name: "Label Fingerprint",
           description:
             "A fingerprint for the labels being applied to this Interconnect, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an Interconnect.",
@@ -361,7 +361,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        link_type: {
+        linkType: {
           name: "Link Type",
           description:
             "Type of link requested, which can take one of the following values:     - LINK_TYPE_ETHERNET_10G_LR: A 10G Ethernet with LR optics    - LINK_TYPE_ETHERNET_100G_LR: A 100G Ethernet with LR optics.    - LINK_TYPE_ETHERNET_400G_LR4: A 400G Ethernet with LR4 optics.    Note that this field indicates the speed of each of the links in the bundle, not the speed of the entire bundle. Check the LinkType enum for the list of possible values.",
@@ -390,12 +390,12 @@ const patch: AppBlock = {
           type: {
             type: "object",
             properties: {
-              fail_open: {
+              failOpen: {
                 type: "boolean",
                 description:
                   "If set to true, the Interconnect connection is configured with ashould-secure MACsec security policy, that allows the Google router to fallback to cleartext traffic if the MKA session cannot be established. By default, the Interconnect connection is configured with amust-secure security policy that drops all traffic if the MKA session cannot be established with your router.",
               },
-              pre_shared_keys: {
+              preSharedKeys: {
                 type: "array",
                 items: {
                   type: "object",
@@ -405,7 +405,7 @@ const patch: AppBlock = {
                       description:
                         "Required. A name for this pre-shared key. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
                     },
-                    start_time: {
+                    startTime: {
                       type: "string",
                       description:
                         "A RFC3339 timestamp on or after which the key is valid. startTime can be in the future. If the keychain has a single key, startTime can be omitted. If the keychain has multiple keys, startTime is mandatory for each key. The start times of keys must be in increasing order. The start times of two consecutive keys must be at least 6 hours apart.",
@@ -425,7 +425,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        macsec_enabled: {
+        macsecEnabled: {
           name: "Macsec Enabled",
           description:
             "Enable or disable MACsec on this Interconnect connection. MACsec enablement fails if the MACsec object is not specified.",
@@ -447,7 +447,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        noc_contact_email: {
+        nocContactEmail: {
           name: "Noc Contact Email",
           description:
             "Email address to contact the customer NOC for operations and maintenance notifications regarding this Interconnect. If specified, this will be used for notifications in addition to all other forms described, such as Cloud Monitoring logs alerting and Cloud Notifications. This field is required for users who sign up for Cloud Interconnect using workforce identity federation.",
@@ -458,7 +458,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        operational_status: {
+        operationalStatus: {
           name: "Operational Status",
           description:
             "Output only. [Output Only] The current status of this Interconnect's functionality, which can take one of the following values:     - OS_ACTIVE: A valid Interconnect, which is turned up and is ready to    use. Attachments may be provisioned on this Interconnect.  - OS_UNPROVISIONED: An Interconnect that has not completed turnup. No attachments may be provisioned on this Interconnect. - OS_UNDER_MAINTENANCE: An Interconnect that is undergoing internal maintenance. No attachments may be provisioned or updated on this Interconnect. Check the OperationalStatus enum for the list of possible values.",
@@ -476,7 +476,7 @@ const patch: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -490,7 +490,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        peer_ip_address: {
+        peerIpAddress: {
           name: "Peer Ip Address",
           description:
             "Output only. [Output Only] IP address configured on the customer side of the Interconnect link. The customer should configure this IP address during turnup when prompted by Google NOC. This can be used only for ping tests.",
@@ -501,7 +501,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        provisioned_link_count: {
+        provisionedLinkCount: {
           name: "Provisioned Link Count",
           description:
             "Output only. [Output Only] Number of links actually provisioned in this interconnect.",
@@ -512,7 +512,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        remote_location: {
+        remoteLocation: {
           name: "Remote Location",
           description:
             "Indicates that this is a Cross-Cloud Interconnect. This field specifies the location outside of Google's network that the interconnect is connected to.",
@@ -523,7 +523,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        requested_features: {
+        requestedFeatures: {
           name: "Requested Features",
           description:
             "Optional. This parameter can be provided only with Interconnect INSERT. It isn't valid for Interconnect PATCH. List of features requested for this Interconnect connection, which can take one of the following values:     - IF_MACSEC: If specified, then the connection is created on MACsec    capable hardware ports. If not specified, non-MACsec capable ports will    also be considered.    - IF_CROSS_SITE_NETWORK: If specified, then the connection is created    exclusively for Cross-Site Networking. The connection can not be used for    Cross-Site Networking unless this feature is specified. Check the RequestedFeatures enum for the list of possible values.",
@@ -537,7 +537,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        requested_link_count: {
+        requestedLinkCount: {
           name: "Requested Link Count",
           description:
             "Target number of physical links in the link bundle, as requested by the customer.",
@@ -548,7 +548,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        satisfies_pzs: {
+        satisfiesPzs: {
           name: "Satisfies Pzs",
           description: "Output only. [Output Only] Reserved for future use.",
           type: {
@@ -557,7 +557,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] Server-defined URL for the resource.",
@@ -590,7 +590,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        wire_groups: {
+        wireGroups: {
           name: "Wire Groups",
           description:
             "Output only. [Output Only] A list of the URLs of all CrossSiteNetwork WireGroups configured to use this Interconnect. The Interconnect cannot be deleted if this list is non-empty.",
@@ -604,7 +604,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -623,89 +623,84 @@ const patch: AppBlock = {
           );
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.aai_enabled !== undefined)
-          body.aai_enabled = input.event.inputConfig.aai_enabled;
-        if (input.event.inputConfig.admin_enabled !== undefined)
-          body.admin_enabled = input.event.inputConfig.admin_enabled;
-        if (
-          input.event.inputConfig.application_aware_interconnect !== undefined
-        )
-          body.application_aware_interconnect =
-            input.event.inputConfig.application_aware_interconnect;
-        if (input.event.inputConfig.available_features !== undefined)
-          body.available_features = input.event.inputConfig.available_features;
-        if (input.event.inputConfig.circuit_infos !== undefined)
-          body.circuit_infos = input.event.inputConfig.circuit_infos;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
-        if (input.event.inputConfig.customer_name !== undefined)
-          body.customer_name = input.event.inputConfig.customer_name;
+        if (input.event.inputConfig.aaiEnabled !== undefined)
+          body.aaiEnabled = input.event.inputConfig.aaiEnabled;
+        if (input.event.inputConfig.adminEnabled !== undefined)
+          body.adminEnabled = input.event.inputConfig.adminEnabled;
+        if (input.event.inputConfig.applicationAwareInterconnect !== undefined)
+          body.applicationAwareInterconnect =
+            input.event.inputConfig.applicationAwareInterconnect;
+        if (input.event.inputConfig.availableFeatures !== undefined)
+          body.availableFeatures = input.event.inputConfig.availableFeatures;
+        if (input.event.inputConfig.circuitInfos !== undefined)
+          body.circuitInfos = input.event.inputConfig.circuitInfos;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.customerName !== undefined)
+          body.customerName = input.event.inputConfig.customerName;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.expected_outages !== undefined)
-          body.expected_outages = input.event.inputConfig.expected_outages;
-        if (input.event.inputConfig.google_ip_address !== undefined)
-          body.google_ip_address = input.event.inputConfig.google_ip_address;
-        if (input.event.inputConfig.google_reference_id !== undefined)
-          body.google_reference_id =
-            input.event.inputConfig.google_reference_id;
+        if (input.event.inputConfig.expectedOutages !== undefined)
+          body.expectedOutages = input.event.inputConfig.expectedOutages;
+        if (input.event.inputConfig.googleIpAddress !== undefined)
+          body.googleIpAddress = input.event.inputConfig.googleIpAddress;
+        if (input.event.inputConfig.googleReferenceId !== undefined)
+          body.googleReferenceId = input.event.inputConfig.googleReferenceId;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.interconnect_attachments !== undefined)
-          body.interconnect_attachments =
-            input.event.inputConfig.interconnect_attachments;
-        if (input.event.inputConfig.interconnect_groups !== undefined)
-          body.interconnect_groups =
-            input.event.inputConfig.interconnect_groups;
-        if (input.event.inputConfig.interconnect_type !== undefined)
-          body.interconnect_type = input.event.inputConfig.interconnect_type;
+        if (input.event.inputConfig.interconnectAttachments !== undefined)
+          body.interconnectAttachments =
+            input.event.inputConfig.interconnectAttachments;
+        if (input.event.inputConfig.interconnectGroups !== undefined)
+          body.interconnectGroups = input.event.inputConfig.interconnectGroups;
+        if (input.event.inputConfig.interconnectType !== undefined)
+          body.interconnectType = input.event.inputConfig.interconnectType;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.label_fingerprint !== undefined)
-          body.label_fingerprint = input.event.inputConfig.label_fingerprint;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
         if (input.event.inputConfig.labels !== undefined)
           body.labels = input.event.inputConfig.labels;
-        if (input.event.inputConfig.link_type !== undefined)
-          body.link_type = input.event.inputConfig.link_type;
+        if (input.event.inputConfig.linkType !== undefined)
+          body.linkType = input.event.inputConfig.linkType;
         if (input.event.inputConfig.location !== undefined)
           body.location = input.event.inputConfig.location;
         if (input.event.inputConfig.macsec !== undefined)
           body.macsec = input.event.inputConfig.macsec;
-        if (input.event.inputConfig.macsec_enabled !== undefined)
-          body.macsec_enabled = input.event.inputConfig.macsec_enabled;
+        if (input.event.inputConfig.macsecEnabled !== undefined)
+          body.macsecEnabled = input.event.inputConfig.macsecEnabled;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.noc_contact_email !== undefined)
-          body.noc_contact_email = input.event.inputConfig.noc_contact_email;
-        if (input.event.inputConfig.operational_status !== undefined)
-          body.operational_status = input.event.inputConfig.operational_status;
+        if (input.event.inputConfig.nocContactEmail !== undefined)
+          body.nocContactEmail = input.event.inputConfig.nocContactEmail;
+        if (input.event.inputConfig.operationalStatus !== undefined)
+          body.operationalStatus = input.event.inputConfig.operationalStatus;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
-        if (input.event.inputConfig.peer_ip_address !== undefined)
-          body.peer_ip_address = input.event.inputConfig.peer_ip_address;
-        if (input.event.inputConfig.provisioned_link_count !== undefined)
-          body.provisioned_link_count =
-            input.event.inputConfig.provisioned_link_count;
-        if (input.event.inputConfig.remote_location !== undefined)
-          body.remote_location = input.event.inputConfig.remote_location;
-        if (input.event.inputConfig.requested_features !== undefined)
-          body.requested_features = input.event.inputConfig.requested_features;
-        if (input.event.inputConfig.requested_link_count !== undefined)
-          body.requested_link_count =
-            input.event.inputConfig.requested_link_count;
-        if (input.event.inputConfig.satisfies_pzs !== undefined)
-          body.satisfies_pzs = input.event.inputConfig.satisfies_pzs;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
+        if (input.event.inputConfig.peerIpAddress !== undefined)
+          body.peerIpAddress = input.event.inputConfig.peerIpAddress;
+        if (input.event.inputConfig.provisionedLinkCount !== undefined)
+          body.provisionedLinkCount =
+            input.event.inputConfig.provisionedLinkCount;
+        if (input.event.inputConfig.remoteLocation !== undefined)
+          body.remoteLocation = input.event.inputConfig.remoteLocation;
+        if (input.event.inputConfig.requestedFeatures !== undefined)
+          body.requestedFeatures = input.event.inputConfig.requestedFeatures;
+        if (input.event.inputConfig.requestedLinkCount !== undefined)
+          body.requestedLinkCount = input.event.inputConfig.requestedLinkCount;
+        if (input.event.inputConfig.satisfiesPzs !== undefined)
+          body.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
         if (input.event.inputConfig.state !== undefined)
           body.state = input.event.inputConfig.state;
         if (input.event.inputConfig.subzone !== undefined)
           body.subzone = input.event.inputConfig.subzone;
-        if (input.event.inputConfig.wire_groups !== undefined)
-          body.wire_groups = input.event.inputConfig.wire_groups;
+        if (input.event.inputConfig.wireGroups !== undefined)
+          body.wireGroups = input.event.inputConfig.wireGroups;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -727,12 +722,12 @@ const patch: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -741,7 +736,7 @@ const patch: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -759,12 +754,12 @@ const patch: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -819,7 +814,7 @@ const patch: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -837,7 +832,7 @@ const patch: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -848,7 +843,7 @@ const patch: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -858,16 +853,16 @@ const patch: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -904,12 +899,12 @@ const patch: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -918,15 +913,15 @@ const patch: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -946,12 +941,12 @@ const patch: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -966,18 +961,18 @@ const patch: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -990,7 +985,7 @@ const patch: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -1001,16 +996,16 @@ const patch: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

@@ -1,5 +1,29 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlConnectServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlConnectServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  publicKey: "public_key",
+  accessToken: "access_token",
+  readTime: "read_time",
+  validDuration: "valid_duration",
+};
+
+const outputMapping = {
+  ephemeral_cert: {
+    name: "ephemeralCert",
+    fields: {
+      cert_serial_number: "certSerialNumber",
+      create_time: "createTime",
+      common_name: "commonName",
+      expiration_time: "expirationTime",
+      sha1_fingerprint: "sha1Fingerprint",
+      self_link: "selfLink",
+    },
+  },
+};
 
 const generateEphemeralCert: AppBlock = {
   name: "Generate Ephemeral Cert",
@@ -29,7 +53,7 @@ const generateEphemeralCert: AppBlock = {
           },
           required: false,
         },
-        public_key: {
+        publicKey: {
           name: "Public Key",
           description:
             "PEM encoded public key to include in the signed certificate.",
@@ -40,7 +64,7 @@ const generateEphemeralCert: AppBlock = {
           },
           required: false,
         },
-        access_token: {
+        accessToken: {
           name: "Access Token",
           description:
             "Optional. Access token to include in the signed certificate.",
@@ -51,7 +75,7 @@ const generateEphemeralCert: AppBlock = {
           },
           required: false,
         },
-        read_time: {
+        readTime: {
           name: "Read Time",
           description:
             "Optional. Optional snapshot read timestamp to trade freshness for performance.",
@@ -61,7 +85,7 @@ const generateEphemeralCert: AppBlock = {
           },
           required: false,
         },
-        valid_duration: {
+        validDuration: {
           name: "Valid Duration",
           description:
             "Optional. If set, it will contain the cert valid duration.",
@@ -75,19 +99,7 @@ const generateEphemeralCert: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlConnectServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.public_key !== undefined)
-          request.public_key = input.event.inputConfig.public_key;
-        if (input.event.inputConfig.access_token !== undefined)
-          request.access_token = input.event.inputConfig.access_token;
-        if (input.event.inputConfig.read_time !== undefined)
-          request.read_time = input.event.inputConfig.read_time;
-        if (input.event.inputConfig.valid_duration !== undefined)
-          request.valid_duration = input.event.inputConfig.valid_duration;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.generateEphemeralCert(request, (err: any, response: any) => {
@@ -101,7 +113,8 @@ const generateEphemeralCert: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -111,14 +124,14 @@ const generateEphemeralCert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          ephemeral_cert: {
+          ephemeralCert: {
             type: "object",
             properties: {
               kind: {
                 type: "string",
                 description: "This is always `sql#sslCert`.",
               },
-              cert_serial_number: {
+              certSerialNumber: {
                 type: "string",
                 description:
                   "Serial number, as extracted from the certificate.",
@@ -127,20 +140,20 @@ const generateEphemeralCert: AppBlock = {
                 type: "string",
                 description: "PEM representation.",
               },
-              create_time: {
+              createTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              common_name: {
+              commonName: {
                 type: "string",
                 description:
                   "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
               },
-              expiration_time: {
+              expirationTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              sha1_fingerprint: {
+              sha1Fingerprint: {
                 type: "string",
                 description: "Sha1 Fingerprint.",
               },
@@ -148,7 +161,7 @@ const generateEphemeralCert: AppBlock = {
                 type: "string",
                 description: "Name of the database instance.",
               },
-              self_link: {
+              selfLink: {
                 type: "string",
                 description: "The URI of this resource.",
               },

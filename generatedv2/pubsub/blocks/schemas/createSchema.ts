@@ -1,5 +1,14 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  schemaId: "schema_id",
+};
+
+const outputMapping = {
+  revision_id: "revisionId",
+  revision_create_time: "revisionCreateTime",
+};
 
 const createSchema: AppBlock = {
   name: "Create Schema",
@@ -48,7 +57,7 @@ const createSchema: AppBlock = {
           },
           required: true,
         },
-        schema_id: {
+        schemaId: {
           name: "Schema Id",
           description:
             "The ID to use for the schema, which will become the final component of the schema's resource name.  See https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names for resource name constraints.",
@@ -63,13 +72,7 @@ const createSchema: AppBlock = {
       onEvent: async (input) => {
         const client = await getSchemaServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.schema !== undefined)
-          request.schema = input.event.inputConfig.schema;
-        if (input.event.inputConfig.schema_id !== undefined)
-          request.schema_id = input.event.inputConfig.schema_id;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createSchema(request, (err: any, response: any) => {
@@ -83,7 +86,8 @@ const createSchema: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -108,12 +112,12 @@ const createSchema: AppBlock = {
             description:
               "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
-          revision_id: {
+          revisionId: {
             type: "string",
             description:
               "Output only. Immutable. The revision ID of the schema.",
           },
-          revision_create_time: {
+          revisionCreateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

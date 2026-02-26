@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        target_instance: {
+        targetInstance: {
           name: "Target Instance",
           description: "Name of the TargetInstance resource to return.",
           type: {
@@ -30,9 +30,9 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.target_instance !== undefined)
+        if (input.event.inputConfig.targetInstance !== undefined)
           pathParams["target_instance"] = String(
-            input.event.inputConfig.target_instance,
+            input.event.inputConfig.targetInstance,
           );
 
         const result = await computeFetch({
@@ -53,7 +53,7 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -82,7 +82,7 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          nat_policy: {
+          natPolicy: {
             type: "string",
             description:
               "Must have a value of NO_NAT. Protocol forwarding delivers packets while preserving the destination IP address of the forwarding rule referencing the target instance. Check the NatPolicy enum for the list of possible values.",
@@ -92,12 +92,12 @@ const get: AppBlock = {
             description:
               "The URL of the network this target instance uses to forward traffic. If not specified, the traffic will be forwarded to the network that the default network interface belongs to.",
           },
-          security_policy: {
+          securityPolicy: {
             type: "string",
             description:
               "[Output Only] The resource URL for the security policy associated with this target instance.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },

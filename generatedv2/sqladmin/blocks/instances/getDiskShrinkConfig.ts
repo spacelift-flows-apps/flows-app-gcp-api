@@ -1,5 +1,12 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  minimal_target_size_gb: "minimalTargetSizeGb",
+};
 
 const getDiskShrinkConfig: AppBlock = {
   name: "Get Disk Shrink Config",
@@ -33,11 +40,7 @@ const getDiskShrinkConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getDiskShrinkConfig(request, (err: any, response: any) => {
@@ -51,7 +54,8 @@ const getDiskShrinkConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -65,7 +69,7 @@ const getDiskShrinkConfig: AppBlock = {
             type: "string",
             description: "This is always `sql#getDiskShrinkConfig`.",
           },
-          minimal_target_size_gb: {
+          minimalTargetSizeGb: {
             type: "string",
             description: "64-bit integer as string",
           },

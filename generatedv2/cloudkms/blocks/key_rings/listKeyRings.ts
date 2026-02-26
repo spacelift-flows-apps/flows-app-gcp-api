@@ -1,5 +1,25 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  orderBy: "order_by",
+};
+
+const outputMapping = {
+  key_rings: {
+    name: "keyRings",
+    fields: {
+      create_time: "createTime",
+    },
+  },
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listKeyRings: AppBlock = {
   name: "List Key Rings",
@@ -19,7 +39,7 @@ const listKeyRings: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. Optional limit on the number of [KeyRings][google.cloud.kms.v1.KeyRing] to include in the response. Further [KeyRings][google.cloud.kms.v1.KeyRing] can subsequently be obtained by including the [ListKeyRingsResponse.next_page_token][google.cloud.kms.v1.ListKeyRingsResponse.next_page_token] in a subsequent request.  If unspecified, the server will pick an appropriate default.",
@@ -30,7 +50,7 @@ const listKeyRings: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. Optional pagination token, returned earlier via [ListKeyRingsResponse.next_page_token][google.cloud.kms.v1.ListKeyRingsResponse.next_page_token].",
@@ -52,7 +72,7 @@ const listKeyRings: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order.  For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
@@ -67,17 +87,7 @@ const listKeyRings: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.order_by !== undefined)
-          request.order_by = input.event.inputConfig.order_by;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listKeyRings(request, (err: any, response: any) => {
@@ -91,7 +101,8 @@ const listKeyRings: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -101,7 +112,7 @@ const listKeyRings: AppBlock = {
       type: {
         type: "object",
         properties: {
-          key_rings: {
+          keyRings: {
             type: "array",
             items: {
               type: "object",
@@ -111,7 +122,7 @@ const listKeyRings: AppBlock = {
                   description:
                     "Output only. The resource name for the [KeyRing][google.cloud.kms.v1.KeyRing] in the format `projects/*/locations/*/keyRings/*`.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -123,12 +134,12 @@ const listKeyRings: AppBlock = {
             },
             description: "The list of [KeyRings][google.cloud.kms.v1.KeyRing].",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token to retrieve next page of results. Pass this value in [ListKeyRingsRequest.page_token][google.cloud.kms.v1.ListKeyRingsRequest.page_token] to retrieve the next page of results.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description:
               "The total number of [KeyRings][google.cloud.kms.v1.KeyRing] that matched the query.  This field is not populated if [ListKeyRingsRequest.filter][google.cloud.kms.v1.ListKeyRingsRequest.filter] is applied.",

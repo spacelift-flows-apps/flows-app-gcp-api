@@ -1,5 +1,29 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagKeysClient } from "../../lib/grpcClient.ts";
+import { getTagKeysClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  options: {
+    name: "options",
+    fields: {
+      requestedPolicyVersion: "requested_policy_version",
+    },
+  },
+};
+
+const outputMapping = {
+  audit_configs: {
+    name: "auditConfigs",
+    fields: {
+      audit_log_configs: {
+        name: "auditLogConfigs",
+        fields: {
+          log_type: "logType",
+          exempted_members: "exemptedMembers",
+        },
+      },
+    },
+  },
+};
 
 const tagKeysGetIamPolicy: AppBlock = {
   name: "TagKeys - Get IAM Policy",
@@ -22,7 +46,7 @@ const tagKeysGetIamPolicy: AppBlock = {
           type: {
             type: "object",
             properties: {
-              requested_policy_version: {
+              requestedPolicyVersion: {
                 type: "integer",
               },
             },
@@ -34,11 +58,7 @@ const tagKeysGetIamPolicy: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagKeysClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.resource !== undefined)
-          request.resource = input.event.inputConfig.resource;
-        if (input.event.inputConfig.options !== undefined)
-          request.options = input.event.inputConfig.options;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getIamPolicy(request, (err: any, response: any) => {
@@ -52,7 +72,8 @@ const tagKeysGetIamPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -101,7 +122,7 @@ const tagKeysGetIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          audit_configs: {
+          auditConfigs: {
             type: "array",
             items: {
               type: "object",
@@ -109,12 +130,12 @@ const tagKeysGetIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                audit_log_configs: {
+                auditLogConfigs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      log_type: {
+                      logType: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -123,7 +144,7 @@ const tagKeysGetIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exempted_members: {
+                      exemptedMembers: {
                         type: "array",
                         items: {
                           type: "string",

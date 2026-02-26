@@ -1,5 +1,13 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getProjectsClient } from "../../lib/grpcClient.ts";
+import { getProjectsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  project_id: "projectId",
+  display_name: "displayName",
+  create_time: "createTime",
+  update_time: "updateTime",
+  delete_time: "deleteTime",
+};
 
 const getProject: AppBlock = {
   name: "Get Project",
@@ -23,9 +31,7 @@ const getProject: AppBlock = {
       onEvent: async (input) => {
         const client = await getProjectsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getProject(request, (err: any, response: any) => {
@@ -39,7 +45,8 @@ const getProject: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -59,7 +66,7 @@ const getProject: AppBlock = {
             description:
               "Optional. A reference to a parent Resource. eg., `organizations/123` or `folders/876`.",
           },
-          project_id: {
+          projectId: {
             type: "string",
             description:
               "Immutable. The unique, user-assigned id of the project. It must be 6 to 30 lowercase ASCII letters, digits, or hyphens. It must start with a letter. Trailing hyphens are prohibited.  Example: `tokyo-rain-123`",
@@ -69,20 +76,20 @@ const getProject: AppBlock = {
             enum: ["STATE_UNSPECIFIED", "ACTIVE", "DELETE_REQUESTED"],
             description: "Output only. The project lifecycle state.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "Optional. A user-assigned display name of the project. When present it must be between 4 to 30 characters. Allowed characters are: lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point.  Example: `My Project`",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          update_time: {
+          updateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          delete_time: {
+          deleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

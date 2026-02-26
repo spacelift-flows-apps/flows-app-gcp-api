@@ -1487,21 +1487,21 @@
               }
             },
             {
-              "name": ".google.api.field_behavior",
-              "number": 1052,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "api.FieldBehavior",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.resource_reference",
               "number": 1055,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.ResourceReference",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.field_behavior",
+              "number": 1052,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "api.FieldBehavior",
               "options": {
                 "packed": false
               }
@@ -3636,6 +3636,88 @@
           "options": {}
         },
         {
+          "name": "ExecutionTemplate",
+          "field": [
+            {
+              "name": "labels",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Labels"
+            },
+            {
+              "name": "annotations",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Annotations"
+            },
+            {
+              "name": "parallelism",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "task_count",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            },
+            {
+              "name": "template",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "TaskTemplate",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "Labels",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "name": "Annotations",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ]
+        },
+        {
           "name": "CreateInstanceRequest",
           "field": [
             {
@@ -4130,88 +4212,6 @@
           ]
         },
         {
-          "name": "ExecutionTemplate",
-          "field": [
-            {
-              "name": "labels",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Labels"
-            },
-            {
-              "name": "annotations",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Annotations"
-            },
-            {
-              "name": "parallelism",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "task_count",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "template",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "TaskTemplate",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "Labels",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            },
-            {
-              "name": "Annotations",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            }
-          ]
-        },
-        {
           "name": "InstanceSplit",
           "field": [
             {
@@ -4258,6 +4258,750 @@
               "number": 3,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_INT32"
+            }
+          ]
+        },
+        {
+          "name": "CreateJobRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "job",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Job",
+              "options": {}
+            },
+            {
+              "name": "job_id",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "validate_only",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL"
+            }
+          ]
+        },
+        {
+          "name": "GetJobRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "UpdateJobRequest",
+          "field": [
+            {
+              "name": "job",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Job",
+              "options": {}
+            },
+            {
+              "name": "validate_only",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL"
+            },
+            {
+              "name": "allow_missing",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ListJobsRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "page_size",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            },
+            {
+              "name": "page_token",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "show_deleted",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL"
+            }
+          ]
+        },
+        {
+          "name": "ListJobsResponse",
+          "field": [
+            {
+              "name": "jobs",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Job"
+            },
+            {
+              "name": "next_page_token",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "DeleteJobRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "validate_only",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL"
+            },
+            {
+              "name": "etag",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "RunJobRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "validate_only",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL"
+            },
+            {
+              "name": "etag",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "overrides",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Overrides"
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "Overrides",
+              "field": [
+                {
+                  "name": "container_overrides",
+                  "number": 1,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "ContainerOverride"
+                },
+                {
+                  "name": "task_count",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_INT32",
+                  "options": {}
+                },
+                {
+                  "name": "timeout",
+                  "number": 4,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "protobuf.Duration"
+                }
+              ],
+              "nestedType": [
+                {
+                  "name": "ContainerOverride",
+                  "field": [
+                    {
+                      "name": "name",
+                      "number": 1,
+                      "label": "LABEL_OPTIONAL",
+                      "type": "TYPE_STRING"
+                    },
+                    {
+                      "name": "args",
+                      "number": 2,
+                      "label": "LABEL_REPEATED",
+                      "type": "TYPE_STRING",
+                      "options": {}
+                    },
+                    {
+                      "name": "env",
+                      "number": 3,
+                      "label": "LABEL_REPEATED",
+                      "type": "TYPE_MESSAGE",
+                      "typeName": "EnvVar"
+                    },
+                    {
+                      "name": "clear_args",
+                      "number": 4,
+                      "label": "LABEL_OPTIONAL",
+                      "type": "TYPE_BOOL",
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Job",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "uid",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "generation",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64",
+              "options": {}
+            },
+            {
+              "name": "labels",
+              "number": 4,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Labels"
+            },
+            {
+              "name": "annotations",
+              "number": 5,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Annotations"
+            },
+            {
+              "name": "create_time",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "update_time",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "delete_time",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "expire_time",
+              "number": 9,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            },
+            {
+              "name": "creator",
+              "number": 10,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "last_modifier",
+              "number": 11,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "client",
+              "number": 12,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "client_version",
+              "number": 13,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "launch_stage",
+              "number": 14,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "api.LaunchStage"
+            },
+            {
+              "name": "binary_authorization",
+              "number": 15,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "BinaryAuthorization"
+            },
+            {
+              "name": "template",
+              "number": 16,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "ExecutionTemplate",
+              "options": {}
+            },
+            {
+              "name": "observed_generation",
+              "number": 17,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64",
+              "options": {}
+            },
+            {
+              "name": "terminal_condition",
+              "number": 18,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Condition",
+              "options": {}
+            },
+            {
+              "name": "conditions",
+              "number": 19,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Condition",
+              "options": {}
+            },
+            {
+              "name": "execution_count",
+              "number": 20,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "latest_created_execution",
+              "number": 22,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "ExecutionReference",
+              "options": {}
+            },
+            {
+              "name": "reconciling",
+              "number": 23,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            },
+            {
+              "name": "satisfies_pzs",
+              "number": 25,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            },
+            {
+              "name": "start_execution_token",
+              "number": 26,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "oneofIndex": 0
+            },
+            {
+              "name": "run_execution_token",
+              "number": 27,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "oneofIndex": 0
+            },
+            {
+              "name": "etag",
+              "number": 99,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "Labels",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "name": "Annotations",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ],
+          "options": {},
+          "oneofDecl": [
+            {
+              "name": "create_execution"
+            }
+          ]
+        },
+        {
+          "name": "ExecutionReference",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "create_time",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "completion_time",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "delete_time",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "name": "completion_status",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "CompletionStatus"
+            }
+          ],
+          "enumType": [
+            {
+              "name": "CompletionStatus",
+              "value": [
+                {
+                  "name": "COMPLETION_STATUS_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "EXECUTION_SUCCEEDED",
+                  "number": 1
+                },
+                {
+                  "name": "EXECUTION_FAILED",
+                  "number": 2
+                },
+                {
+                  "name": "EXECUTION_RUNNING",
+                  "number": 3
+                },
+                {
+                  "name": "EXECUTION_PENDING",
+                  "number": 4
+                },
+                {
+                  "name": "EXECUTION_CANCELLED",
+                  "number": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "RevisionTemplate",
+          "field": [
+            {
+              "name": "revision",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "labels",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Labels",
+              "options": {}
+            },
+            {
+              "name": "annotations",
+              "number": 3,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Annotations",
+              "options": {}
+            },
+            {
+              "name": "scaling",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RevisionScaling",
+              "options": {}
+            },
+            {
+              "name": "vpc_access",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "VpcAccess",
+              "options": {}
+            },
+            {
+              "name": "timeout",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration",
+              "options": {}
+            },
+            {
+              "name": "service_account",
+              "number": 9,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "containers",
+              "number": 10,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Container"
+            },
+            {
+              "name": "volumes",
+              "number": 11,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Volume",
+              "options": {}
+            },
+            {
+              "name": "execution_environment",
+              "number": 13,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "ExecutionEnvironment",
+              "options": {}
+            },
+            {
+              "name": "encryption_key",
+              "number": 14,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "max_instance_request_concurrency",
+              "number": 15,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "service_mesh",
+              "number": 16,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "ServiceMesh",
+              "options": {}
+            },
+            {
+              "name": "encryption_key_revocation_action",
+              "number": 17,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "EncryptionKeyRevocationAction",
+              "options": {}
+            },
+            {
+              "name": "encryption_key_shutdown_duration",
+              "number": 18,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration",
+              "options": {}
+            },
+            {
+              "name": "session_affinity",
+              "number": 19,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            },
+            {
+              "name": "health_check_disabled",
+              "number": 20,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            },
+            {
+              "name": "node_selector",
+              "number": 21,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "NodeSelector",
+              "options": {}
+            },
+            {
+              "name": "gpu_zonal_redundancy_disabled",
+              "number": 24,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {},
+              "oneofIndex": 0
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "Labels",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "name": "Annotations",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "_gpu_zonal_redundancy_disabled"
             }
           ]
         },
@@ -4930,584 +5674,6 @@
           ]
         },
         {
-          "name": "GetRevisionRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ListRevisionsRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "page_size",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "page_token",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "show_deleted",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            }
-          ]
-        },
-        {
-          "name": "ListRevisionsResponse",
-          "field": [
-            {
-              "name": "revisions",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Revision"
-            },
-            {
-              "name": "next_page_token",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "DeleteRevisionRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "validate_only",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            },
-            {
-              "name": "etag",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "Revision",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "uid",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "generation",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64",
-              "options": {}
-            },
-            {
-              "name": "labels",
-              "number": 4,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Labels",
-              "options": {}
-            },
-            {
-              "name": "annotations",
-              "number": 5,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Annotations",
-              "options": {}
-            },
-            {
-              "name": "create_time",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "update_time",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "delete_time",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "expire_time",
-              "number": 9,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            },
-            {
-              "name": "launch_stage",
-              "number": 10,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "api.LaunchStage"
-            },
-            {
-              "name": "service",
-              "number": 11,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "scaling",
-              "number": 12,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RevisionScaling"
-            },
-            {
-              "name": "vpc_access",
-              "number": 13,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "VpcAccess"
-            },
-            {
-              "name": "max_instance_request_concurrency",
-              "number": 34,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "timeout",
-              "number": 15,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration"
-            },
-            {
-              "name": "service_account",
-              "number": 16,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "containers",
-              "number": 17,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Container"
-            },
-            {
-              "name": "volumes",
-              "number": 18,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Volume"
-            },
-            {
-              "name": "execution_environment",
-              "number": 20,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "ExecutionEnvironment"
-            },
-            {
-              "name": "encryption_key",
-              "number": 21,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "service_mesh",
-              "number": 22,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "ServiceMesh"
-            },
-            {
-              "name": "encryption_key_revocation_action",
-              "number": 23,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "EncryptionKeyRevocationAction"
-            },
-            {
-              "name": "encryption_key_shutdown_duration",
-              "number": 24,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration"
-            },
-            {
-              "name": "reconciling",
-              "number": 30,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            },
-            {
-              "name": "conditions",
-              "number": 31,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Condition",
-              "options": {}
-            },
-            {
-              "name": "observed_generation",
-              "number": 32,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64",
-              "options": {}
-            },
-            {
-              "name": "log_uri",
-              "number": 33,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "satisfies_pzs",
-              "number": 37,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            },
-            {
-              "name": "session_affinity",
-              "number": 38,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            },
-            {
-              "name": "scaling_status",
-              "number": 39,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RevisionScalingStatus",
-              "options": {}
-            },
-            {
-              "name": "node_selector",
-              "number": 40,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "NodeSelector"
-            },
-            {
-              "name": "gpu_zonal_redundancy_disabled",
-              "number": 48,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "creator",
-              "number": 49,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "etag",
-              "number": 99,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "Labels",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            },
-            {
-              "name": "Annotations",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            }
-          ],
-          "options": {},
-          "oneofDecl": [
-            {
-              "name": "_gpu_zonal_redundancy_disabled"
-            }
-          ]
-        },
-        {
-          "name": "RevisionTemplate",
-          "field": [
-            {
-              "name": "revision",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "labels",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Labels",
-              "options": {}
-            },
-            {
-              "name": "annotations",
-              "number": 3,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Annotations",
-              "options": {}
-            },
-            {
-              "name": "scaling",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RevisionScaling",
-              "options": {}
-            },
-            {
-              "name": "vpc_access",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "VpcAccess",
-              "options": {}
-            },
-            {
-              "name": "timeout",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration",
-              "options": {}
-            },
-            {
-              "name": "service_account",
-              "number": 9,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "containers",
-              "number": 10,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Container"
-            },
-            {
-              "name": "volumes",
-              "number": 11,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Volume",
-              "options": {}
-            },
-            {
-              "name": "execution_environment",
-              "number": 13,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "ExecutionEnvironment",
-              "options": {}
-            },
-            {
-              "name": "encryption_key",
-              "number": 14,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "max_instance_request_concurrency",
-              "number": 15,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "service_mesh",
-              "number": 16,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "ServiceMesh",
-              "options": {}
-            },
-            {
-              "name": "encryption_key_revocation_action",
-              "number": 17,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "EncryptionKeyRevocationAction",
-              "options": {}
-            },
-            {
-              "name": "encryption_key_shutdown_duration",
-              "number": 18,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration",
-              "options": {}
-            },
-            {
-              "name": "session_affinity",
-              "number": 19,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            },
-            {
-              "name": "health_check_disabled",
-              "number": 20,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            },
-            {
-              "name": "node_selector",
-              "number": 21,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "NodeSelector",
-              "options": {}
-            },
-            {
-              "name": "gpu_zonal_redundancy_disabled",
-              "number": 24,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {},
-              "oneofIndex": 0
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "Labels",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            },
-            {
-              "name": "Annotations",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "_gpu_zonal_redundancy_disabled"
-            }
-          ]
-        },
-        {
           "name": "CreateServiceRequest",
           "field": [
             {
@@ -6012,140 +6178,7 @@
           "options": {}
         },
         {
-          "name": "RevisionScalingStatus",
-          "field": [
-            {
-              "name": "desired_min_instance_count",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            }
-          ]
-        },
-        {
-          "name": "TaskTemplate",
-          "field": [
-            {
-              "name": "containers",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Container"
-            },
-            {
-              "name": "volumes",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Volume",
-              "options": {}
-            },
-            {
-              "name": "max_retries",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "oneofIndex": 0
-            },
-            {
-              "name": "timeout",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Duration",
-              "options": {}
-            },
-            {
-              "name": "service_account",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "execution_environment",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "ExecutionEnvironment",
-              "options": {}
-            },
-            {
-              "name": "encryption_key",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "vpc_access",
-              "number": 8,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "VpcAccess",
-              "options": {}
-            },
-            {
-              "name": "node_selector",
-              "number": 11,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "NodeSelector",
-              "options": {}
-            },
-            {
-              "name": "gpu_zonal_redundancy_disabled",
-              "number": 12,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {},
-              "oneofIndex": 1
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "retries"
-            },
-            {
-              "name": "_gpu_zonal_redundancy_disabled"
-            }
-          ]
-        },
-        {
-          "name": "CreateJobRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "job",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Job",
-              "options": {}
-            },
-            {
-              "name": "job_id",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "validate_only",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            }
-          ]
-        },
-        {
-          "name": "GetJobRequest",
+          "name": "GetRevisionRequest",
           "field": [
             {
               "name": "name",
@@ -6157,33 +6190,7 @@
           ]
         },
         {
-          "name": "UpdateJobRequest",
-          "field": [
-            {
-              "name": "job",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Job",
-              "options": {}
-            },
-            {
-              "name": "validate_only",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            },
-            {
-              "name": "allow_missing",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ListJobsRequest",
+          "name": "ListRevisionsRequest",
           "field": [
             {
               "name": "parent",
@@ -6213,14 +6220,14 @@
           ]
         },
         {
-          "name": "ListJobsResponse",
+          "name": "ListRevisionsResponse",
           "field": [
             {
-              "name": "jobs",
+              "name": "revisions",
               "number": 1,
               "label": "LABEL_REPEATED",
               "type": "TYPE_MESSAGE",
-              "typeName": "Job"
+              "typeName": "Revision"
             },
             {
               "name": "next_page_token",
@@ -6231,31 +6238,7 @@
           ]
         },
         {
-          "name": "DeleteJobRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "validate_only",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL"
-            },
-            {
-              "name": "etag",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "RunJobRequest",
+          "name": "DeleteRevisionRequest",
           "field": [
             {
               "name": "name",
@@ -6275,86 +6258,18 @@
               "number": 3,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING"
-            },
-            {
-              "name": "overrides",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Overrides"
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "Overrides",
-              "field": [
-                {
-                  "name": "container_overrides",
-                  "number": 1,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "ContainerOverride"
-                },
-                {
-                  "name": "task_count",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_INT32",
-                  "options": {}
-                },
-                {
-                  "name": "timeout",
-                  "number": 4,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_MESSAGE",
-                  "typeName": "protobuf.Duration"
-                }
-              ],
-              "nestedType": [
-                {
-                  "name": "ContainerOverride",
-                  "field": [
-                    {
-                      "name": "name",
-                      "number": 1,
-                      "label": "LABEL_OPTIONAL",
-                      "type": "TYPE_STRING"
-                    },
-                    {
-                      "name": "args",
-                      "number": 2,
-                      "label": "LABEL_REPEATED",
-                      "type": "TYPE_STRING",
-                      "options": {}
-                    },
-                    {
-                      "name": "env",
-                      "number": 3,
-                      "label": "LABEL_REPEATED",
-                      "type": "TYPE_MESSAGE",
-                      "typeName": "EnvVar"
-                    },
-                    {
-                      "name": "clear_args",
-                      "number": 4,
-                      "label": "LABEL_OPTIONAL",
-                      "type": "TYPE_BOOL",
-                      "options": {}
-                    }
-                  ]
-                }
-              ]
             }
           ]
         },
         {
-          "name": "Job",
+          "name": "Revision",
           "field": [
             {
               "name": "name",
               "number": 1,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
+              "type": "TYPE_STRING",
+              "options": {}
             },
             {
               "name": "uid",
@@ -6375,14 +6290,16 @@
               "number": 4,
               "label": "LABEL_REPEATED",
               "type": "TYPE_MESSAGE",
-              "typeName": "Labels"
+              "typeName": "Labels",
+              "options": {}
             },
             {
               "name": "annotations",
               "number": 5,
               "label": "LABEL_REPEATED",
               "type": "TYPE_MESSAGE",
-              "typeName": "Annotations"
+              "typeName": "Annotations",
+              "options": {}
             },
             {
               "name": "create_time",
@@ -6417,118 +6334,172 @@
               "options": {}
             },
             {
-              "name": "creator",
+              "name": "launch_stage",
               "number": 10,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
+              "type": "TYPE_ENUM",
+              "typeName": "api.LaunchStage"
             },
             {
-              "name": "last_modifier",
+              "name": "service",
               "number": 11,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING",
               "options": {}
             },
             {
-              "name": "client",
+              "name": "scaling",
               "number": 12,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
+              "type": "TYPE_MESSAGE",
+              "typeName": "RevisionScaling"
             },
             {
-              "name": "client_version",
+              "name": "vpc_access",
               "number": 13,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
+              "type": "TYPE_MESSAGE",
+              "typeName": "VpcAccess"
             },
             {
-              "name": "launch_stage",
-              "number": 14,
+              "name": "max_instance_request_concurrency",
+              "number": 34,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "api.LaunchStage"
+              "type": "TYPE_INT32"
             },
             {
-              "name": "binary_authorization",
+              "name": "timeout",
               "number": 15,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
-              "typeName": "BinaryAuthorization"
+              "typeName": "protobuf.Duration"
             },
             {
-              "name": "template",
+              "name": "service_account",
               "number": 16,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "ExecutionTemplate",
-              "options": {}
+              "type": "TYPE_STRING"
             },
             {
-              "name": "observed_generation",
+              "name": "containers",
               "number": 17,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Container"
+            },
+            {
+              "name": "volumes",
+              "number": 18,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Volume"
+            },
+            {
+              "name": "execution_environment",
+              "number": 20,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64",
+              "type": "TYPE_ENUM",
+              "typeName": "ExecutionEnvironment"
+            },
+            {
+              "name": "encryption_key",
+              "number": 21,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
               "options": {}
             },
             {
-              "name": "terminal_condition",
-              "number": 18,
+              "name": "service_mesh",
+              "number": 22,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
-              "typeName": "Condition",
+              "typeName": "ServiceMesh"
+            },
+            {
+              "name": "encryption_key_revocation_action",
+              "number": 23,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "EncryptionKeyRevocationAction"
+            },
+            {
+              "name": "encryption_key_shutdown_duration",
+              "number": 24,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration"
+            },
+            {
+              "name": "reconciling",
+              "number": 30,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
               "options": {}
             },
             {
               "name": "conditions",
-              "number": 19,
+              "number": 31,
               "label": "LABEL_REPEATED",
               "type": "TYPE_MESSAGE",
               "typeName": "Condition",
               "options": {}
             },
             {
-              "name": "execution_count",
-              "number": 20,
+              "name": "observed_generation",
+              "number": 32,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
+              "type": "TYPE_INT64",
               "options": {}
             },
             {
-              "name": "latest_created_execution",
-              "number": 22,
+              "name": "log_uri",
+              "number": 33,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "ExecutionReference",
-              "options": {}
-            },
-            {
-              "name": "reconciling",
-              "number": 23,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
+              "type": "TYPE_STRING",
               "options": {}
             },
             {
               "name": "satisfies_pzs",
-              "number": 25,
+              "number": 37,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_BOOL",
               "options": {}
             },
             {
-              "name": "start_execution_token",
-              "number": 26,
+              "name": "session_affinity",
+              "number": 38,
               "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
+              "type": "TYPE_BOOL"
+            },
+            {
+              "name": "scaling_status",
+              "number": 39,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RevisionScalingStatus",
+              "options": {}
+            },
+            {
+              "name": "node_selector",
+              "number": 40,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "NodeSelector"
+            },
+            {
+              "name": "gpu_zonal_redundancy_disabled",
+              "number": 48,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {},
               "oneofIndex": 0
             },
             {
-              "name": "run_execution_token",
-              "number": 27,
+              "name": "creator",
+              "number": 49,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING",
-              "oneofIndex": 0
+              "options": {}
             },
             {
               "name": "etag",
@@ -6583,78 +6554,7 @@
           "options": {},
           "oneofDecl": [
             {
-              "name": "create_execution"
-            }
-          ]
-        },
-        {
-          "name": "ExecutionReference",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "create_time",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "completion_time",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "delete_time",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp"
-            },
-            {
-              "name": "completion_status",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "CompletionStatus"
-            }
-          ],
-          "enumType": [
-            {
-              "name": "CompletionStatus",
-              "value": [
-                {
-                  "name": "COMPLETION_STATUS_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "EXECUTION_SUCCEEDED",
-                  "number": 1
-                },
-                {
-                  "name": "EXECUTION_FAILED",
-                  "number": 2
-                },
-                {
-                  "name": "EXECUTION_RUNNING",
-                  "number": 3
-                },
-                {
-                  "name": "EXECUTION_PENDING",
-                  "number": 4
-                },
-                {
-                  "name": "EXECUTION_CANCELLED",
-                  "number": 5
-                }
-              ]
+              "name": "_gpu_zonal_redundancy_disabled"
             }
           ]
         },
@@ -7042,6 +6942,17 @@
           ]
         },
         {
+          "name": "RevisionScalingStatus",
+          "field": [
+            {
+              "name": "desired_min_instance_count",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            }
+          ]
+        },
+        {
           "name": "TrafficTarget",
           "field": [
             {
@@ -7106,6 +7017,413 @@
               "number": 5,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "TaskTemplate",
+          "field": [
+            {
+              "name": "containers",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Container"
+            },
+            {
+              "name": "volumes",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Volume",
+              "options": {}
+            },
+            {
+              "name": "max_retries",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "oneofIndex": 0
+            },
+            {
+              "name": "timeout",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration",
+              "options": {}
+            },
+            {
+              "name": "service_account",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "execution_environment",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "ExecutionEnvironment",
+              "options": {}
+            },
+            {
+              "name": "encryption_key",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "vpc_access",
+              "number": 8,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "VpcAccess",
+              "options": {}
+            },
+            {
+              "name": "node_selector",
+              "number": 11,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "NodeSelector",
+              "options": {}
+            },
+            {
+              "name": "gpu_zonal_redundancy_disabled",
+              "number": 12,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {},
+              "oneofIndex": 1
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "retries"
+            },
+            {
+              "name": "_gpu_zonal_redundancy_disabled"
+            }
+          ]
+        },
+        {
+          "name": "VpcAccess",
+          "field": [
+            {
+              "name": "connector",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "egress",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "VpcEgress",
+              "options": {}
+            },
+            {
+              "name": "network_interfaces",
+              "number": 3,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "NetworkInterface",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "NetworkInterface",
+              "field": [
+                {
+                  "name": "network",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                },
+                {
+                  "name": "subnetwork",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                },
+                {
+                  "name": "tags",
+                  "number": 3,
+                  "label": "LABEL_REPEATED",
+                  "type": "TYPE_STRING",
+                  "options": {}
+                }
+              ]
+            }
+          ],
+          "enumType": [
+            {
+              "name": "VpcEgress",
+              "value": [
+                {
+                  "name": "VPC_EGRESS_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ALL_TRAFFIC",
+                  "number": 1
+                },
+                {
+                  "name": "PRIVATE_RANGES_ONLY",
+                  "number": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "BinaryAuthorization",
+          "field": [
+            {
+              "name": "use_default",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "policy",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "breakglass_justification",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "binauthz_method"
+            }
+          ]
+        },
+        {
+          "name": "RevisionScaling",
+          "field": [
+            {
+              "name": "min_instance_count",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "max_instance_count",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ServiceMesh",
+          "field": [
+            {
+              "name": "mesh",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ServiceScaling",
+          "field": [
+            {
+              "name": "min_instance_count",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "scaling_mode",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "ScalingMode",
+              "options": {}
+            },
+            {
+              "name": "max_instance_count",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {}
+            },
+            {
+              "name": "manual_instance_count",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {},
+              "oneofIndex": 0
+            }
+          ],
+          "enumType": [
+            {
+              "name": "ScalingMode",
+              "value": [
+                {
+                  "name": "SCALING_MODE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "AUTOMATIC",
+                  "number": 1
+                },
+                {
+                  "name": "MANUAL",
+                  "number": 2
+                }
+              ]
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "_manual_instance_count"
+            }
+          ]
+        },
+        {
+          "name": "WorkerPoolScaling",
+          "field": [
+            {
+              "name": "manual_instance_count",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32",
+              "options": {},
+              "oneofIndex": 0
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "_manual_instance_count"
+            }
+          ]
+        },
+        {
+          "name": "NodeSelector",
+          "field": [
+            {
+              "name": "accelerator",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "BuildConfig",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "source_location",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "function_target",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "image_uri",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "base_image",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "enable_automatic_updates",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BOOL",
+              "options": {}
+            },
+            {
+              "name": "worker_pool",
+              "number": 7,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "environment_variables",
+              "number": 8,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Environment_variables",
+              "options": {}
+            },
+            {
+              "name": "service_account",
+              "number": 9,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ],
+          "nestedType": [
+            {
+              "name": "Environment_variables",
+              "field": [
+                {
+                  "name": "key",
+                  "number": 1,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "name": "value",
+                  "number": 2,
+                  "label": "LABEL_OPTIONAL",
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "options": {
+                "mapEntry": true
+              }
             }
           ]
         },
@@ -7688,324 +8006,6 @@
             }
           ],
           "options": {}
-        },
-        {
-          "name": "VpcAccess",
-          "field": [
-            {
-              "name": "connector",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "egress",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "VpcEgress",
-              "options": {}
-            },
-            {
-              "name": "network_interfaces",
-              "number": 3,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "NetworkInterface",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "NetworkInterface",
-              "field": [
-                {
-                  "name": "network",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                },
-                {
-                  "name": "subnetwork",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                },
-                {
-                  "name": "tags",
-                  "number": 3,
-                  "label": "LABEL_REPEATED",
-                  "type": "TYPE_STRING",
-                  "options": {}
-                }
-              ]
-            }
-          ],
-          "enumType": [
-            {
-              "name": "VpcEgress",
-              "value": [
-                {
-                  "name": "VPC_EGRESS_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "ALL_TRAFFIC",
-                  "number": 1
-                },
-                {
-                  "name": "PRIVATE_RANGES_ONLY",
-                  "number": 2
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "BinaryAuthorization",
-          "field": [
-            {
-              "name": "use_default",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "policy",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "breakglass_justification",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "binauthz_method"
-            }
-          ]
-        },
-        {
-          "name": "RevisionScaling",
-          "field": [
-            {
-              "name": "min_instance_count",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "max_instance_count",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ServiceMesh",
-          "field": [
-            {
-              "name": "mesh",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ServiceScaling",
-          "field": [
-            {
-              "name": "min_instance_count",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "scaling_mode",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "ScalingMode",
-              "options": {}
-            },
-            {
-              "name": "max_instance_count",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {}
-            },
-            {
-              "name": "manual_instance_count",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {},
-              "oneofIndex": 0
-            }
-          ],
-          "enumType": [
-            {
-              "name": "ScalingMode",
-              "value": [
-                {
-                  "name": "SCALING_MODE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "AUTOMATIC",
-                  "number": 1
-                },
-                {
-                  "name": "MANUAL",
-                  "number": 2
-                }
-              ]
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "_manual_instance_count"
-            }
-          ]
-        },
-        {
-          "name": "WorkerPoolScaling",
-          "field": [
-            {
-              "name": "manual_instance_count",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32",
-              "options": {},
-              "oneofIndex": 0
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "_manual_instance_count"
-            }
-          ]
-        },
-        {
-          "name": "NodeSelector",
-          "field": [
-            {
-              "name": "accelerator",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "BuildConfig",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "source_location",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "function_target",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "image_uri",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "base_image",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "enable_automatic_updates",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BOOL",
-              "options": {}
-            },
-            {
-              "name": "worker_pool",
-              "number": 7,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "environment_variables",
-              "number": 8,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Environment_variables",
-              "options": {}
-            },
-            {
-              "name": "service_account",
-              "number": 9,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ],
-          "nestedType": [
-            {
-              "name": "Environment_variables",
-              "field": [
-                {
-                  "name": "key",
-                  "number": 1,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                },
-                {
-                  "name": "value",
-                  "number": 2,
-                  "label": "LABEL_OPTIONAL",
-                  "type": "TYPE_STRING"
-                }
-              ],
-              "options": {
-                "mapEntry": true
-              }
-            }
-          ]
         }
       ],
       "enumType": [
@@ -8189,24 +8189,60 @@
           "options": {}
         },
         {
-          "name": "Revisions",
+          "name": "Jobs",
           "method": [
             {
-              "name": "GetRevision",
-              "inputType": ".google.cloud.run.v2.GetRevisionRequest",
-              "outputType": ".google.cloud.run.v2.Revision",
-              "options": {}
-            },
-            {
-              "name": "ListRevisions",
-              "inputType": ".google.cloud.run.v2.ListRevisionsRequest",
-              "outputType": ".google.cloud.run.v2.ListRevisionsResponse",
-              "options": {}
-            },
-            {
-              "name": "DeleteRevision",
-              "inputType": ".google.cloud.run.v2.DeleteRevisionRequest",
+              "name": "CreateJob",
+              "inputType": ".google.cloud.run.v2.CreateJobRequest",
               "outputType": ".google.longrunning.Operation",
+              "options": {}
+            },
+            {
+              "name": "GetJob",
+              "inputType": ".google.cloud.run.v2.GetJobRequest",
+              "outputType": ".google.cloud.run.v2.Job",
+              "options": {}
+            },
+            {
+              "name": "ListJobs",
+              "inputType": ".google.cloud.run.v2.ListJobsRequest",
+              "outputType": ".google.cloud.run.v2.ListJobsResponse",
+              "options": {}
+            },
+            {
+              "name": "UpdateJob",
+              "inputType": ".google.cloud.run.v2.UpdateJobRequest",
+              "outputType": ".google.longrunning.Operation",
+              "options": {}
+            },
+            {
+              "name": "DeleteJob",
+              "inputType": ".google.cloud.run.v2.DeleteJobRequest",
+              "outputType": ".google.longrunning.Operation",
+              "options": {}
+            },
+            {
+              "name": "RunJob",
+              "inputType": ".google.cloud.run.v2.RunJobRequest",
+              "outputType": ".google.longrunning.Operation",
+              "options": {}
+            },
+            {
+              "name": "GetIamPolicy",
+              "inputType": ".google.iam.v1.GetIamPolicyRequest",
+              "outputType": ".google.iam.v1.Policy",
+              "options": {}
+            },
+            {
+              "name": "SetIamPolicy",
+              "inputType": ".google.iam.v1.SetIamPolicyRequest",
+              "outputType": ".google.iam.v1.Policy",
+              "options": {}
+            },
+            {
+              "name": "TestIamPermissions",
+              "inputType": ".google.iam.v1.TestIamPermissionsRequest",
+              "outputType": ".google.iam.v1.TestIamPermissionsResponse",
               "options": {}
             }
           ],
@@ -8267,60 +8303,24 @@
           "options": {}
         },
         {
-          "name": "Jobs",
+          "name": "Revisions",
           "method": [
             {
-              "name": "CreateJob",
-              "inputType": ".google.cloud.run.v2.CreateJobRequest",
+              "name": "GetRevision",
+              "inputType": ".google.cloud.run.v2.GetRevisionRequest",
+              "outputType": ".google.cloud.run.v2.Revision",
+              "options": {}
+            },
+            {
+              "name": "ListRevisions",
+              "inputType": ".google.cloud.run.v2.ListRevisionsRequest",
+              "outputType": ".google.cloud.run.v2.ListRevisionsResponse",
+              "options": {}
+            },
+            {
+              "name": "DeleteRevision",
+              "inputType": ".google.cloud.run.v2.DeleteRevisionRequest",
               "outputType": ".google.longrunning.Operation",
-              "options": {}
-            },
-            {
-              "name": "GetJob",
-              "inputType": ".google.cloud.run.v2.GetJobRequest",
-              "outputType": ".google.cloud.run.v2.Job",
-              "options": {}
-            },
-            {
-              "name": "ListJobs",
-              "inputType": ".google.cloud.run.v2.ListJobsRequest",
-              "outputType": ".google.cloud.run.v2.ListJobsResponse",
-              "options": {}
-            },
-            {
-              "name": "UpdateJob",
-              "inputType": ".google.cloud.run.v2.UpdateJobRequest",
-              "outputType": ".google.longrunning.Operation",
-              "options": {}
-            },
-            {
-              "name": "DeleteJob",
-              "inputType": ".google.cloud.run.v2.DeleteJobRequest",
-              "outputType": ".google.longrunning.Operation",
-              "options": {}
-            },
-            {
-              "name": "RunJob",
-              "inputType": ".google.cloud.run.v2.RunJobRequest",
-              "outputType": ".google.longrunning.Operation",
-              "options": {}
-            },
-            {
-              "name": "GetIamPolicy",
-              "inputType": ".google.iam.v1.GetIamPolicyRequest",
-              "outputType": ".google.iam.v1.Policy",
-              "options": {}
-            },
-            {
-              "name": "SetIamPolicy",
-              "inputType": ".google.iam.v1.SetIamPolicyRequest",
-              "outputType": ".google.iam.v1.Policy",
-              "options": {}
-            },
-            {
-              "name": "TestIamPermissions",
-              "inputType": ".google.iam.v1.TestIamPermissionsRequest",
-              "outputType": ".google.iam.v1.TestIamPermissionsResponse",
               "options": {}
             }
           ],
@@ -8401,7 +8401,7 @@
       ],
       "options": {
         "javaPackage": "com.google.cloud.run.v2",
-        "javaOuterClassname": "VendorSettingsProto",
+        "javaOuterClassname": "WorkerPoolProto",
         "javaMultipleFiles": true,
         "goPackage": "cloud.google.com/go/run/apiv2/runpb;runpb"
       },
@@ -9177,43 +9177,6 @@
       ],
       "enumType": [
         {
-          "name": "LaunchStage",
-          "value": [
-            {
-              "name": "LAUNCH_STAGE_UNSPECIFIED",
-              "number": 0
-            },
-            {
-              "name": "UNIMPLEMENTED",
-              "number": 6
-            },
-            {
-              "name": "PRELAUNCH",
-              "number": 7
-            },
-            {
-              "name": "EARLY_ACCESS",
-              "number": 1
-            },
-            {
-              "name": "ALPHA",
-              "number": 2
-            },
-            {
-              "name": "BETA",
-              "number": 3
-            },
-            {
-              "name": "GA",
-              "number": 4
-            },
-            {
-              "name": "DEPRECATED",
-              "number": 5
-            }
-          ]
-        },
-        {
           "name": "ClientLibraryOrganization",
           "value": [
             {
@@ -9264,6 +9227,43 @@
             {
               "name": "PACKAGE_MANAGER",
               "number": 20
+            }
+          ]
+        },
+        {
+          "name": "LaunchStage",
+          "value": [
+            {
+              "name": "LAUNCH_STAGE_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "UNIMPLEMENTED",
+              "number": 6
+            },
+            {
+              "name": "PRELAUNCH",
+              "number": 7
+            },
+            {
+              "name": "EARLY_ACCESS",
+              "number": 1
+            },
+            {
+              "name": "ALPHA",
+              "number": 2
+            },
+            {
+              "name": "BETA",
+              "number": 3
+            },
+            {
+              "name": "GA",
+              "number": 4
+            },
+            {
+              "name": "DEPRECATED",
+              "number": 5
             }
           ]
         },
@@ -9347,17 +9347,6 @@
           "type": "TYPE_STRING"
         },
         {
-          "name": "field_behavior",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1052,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_ENUM",
-          "typeName": "FieldBehavior",
-          "options": {
-            "packed": false
-          }
-        },
-        {
           "name": "resource_reference",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1055,
@@ -9380,6 +9369,17 @@
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
           "typeName": "ResourceDescriptor"
+        },
+        {
+          "name": "field_behavior",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1052,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior",
+          "options": {
+            "packed": false
+          }
         },
         {
           "name": "routing",
@@ -9640,82 +9640,6 @@
       "package": "google.iam.v1",
       "messageType": [
         {
-          "name": "SetIamPolicyRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "policy",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Policy",
-              "options": {}
-            },
-            {
-              "name": "update_mask",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.FieldMask"
-            }
-          ]
-        },
-        {
-          "name": "GetIamPolicyRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "options",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "GetPolicyOptions"
-            }
-          ]
-        },
-        {
-          "name": "TestIamPermissionsRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "permissions",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "TestIamPermissionsResponse",
-          "field": [
-            {
-              "name": "permissions",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
           "name": "Policy",
           "field": [
             {
@@ -9944,6 +9868,82 @@
                   "number": 2
                 }
               ]
+            }
+          ]
+        },
+        {
+          "name": "SetIamPolicyRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "policy",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Policy",
+              "options": {}
+            },
+            {
+              "name": "update_mask",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask"
+            }
+          ]
+        },
+        {
+          "name": "GetIamPolicyRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "options",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "GetPolicyOptions"
+            }
+          ]
+        },
+        {
+          "name": "TestIamPermissionsRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "permissions",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "TestIamPermissionsResponse",
+          "field": [
+            {
+              "name": "permissions",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
             }
           ]
         },

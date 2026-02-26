@@ -16,7 +16,7 @@ const get: AppBlock = {
           },
           required: true,
         },
-        disk_type: {
+        diskType: {
           name: "Disk Type",
           description: "Name of the disk type to return.",
           type: {
@@ -30,8 +30,8 @@ const get: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.disk_type !== undefined)
-          pathParams["disk_type"] = String(input.event.inputConfig.disk_type);
+        if (input.event.inputConfig.diskType !== undefined)
+          pathParams["disk_type"] = String(input.event.inputConfig.diskType);
 
         const result = await computeFetch({
           config: input.app.config,
@@ -51,12 +51,12 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "[Output Only] Creation timestamp inRFC3339 text format.",
           },
-          default_disk_size_gb: {
+          defaultDiskSizeGb: {
             type: "string",
             description: "64-bit integer as string",
           },
@@ -115,11 +115,11 @@ const get: AppBlock = {
             description:
               "[Output Only] URL of the region where the disk type resides. Only applicable for regional resources. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          valid_disk_size: {
+          validDiskSize: {
             type: "string",
             description:
               '[Output Only] An optional textual description of the valid disk size, such as "10GB-10TB".',

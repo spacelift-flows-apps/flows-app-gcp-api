@@ -1,5 +1,12 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  operation_id: "operationId",
+};
 
 const releaseSsrsLease: AppBlock = {
   name: "Release Ssrs Lease",
@@ -32,11 +39,7 @@ const releaseSsrsLease: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.releaseSsrsLease(request, (err: any, response: any) => {
@@ -50,7 +53,8 @@ const releaseSsrsLease: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -60,7 +64,7 @@ const releaseSsrsLease: AppBlock = {
       type: {
         type: "object",
         properties: {
-          operation_id: {
+          operationId: {
             type: "string",
             description: "The unique identifier for this operation.",
           },

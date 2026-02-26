@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -103,12 +103,12 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                byoip_api_version: {
+                byoipApiVersion: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -118,7 +118,7 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                dns_verification_ip: {
+                dnsVerificationIp: {
                   type: "string",
                   description:
                     "The address to be used for reverse DNS verification.",
@@ -132,12 +132,12 @@ const list: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                ip_cidr_range: {
+                ipCidrRange: {
                   type: "string",
                   description:
                     "The address range, in CIDR format, represented by this public advertised prefix.",
                 },
-                ipv6_access_type: {
+                ipv6AccessType: {
                   type: "string",
                   description:
                     "The internet access type for IPv6 Public Advertised Prefixes. Check the Ipv6AccessType enum for the list of possible values.",
@@ -152,17 +152,17 @@ const list: AppBlock = {
                   description:
                     "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
                 },
-                pdp_scope: {
+                pdpScope: {
                   type: "string",
                   description:
                     "Specifies how child public delegated prefix will be scoped. It could be one of following values:        - `REGIONAL`: The public delegated prefix is regional only. The      provisioning will take a few minutes.      - `GLOBAL`: The public delegated prefix is global only. The      provisioning will take ~4 weeks.      - `GLOBAL_AND_REGIONAL` [output only]: The public delegated prefixes is       BYOIP V1 legacy prefix. This is output only value and no longer       supported in BYOIP V2. Check the PdpScope enum for the list of possible values.",
                 },
-                public_delegated_prefixs: {
+                publicDelegatedPrefixs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      ip_range: {
+                      ipRange: {
                         type: "string",
                         description:
                           "The IP address range of the public delegated prefix",
@@ -194,12 +194,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The list of public delegated prefixes that exist for this public advertised prefix.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for the resource.",
                 },
-                shared_secret: {
+                sharedSecret: {
                   type: "string",
                   description:
                     "[Output Only] The shared secret to be used for reverse DNS verification.",
@@ -221,12 +221,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of the resource. Alwayscompute#publicAdvertisedPrefix for public advertised prefixes.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for this resource.",
           },

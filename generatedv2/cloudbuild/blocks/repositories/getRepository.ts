@@ -1,5 +1,15 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  remote_uri: "remoteUri",
+  create_time: "createTime",
+  update_time: "updateTime",
+  webhook_id: "webhookId",
+};
 
 const getRepository: AppBlock = {
   name: "Get Repository",
@@ -23,9 +33,7 @@ const getRepository: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getRepository(request, (err: any, response: any) => {
@@ -39,7 +47,8 @@ const getRepository: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -54,15 +63,15 @@ const getRepository: AppBlock = {
             description:
               "Immutable. Resource name of the repository, in the format `projects/*/locations/*/connections/*/repositories/*`.",
           },
-          remote_uri: {
+          remoteUri: {
             type: "string",
             description: "Required. Git Clone HTTPS URI.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          update_time: {
+          updateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -79,13 +88,13 @@ const getRepository: AppBlock = {
             description:
               "This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.",
           },
-          webhook_id: {
+          webhookId: {
             type: "string",
             description:
               "Output only. External ID of the webhook created for the repository.",
           },
         },
-        required: ["remote_uri"],
+        required: ["remoteUri"],
         description: "A repository associated to a parent connection.",
         additionalProperties: true,
       },

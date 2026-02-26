@@ -8,7 +8,7 @@ const patch: AppBlock = {
   inputs: {
     default: {
       config: {
-        backend_bucket: {
+        backendBucket: {
           name: "Backend Bucket",
           description: "Name of the BackendBucket resource to patch.",
           type: {
@@ -16,7 +16,7 @@ const patch: AppBlock = {
           },
           required: true,
         },
-        bucket_name: {
+        bucketName: {
           name: "Bucket Name",
           description: "Cloud Storage bucket name.",
           type: {
@@ -25,18 +25,18 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        cdn_policy: {
+        cdnPolicy: {
           name: "Cdn Policy",
           description: "Cloud CDN configuration for this BackendBucket.",
           type: {
             type: "object",
             properties: {
-              bypass_cache_on_request_headers: {
+              bypassCacheOnRequestHeaders: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    header_name: {
+                    headerName: {
                       type: "string",
                       description:
                         "The header field name to match on when bypassing cache. Values are case-insensitive.",
@@ -49,10 +49,10 @@ const patch: AppBlock = {
                 description:
                   "Bypass the cache when the specified request headers are matched - e.g. Pragma or Authorization headers. Up to 5 headers can be specified. The cache is bypassed for all cdnPolicy.cacheMode settings.",
               },
-              cache_key_policy: {
+              cacheKeyPolicy: {
                 type: "object",
                 properties: {
-                  include_http_headers: {
+                  includeHttpHeaders: {
                     type: "array",
                     items: {
                       type: "string",
@@ -60,7 +60,7 @@ const patch: AppBlock = {
                     description:
                       "Allows HTTP request headers (by name) to be used in the cache key.",
                   },
-                  query_string_whitelist: {
+                  queryStringWhitelist: {
                     type: "array",
                     items: {
                       type: "string",
@@ -73,32 +73,32 @@ const patch: AppBlock = {
                   "Message containing what to include in the cache key for a request for Cloud CDN.",
                 additionalProperties: true,
               },
-              cache_mode: {
+              cacheMode: {
                 type: "string",
                 description:
                   'Specifies the cache setting for all responses from this backend. The possible values are:USE_ORIGIN_HEADERS Requires the origin to set valid caching headers to cache content. Responses without these headers will not be cached at Google\'s edge, and will require a full trip to the origin on every request, potentially impacting performance and increasing load on the origin server.FORCE_CACHE_ALL Cache all content, ignoring any "private", "no-store" or "no-cache" directives in Cache-Control response headers. Warning: this may result in Cloud CDN caching private, per-user (user identifiable) content.CACHE_ALL_STATIC Automatically cache static content, including common image formats, media (video and audio), and web assets (JavaScript and CSS). Requests and responses that are marked as uncacheable, as well as dynamic content (including HTML), will not be cached.  If no value is provided for cdnPolicy.cacheMode, it defaults to CACHE_ALL_STATIC. Check the CacheMode enum for the list of possible values.',
               },
-              client_ttl: {
+              clientTtl: {
                 type: "integer",
                 description:
                   'Specifies a separate client (e.g. browser client) maximum TTL. This is used to clamp the max-age (or Expires) value sent to the client.  With FORCE_CACHE_ALL, the lesser of client_ttl and default_ttl is used for the response max-age directive, along with a "public" directive.  For cacheable content in CACHE_ALL_STATIC mode, client_ttl clamps the max-age from the origin (if specified), or else sets the response max-age directive to the lesser of the client_ttl and default_ttl, and also ensures a "public" cache-control directive is present. If a client TTL is not specified, a default value (1 hour) will be used. The maximum allowed value is 31,622,400s (1 year).',
               },
-              default_ttl: {
+              defaultTtl: {
                 type: "integer",
                 description:
                   'Specifies the default TTL for cached content served by this origin for responses that do not have an existing valid TTL (max-age or s-maxage). Setting a TTL of "0" means "always revalidate". The value of defaultTTL cannot be set to a value greater than that of maxTTL, but can be equal. When the cacheMode is set to FORCE_CACHE_ALL, the defaultTTL will overwrite the TTL set in all responses. The maximum allowed value is 31,622,400s (1 year), noting that infrequently accessed objects may be evicted from the cache before the defined TTL.',
               },
-              max_ttl: {
+              maxTtl: {
                 type: "integer",
                 description:
                   'Specifies the maximum allowed TTL for cached content served by this origin. Cache directives that attempt to set a max-age or s-maxage higher than this, or an Expires header more than maxTTL seconds in the future will be capped at the value of maxTTL, as if it were the value of an s-maxage Cache-Control directive. Headers sent to the client will not be modified. Setting a TTL of "0" means "always revalidate". The maximum allowed value is 31,622,400s (1 year), noting that infrequently accessed objects may be evicted from the cache before the defined TTL.',
               },
-              negative_caching: {
+              negativeCaching: {
                 type: "boolean",
                 description:
                   "Negative caching allows per-status code TTLs to be set, in order to apply fine-grained caching for common errors or redirects. This can reduce the load on your origin and improve end-user experience by reducing response latency. When the cache mode is set to CACHE_ALL_STATIC or USE_ORIGIN_HEADERS, negative caching applies to responses with the specified response code that lack any Cache-Control, Expires, or Pragma: no-cache directives. When the cache mode is set to FORCE_CACHE_ALL, negative caching applies to all responses with the specified response code, and override any caching headers. By default, Cloud CDN will apply the following default TTLs to these status codes: HTTP 300 (Multiple Choice), 301, 308 (Permanent Redirects): 10m HTTP 404 (Not Found), 410 (Gone), 451 (Unavailable For Legal Reasons): 120s HTTP 405 (Method Not Found), 501 (Not Implemented): 60s. These defaults can be overridden in negative_caching_policy.",
               },
-              negative_caching_policy: {
+              negativeCachingPolicy: {
                 type: "array",
                 items: {
                   type: "object",
@@ -120,21 +120,21 @@ const patch: AppBlock = {
                 description:
                   "Sets a cache TTL for the specified HTTP status code. negative_caching must be enabled to configure negative_caching_policy. Omitting the policy and leaving negative_caching enabled will use Cloud CDN's default cache TTLs. Note that when specifying an explicit negative_caching_policy, you should take care to specify a cache TTL for all response codes that you wish to cache. Cloud CDN will not apply any default negative caching when a policy exists.",
               },
-              request_coalescing: {
+              requestCoalescing: {
                 type: "boolean",
                 description:
                   "If true then Cloud CDN will combine multiple concurrent cache fill requests into a small number of requests to the origin.",
               },
-              serve_while_stale: {
+              serveWhileStale: {
                 type: "integer",
                 description:
                   'Serve existing content from the cache (if available) when revalidating content with the origin, or when an error is encountered when refreshing the cache. This setting defines the default "max-stale" duration for any cached responses that do not specify a max-stale directive. Stale responses that exceed the TTL configured here will not be served. The default limit (max-stale) is 86400s (1 day), which will allow stale content to be served up to this limit beyond the max-age (or s-maxage) of a cached response. The maximum allowed value is 604800 (1 week). Set this to zero (0) to disable serve-while-stale.',
               },
-              signed_url_cache_max_age_sec: {
+              signedUrlCacheMaxAgeSec: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              signed_url_key_names: {
+              signedUrlKeyNames: {
                 type: "array",
                 items: {
                   type: "string",
@@ -149,7 +149,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        compression_mode: {
+        compressionMode: {
           name: "Compression Mode",
           description:
             "Compress text responses using Brotli or gzip compression, based on the client's Accept-Encoding header. Check the CompressionMode enum for the list of possible values.",
@@ -160,7 +160,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "[Output Only] Creation timestamp inRFC3339 text format.",
@@ -171,7 +171,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        custom_response_headers: {
+        customResponseHeaders: {
           name: "Custom Response Headers",
           description:
             "Headers that the Application Load Balancer should add to proxied responses.",
@@ -196,7 +196,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        edge_security_policy: {
+        edgeSecurityPolicy: {
           name: "Edge Security Policy",
           description:
             "[Output Only] The resource URL for the edge security policy associated with this backend bucket.",
@@ -207,7 +207,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        enable_cdn: {
+        enableCdn: {
           name: "Enable Cdn",
           description: "If true, enable Cloud CDN for this BackendBucket.",
           type: {
@@ -235,7 +235,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        load_balancing_scheme: {
+        loadBalancingScheme: {
           name: "Load Balancing Scheme",
           description:
             "The value can only be INTERNAL_MANAGED for cross-region internal layer 7 load balancer.  If loadBalancingScheme is not specified, the backend bucket can be used by classic global external load balancers, or global application external load balancers, or both. Check the LoadBalancingScheme enum for the list of possible values.",
@@ -264,7 +264,7 @@ const patch: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -278,7 +278,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description: "[Output Only] Server-defined URL for the resource.",
           type: {
@@ -287,7 +287,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        used_by: {
+        usedBy: {
           name: "Used By",
           description:
             "Output only. [Output Only] List of resources referencing that backend bucket.",
@@ -309,7 +309,7 @@ const patch: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -322,48 +322,47 @@ const patch: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.backend_bucket !== undefined)
+        if (input.event.inputConfig.backendBucket !== undefined)
           pathParams["backend_bucket"] = String(
-            input.event.inputConfig.backend_bucket,
+            input.event.inputConfig.backendBucket,
           );
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.bucket_name !== undefined)
-          body.bucket_name = input.event.inputConfig.bucket_name;
-        if (input.event.inputConfig.cdn_policy !== undefined)
-          body.cdn_policy = input.event.inputConfig.cdn_policy;
-        if (input.event.inputConfig.compression_mode !== undefined)
-          body.compression_mode = input.event.inputConfig.compression_mode;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
-        if (input.event.inputConfig.custom_response_headers !== undefined)
-          body.custom_response_headers =
-            input.event.inputConfig.custom_response_headers;
+        if (input.event.inputConfig.bucketName !== undefined)
+          body.bucketName = input.event.inputConfig.bucketName;
+        if (input.event.inputConfig.cdnPolicy !== undefined)
+          body.cdnPolicy = input.event.inputConfig.cdnPolicy;
+        if (input.event.inputConfig.compressionMode !== undefined)
+          body.compressionMode = input.event.inputConfig.compressionMode;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.customResponseHeaders !== undefined)
+          body.customResponseHeaders =
+            input.event.inputConfig.customResponseHeaders;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.edge_security_policy !== undefined)
-          body.edge_security_policy =
-            input.event.inputConfig.edge_security_policy;
-        if (input.event.inputConfig.enable_cdn !== undefined)
-          body.enable_cdn = input.event.inputConfig.enable_cdn;
+        if (input.event.inputConfig.edgeSecurityPolicy !== undefined)
+          body.edgeSecurityPolicy = input.event.inputConfig.edgeSecurityPolicy;
+        if (input.event.inputConfig.enableCdn !== undefined)
+          body.enableCdn = input.event.inputConfig.enableCdn;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.load_balancing_scheme !== undefined)
-          body.load_balancing_scheme =
-            input.event.inputConfig.load_balancing_scheme;
+        if (input.event.inputConfig.loadBalancingScheme !== undefined)
+          body.loadBalancingScheme =
+            input.event.inputConfig.loadBalancingScheme;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.used_by !== undefined)
-          body.used_by = input.event.inputConfig.used_by;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.usedBy !== undefined)
+          body.usedBy = input.event.inputConfig.usedBy;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -385,12 +384,12 @@ const patch: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -399,7 +398,7 @@ const patch: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -417,12 +416,12 @@ const patch: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -477,7 +476,7 @@ const patch: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -495,7 +494,7 @@ const patch: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -506,7 +505,7 @@ const patch: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -516,16 +515,16 @@ const patch: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -562,12 +561,12 @@ const patch: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -576,15 +575,15 @@ const patch: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -604,12 +603,12 @@ const patch: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -624,18 +623,18 @@ const patch: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -648,7 +647,7 @@ const patch: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -659,16 +658,16 @@ const patch: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

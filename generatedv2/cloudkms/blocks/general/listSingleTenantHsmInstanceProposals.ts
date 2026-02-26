@@ -1,5 +1,82 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getHsmManagementClient } from "../../lib/grpcClient.ts";
+import { getHsmManagementClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+  orderBy: "order_by",
+  showDeleted: "show_deleted",
+};
+
+const outputMapping = {
+  single_tenant_hsm_instance_proposals: {
+    name: "singleTenantHsmInstanceProposals",
+    fields: {
+      create_time: "createTime",
+      failure_reason: "failureReason",
+      quorum_parameters: {
+        name: "quorumParameters",
+        fields: {
+          required_approver_count: "requiredApproverCount",
+          challenges: {
+            name: "challenges",
+            fields: {
+              public_key_pem: "publicKeyPem",
+            },
+          },
+          approved_two_factor_public_key_pems: "approvedTwoFactorPublicKeyPems",
+        },
+      },
+      required_action_quorum_parameters: {
+        name: "requiredActionQuorumParameters",
+        fields: {
+          required_challenges: {
+            name: "requiredChallenges",
+            fields: {
+              public_key_pem: "publicKeyPem",
+            },
+          },
+          required_approver_count: "requiredApproverCount",
+          quorum_challenges: {
+            name: "quorumChallenges",
+            fields: {
+              public_key_pem: "publicKeyPem",
+            },
+          },
+          approved_two_factor_public_key_pems: "approvedTwoFactorPublicKeyPems",
+        },
+      },
+      expire_time: "expireTime",
+      delete_time: "deleteTime",
+      purge_time: "purgeTime",
+      register_two_factor_auth_keys: {
+        name: "registerTwoFactorAuthKeys",
+        fields: {
+          required_approver_count: "requiredApproverCount",
+          two_factor_public_key_pems: "twoFactorPublicKeyPems",
+        },
+      },
+      disable_single_tenant_hsm_instance: "disableSingleTenantHsmInstance",
+      enable_single_tenant_hsm_instance: "enableSingleTenantHsmInstance",
+      delete_single_tenant_hsm_instance: "deleteSingleTenantHsmInstance",
+      add_quorum_member: {
+        name: "addQuorumMember",
+        fields: {
+          two_factor_public_key_pem: "twoFactorPublicKeyPem",
+        },
+      },
+      remove_quorum_member: {
+        name: "removeQuorumMember",
+        fields: {
+          two_factor_public_key_pem: "twoFactorPublicKeyPem",
+        },
+      },
+      refresh_single_tenant_hsm_instance: "refreshSingleTenantHsmInstance",
+    },
+  },
+  next_page_token: "nextPageToken",
+  total_size: "totalSize",
+};
 
 const listSingleTenantHsmInstanceProposals: AppBlock = {
   name: "List Single Tenant Hsm Instance Proposals",
@@ -19,7 +96,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. Optional limit on the number of [SingleTenantHsmInstanceProposals][google.cloud.kms.v1.SingleTenantHsmInstanceProposal] to include in the response. Further [SingleTenantHsmInstanceProposals][google.cloud.kms.v1.SingleTenantHsmInstanceProposal] can subsequently be obtained by including the [ListSingleTenantHsmInstanceProposalsResponse.next_page_token][google.cloud.kms.v1.ListSingleTenantHsmInstanceProposalsResponse.next_page_token] in a subsequent request. If unspecified, the server will pick an appropriate default.",
@@ -30,7 +107,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. Optional pagination token, returned earlier via [ListSingleTenantHsmInstanceProposalsResponse.next_page_token][google.cloud.kms.v1.ListSingleTenantHsmInstanceProposalsResponse.next_page_token].",
@@ -52,7 +129,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order.  For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
@@ -63,7 +140,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
           },
           required: false,
         },
-        show_deleted: {
+        showDeleted: {
           name: "Show Deleted",
           description:
             "Optional. If set to true, [HsmManagement.ListSingleTenantHsmInstanceProposals][google.cloud.kms.v1.HsmManagement.ListSingleTenantHsmInstanceProposals] will also return [SingleTenantHsmInstanceProposals][google.cloud.kms.v1.SingleTenantHsmInstanceProposal] in DELETED state.",
@@ -78,19 +155,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
       onEvent: async (input) => {
         const client = await getHsmManagementClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
-        if (input.event.inputConfig.filter !== undefined)
-          request.filter = input.event.inputConfig.filter;
-        if (input.event.inputConfig.order_by !== undefined)
-          request.order_by = input.event.inputConfig.order_by;
-        if (input.event.inputConfig.show_deleted !== undefined)
-          request.show_deleted = input.event.inputConfig.show_deleted;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listSingleTenantHsmInstanceProposals(
@@ -107,7 +172,8 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -117,7 +183,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
       type: {
         type: "object",
         properties: {
-          single_tenant_hsm_instance_proposals: {
+          singleTenantHsmInstanceProposals: {
             type: "array",
             items: {
               type: "object",
@@ -127,7 +193,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                   description:
                     "Identifier. The resource name for this [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] in the format `projects/*/locations/*/singleTenantHsmInstances/*/proposals/*`.",
                 },
-                create_time: {
+                createTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -147,15 +213,15 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                   description:
                     "Output only. The state of the [SingleTenantHsmInstanceProposal][google.cloud.kms.v1.SingleTenantHsmInstanceProposal].",
                 },
-                failure_reason: {
+                failureReason: {
                   type: "string",
                   description:
                     "Output only. The root cause of the most recent failure. Only present if [state][google.cloud.kms.v1.SingleTenantHsmInstanceProposal.state] is [FAILED][SingleTenantHsmInstanceProposal.FAILED].",
                 },
-                quorum_parameters: {
+                quorumParameters: {
                   type: "object",
                   properties: {
-                    required_approver_count: {
+                    requiredApproverCount: {
                       type: "integer",
                       description:
                         "Output only. The required numbers of approvers. This is the M value used for M of N quorum auth. It is less than the number of public keys.",
@@ -169,7 +235,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                             type: "string",
                             description: "Base64-encoded bytes",
                           },
-                          public_key_pem: {
+                          publicKeyPem: {
                             type: "string",
                             description:
                               "Output only. The public key associated with the 2FA key that should sign the challenge.",
@@ -181,7 +247,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                       description:
                         "Output only. The challenges to be signed by 2FA keys for quorum auth. M of N of these challenges are required to be signed to approve the operation.",
                     },
-                    approved_two_factor_public_key_pems: {
+                    approvedTwoFactorPublicKeyPems: {
                       type: "array",
                       items: {
                         type: "string",
@@ -194,10 +260,10 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                     "Parameters of quorum approval for the [SingleTenantHsmInstanceProposal][google.cloud.kms.v1.SingleTenantHsmInstanceProposal]. (Part of 'approval_parameters' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                required_action_quorum_parameters: {
+                requiredActionQuorumParameters: {
                   type: "object",
                   properties: {
-                    required_challenges: {
+                    requiredChallenges: {
                       type: "array",
                       items: {
                         type: "object",
@@ -206,7 +272,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                             type: "string",
                             description: "Base64-encoded bytes",
                           },
-                          public_key_pem: {
+                          publicKeyPem: {
                             type: "string",
                             description:
                               "Output only. The public key associated with the 2FA key that should sign the challenge.",
@@ -218,12 +284,12 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                       description:
                         "Output only. A list of specific challenges that must be signed. For some operations, this will contain a single challenge.",
                     },
-                    required_approver_count: {
+                    requiredApproverCount: {
                       type: "integer",
                       description:
                         "Output only. The required number of quorum approvers. This is the M value used for M of N quorum auth. It is less than the number of public keys.",
                     },
-                    quorum_challenges: {
+                    quorumChallenges: {
                       type: "array",
                       items: {
                         type: "object",
@@ -232,7 +298,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                             type: "string",
                             description: "Base64-encoded bytes",
                           },
-                          public_key_pem: {
+                          publicKeyPem: {
                             type: "string",
                             description:
                               "Output only. The public key associated with the 2FA key that should sign the challenge.",
@@ -244,7 +310,7 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                       description:
                         "Output only. The challenges to be signed by 2FA keys for quorum auth. M of N of these challenges are required to be signed to approve the operation.",
                     },
-                    approved_two_factor_public_key_pems: {
+                    approvedTwoFactorPublicKeyPems: {
                       type: "array",
                       items: {
                         type: "string",
@@ -257,30 +323,30 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                     "Parameters for an approval that has both required challenges and a quorum. (Part of 'approval_parameters' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                expire_time: {
+                expireTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z') (Part of 'expiration' - only one field in this group can be set)",
                 },
-                delete_time: {
+                deleteTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                purge_time: {
+                purgeTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                register_two_factor_auth_keys: {
+                registerTwoFactorAuthKeys: {
                   type: "object",
                   properties: {
-                    required_approver_count: {
+                    requiredApproverCount: {
                       type: "integer",
                       description:
                         "Required. The required numbers of approvers to set for the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. This is the M value used for M of N quorum auth. Must be greater than or equal to 2 and less than or equal to [total_approver_count][google.cloud.kms.v1.SingleTenantHsmInstance.QuorumAuth.total_approver_count] - 1.",
                     },
-                    two_factor_public_key_pems: {
+                    twoFactorPublicKeyPems: {
                       type: "array",
                       items: {
                         type: "string",
@@ -289,64 +355,61 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
                         "Required. The public keys associated with the 2FA keys for M of N quorum auth. Public keys must be associated with RSA 2048 keys.",
                     },
                   },
-                  required: [
-                    "required_approver_count",
-                    "two_factor_public_key_pems",
-                  ],
+                  required: ["requiredApproverCount", "twoFactorPublicKeyPems"],
                   description:
                     "Register 2FA keys for the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. This operation requires all Challenges to be signed by 2FA keys. The [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] must be in the [PENDING_TWO_FACTOR_AUTH_REGISTRATION][google.cloud.kms.v1.SingleTenantHsmInstance.State.PENDING_TWO_FACTOR_AUTH_REGISTRATION] state to perform this operation. (Part of 'operation' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                disable_single_tenant_hsm_instance: {
+                disableSingleTenantHsmInstance: {
                   type: "object",
                   properties: {},
                   description:
                     "Disable the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. The [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] must be in the [ACTIVE][google.cloud.kms.v1.SingleTenantHsmInstance.State.ACTIVE] state to perform this operation. (Part of 'operation' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                enable_single_tenant_hsm_instance: {
+                enableSingleTenantHsmInstance: {
                   type: "object",
                   properties: {},
                   description:
                     "Enable the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. The [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] must be in the [DISABLED][google.cloud.kms.v1.SingleTenantHsmInstance.State.DISABLED] state to perform this operation. (Part of 'operation' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                delete_single_tenant_hsm_instance: {
+                deleteSingleTenantHsmInstance: {
                   type: "object",
                   properties: {},
                   description:
                     "Delete the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. Deleting a [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] will make all [CryptoKeys][google.cloud.kms.v1.CryptoKey] attached to the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] unusable. The [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] must not be in the [DELETING][google.cloud.kms.v1.SingleTenantHsmInstance.State.DELETING] or [DELETED][google.cloud.kms.v1.SingleTenantHsmInstance.State.DELETED] state to perform this operation. (Part of 'operation' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                add_quorum_member: {
+                addQuorumMember: {
                   type: "object",
                   properties: {
-                    two_factor_public_key_pem: {
+                    twoFactorPublicKeyPem: {
                       type: "string",
                       description:
                         "Required. The public key associated with the 2FA key for the new quorum member to add. Public keys must be associated with RSA 2048 keys.",
                     },
                   },
-                  required: ["two_factor_public_key_pem"],
+                  required: ["twoFactorPublicKeyPem"],
                   description:
                     "Add a quorum member to the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. This will increase the [total_approver_count][google.cloud.kms.v1.SingleTenantHsmInstance.QuorumAuth.total_approver_count] by 1. The [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] must be in the [ACTIVE][google.cloud.kms.v1.SingleTenantHsmInstance.State.ACTIVE] state to perform this operation. (Part of 'operation' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                remove_quorum_member: {
+                removeQuorumMember: {
                   type: "object",
                   properties: {
-                    two_factor_public_key_pem: {
+                    twoFactorPublicKeyPem: {
                       type: "string",
                       description:
                         "Required. The public key associated with the 2FA key for the quorum member to remove. Public keys must be associated with RSA 2048 keys.",
                     },
                   },
-                  required: ["two_factor_public_key_pem"],
+                  required: ["twoFactorPublicKeyPem"],
                   description:
                     "Remove a quorum member from the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance]. This will reduce [total_approver_count][google.cloud.kms.v1.SingleTenantHsmInstance.QuorumAuth.total_approver_count] by 1. The [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] must be in the [ACTIVE][google.cloud.kms.v1.SingleTenantHsmInstance.State.ACTIVE] state to perform this operation. (Part of 'operation' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                refresh_single_tenant_hsm_instance: {
+                refreshSingleTenantHsmInstance: {
                   type: "object",
                   properties: {},
                   description:
@@ -359,12 +422,12 @@ const listSingleTenantHsmInstanceProposals: AppBlock = {
               additionalProperties: true,
             },
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "A token to retrieve next page of results. Pass this value in [ListSingleTenantHsmInstanceProposalsRequest.page_token][google.cloud.kms.v1.ListSingleTenantHsmInstanceProposalsRequest.page_token] to retrieve the next page of results.",
           },
-          total_size: {
+          totalSize: {
             type: "integer",
             description:
               "The total number of [SingleTenantHsmInstanceProposals][google.cloud.kms.v1.SingleTenantHsmInstanceProposal] that matched the query.  This field is not populated if [ListSingleTenantHsmInstanceProposalsRequest.filter][google.cloud.kms.v1.ListSingleTenantHsmInstanceProposalsRequest.filter] is applied.",

@@ -2,7 +2,23 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ifGenerationMatch: "if_generation_match",
+  ifGenerationNotMatch: "if_generation_not_match",
+  ifMetagenerationMatch: "if_metageneration_match",
+  ifMetagenerationNotMatch: "if_metageneration_not_match",
+  commonObjectRequestParams: {
+    name: "common_object_request_params",
+    fields: {
+      encryptionAlgorithm: "encryption_algorithm",
+      encryptionKeyBytes: "encryption_key_bytes",
+      encryptionKeySha256Bytes: "encryption_key_sha256_bytes",
+    },
+  },
+};
 
 const deleteObject: AppBlock = {
   name: "Delete Object",
@@ -43,7 +59,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        if_generation_match: {
+        ifGenerationMatch: {
           name: "If Generation Match",
           description:
             "Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.",
@@ -53,7 +69,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        if_generation_not_match: {
+        ifGenerationNotMatch: {
           name: "If Generation Not Match",
           description:
             "Makes the operation conditional on whether the object's live generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.",
@@ -63,7 +79,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        if_metageneration_match: {
+        ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration matches the given value.",
@@ -73,7 +89,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        if_metageneration_not_match: {
+        ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration does not match the given value.",
@@ -83,23 +99,23 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        common_object_request_params: {
+        commonObjectRequestParams: {
           name: "Common Object Request Params",
           description:
             "Optional. A set of parameters common to Storage API requests concerning an object.",
           type: {
             type: "object",
             properties: {
-              encryption_algorithm: {
+              encryptionAlgorithm: {
                 type: "string",
                 description:
                   "Optional. Encryption algorithm used with the Customer-Supplied Encryption Keys feature.",
               },
-              encryption_key_bytes: {
+              encryptionKeyBytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              encryption_key_sha256_bytes: {
+              encryptionKeySha256Bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -113,28 +129,7 @@ const deleteObject: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.bucket !== undefined)
-          request.bucket = input.event.inputConfig.bucket;
-        if (input.event.inputConfig.object !== undefined)
-          request.object = input.event.inputConfig.object;
-        if (input.event.inputConfig.generation !== undefined)
-          request.generation = input.event.inputConfig.generation;
-        if (input.event.inputConfig.if_generation_match !== undefined)
-          request.if_generation_match =
-            input.event.inputConfig.if_generation_match;
-        if (input.event.inputConfig.if_generation_not_match !== undefined)
-          request.if_generation_not_match =
-            input.event.inputConfig.if_generation_not_match;
-        if (input.event.inputConfig.if_metageneration_match !== undefined)
-          request.if_metageneration_match =
-            input.event.inputConfig.if_metageneration_match;
-        if (input.event.inputConfig.if_metageneration_not_match !== undefined)
-          request.if_metageneration_not_match =
-            input.event.inputConfig.if_metageneration_not_match;
-        if (input.event.inputConfig.common_object_request_params !== undefined)
-          request.common_object_request_params =
-            input.event.inputConfig.common_object_request_params;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.bucket !== undefined)

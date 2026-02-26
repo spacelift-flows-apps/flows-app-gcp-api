@@ -46,16 +46,16 @@ const getDiagnostics: AppBlock = {
           result: {
             type: "object",
             properties: {
-              arp_caches: {
+              arpCaches: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    ip_address: {
+                    ipAddress: {
                       type: "string",
                       description: "The IP address of this ARP neighbor.",
                     },
-                    mac_address: {
+                    macAddress: {
                       type: "string",
                       description: "The MAC address of this ARP neighbor.",
                     },
@@ -67,12 +67,12 @@ const getDiagnostics: AppBlock = {
                 description:
                   "A list of InterconnectDiagnostics.ARPEntry objects, describing individual neighbors currently seen by the Google router in the ARP cache for the Interconnect. This will be empty when the Interconnect is not bundled.",
               },
-              bundle_aggregation_type: {
+              bundleAggregationType: {
                 type: "string",
                 description:
                   "The aggregation type of the bundle interface. Check the BundleAggregationType enum for the list of possible values.",
               },
-              bundle_operational_status: {
+              bundleOperationalStatus: {
                 type: "string",
                 description:
                   "The operational status of the bundle interface. Check the BundleOperationalStatus enum for the list of possible values.",
@@ -82,16 +82,16 @@ const getDiagnostics: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    arp_caches: {
+                    arpCaches: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          ip_address: {
+                          ipAddress: {
                             type: "string",
                             description: "The IP address of this ARP neighbor.",
                           },
-                          mac_address: {
+                          macAddress: {
                             type: "string",
                             description:
                               "The MAC address of this ARP neighbor.",
@@ -104,25 +104,25 @@ const getDiagnostics: AppBlock = {
                       description:
                         "A list of InterconnectDiagnostics.ARPEntry objects, describing the ARP neighbor entries seen on this link. This will be empty if the link is bundled",
                     },
-                    circuit_id: {
+                    circuitId: {
                       type: "string",
                       description:
                         "The unique ID for this link assigned during turn up by Google.",
                     },
-                    google_demarc: {
+                    googleDemarc: {
                       type: "string",
                       description:
                         "The Demarc address assigned by Google and provided in the LoA.",
                     },
-                    lacp_status: {
+                    lacpStatus: {
                       type: "object",
                       properties: {
-                        google_system_id: {
+                        googleSystemId: {
                           type: "string",
                           description:
                             "System ID of the port on Google's side of the LACP exchange.",
                         },
-                        neighbor_system_id: {
+                        neighborSystemId: {
                           type: "string",
                           description:
                             "System ID of the port on the neighbor's side of the LACP exchange.",
@@ -153,12 +153,12 @@ const getDiagnostics: AppBlock = {
                         "Describes the status of MACsec encryption on the link.",
                       additionalProperties: true,
                     },
-                    operational_status: {
+                    operationalStatus: {
                       type: "string",
                       description:
                         "The operational status of the link. Check the OperationalStatus enum for the list of possible values.",
                     },
-                    receiving_optical_power: {
+                    receivingOpticalPower: {
                       type: "object",
                       properties: {
                         state: {
@@ -176,7 +176,7 @@ const getDiagnostics: AppBlock = {
                       description:
                         "An InterconnectDiagnostics.LinkOpticalPower object, describing the current value and status of the received light level.",
                     },
-                    transmitting_optical_power: {
+                    transmittingOpticalPower: {
                       type: "object",
                       properties: {
                         state: {
@@ -200,7 +200,7 @@ const getDiagnostics: AppBlock = {
                 description:
                   "A list of InterconnectDiagnostics.LinkStatus objects, describing the status for each link on the Interconnect.",
               },
-              mac_address: {
+              macAddress: {
                 type: "string",
                 description:
                   "The MAC address of the Interconnect's bundle interface.",

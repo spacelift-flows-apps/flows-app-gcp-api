@@ -1,5 +1,18 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  dataCrc32c: "data_crc32c",
+};
+
+const outputMapping = {
+  mac_crc32c: "macCrc32c",
+  verified_data_crc32c: "verifiedDataCrc32c",
+  protection_level: "protectionLevel",
+};
 
 const macSign: AppBlock = {
   name: "Mac Sign",
@@ -29,7 +42,7 @@ const macSign: AppBlock = {
           },
           required: true,
         },
-        data_crc32c: {
+        dataCrc32c: {
           name: "Data Crc32c",
           description:
             "Optional. An optional CRC32C checksum of the [MacSignRequest.data][google.cloud.kms.v1.MacSignRequest.data]. If specified, [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will verify the integrity of the received [MacSignRequest.data][google.cloud.kms.v1.MacSignRequest.data] using this checksum. [KeyManagementService][google.cloud.kms.v1.KeyManagementService] will report an error if the checksum verification fails. If you receive a checksum error, your client should verify that CRC32C([MacSignRequest.data][google.cloud.kms.v1.MacSignRequest.data]) is equal to [MacSignRequest.data_crc32c][google.cloud.kms.v1.MacSignRequest.data_crc32c], and if so, perform a limited number of retries. A persistent mismatch may indicate an issue in your computation of the CRC32C checksum. Note: This field is defined as int64 for reasons of compatibility across different languages. However, it is a non-negative integer, which will never exceed 2^32-1, and can be safely downconverted to uint32 in languages that support this type.",
@@ -43,13 +56,7 @@ const macSign: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.data !== undefined)
-          request.data = input.event.inputConfig.data;
-        if (input.event.inputConfig.data_crc32c !== undefined)
-          request.data_crc32c = input.event.inputConfig.data_crc32c;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.macSign(request, (err: any, response: any) => {
@@ -63,7 +70,8 @@ const macSign: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -82,16 +90,16 @@ const macSign: AppBlock = {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          mac_crc32c: {
+          macCrc32c: {
             type: "string",
             description: "64-bit integer as string",
           },
-          verified_data_crc32c: {
+          verifiedDataCrc32c: {
             type: "boolean",
             description:
               "Integrity verification field. A flag indicating whether [MacSignRequest.data_crc32c][google.cloud.kms.v1.MacSignRequest.data_crc32c] was received by [KeyManagementService][google.cloud.kms.v1.KeyManagementService] and used for the integrity verification of the [data][google.cloud.kms.v1.MacSignRequest.data]. A false value of this field indicates either that [MacSignRequest.data_crc32c][google.cloud.kms.v1.MacSignRequest.data_crc32c] was left unset or that it was not delivered to [KeyManagementService][google.cloud.kms.v1.KeyManagementService]. If you've set [MacSignRequest.data_crc32c][google.cloud.kms.v1.MacSignRequest.data_crc32c] but this field is still false, discard the response and perform a limited number of retries.",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",

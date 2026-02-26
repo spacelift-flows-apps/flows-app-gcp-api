@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getAutokeyAdminClient } from "../../lib/grpcClient.ts";
+import { getAutokeyAdminClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  autokeyConfig: {
+    name: "autokey_config",
+    fields: {
+      keyProject: "key_project",
+      keyProjectResolutionMode: "key_project_resolution_mode",
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  key_project: "keyProject",
+  key_project_resolution_mode: "keyProjectResolutionMode",
+};
 
 const updateAutokeyConfig: AppBlock = {
   name: "Update Autokey Config",
@@ -8,7 +24,7 @@ const updateAutokeyConfig: AppBlock = {
   inputs: {
     default: {
       config: {
-        autokey_config: {
+        autokeyConfig: {
           name: "Autokey Config",
           description:
             "Required. [AutokeyConfig][google.cloud.kms.v1.AutokeyConfig] with values to update.",
@@ -20,7 +36,7 @@ const updateAutokeyConfig: AppBlock = {
                 description:
                   "Identifier. Name of the [AutokeyConfig][google.cloud.kms.v1.AutokeyConfig] resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` or `projects/{PROJECT_NUMBER}/autokeyConfig`.",
               },
-              key_project: {
+              keyProject: {
                 type: "string",
                 description:
                   "Optional. Name of the key project, e.g. `projects/{PROJECT_ID}` or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new [CryptoKey][google.cloud.kms.v1.CryptoKey] when a [KeyHandle][google.cloud.kms.v1.KeyHandle] is created. On [UpdateAutokeyConfig][google.cloud.kms.v1.AutokeyAdmin.UpdateAutokeyConfig], the caller will require `cloudkms.cryptoKeys.setIamPolicy` permission on this key project. Once configured, for Cloud KMS Autokey to function properly, this key project must have the Cloud KMS API activated and the Cloud KMS Service Agent for this key project must be granted the `cloudkms.admin` role (or pertinent permissions). A request with an empty key project field will clear the configuration.",
@@ -30,7 +46,7 @@ const updateAutokeyConfig: AppBlock = {
                 description:
                   "Optional. A checksum computed by the server based on the value of other fields. This may be sent on update requests to ensure that the client has an up-to-date value before proceeding. The request will be rejected with an ABORTED error on a mismatched etag.",
               },
-              key_project_resolution_mode: {
+              keyProjectResolutionMode: {
                 type: "string",
                 enum: [
                   "KEY_PROJECT_RESOLUTION_MODE_UNSPECIFIED",
@@ -47,7 +63,7 @@ const updateAutokeyConfig: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Required. Masks which fields of the [AutokeyConfig][google.cloud.kms.v1.AutokeyConfig] to update, e.g. `keyProject`.",
@@ -62,11 +78,7 @@ const updateAutokeyConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getAutokeyAdminClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.autokey_config !== undefined)
-          request.autokey_config = input.event.inputConfig.autokey_config;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateAutokeyConfig(request, (err: any, response: any) => {
@@ -80,7 +92,8 @@ const updateAutokeyConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -95,7 +108,7 @@ const updateAutokeyConfig: AppBlock = {
             description:
               "Identifier. Name of the [AutokeyConfig][google.cloud.kms.v1.AutokeyConfig] resource, e.g. `folders/{FOLDER_NUMBER}/autokeyConfig` or `projects/{PROJECT_NUMBER}/autokeyConfig`.",
           },
-          key_project: {
+          keyProject: {
             type: "string",
             description:
               "Optional. Name of the key project, e.g. `projects/{PROJECT_ID}` or `projects/{PROJECT_NUMBER}`, where Cloud KMS Autokey will provision a new [CryptoKey][google.cloud.kms.v1.CryptoKey] when a [KeyHandle][google.cloud.kms.v1.KeyHandle] is created. On [UpdateAutokeyConfig][google.cloud.kms.v1.AutokeyAdmin.UpdateAutokeyConfig], the caller will require `cloudkms.cryptoKeys.setIamPolicy` permission on this key project. Once configured, for Cloud KMS Autokey to function properly, this key project must have the Cloud KMS API activated and the Cloud KMS Service Agent for this key project must be granted the `cloudkms.admin` role (or pertinent permissions). A request with an empty key project field will clear the configuration.",
@@ -116,7 +129,7 @@ const updateAutokeyConfig: AppBlock = {
             description:
               "Optional. A checksum computed by the server based on the value of other fields. This may be sent on update requests to ensure that the client has an up-to-date value before proceeding. The request will be rejected with an ABORTED error on a mismatched etag.",
           },
-          key_project_resolution_mode: {
+          keyProjectResolutionMode: {
             type: "string",
             enum: [
               "KEY_PROJECT_RESOLUTION_MODE_UNSPECIFIED",

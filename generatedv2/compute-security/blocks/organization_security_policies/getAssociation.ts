@@ -8,7 +8,7 @@ const getAssociation: AppBlock = {
   inputs: {
     default: {
       config: {
-        security_policy: {
+        securityPolicy: {
           name: "Security Policy",
           description:
             "Name of the security policy to which the queried rule belongs.",
@@ -30,9 +30,9 @@ const getAssociation: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.security_policy !== undefined)
+        if (input.event.inputConfig.securityPolicy !== undefined)
           pathParams["security_policy"] = String(
-            input.event.inputConfig.security_policy,
+            input.event.inputConfig.securityPolicy,
           );
 
         const queryParams: Record<string, string> = {};
@@ -58,17 +58,17 @@ const getAssociation: AppBlock = {
       type: {
         type: "object",
         properties: {
-          attachment_id: {
+          attachmentId: {
             type: "string",
             description:
               "The resource that the security policy is attached to.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "Output only. [Output Only] The display name of the security policy of the association.",
           },
-          excluded_folders: {
+          excludedFolders: {
             type: "array",
             items: {
               type: "string",
@@ -76,7 +76,7 @@ const getAssociation: AppBlock = {
             description:
               "A list of folders to exclude from the security policy.",
           },
-          excluded_projects: {
+          excludedProjects: {
             type: "array",
             items: {
               type: "string",
@@ -88,12 +88,12 @@ const getAssociation: AppBlock = {
             type: "string",
             description: "The name for an association.",
           },
-          security_policy_id: {
+          securityPolicyId: {
             type: "string",
             description:
               "Output only. [Output Only] The security policy ID of the association.",
           },
-          short_name: {
+          shortName: {
             type: "string",
             description:
               "Output only. [Output Only] The short name of the security policy of the association.",

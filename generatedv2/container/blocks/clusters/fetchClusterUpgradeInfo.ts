@@ -1,5 +1,24 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  minor_target_version: "minorTargetVersion",
+  patch_target_version: "patchTargetVersion",
+  auto_upgrade_status: "autoUpgradeStatus",
+  paused_reason: "pausedReason",
+  upgrade_details: {
+    name: "upgradeDetails",
+    fields: {
+      start_time: "startTime",
+      end_time: "endTime",
+      initial_version: "initialVersion",
+      target_version: "targetVersion",
+      start_type: "startType",
+    },
+  },
+  end_of_standard_support_timestamp: "endOfStandardSupportTimestamp",
+  end_of_extended_support_timestamp: "endOfExtendedSupportTimestamp",
+};
 
 const fetchClusterUpgradeInfo: AppBlock = {
   name: "Fetch Cluster Upgrade Info",
@@ -32,11 +51,7 @@ const fetchClusterUpgradeInfo: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.version !== undefined)
-          request.version = input.event.inputConfig.version;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.fetchClusterUpgradeInfo(request, (err: any, response: any) => {
@@ -50,7 +65,8 @@ const fetchClusterUpgradeInfo: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -60,17 +76,17 @@ const fetchClusterUpgradeInfo: AppBlock = {
       type: {
         type: "object",
         properties: {
-          minor_target_version: {
+          minorTargetVersion: {
             type: "string",
             description:
               "minor_target_version indicates the target version for minor upgrade.",
           },
-          patch_target_version: {
+          patchTargetVersion: {
             type: "string",
             description:
               "patch_target_version indicates the target version for patch upgrade.",
           },
-          auto_upgrade_status: {
+          autoUpgradeStatus: {
             type: "array",
             items: {
               type: "string",
@@ -83,7 +99,7 @@ const fetchClusterUpgradeInfo: AppBlock = {
             },
             description: "The auto upgrade status.",
           },
-          paused_reason: {
+          pausedReason: {
             type: "array",
             items: {
               type: "string",
@@ -99,7 +115,7 @@ const fetchClusterUpgradeInfo: AppBlock = {
             },
             description: "The auto upgrade paused reason.",
           },
-          upgrade_details: {
+          upgradeDetails: {
             type: "array",
             items: {
               type: "object",
@@ -115,25 +131,25 @@ const fetchClusterUpgradeInfo: AppBlock = {
                   ],
                   description: "Output only. The state of the upgrade.",
                 },
-                start_time: {
+                startTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                end_time: {
+                endTime: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                initial_version: {
+                initialVersion: {
                   type: "string",
                   description: "The version before the upgrade.",
                 },
-                target_version: {
+                targetVersion: {
                   type: "string",
                   description: "The version after the upgrade.",
                 },
-                start_type: {
+                startType: {
                   type: "string",
                   enum: ["START_TYPE_UNSPECIFIED", "AUTOMATIC", "MANUAL"],
                   description: "The start type of the upgrade.",
@@ -145,12 +161,12 @@ const fetchClusterUpgradeInfo: AppBlock = {
             },
             description: "The list of past auto upgrades.",
           },
-          end_of_standard_support_timestamp: {
+          endOfStandardSupportTimestamp: {
             type: "string",
             description:
               "The cluster's current minor version's end of standard support timestamp.",
           },
-          end_of_extended_support_timestamp: {
+          endOfExtendedSupportTimestamp: {
             type: "string",
             description:
               "The cluster's current minor version's end of extended support timestamp.",

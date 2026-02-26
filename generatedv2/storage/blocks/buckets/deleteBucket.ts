@@ -2,7 +2,13 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ifMetagenerationMatch: "if_metageneration_match",
+  ifMetagenerationNotMatch: "if_metageneration_not_match",
+};
 
 const deleteBucket: AppBlock = {
   name: "Delete Bucket",
@@ -20,7 +26,7 @@ const deleteBucket: AppBlock = {
           },
           required: true,
         },
-        if_metageneration_match: {
+        ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "If set, only deletes the bucket if its metageneration matches this value.",
@@ -30,7 +36,7 @@ const deleteBucket: AppBlock = {
           },
           required: false,
         },
-        if_metageneration_not_match: {
+        ifMetagenerationNotMatch: {
           name: "If Metageneration Not Match",
           description:
             "If set, only deletes the bucket if its metageneration does not match this value.",
@@ -44,15 +50,7 @@ const deleteBucket: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.if_metageneration_match !== undefined)
-          request.if_metageneration_match =
-            input.event.inputConfig.if_metageneration_match;
-        if (input.event.inputConfig.if_metageneration_not_match !== undefined)
-          request.if_metageneration_not_match =
-            input.event.inputConfig.if_metageneration_not_match;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined)

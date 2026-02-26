@@ -1,5 +1,116 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSecretManagerServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSecretManagerServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  secret: {
+    name: "secret",
+    fields: {
+      replication: {
+        name: "replication",
+        fields: {
+          automatic: {
+            name: "automatic",
+            fields: {
+              customerManagedEncryption: {
+                name: "customer_managed_encryption",
+                fields: {
+                  kmsKeyName: "kms_key_name",
+                },
+              },
+            },
+          },
+          userManaged: {
+            name: "user_managed",
+            fields: {
+              replicas: {
+                name: "replicas",
+                fields: {
+                  customerManagedEncryption: {
+                    name: "customer_managed_encryption",
+                    fields: {
+                      kmsKeyName: "kms_key_name",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      expireTime: "expire_time",
+      rotation: {
+        name: "rotation",
+        fields: {
+          nextRotationTime: "next_rotation_time",
+          rotationPeriod: "rotation_period",
+        },
+      },
+      versionAliases: "version_aliases",
+      versionDestroyTtl: "version_destroy_ttl",
+      customerManagedEncryption: {
+        name: "customer_managed_encryption",
+        fields: {
+          kmsKeyName: "kms_key_name",
+        },
+      },
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  replication: {
+    name: "replication",
+    fields: {
+      automatic: {
+        name: "automatic",
+        fields: {
+          customer_managed_encryption: {
+            name: "customerManagedEncryption",
+            fields: {
+              kms_key_name: "kmsKeyName",
+            },
+          },
+        },
+      },
+      user_managed: {
+        name: "userManaged",
+        fields: {
+          replicas: {
+            name: "replicas",
+            fields: {
+              customer_managed_encryption: {
+                name: "customerManagedEncryption",
+                fields: {
+                  kms_key_name: "kmsKeyName",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  create_time: "createTime",
+  expire_time: "expireTime",
+  rotation: {
+    name: "rotation",
+    fields: {
+      next_rotation_time: "nextRotationTime",
+    },
+  },
+  version_aliases: "versionAliases",
+  version_destroy_ttl: "versionDestroyTtl",
+  customer_managed_encryption: {
+    name: "customerManagedEncryption",
+    fields: {
+      kms_key_name: "kmsKeyName",
+    },
+  },
+};
 
 const updateSecret: AppBlock = {
   name: "Update Secret",
@@ -21,16 +132,16 @@ const updateSecret: AppBlock = {
                   automatic: {
                     type: "object",
                     properties: {
-                      customer_managed_encryption: {
+                      customerManagedEncryption: {
                         type: "object",
                         properties: {
-                          kms_key_name: {
+                          kmsKeyName: {
                             type: "string",
                             description:
                               "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                           },
                         },
-                        required: ["kms_key_name"],
+                        required: ["kmsKeyName"],
                         description:
                           "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                         additionalProperties: true,
@@ -40,7 +151,7 @@ const updateSecret: AppBlock = {
                       "A replication policy that replicates the [Secret][google.cloud.secretmanager.v1.Secret] payload without any restrictions. (Part of 'replication' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  user_managed: {
+                  userManaged: {
                     type: "object",
                     properties: {
                       replicas: {
@@ -53,16 +164,16 @@ const updateSecret: AppBlock = {
                               description:
                                 'The canonical IDs of the location to replicate data. For example: `"us-east1"`.',
                             },
-                            customer_managed_encryption: {
+                            customerManagedEncryption: {
                               type: "object",
                               properties: {
-                                kms_key_name: {
+                                kmsKeyName: {
                                   type: "string",
                                   description:
                                     "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                                 },
                               },
-                              required: ["kms_key_name"],
+                              required: ["kmsKeyName"],
                               description:
                                 "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                               additionalProperties: true,
@@ -112,7 +223,7 @@ const updateSecret: AppBlock = {
                 description:
                   "Optional. A list of up to 10 Pub/Sub topics to which messages are published when control plane operations are called on the secret or its versions.",
               },
-              expire_time: {
+              expireTime: {
                 type: "string",
                 description:
                   "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z') (Part of 'expiration' - only one field in this group can be set)",
@@ -130,12 +241,12 @@ const updateSecret: AppBlock = {
               rotation: {
                 type: "object",
                 properties: {
-                  next_rotation_time: {
+                  nextRotationTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                   },
-                  rotation_period: {
+                  rotationPeriod: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
@@ -144,7 +255,7 @@ const updateSecret: AppBlock = {
                   "The rotation time and period for a [Secret][google.cloud.secretmanager.v1.Secret]. At next_rotation_time, Secret Manager will send a Pub/Sub notification to the topics configured on the Secret. [Secret.topics][google.cloud.secretmanager.v1.Secret.topics] must be set to configure rotation.",
                 additionalProperties: true,
               },
-              version_aliases: {
+              versionAliases: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -160,20 +271,20 @@ const updateSecret: AppBlock = {
                 description:
                   "Optional. Custom metadata about the secret.  Annotations are distinct from various forms of labels. Annotations exist to allow client tools to store their own state information without requiring a database.  Annotation keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes, begin and end with an alphanumeric character ([a-z0-9A-Z]), and may have dashes (-), underscores (_), dots (.), and alphanumerics in between these symbols.  The total size of annotation keys and values must be less than 16KiB.",
               },
-              version_destroy_ttl: {
+              versionDestroyTtl: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              customer_managed_encryption: {
+              customerManagedEncryption: {
                 type: "object",
                 properties: {
-                  kms_key_name: {
+                  kmsKeyName: {
                     type: "string",
                     description:
                       "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                   },
                 },
-                required: ["kms_key_name"],
+                required: ["kmsKeyName"],
                 description:
                   "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                 additionalProperties: true,
@@ -193,7 +304,7 @@ const updateSecret: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description: "Required. Specifies the fields to be updated.",
           type: {
@@ -207,11 +318,7 @@ const updateSecret: AppBlock = {
       onEvent: async (input) => {
         const client = await getSecretManagerServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.secret !== undefined)
-          request.secret = input.event.inputConfig.secret;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateSecret(request, (err: any, response: any) => {
@@ -225,7 +332,8 @@ const updateSecret: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -246,16 +354,16 @@ const updateSecret: AppBlock = {
               automatic: {
                 type: "object",
                 properties: {
-                  customer_managed_encryption: {
+                  customerManagedEncryption: {
                     type: "object",
                     properties: {
-                      kms_key_name: {
+                      kmsKeyName: {
                         type: "string",
                         description:
                           "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                       },
                     },
-                    required: ["kms_key_name"],
+                    required: ["kmsKeyName"],
                     description:
                       "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                     additionalProperties: true,
@@ -265,7 +373,7 @@ const updateSecret: AppBlock = {
                   "A replication policy that replicates the [Secret][google.cloud.secretmanager.v1.Secret] payload without any restrictions. (Part of 'replication' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              user_managed: {
+              userManaged: {
                 type: "object",
                 properties: {
                   replicas: {
@@ -278,16 +386,16 @@ const updateSecret: AppBlock = {
                           description:
                             'The canonical IDs of the location to replicate data. For example: `"us-east1"`.',
                         },
-                        customer_managed_encryption: {
+                        customerManagedEncryption: {
                           type: "object",
                           properties: {
-                            kms_key_name: {
+                            kmsKeyName: {
                               type: "string",
                               description:
                                 "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
                             },
                           },
-                          required: ["kms_key_name"],
+                          required: ["kmsKeyName"],
                           description:
                             "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
                           additionalProperties: true,
@@ -311,7 +419,7 @@ const updateSecret: AppBlock = {
               "A policy that defines the replication and encryption configuration of data.",
             additionalProperties: true,
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -341,7 +449,7 @@ const updateSecret: AppBlock = {
             description:
               "Optional. A list of up to 10 Pub/Sub topics to which messages are published when control plane operations are called on the secret or its versions.",
           },
-          expire_time: {
+          expireTime: {
             type: "string",
             description:
               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z') (Part of 'expiration' - only one field in this group can be set)",
@@ -354,7 +462,7 @@ const updateSecret: AppBlock = {
           rotation: {
             type: "object",
             properties: {
-              next_rotation_time: {
+              nextRotationTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -363,7 +471,7 @@ const updateSecret: AppBlock = {
               "The rotation time and period for a [Secret][google.cloud.secretmanager.v1.Secret]. At next_rotation_time, Secret Manager will send a Pub/Sub notification to the topics configured on the Secret. [Secret.topics][google.cloud.secretmanager.v1.Secret.topics] must be set to configure rotation.",
             additionalProperties: true,
           },
-          version_aliases: {
+          versionAliases: {
             type: "object",
             additionalProperties: {
               type: "string",
@@ -379,20 +487,20 @@ const updateSecret: AppBlock = {
             description:
               "Optional. Custom metadata about the secret.  Annotations are distinct from various forms of labels. Annotations exist to allow client tools to store their own state information without requiring a database.  Annotation keys must be between 1 and 63 characters long, have a UTF-8 encoding of maximum 128 bytes, begin and end with an alphanumeric character ([a-z0-9A-Z]), and may have dashes (-), underscores (_), dots (.), and alphanumerics in between these symbols.  The total size of annotation keys and values must be less than 16KiB.",
           },
-          version_destroy_ttl: {
+          versionDestroyTtl: {
             type: "string",
             description: "Duration string (e.g., '1.5s', '300s')",
           },
-          customer_managed_encryption: {
+          customerManagedEncryption: {
             type: "object",
             properties: {
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   "Required. The resource name of the Cloud KMS CryptoKey used to encrypt secret payloads.  For secrets using the [UserManaged][google.cloud.secretmanager.v1.Replication.UserManaged] replication policy type, Cloud KMS CryptoKeys must reside in the same location as the [replica location][Secret.UserManaged.Replica.location].  For secrets using the [Automatic][google.cloud.secretmanager.v1.Replication.Automatic] replication policy type, Cloud KMS CryptoKeys must reside in `global`.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
               },
             },
-            required: ["kms_key_name"],
+            required: ["kmsKeyName"],
             description:
               "Configuration for encrypting secret payloads using customer-managed encryption keys (CMEK).",
             additionalProperties: true,

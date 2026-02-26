@@ -1,5 +1,24 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getTagBindingsClient } from "../../lib/grpcClient.ts";
+import { getTagBindingsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  effective_tags: {
+    name: "effectiveTags",
+    fields: {
+      tag_value: "tagValue",
+      namespaced_tag_value: "namespacedTagValue",
+      tag_key: "tagKey",
+      namespaced_tag_key: "namespacedTagKey",
+      tag_key_parent_name: "tagKeyParentName",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listEffectiveTags: AppBlock = {
   name: "List Effective Tags",
@@ -19,7 +38,7 @@ const listEffectiveTags: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "Optional. The maximum number of effective tags to return in the response. The server allows a maximum of 300 effective tags to return in a single page. If unspecified, the server will use 100 as the default.",
@@ -30,7 +49,7 @@ const listEffectiveTags: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. A pagination token returned from a previous call to `ListEffectiveTags` that indicates from where this listing should continue.",
@@ -45,13 +64,7 @@ const listEffectiveTags: AppBlock = {
       onEvent: async (input) => {
         const client = await getTagBindingsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listEffectiveTags(request, (err: any, response: any) => {
@@ -65,7 +78,8 @@ const listEffectiveTags: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -75,32 +89,32 @@ const listEffectiveTags: AppBlock = {
       type: {
         type: "object",
         properties: {
-          effective_tags: {
+          effectiveTags: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                tag_value: {
+                tagValue: {
                   type: "string",
                   description:
                     "Resource name for TagValue in the format `tagValues/456`.",
                 },
-                namespaced_tag_value: {
+                namespacedTagValue: {
                   type: "string",
                   description:
                     "The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`.",
                 },
-                tag_key: {
+                tagKey: {
                   type: "string",
                   description:
                     "The name of the TagKey, in the format `tagKeys/{id}`, such as `tagKeys/123`.",
                 },
-                namespaced_tag_key: {
+                namespacedTagKey: {
                   type: "string",
                   description:
                     "The namespaced name of the TagKey. Can be in the form `{organization_id}/{tag_key_short_name}` or `{project_id}/{tag_key_short_name}` or `{project_number}/{tag_key_short_name}`.",
                 },
-                tag_key_parent_name: {
+                tagKeyParentName: {
                   type: "string",
                   description:
                     "The parent name of the tag key. Must be in the format `organizations/{organization_id}` or `projects/{project_number}`",
@@ -118,7 +132,7 @@ const listEffectiveTags: AppBlock = {
             description:
               "A possibly paginated list of effective tags for the specified resource.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Pagination token.  If the result set is too large to fit in a single response, this token is returned. It encodes the position of the current result cursor. Feeding this value into a new list request with the `page_token` parameter gives the next page of the results.  When `next_page_token` is not filled in, there is no next page and the list returned is the last page in the result set.  Pagination tokens have a limited lifetime.",

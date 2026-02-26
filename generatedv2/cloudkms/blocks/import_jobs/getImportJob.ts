@@ -1,5 +1,32 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  import_method: "importMethod",
+  protection_level: "protectionLevel",
+  create_time: "createTime",
+  generate_time: "generateTime",
+  expire_time: "expireTime",
+  expire_event_time: "expireEventTime",
+  public_key: "publicKey",
+  attestation: {
+    name: "attestation",
+    fields: {
+      cert_chains: {
+        name: "certChains",
+        fields: {
+          cavium_certs: "caviumCerts",
+          google_card_certs: "googleCardCerts",
+          google_partition_certs: "googlePartitionCerts",
+        },
+      },
+    },
+  },
+  crypto_key_backend: "cryptoKeyBackend",
+};
 
 const getImportJob: AppBlock = {
   name: "Get Import Job",
@@ -23,9 +50,7 @@ const getImportJob: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getImportJob(request, (err: any, response: any) => {
@@ -39,7 +64,8 @@ const getImportJob: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -54,7 +80,7 @@ const getImportJob: AppBlock = {
             description:
               "Output only. The resource name for this [ImportJob][google.cloud.kms.v1.ImportJob] in the format `projects/*/locations/*/keyRings/*/importJobs/*`.",
           },
-          import_method: {
+          importMethod: {
             type: "string",
             enum: [
               "IMPORT_METHOD_UNSPECIFIED",
@@ -68,7 +94,7 @@ const getImportJob: AppBlock = {
             description:
               "Required. Immutable. The wrapping method to be used for incoming key material.",
           },
-          protection_level: {
+          protectionLevel: {
             type: "string",
             enum: [
               "PROTECTION_LEVEL_UNSPECIFIED",
@@ -81,19 +107,19 @@ const getImportJob: AppBlock = {
             description:
               "[ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] specifies how cryptographic operations are performed. For more information, see [Protection levels] (https://cloud.google.com/kms/docs/algorithms#protection_levels).",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          generate_time: {
+          generateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          expire_time: {
+          expireTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          expire_event_time: {
+          expireEventTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -108,7 +134,7 @@ const getImportJob: AppBlock = {
             description:
               "Output only. The current state of the [ImportJob][google.cloud.kms.v1.ImportJob], indicating if it can be used.",
           },
-          public_key: {
+          publicKey: {
             type: "object",
             properties: {
               pem: {
@@ -137,10 +163,10 @@ const getImportJob: AppBlock = {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              cert_chains: {
+              certChains: {
                 type: "object",
                 properties: {
-                  cavium_certs: {
+                  caviumCerts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -148,7 +174,7 @@ const getImportJob: AppBlock = {
                     description:
                       "Cavium certificate chain corresponding to the attestation.",
                   },
-                  google_card_certs: {
+                  googleCardCerts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -156,7 +182,7 @@ const getImportJob: AppBlock = {
                     description:
                       "Google card certificate chain corresponding to the attestation.",
                   },
-                  google_partition_certs: {
+                  googlePartitionCerts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -174,13 +200,13 @@ const getImportJob: AppBlock = {
               "Contains an HSM-generated attestation about a key operation. For more information, see [Verifying attestations] (https://cloud.google.com/kms/docs/attest-key).",
             additionalProperties: true,
           },
-          crypto_key_backend: {
+          cryptoKeyBackend: {
             type: "string",
             description:
               'Immutable. The resource name of the backend environment where the key material for the wrapping key resides and where all related cryptographic operations are performed. Currently, this field is only populated for keys stored in HSM_SINGLE_TENANT. Note, this list is non-exhaustive and may apply to additional [ProtectionLevels][google.cloud.kms.v1.ProtectionLevel] in the future. Supported resources: * `"projects/*/locations/*/singleTenantHsmInstances/*"`',
           },
         },
-        required: ["import_method", "protection_level"],
+        required: ["importMethod", "protectionLevel"],
         description:
           'An [ImportJob][google.cloud.kms.v1.ImportJob] can be used to create [CryptoKeys][google.cloud.kms.v1.CryptoKey] and [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] using pre-existing key material, generated outside of Cloud KMS.  When an [ImportJob][google.cloud.kms.v1.ImportJob] is created, Cloud KMS will generate a "wrapping key", which is a public/private key pair. You use the wrapping key to encrypt (also known as wrap) the pre-existing key material to protect it during the import process. The nature of the wrapping key depends on the choice of [import_method][google.cloud.kms.v1.ImportJob.import_method]. When the wrapping key generation is complete, the [state][google.cloud.kms.v1.ImportJob.state] will be set to [ACTIVE][google.cloud.kms.v1.ImportJob.ImportJobState.ACTIVE] and the [public_key][google.cloud.kms.v1.ImportJob.public_key] can be fetched. The fetched public key can then be used to wrap your pre-existing key material.  Once the key material is wrapped, it can be imported into a new [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] in an existing [CryptoKey][google.cloud.kms.v1.CryptoKey] by calling [ImportCryptoKeyVersion][google.cloud.kms.v1.KeyManagementService.ImportCryptoKeyVersion]. Multiple [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] can be imported with a single [ImportJob][google.cloud.kms.v1.ImportJob]. Cloud KMS uses the private key portion of the wrapping key to unwrap the key material. Only Cloud KMS has access to the private key.  An [ImportJob][google.cloud.kms.v1.ImportJob] expires 3 days after it is created. Once expired, Cloud KMS will no longer be able to import or unwrap any key material that was wrapped with the [ImportJob][google.cloud.kms.v1.ImportJob]\'s public key.  For more information, see [Importing a key](https://cloud.google.com/kms/docs/importing-a-key).',
         additionalProperties: true,

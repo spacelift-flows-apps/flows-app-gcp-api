@@ -23,9 +23,7 @@ const deleteSnapshot: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.snapshot !== undefined)
-          request.snapshot = input.event.inputConfig.snapshot;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteSnapshot(request, (err: any, response: any) => {

@@ -1,5 +1,55 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getClusterManagerClient } from "../../lib/grpcClient.ts";
+import { getClusterManagerClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  clusterId: "cluster_id",
+};
+
+const outputMapping = {
+  operation_type: "operationType",
+  status_message: "statusMessage",
+  self_link: "selfLink",
+  target_link: "targetLink",
+  start_time: "startTime",
+  end_time: "endTime",
+  progress: {
+    name: "progress",
+    fields: {
+      metrics: {
+        name: "metrics",
+        fields: {
+          int_value: "intValue",
+          double_value: "doubleValue",
+          string_value: "stringValue",
+        },
+      },
+    },
+  },
+  cluster_conditions: {
+    name: "clusterConditions",
+    fields: {
+      canonical_code: "canonicalCode",
+    },
+  },
+  nodepool_conditions: {
+    name: "nodepoolConditions",
+    fields: {
+      canonical_code: "canonicalCode",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+};
 
 const completeIPRotation: AppBlock = {
   name: "Complete IP Rotation",
@@ -8,7 +58,7 @@ const completeIPRotation: AppBlock = {
   inputs: {
     default: {
       config: {
-        project_id: {
+        projectId: {
           name: "Project Id",
           description:
             "Deprecated. The Google Developers Console [project ID or project number](https://cloud.google.com/resource-manager/docs/creating-managing-projects). This field has been deprecated and replaced by the name field.",
@@ -30,7 +80,7 @@ const completeIPRotation: AppBlock = {
           },
           required: false,
         },
-        cluster_id: {
+        clusterId: {
           name: "Cluster Id",
           description:
             "Deprecated. The name of the cluster. This field has been deprecated and replaced by the name field.",
@@ -56,15 +106,7 @@ const completeIPRotation: AppBlock = {
       onEvent: async (input) => {
         const client = await getClusterManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.zone !== undefined)
-          request.zone = input.event.inputConfig.zone;
-        if (input.event.inputConfig.cluster_id !== undefined)
-          request.cluster_id = input.event.inputConfig.cluster_id;
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.completeIPRotation(request, (err: any, response: any) => {
@@ -78,7 +120,8 @@ const completeIPRotation: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -98,7 +141,7 @@ const completeIPRotation: AppBlock = {
             description:
               "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/zones#available) in which the operation is taking place. This field is deprecated, use location instead.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             enum: [
               "TYPE_UNSPECIFIED",
@@ -139,17 +182,17 @@ const completeIPRotation: AppBlock = {
             description:
               "Output only. Detailed operation progress, if available.",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "Output only. If an error has occurred, a textual description of the error. Deprecated. Use the field error instead.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. Server-defined URI for the operation. Example: `https://container.googleapis.com/v1alpha1/projects/123/locations/us-central1/operations/operation-123`.",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "Output only. Server-defined URI for the target of the operation. The format of this is a URI to the resource being modified (such as a cluster, node pool, or node). For node pool repairs, there may be multiple nodes being repaired, but only one will be the target.  Examples:  - ## `https://container.googleapis.com/v1/projects/123/locations/us-central1/clusters/my-cluster`  ## `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np`  `https://container.googleapis.com/v1/projects/123/zones/us-central1-c/clusters/my-cluster/nodePools/my-np/node/my-node`",
@@ -159,12 +202,12 @@ const completeIPRotation: AppBlock = {
             description:
               "Output only. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) or [region](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available) in which the cluster resides.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "Output only. The time the operation started, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "Output only. The time the operation completed, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) text format.",
@@ -199,17 +242,17 @@ const completeIPRotation: AppBlock = {
                       description:
                         'Required. Metric name, e.g., "nodes total", "percent done".',
                     },
-                    int_value: {
+                    intValue: {
                       type: "string",
                       description:
                         "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                     },
-                    double_value: {
+                    doubleValue: {
                       type: "number",
                       description:
                         "For metrics with floating point value. (Part of 'value' - only one field in this group can be set)",
                     },
-                    string_value: {
+                    stringValue: {
                       type: "string",
                       description:
                         "For metrics with custom values (ratios, visual progress, etc.). (Part of 'value' - only one field in this group can be set)",
@@ -236,7 +279,7 @@ const completeIPRotation: AppBlock = {
               "Information about operation (or operation stage) progress.",
             additionalProperties: true,
           },
-          cluster_conditions: {
+          clusterConditions: {
             type: "array",
             items: {
               type: "object",
@@ -261,7 +304,7 @@ const completeIPRotation: AppBlock = {
                   type: "string",
                   description: "Human-friendly representation of the condition",
                 },
-                canonical_code: {
+                canonicalCode: {
                   type: "string",
                   enum: [
                     "OK",
@@ -292,7 +335,7 @@ const completeIPRotation: AppBlock = {
             description:
               "Which conditions caused the current cluster state. Deprecated. Use field error instead.",
           },
-          nodepool_conditions: {
+          nodepoolConditions: {
             type: "array",
             items: {
               type: "object",
@@ -317,7 +360,7 @@ const completeIPRotation: AppBlock = {
                   type: "string",
                   description: "Human-friendly representation of the condition",
                 },
-                canonical_code: {
+                canonicalCode: {
                   type: "string",
                   enum: [
                     "OK",
@@ -362,7 +405,7 @@ const completeIPRotation: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {

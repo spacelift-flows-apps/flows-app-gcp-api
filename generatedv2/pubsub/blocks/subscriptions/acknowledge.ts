@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import { getSubscriberClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  ackIds: "ack_ids",
+};
 
 const acknowledge: AppBlock = {
   name: "Acknowledge",
@@ -19,7 +23,7 @@ const acknowledge: AppBlock = {
           },
           required: true,
         },
-        ack_ids: {
+        ackIds: {
           name: "Ack Ids",
           description:
             "Required. The acknowledgment ID for the messages being acknowledged that was returned by the Pub/Sub system in the `Pull` response. Must not be empty.",
@@ -37,11 +41,7 @@ const acknowledge: AppBlock = {
       onEvent: async (input) => {
         const client = await getSubscriberClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.subscription !== undefined)
-          request.subscription = input.event.inputConfig.subscription;
-        if (input.event.inputConfig.ack_ids !== undefined)
-          request.ack_ids = input.event.inputConfig.ack_ids;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.acknowledge(request, (err: any, response: any) => {

@@ -8,7 +8,7 @@ const insert: AppBlock = {
   inputs: {
     default: {
       config: {
-        as_paths: {
+        asPaths: {
           name: "As Paths",
           description: "Output only. [Output Only] AS path.",
           type: {
@@ -16,14 +16,14 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                as_lists: {
+                asLists: {
                   type: "array",
                   items: {
                     type: "integer",
                   },
                   description: "[Output Only] The AS numbers of the AS Path.",
                 },
-                path_segment_type: {
+                pathSegmentType: {
                   type: "string",
                   description:
                     "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
@@ -35,7 +35,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -57,7 +57,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        dest_range: {
+        destRange: {
           name: "Dest Range",
           description:
             "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
@@ -111,7 +111,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_gateway: {
+        nextHopGateway: {
           name: "Next Hop Gateway",
           description:
             "The URL to a gateway that should handle matching packets. You can only specify the internet gateway using a full or partial valid URL: projects/project/global/gateways/default-internet-gateway",
@@ -122,7 +122,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_hub: {
+        nextHopHub: {
           name: "Next Hop Hub",
           description:
             "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
@@ -133,7 +133,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_ilb: {
+        nextHopIlb: {
           name: "Next Hop Ilb",
           description:
             "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule    - regions/region/forwardingRules/forwardingRule   If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses:         - 10.128.0.56       - 2001:db8::2d9:51:0:0       - 2001:db8:0:0:2d9:51:0:0   IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
@@ -144,7 +144,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_instance: {
+        nextHopInstance: {
           name: "Next Hop Instance",
           description:
             "The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
@@ -155,7 +155,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_inter_region_cost: {
+        nextHopInterRegionCost: {
           name: "Next Hop Inter Region Cost",
           description:
             "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
@@ -166,7 +166,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_interconnect_attachment: {
+        nextHopInterconnectAttachment: {
           name: "Next Hop Interconnect Attachment",
           description:
             "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
@@ -177,7 +177,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_ip: {
+        nextHopIp: {
           name: "Next Hop Ip",
           description:
             "The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
@@ -188,7 +188,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_med: {
+        nextHopMed: {
           name: "Next Hop Med",
           description:
             "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
@@ -199,7 +199,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_network: {
+        nextHopNetwork: {
           name: "Next Hop Network",
           description:
             "The URL of the local network if it should handle matching packets.",
@@ -210,7 +210,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_origin: {
+        nextHopOrigin: {
           name: "Next Hop Origin",
           description:
             "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
@@ -221,7 +221,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_peering: {
+        nextHopPeering: {
           name: "Next Hop Peering",
           description:
             "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
@@ -232,7 +232,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        next_hop_vpn_tunnel: {
+        nextHopVpnTunnel: {
           name: "Next Hop Vpn Tunnel",
           description:
             "The URL to a VpnTunnel that should handle matching packets.",
@@ -250,7 +250,7 @@ const insert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -275,7 +275,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        route_status: {
+        routeStatus: {
           name: "Route Status",
           description:
             "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
@@ -286,7 +286,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        route_type: {
+        routeType: {
           name: "Route Type",
           description:
             "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
@@ -297,7 +297,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "[Output Only] Server-defined fully-qualified URL for this resource.",
@@ -368,7 +368,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -383,17 +383,17 @@ const insert: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.as_paths !== undefined)
-          body.as_paths = input.event.inputConfig.as_paths;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.asPaths !== undefined)
+          body.asPaths = input.event.inputConfig.asPaths;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.dest_range !== undefined)
-          body.dest_range = input.event.inputConfig.dest_range;
+        if (input.event.inputConfig.destRange !== undefined)
+          body.destRange = input.event.inputConfig.destRange;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
         if (input.event.inputConfig.kind !== undefined)
@@ -402,45 +402,42 @@ const insert: AppBlock = {
           body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.network !== undefined)
           body.network = input.event.inputConfig.network;
-        if (input.event.inputConfig.next_hop_gateway !== undefined)
-          body.next_hop_gateway = input.event.inputConfig.next_hop_gateway;
-        if (input.event.inputConfig.next_hop_hub !== undefined)
-          body.next_hop_hub = input.event.inputConfig.next_hop_hub;
-        if (input.event.inputConfig.next_hop_ilb !== undefined)
-          body.next_hop_ilb = input.event.inputConfig.next_hop_ilb;
-        if (input.event.inputConfig.next_hop_instance !== undefined)
-          body.next_hop_instance = input.event.inputConfig.next_hop_instance;
-        if (input.event.inputConfig.next_hop_inter_region_cost !== undefined)
-          body.next_hop_inter_region_cost =
-            input.event.inputConfig.next_hop_inter_region_cost;
-        if (
-          input.event.inputConfig.next_hop_interconnect_attachment !== undefined
-        )
-          body.next_hop_interconnect_attachment =
-            input.event.inputConfig.next_hop_interconnect_attachment;
-        if (input.event.inputConfig.next_hop_ip !== undefined)
-          body.next_hop_ip = input.event.inputConfig.next_hop_ip;
-        if (input.event.inputConfig.next_hop_med !== undefined)
-          body.next_hop_med = input.event.inputConfig.next_hop_med;
-        if (input.event.inputConfig.next_hop_network !== undefined)
-          body.next_hop_network = input.event.inputConfig.next_hop_network;
-        if (input.event.inputConfig.next_hop_origin !== undefined)
-          body.next_hop_origin = input.event.inputConfig.next_hop_origin;
-        if (input.event.inputConfig.next_hop_peering !== undefined)
-          body.next_hop_peering = input.event.inputConfig.next_hop_peering;
-        if (input.event.inputConfig.next_hop_vpn_tunnel !== undefined)
-          body.next_hop_vpn_tunnel =
-            input.event.inputConfig.next_hop_vpn_tunnel;
+        if (input.event.inputConfig.nextHopGateway !== undefined)
+          body.nextHopGateway = input.event.inputConfig.nextHopGateway;
+        if (input.event.inputConfig.nextHopHub !== undefined)
+          body.nextHopHub = input.event.inputConfig.nextHopHub;
+        if (input.event.inputConfig.nextHopIlb !== undefined)
+          body.nextHopIlb = input.event.inputConfig.nextHopIlb;
+        if (input.event.inputConfig.nextHopInstance !== undefined)
+          body.nextHopInstance = input.event.inputConfig.nextHopInstance;
+        if (input.event.inputConfig.nextHopInterRegionCost !== undefined)
+          body.nextHopInterRegionCost =
+            input.event.inputConfig.nextHopInterRegionCost;
+        if (input.event.inputConfig.nextHopInterconnectAttachment !== undefined)
+          body.nextHopInterconnectAttachment =
+            input.event.inputConfig.nextHopInterconnectAttachment;
+        if (input.event.inputConfig.nextHopIp !== undefined)
+          body.nextHopIp = input.event.inputConfig.nextHopIp;
+        if (input.event.inputConfig.nextHopMed !== undefined)
+          body.nextHopMed = input.event.inputConfig.nextHopMed;
+        if (input.event.inputConfig.nextHopNetwork !== undefined)
+          body.nextHopNetwork = input.event.inputConfig.nextHopNetwork;
+        if (input.event.inputConfig.nextHopOrigin !== undefined)
+          body.nextHopOrigin = input.event.inputConfig.nextHopOrigin;
+        if (input.event.inputConfig.nextHopPeering !== undefined)
+          body.nextHopPeering = input.event.inputConfig.nextHopPeering;
+        if (input.event.inputConfig.nextHopVpnTunnel !== undefined)
+          body.nextHopVpnTunnel = input.event.inputConfig.nextHopVpnTunnel;
         if (input.event.inputConfig.params !== undefined)
           body.params = input.event.inputConfig.params;
         if (input.event.inputConfig.priority !== undefined)
           body.priority = input.event.inputConfig.priority;
-        if (input.event.inputConfig.route_status !== undefined)
-          body.route_status = input.event.inputConfig.route_status;
-        if (input.event.inputConfig.route_type !== undefined)
-          body.route_type = input.event.inputConfig.route_type;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
+        if (input.event.inputConfig.routeStatus !== undefined)
+          body.routeStatus = input.event.inputConfig.routeStatus;
+        if (input.event.inputConfig.routeType !== undefined)
+          body.routeType = input.event.inputConfig.routeType;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
         if (input.event.inputConfig.tags !== undefined)
           body.tags = input.event.inputConfig.tags;
         if (input.event.inputConfig.warnings !== undefined)
@@ -465,12 +462,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -479,7 +476,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -497,12 +494,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -557,7 +554,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -575,7 +572,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -586,7 +583,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -596,16 +593,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -642,12 +639,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -656,15 +653,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -684,12 +681,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -704,18 +701,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -728,7 +725,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -739,16 +736,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

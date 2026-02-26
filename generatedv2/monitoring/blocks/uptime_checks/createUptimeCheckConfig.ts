@@ -1,5 +1,176 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getUptimeCheckServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getUptimeCheckServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  uptimeCheckConfig: {
+    name: "uptime_check_config",
+    fields: {
+      displayName: "display_name",
+      monitoredResource: "monitored_resource",
+      resourceGroup: {
+        name: "resource_group",
+        fields: {
+          groupId: "group_id",
+          resourceType: "resource_type",
+        },
+      },
+      syntheticMonitor: {
+        name: "synthetic_monitor",
+        fields: {
+          cloudFunctionV2: "cloud_function_v2",
+        },
+      },
+      httpCheck: {
+        name: "http_check",
+        fields: {
+          requestMethod: "request_method",
+          useSsl: "use_ssl",
+          authInfo: "auth_info",
+          maskHeaders: "mask_headers",
+          contentType: "content_type",
+          customContentType: "custom_content_type",
+          validateSsl: "validate_ssl",
+          acceptedResponseStatusCodes: {
+            name: "accepted_response_status_codes",
+            fields: {
+              statusValue: "status_value",
+              statusClass: "status_class",
+            },
+          },
+          pingConfig: {
+            name: "ping_config",
+            fields: {
+              pingsCount: "pings_count",
+            },
+          },
+          serviceAgentAuthentication: "service_agent_authentication",
+        },
+      },
+      tcpCheck: {
+        name: "tcp_check",
+        fields: {
+          pingConfig: {
+            name: "ping_config",
+            fields: {
+              pingsCount: "pings_count",
+            },
+          },
+        },
+      },
+      contentMatchers: {
+        name: "content_matchers",
+        fields: {
+          jsonPathMatcher: {
+            name: "json_path_matcher",
+            fields: {
+              jsonPath: "json_path",
+              jsonMatcher: "json_matcher",
+            },
+          },
+        },
+      },
+      checkerType: "checker_type",
+      selectedRegions: "selected_regions",
+      isInternal: "is_internal",
+      internalCheckers: {
+        name: "internal_checkers",
+        fields: {
+          displayName: "display_name",
+          gcpZone: "gcp_zone",
+          peerProjectId: "peer_project_id",
+        },
+      },
+      userLabels: "user_labels",
+    },
+  },
+};
+
+const outputMapping = {
+  display_name: "displayName",
+  monitored_resource: "monitoredResource",
+  resource_group: {
+    name: "resourceGroup",
+    fields: {
+      group_id: "groupId",
+      resource_type: "resourceType",
+    },
+  },
+  synthetic_monitor: {
+    name: "syntheticMonitor",
+    fields: {
+      cloud_function_v2: {
+        name: "cloudFunctionV2",
+        fields: {
+          cloud_run_revision: "cloudRunRevision",
+        },
+      },
+    },
+  },
+  http_check: {
+    name: "httpCheck",
+    fields: {
+      request_method: "requestMethod",
+      use_ssl: "useSsl",
+      auth_info: "authInfo",
+      mask_headers: "maskHeaders",
+      content_type: "contentType",
+      custom_content_type: "customContentType",
+      validate_ssl: "validateSsl",
+      accepted_response_status_codes: {
+        name: "acceptedResponseStatusCodes",
+        fields: {
+          status_value: "statusValue",
+          status_class: "statusClass",
+        },
+      },
+      ping_config: {
+        name: "pingConfig",
+        fields: {
+          pings_count: "pingsCount",
+        },
+      },
+      service_agent_authentication: "serviceAgentAuthentication",
+    },
+  },
+  tcp_check: {
+    name: "tcpCheck",
+    fields: {
+      ping_config: {
+        name: "pingConfig",
+        fields: {
+          pings_count: "pingsCount",
+        },
+      },
+    },
+  },
+  content_matchers: {
+    name: "contentMatchers",
+    fields: {
+      json_path_matcher: {
+        name: "jsonPathMatcher",
+        fields: {
+          json_path: "jsonPath",
+          json_matcher: "jsonMatcher",
+        },
+      },
+    },
+  },
+  checker_type: "checkerType",
+  selected_regions: "selectedRegions",
+  is_internal: "isInternal",
+  internal_checkers: {
+    name: "internalCheckers",
+    fields: {
+      display_name: "displayName",
+      gcp_zone: "gcpZone",
+      peer_project_id: "peerProjectId",
+    },
+  },
+  user_labels: "userLabels",
+};
 
 const createUptimeCheckConfig: AppBlock = {
   name: "Create Uptime Check Config",
@@ -19,7 +190,7 @@ const createUptimeCheckConfig: AppBlock = {
           },
           required: true,
         },
-        uptime_check_config: {
+        uptimeCheckConfig: {
           name: "Uptime Check Config",
           description: "Required. The new Uptime check configuration.",
           type: {
@@ -30,12 +201,12 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "Identifier. A unique resource name for this Uptime check configuration. The format is:       projects/[PROJECT_ID_OR_NUMBER]/uptimeCheckConfigs/[UPTIME_CHECK_ID]  `[PROJECT_ID_OR_NUMBER]` is the Workspace host project associated with the Uptime check.  This field should be omitted when creating the Uptime check configuration; on create, the resource name is assigned by the server and included in the response.",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   "A human-friendly name for the Uptime check configuration. The display name should be unique within a Cloud Monitoring Workspace in order to make it easier to identify; however, uniqueness is not enforced. Required.",
               },
-              monitored_resource: {
+              monitoredResource: {
                 type: "object",
                 properties: {
                   type: {
@@ -52,15 +223,15 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The [monitored resource](https://cloud.google.com/monitoring/api/resources) associated with the configuration. The following monitored resource types are valid for this field:   `uptime_url`,   `gce_instance`,   `gae_app`,   `aws_ec2_instance`,   `aws_elb_load_balancer`   `k8s_service`   `servicedirectory_service`   `cloud_run_revision` (Part of 'resource' - only one field in this group can be set)",
               },
-              resource_group: {
+              resourceGroup: {
                 type: "object",
                 properties: {
-                  group_id: {
+                  groupId: {
                     type: "string",
                     description:
                       "The group of resources being monitored. Should be only the `[GROUP_ID]`, and not the full-path `projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]`.",
                   },
-                  resource_type: {
+                  resourceType: {
                     type: "string",
                     enum: [
                       "RESOURCE_TYPE_UNSPECIFIED",
@@ -75,10 +246,10 @@ const createUptimeCheckConfig: AppBlock = {
                   "The resource submessage for group checks. It can be used instead of a monitored resource, when multiple resources are being monitored. (Part of 'resource' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              synthetic_monitor: {
+              syntheticMonitor: {
                 type: "object",
                 properties: {
-                  cloud_function_v2: {
+                  cloudFunctionV2: {
                     type: "object",
                     properties: {
                       name: {
@@ -97,16 +268,16 @@ const createUptimeCheckConfig: AppBlock = {
                   "Describes a Synthetic Monitor to be invoked by Uptime. (Part of 'resource' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              http_check: {
+              httpCheck: {
                 type: "object",
                 properties: {
-                  request_method: {
+                  requestMethod: {
                     type: "string",
                     enum: ["METHOD_UNSPECIFIED", "GET", "POST"],
                     description:
                       "The HTTP request method to use for the check. If set to `METHOD_UNSPECIFIED` then `request_method` defaults to `GET`.",
                   },
-                  use_ssl: {
+                  useSsl: {
                     type: "boolean",
                     description:
                       "If `true`, use HTTPS instead of HTTP to run the check.",
@@ -121,7 +292,7 @@ const createUptimeCheckConfig: AppBlock = {
                     description:
                       "Optional (defaults to 80 when `use_ssl` is `false`, and 443 when `use_ssl` is `true`). The TCP port on the HTTP server against which to run the check. Will be combined with host (specified within the `monitored_resource`) and `path` to construct the full URL.",
                   },
-                  auth_info: {
+                  authInfo: {
                     type: "object",
                     properties: {
                       username: {
@@ -139,7 +310,7 @@ const createUptimeCheckConfig: AppBlock = {
                       "The authentication parameters to provide to the specified resource or URL that requires a username and password. Currently, only [Basic HTTP authentication](https://tools.ietf.org/html/rfc7617) is supported in Uptime checks.",
                     additionalProperties: true,
                   },
-                  mask_headers: {
+                  maskHeaders: {
                     type: "boolean",
                     description:
                       "Boolean specifying whether to encrypt the header information. Encryption should be specified for any headers related to authentication that you do not wish to be seen when retrieving the configuration. The server will be responsible for encrypting the headers. On Get/List calls, if `mask_headers` is set to `true` then the headers will be obscured with `******.`",
@@ -152,18 +323,18 @@ const createUptimeCheckConfig: AppBlock = {
                     description:
                       "The list of headers to send as part of the Uptime check request. If two headers have the same key and different values, they should be entered as a single header, with the value being a comma-separated list of all the desired values as described at https://www.w3.org/Protocols/rfc2616/rfc2616.txt (page 31). Entering two separate headers with the same key in a Create call will cause the first to be overwritten by the second. The maximum number of headers allowed is 100.",
                   },
-                  content_type: {
+                  contentType: {
                     type: "string",
                     enum: ["TYPE_UNSPECIFIED", "URL_ENCODED", "USER_PROVIDED"],
                     description:
                       'The content type header to use for the check. The following configurations result in errors: 1. Content type is specified in both the `headers` field and the `content_type` field. 2. Request method is `GET` and `content_type` is not `TYPE_UNSPECIFIED` 3. Request method is `POST` and `content_type` is `TYPE_UNSPECIFIED`. 4. Request method is `POST` and a "Content-Type" header is provided via `headers` field. The `content_type` field should be used instead.',
                   },
-                  custom_content_type: {
+                  customContentType: {
                     type: "string",
                     description:
                       "A user provided content type header to use for the check. The invalid configurations outlined in the `content_type` field apply to `custom_content_type`, as well as the following: 1. `content_type` is `URL_ENCODED` and `custom_content_type` is set. 2. `content_type` is `USER_PROVIDED` and `custom_content_type` is not set.",
                   },
-                  validate_ssl: {
+                  validateSsl: {
                     type: "boolean",
                     description:
                       "Boolean specifying whether to include SSL certificate validation as a part of the Uptime check. Only applies to checks where `monitored_resource` is set to `uptime_url`. If `use_ssl` is `false`, setting `validate_ssl` to `true` has no effect.",
@@ -172,17 +343,17 @@ const createUptimeCheckConfig: AppBlock = {
                     type: "string",
                     description: "Base64-encoded bytes",
                   },
-                  accepted_response_status_codes: {
+                  acceptedResponseStatusCodes: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        status_value: {
+                        statusValue: {
                           type: "integer",
                           description:
                             "A status code to accept. (Part of 'status_code' - only one field in this group can be set)",
                         },
-                        status_class: {
+                        statusClass: {
                           type: "string",
                           enum: [
                             "STATUS_CLASS_UNSPECIFIED",
@@ -204,10 +375,10 @@ const createUptimeCheckConfig: AppBlock = {
                     description:
                       "If present, the check will only pass if the HTTP response status code is in this set of status codes. If empty, the HTTP status code will only pass if the HTTP status code is 200-299.",
                   },
-                  ping_config: {
+                  pingConfig: {
                     type: "object",
                     properties: {
-                      pings_count: {
+                      pingsCount: {
                         type: "integer",
                         description:
                           "Number of ICMP pings. A maximum of 3 ICMP pings is currently supported.",
@@ -217,7 +388,7 @@ const createUptimeCheckConfig: AppBlock = {
                       "Information involved in sending ICMP pings alongside public HTTP/TCP checks. For HTTP, the pings are performed for each part of the redirect chain.",
                     additionalProperties: true,
                   },
-                  service_agent_authentication: {
+                  serviceAgentAuthentication: {
                     type: "object",
                     properties: {
                       type: {
@@ -238,7 +409,7 @@ const createUptimeCheckConfig: AppBlock = {
                   "Information involved in an HTTP/HTTPS Uptime check request. (Part of 'check_request_type' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              tcp_check: {
+              tcpCheck: {
                 type: "object",
                 properties: {
                   port: {
@@ -246,10 +417,10 @@ const createUptimeCheckConfig: AppBlock = {
                     description:
                       "The TCP port on the server against which to run the check. Will be combined with host (specified within the `monitored_resource`) to construct the full URL. Required.",
                   },
-                  ping_config: {
+                  pingConfig: {
                     type: "object",
                     properties: {
-                      pings_count: {
+                      pingsCount: {
                         type: "integer",
                         description:
                           "Number of ICMP pings. A maximum of 3 ICMP pings is currently supported.",
@@ -272,7 +443,7 @@ const createUptimeCheckConfig: AppBlock = {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              content_matchers: {
+              contentMatchers: {
                 type: "array",
                 items: {
                   type: "object",
@@ -296,15 +467,15 @@ const createUptimeCheckConfig: AppBlock = {
                       description:
                         "The type of content matcher that will be applied to the server output, compared to the `content` string when the check is run.",
                     },
-                    json_path_matcher: {
+                    jsonPathMatcher: {
                       type: "object",
                       properties: {
-                        json_path: {
+                        jsonPath: {
                           type: "string",
                           description:
                             "JSONPath within the response output pointing to the expected `ContentMatcher::content` to match against.",
                         },
-                        json_matcher: {
+                        jsonMatcher: {
                           type: "string",
                           enum: [
                             "JSON_PATH_MATCHER_OPTION_UNSPECIFIED",
@@ -327,7 +498,7 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The content that is expected to appear in the data returned by the target server against which the check is run.  Currently, only the first entry in the `content_matchers` list is supported, and additional entries will be ignored. This field is optional and should only be specified if a content match is required as part of the/ Uptime check.",
               },
-              checker_type: {
+              checkerType: {
                 type: "string",
                 enum: [
                   "CHECKER_TYPE_UNSPECIFIED",
@@ -337,7 +508,7 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The type of checkers to use to execute the Uptime check.",
               },
-              selected_regions: {
+              selectedRegions: {
                 type: "array",
                 items: {
                   type: "string",
@@ -357,12 +528,12 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The list of regions from which the check will be run. Some regions contain one location, and others contain more than one. If this field is specified, enough regions must be provided to include a minimum of 3 locations.  Not specifying this field will result in Uptime checks running from all available regions.",
               },
-              is_internal: {
+              isInternal: {
                 type: "boolean",
                 description:
                   "If this is `true`, then checks are made only from the 'internal_checkers'. If it is `false`, then checks are made only from the 'selected_regions'. It is an error to provide 'selected_regions' when is_internal is `true`, or to provide 'internal_checkers' when is_internal is `false`.",
               },
-              internal_checkers: {
+              internalCheckers: {
                 type: "array",
                 items: {
                   type: "object",
@@ -372,7 +543,7 @@ const createUptimeCheckConfig: AppBlock = {
                       description:
                         "A unique resource name for this InternalChecker. The format is:      projects/[PROJECT_ID_OR_NUMBER]/internalCheckers/[INTERNAL_CHECKER_ID]  `[PROJECT_ID_OR_NUMBER]` is the Cloud Monitoring Metrics Scope project for the Uptime check config associated with the internal checker.",
                     },
-                    display_name: {
+                    displayName: {
                       type: "string",
                       description:
                         "The checker's human-readable name. The display name should be unique within a Cloud Monitoring Metrics Scope in order to make it easier to identify; however, uniqueness is not enforced.",
@@ -382,12 +553,12 @@ const createUptimeCheckConfig: AppBlock = {
                       description:
                         'The [GCP VPC network](https://cloud.google.com/vpc/docs/vpc) where the internal resource lives (ex: "default").',
                     },
-                    gcp_zone: {
+                    gcpZone: {
                       type: "string",
                       description:
                         "The GCP zone the Uptime check should egress from. Only respected for internal Uptime checks, where internal_network is specified.",
                     },
-                    peer_project_id: {
+                    peerProjectId: {
                       type: "string",
                       description:
                         "The GCP project ID where the internal checker lives. Not necessary the same as the Metrics Scope project.",
@@ -406,7 +577,7 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The internal checkers that this check will egress from. If `is_internal` is `true` and this list is empty, the check will egress from all the InternalCheckers configured for the project that owns this `UptimeCheckConfig`.",
               },
-              user_labels: {
+              userLabels: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -425,12 +596,7 @@ const createUptimeCheckConfig: AppBlock = {
       onEvent: async (input) => {
         const client = await getUptimeCheckServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.uptime_check_config !== undefined)
-          request.uptime_check_config =
-            input.event.inputConfig.uptime_check_config;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createUptimeCheckConfig(request, (err: any, response: any) => {
@@ -444,7 +610,8 @@ const createUptimeCheckConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -459,12 +626,12 @@ const createUptimeCheckConfig: AppBlock = {
             description:
               "Identifier. A unique resource name for this Uptime check configuration. The format is:       projects/[PROJECT_ID_OR_NUMBER]/uptimeCheckConfigs/[UPTIME_CHECK_ID]  `[PROJECT_ID_OR_NUMBER]` is the Workspace host project associated with the Uptime check.  This field should be omitted when creating the Uptime check configuration; on create, the resource name is assigned by the server and included in the response.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "A human-friendly name for the Uptime check configuration. The display name should be unique within a Cloud Monitoring Workspace in order to make it easier to identify; however, uniqueness is not enforced. Required.",
           },
-          monitored_resource: {
+          monitoredResource: {
             type: "object",
             properties: {
               type: {
@@ -481,15 +648,15 @@ const createUptimeCheckConfig: AppBlock = {
             description:
               "The [monitored resource](https://cloud.google.com/monitoring/api/resources) associated with the configuration. The following monitored resource types are valid for this field:   `uptime_url`,   `gce_instance`,   `gae_app`,   `aws_ec2_instance`,   `aws_elb_load_balancer`   `k8s_service`   `servicedirectory_service`   `cloud_run_revision` (Part of 'resource' - only one field in this group can be set)",
           },
-          resource_group: {
+          resourceGroup: {
             type: "object",
             properties: {
-              group_id: {
+              groupId: {
                 type: "string",
                 description:
                   "The group of resources being monitored. Should be only the `[GROUP_ID]`, and not the full-path `projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]`.",
               },
-              resource_type: {
+              resourceType: {
                 type: "string",
                 enum: [
                   "RESOURCE_TYPE_UNSPECIFIED",
@@ -504,10 +671,10 @@ const createUptimeCheckConfig: AppBlock = {
               "The resource submessage for group checks. It can be used instead of a monitored resource, when multiple resources are being monitored. (Part of 'resource' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          synthetic_monitor: {
+          syntheticMonitor: {
             type: "object",
             properties: {
-              cloud_function_v2: {
+              cloudFunctionV2: {
                 type: "object",
                 properties: {
                   name: {
@@ -515,7 +682,7 @@ const createUptimeCheckConfig: AppBlock = {
                     description:
                       "Required. Fully qualified GCFv2 resource name i.e. `projects/{project}/locations/{location}/functions/{function}` Required.",
                   },
-                  cloud_run_revision: {
+                  cloudRunRevision: {
                     type: "object",
                     properties: {
                       type: {
@@ -543,16 +710,16 @@ const createUptimeCheckConfig: AppBlock = {
               "Describes a Synthetic Monitor to be invoked by Uptime. (Part of 'resource' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          http_check: {
+          httpCheck: {
             type: "object",
             properties: {
-              request_method: {
+              requestMethod: {
                 type: "string",
                 enum: ["METHOD_UNSPECIFIED", "GET", "POST"],
                 description:
                   "The HTTP request method to use for the check. If set to `METHOD_UNSPECIFIED` then `request_method` defaults to `GET`.",
               },
-              use_ssl: {
+              useSsl: {
                 type: "boolean",
                 description:
                   "If `true`, use HTTPS instead of HTTP to run the check.",
@@ -567,7 +734,7 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "Optional (defaults to 80 when `use_ssl` is `false`, and 443 when `use_ssl` is `true`). The TCP port on the HTTP server against which to run the check. Will be combined with host (specified within the `monitored_resource`) and `path` to construct the full URL.",
               },
-              auth_info: {
+              authInfo: {
                 type: "object",
                 properties: {
                   username: {
@@ -585,7 +752,7 @@ const createUptimeCheckConfig: AppBlock = {
                   "The authentication parameters to provide to the specified resource or URL that requires a username and password. Currently, only [Basic HTTP authentication](https://tools.ietf.org/html/rfc7617) is supported in Uptime checks.",
                 additionalProperties: true,
               },
-              mask_headers: {
+              maskHeaders: {
                 type: "boolean",
                 description:
                   "Boolean specifying whether to encrypt the header information. Encryption should be specified for any headers related to authentication that you do not wish to be seen when retrieving the configuration. The server will be responsible for encrypting the headers. On Get/List calls, if `mask_headers` is set to `true` then the headers will be obscured with `******.`",
@@ -598,18 +765,18 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The list of headers to send as part of the Uptime check request. If two headers have the same key and different values, they should be entered as a single header, with the value being a comma-separated list of all the desired values as described at https://www.w3.org/Protocols/rfc2616/rfc2616.txt (page 31). Entering two separate headers with the same key in a Create call will cause the first to be overwritten by the second. The maximum number of headers allowed is 100.",
               },
-              content_type: {
+              contentType: {
                 type: "string",
                 enum: ["TYPE_UNSPECIFIED", "URL_ENCODED", "USER_PROVIDED"],
                 description:
                   'The content type header to use for the check. The following configurations result in errors: 1. Content type is specified in both the `headers` field and the `content_type` field. 2. Request method is `GET` and `content_type` is not `TYPE_UNSPECIFIED` 3. Request method is `POST` and `content_type` is `TYPE_UNSPECIFIED`. 4. Request method is `POST` and a "Content-Type" header is provided via `headers` field. The `content_type` field should be used instead.',
               },
-              custom_content_type: {
+              customContentType: {
                 type: "string",
                 description:
                   "A user provided content type header to use for the check. The invalid configurations outlined in the `content_type` field apply to `custom_content_type`, as well as the following: 1. `content_type` is `URL_ENCODED` and `custom_content_type` is set. 2. `content_type` is `USER_PROVIDED` and `custom_content_type` is not set.",
               },
-              validate_ssl: {
+              validateSsl: {
                 type: "boolean",
                 description:
                   "Boolean specifying whether to include SSL certificate validation as a part of the Uptime check. Only applies to checks where `monitored_resource` is set to `uptime_url`. If `use_ssl` is `false`, setting `validate_ssl` to `true` has no effect.",
@@ -618,17 +785,17 @@ const createUptimeCheckConfig: AppBlock = {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              accepted_response_status_codes: {
+              acceptedResponseStatusCodes: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    status_value: {
+                    statusValue: {
                       type: "integer",
                       description:
                         "A status code to accept. (Part of 'status_code' - only one field in this group can be set)",
                     },
-                    status_class: {
+                    statusClass: {
                       type: "string",
                       enum: [
                         "STATUS_CLASS_UNSPECIFIED",
@@ -650,10 +817,10 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "If present, the check will only pass if the HTTP response status code is in this set of status codes. If empty, the HTTP status code will only pass if the HTTP status code is 200-299.",
               },
-              ping_config: {
+              pingConfig: {
                 type: "object",
                 properties: {
-                  pings_count: {
+                  pingsCount: {
                     type: "integer",
                     description:
                       "Number of ICMP pings. A maximum of 3 ICMP pings is currently supported.",
@@ -663,7 +830,7 @@ const createUptimeCheckConfig: AppBlock = {
                   "Information involved in sending ICMP pings alongside public HTTP/TCP checks. For HTTP, the pings are performed for each part of the redirect chain.",
                 additionalProperties: true,
               },
-              service_agent_authentication: {
+              serviceAgentAuthentication: {
                 type: "object",
                 properties: {
                   type: {
@@ -684,7 +851,7 @@ const createUptimeCheckConfig: AppBlock = {
               "Information involved in an HTTP/HTTPS Uptime check request. (Part of 'check_request_type' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          tcp_check: {
+          tcpCheck: {
             type: "object",
             properties: {
               port: {
@@ -692,10 +859,10 @@ const createUptimeCheckConfig: AppBlock = {
                 description:
                   "The TCP port on the server against which to run the check. Will be combined with host (specified within the `monitored_resource`) to construct the full URL. Required.",
               },
-              ping_config: {
+              pingConfig: {
                 type: "object",
                 properties: {
-                  pings_count: {
+                  pingsCount: {
                     type: "integer",
                     description:
                       "Number of ICMP pings. A maximum of 3 ICMP pings is currently supported.",
@@ -718,7 +885,7 @@ const createUptimeCheckConfig: AppBlock = {
             type: "string",
             description: "Duration string (e.g., '1.5s', '300s')",
           },
-          content_matchers: {
+          contentMatchers: {
             type: "array",
             items: {
               type: "object",
@@ -742,15 +909,15 @@ const createUptimeCheckConfig: AppBlock = {
                   description:
                     "The type of content matcher that will be applied to the server output, compared to the `content` string when the check is run.",
                 },
-                json_path_matcher: {
+                jsonPathMatcher: {
                   type: "object",
                   properties: {
-                    json_path: {
+                    jsonPath: {
                       type: "string",
                       description:
                         "JSONPath within the response output pointing to the expected `ContentMatcher::content` to match against.",
                     },
-                    json_matcher: {
+                    jsonMatcher: {
                       type: "string",
                       enum: [
                         "JSON_PATH_MATCHER_OPTION_UNSPECIFIED",
@@ -773,7 +940,7 @@ const createUptimeCheckConfig: AppBlock = {
             description:
               "The content that is expected to appear in the data returned by the target server against which the check is run.  Currently, only the first entry in the `content_matchers` list is supported, and additional entries will be ignored. This field is optional and should only be specified if a content match is required as part of the/ Uptime check.",
           },
-          checker_type: {
+          checkerType: {
             type: "string",
             enum: [
               "CHECKER_TYPE_UNSPECIFIED",
@@ -783,7 +950,7 @@ const createUptimeCheckConfig: AppBlock = {
             description:
               "The type of checkers to use to execute the Uptime check.",
           },
-          selected_regions: {
+          selectedRegions: {
             type: "array",
             items: {
               type: "string",
@@ -802,12 +969,12 @@ const createUptimeCheckConfig: AppBlock = {
             description:
               "The list of regions from which the check will be run. Some regions contain one location, and others contain more than one. If this field is specified, enough regions must be provided to include a minimum of 3 locations.  Not specifying this field will result in Uptime checks running from all available regions.",
           },
-          is_internal: {
+          isInternal: {
             type: "boolean",
             description:
               "If this is `true`, then checks are made only from the 'internal_checkers'. If it is `false`, then checks are made only from the 'selected_regions'. It is an error to provide 'selected_regions' when is_internal is `true`, or to provide 'internal_checkers' when is_internal is `false`.",
           },
-          internal_checkers: {
+          internalCheckers: {
             type: "array",
             items: {
               type: "object",
@@ -817,7 +984,7 @@ const createUptimeCheckConfig: AppBlock = {
                   description:
                     "A unique resource name for this InternalChecker. The format is:      projects/[PROJECT_ID_OR_NUMBER]/internalCheckers/[INTERNAL_CHECKER_ID]  `[PROJECT_ID_OR_NUMBER]` is the Cloud Monitoring Metrics Scope project for the Uptime check config associated with the internal checker.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "The checker's human-readable name. The display name should be unique within a Cloud Monitoring Metrics Scope in order to make it easier to identify; however, uniqueness is not enforced.",
@@ -827,12 +994,12 @@ const createUptimeCheckConfig: AppBlock = {
                   description:
                     'The [GCP VPC network](https://cloud.google.com/vpc/docs/vpc) where the internal resource lives (ex: "default").',
                 },
-                gcp_zone: {
+                gcpZone: {
                   type: "string",
                   description:
                     "The GCP zone the Uptime check should egress from. Only respected for internal Uptime checks, where internal_network is specified.",
                 },
-                peer_project_id: {
+                peerProjectId: {
                   type: "string",
                   description:
                     "The GCP project ID where the internal checker lives. Not necessary the same as the Metrics Scope project.",
@@ -851,7 +1018,7 @@ const createUptimeCheckConfig: AppBlock = {
             description:
               "The internal checkers that this check will egress from. If `is_internal` is `true` and this list is empty, the check will egress from all the InternalCheckers configured for the project that owns this `UptimeCheckConfig`.",
           },
-          user_labels: {
+          userLabels: {
             type: "object",
             additionalProperties: {
               type: "string",

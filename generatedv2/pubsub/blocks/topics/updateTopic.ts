@@ -1,5 +1,193 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import { getPublisherClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  topic: {
+    name: "topic",
+    fields: {
+      messageStoragePolicy: {
+        name: "message_storage_policy",
+        fields: {
+          allowedPersistenceRegions: "allowed_persistence_regions",
+          enforceInTransit: "enforce_in_transit",
+        },
+      },
+      kmsKeyName: "kms_key_name",
+      schemaSettings: {
+        name: "schema_settings",
+        fields: {
+          firstRevisionId: "first_revision_id",
+          lastRevisionId: "last_revision_id",
+        },
+      },
+      satisfiesPzs: "satisfies_pzs",
+      messageRetentionDuration: "message_retention_duration",
+      ingestionDataSourceSettings: {
+        name: "ingestion_data_source_settings",
+        fields: {
+          awsKinesis: {
+            name: "aws_kinesis",
+            fields: {
+              streamArn: "stream_arn",
+              consumerArn: "consumer_arn",
+              awsRoleArn: "aws_role_arn",
+              gcpServiceAccount: "gcp_service_account",
+            },
+          },
+          cloudStorage: {
+            name: "cloud_storage",
+            fields: {
+              textFormat: "text_format",
+              avroFormat: "avro_format",
+              pubsubAvroFormat: "pubsub_avro_format",
+              minimumObjectCreateTime: "minimum_object_create_time",
+              matchGlob: "match_glob",
+            },
+          },
+          azureEventHubs: {
+            name: "azure_event_hubs",
+            fields: {
+              resourceGroup: "resource_group",
+              eventHub: "event_hub",
+              clientId: "client_id",
+              tenantId: "tenant_id",
+              subscriptionId: "subscription_id",
+              gcpServiceAccount: "gcp_service_account",
+            },
+          },
+          awsMsk: {
+            name: "aws_msk",
+            fields: {
+              clusterArn: "cluster_arn",
+              awsRoleArn: "aws_role_arn",
+              gcpServiceAccount: "gcp_service_account",
+            },
+          },
+          confluentCloud: {
+            name: "confluent_cloud",
+            fields: {
+              bootstrapServer: "bootstrap_server",
+              clusterId: "cluster_id",
+              identityPoolId: "identity_pool_id",
+              gcpServiceAccount: "gcp_service_account",
+            },
+          },
+          platformLogsSettings: "platform_logs_settings",
+        },
+      },
+      messageTransforms: {
+        name: "message_transforms",
+        fields: {
+          javascriptUdf: {
+            name: "javascript_udf",
+            fields: {
+              functionName: "function_name",
+            },
+          },
+          aiInference: {
+            name: "ai_inference",
+            fields: {
+              unstructuredInference: "unstructured_inference",
+              serviceAccountEmail: "service_account_email",
+            },
+          },
+        },
+      },
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  message_storage_policy: {
+    name: "messageStoragePolicy",
+    fields: {
+      allowed_persistence_regions: "allowedPersistenceRegions",
+      enforce_in_transit: "enforceInTransit",
+    },
+  },
+  kms_key_name: "kmsKeyName",
+  schema_settings: {
+    name: "schemaSettings",
+    fields: {
+      first_revision_id: "firstRevisionId",
+      last_revision_id: "lastRevisionId",
+    },
+  },
+  satisfies_pzs: "satisfiesPzs",
+  message_retention_duration: "messageRetentionDuration",
+  ingestion_data_source_settings: {
+    name: "ingestionDataSourceSettings",
+    fields: {
+      aws_kinesis: {
+        name: "awsKinesis",
+        fields: {
+          stream_arn: "streamArn",
+          consumer_arn: "consumerArn",
+          aws_role_arn: "awsRoleArn",
+          gcp_service_account: "gcpServiceAccount",
+        },
+      },
+      cloud_storage: {
+        name: "cloudStorage",
+        fields: {
+          text_format: "textFormat",
+          avro_format: "avroFormat",
+          pubsub_avro_format: "pubsubAvroFormat",
+          minimum_object_create_time: "minimumObjectCreateTime",
+          match_glob: "matchGlob",
+        },
+      },
+      azure_event_hubs: {
+        name: "azureEventHubs",
+        fields: {
+          resource_group: "resourceGroup",
+          event_hub: "eventHub",
+          client_id: "clientId",
+          tenant_id: "tenantId",
+          subscription_id: "subscriptionId",
+          gcp_service_account: "gcpServiceAccount",
+        },
+      },
+      aws_msk: {
+        name: "awsMsk",
+        fields: {
+          cluster_arn: "clusterArn",
+          aws_role_arn: "awsRoleArn",
+          gcp_service_account: "gcpServiceAccount",
+        },
+      },
+      confluent_cloud: {
+        name: "confluentCloud",
+        fields: {
+          bootstrap_server: "bootstrapServer",
+          cluster_id: "clusterId",
+          identity_pool_id: "identityPoolId",
+          gcp_service_account: "gcpServiceAccount",
+        },
+      },
+      platform_logs_settings: "platformLogsSettings",
+    },
+  },
+  message_transforms: {
+    name: "messageTransforms",
+    fields: {
+      javascript_udf: {
+        name: "javascriptUdf",
+        fields: {
+          function_name: "functionName",
+        },
+      },
+      ai_inference: {
+        name: "aiInference",
+        fields: {
+          unstructured_inference: "unstructuredInference",
+          service_account_email: "serviceAccountEmail",
+        },
+      },
+    },
+  },
+};
 
 const updateTopic: AppBlock = {
   name: "Update Topic",
@@ -27,10 +215,10 @@ const updateTopic: AppBlock = {
                 description:
                   "Optional. See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).",
               },
-              message_storage_policy: {
+              messageStoragePolicy: {
                 type: "object",
                 properties: {
-                  allowed_persistence_regions: {
+                  allowedPersistenceRegions: {
                     type: "array",
                     items: {
                       type: "string",
@@ -38,7 +226,7 @@ const updateTopic: AppBlock = {
                     description:
                       "Optional. A list of IDs of Google Cloud regions where messages that are published to the topic may be persisted in storage. Messages published by publishers running in non-allowed Google Cloud regions (or running outside of Google Cloud altogether) are routed for storage in one of the allowed regions. An empty list means that no regions are allowed, and is not a valid configuration.",
                   },
-                  enforce_in_transit: {
+                  enforceInTransit: {
                     type: "boolean",
                     description:
                       "Optional. If true, `allowed_persistence_regions` is also used to enforce in-transit guarantees for messages. That is, Pub/Sub will fail Publish operations on this topic and subscribe operations on any subscription attached to this topic in any region that is not in `allowed_persistence_regions`.",
@@ -48,12 +236,12 @@ const updateTopic: AppBlock = {
                   "A policy constraining the storage of messages published to the topic.",
                 additionalProperties: true,
               },
-              kms_key_name: {
+              kmsKeyName: {
                 type: "string",
                 description:
                   "Optional. The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
               },
-              schema_settings: {
+              schemaSettings: {
                 type: "object",
                 properties: {
                   schema: {
@@ -66,12 +254,12 @@ const updateTopic: AppBlock = {
                     enum: ["ENCODING_UNSPECIFIED", "JSON", "BINARY"],
                     description: "Possible encoding types for messages.",
                   },
-                  first_revision_id: {
+                  firstRevisionId: {
                     type: "string",
                     description:
                       "Optional. The minimum (inclusive) revision allowed for validating messages. If empty or not present, allow any revision to be validated against last_revision or any revision created before.",
                   },
-                  last_revision_id: {
+                  lastRevisionId: {
                     type: "string",
                     description:
                       "Optional. The maximum (inclusive) revision allowed for validating messages. If empty or not present, allow any revision to be validated against first_revision or any revision created after.",
@@ -82,53 +270,53 @@ const updateTopic: AppBlock = {
                   "Settings for validating messages published against a schema.",
                 additionalProperties: true,
               },
-              satisfies_pzs: {
+              satisfiesPzs: {
                 type: "boolean",
                 description:
                   "Optional. Reserved for future use. This field is set only in responses from the server; it is ignored if it is set in any requests.",
               },
-              message_retention_duration: {
+              messageRetentionDuration: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              ingestion_data_source_settings: {
+              ingestionDataSourceSettings: {
                 type: "object",
                 properties: {
-                  aws_kinesis: {
+                  awsKinesis: {
                     type: "object",
                     properties: {
-                      stream_arn: {
+                      streamArn: {
                         type: "string",
                         description:
                           "Required. The Kinesis stream ARN to ingest data from.",
                       },
-                      consumer_arn: {
+                      consumerArn: {
                         type: "string",
                         description:
                           "Required. The Kinesis consumer ARN to used for ingestion in Enhanced Fan-Out mode. The consumer must be already created and ready to be used.",
                       },
-                      aws_role_arn: {
+                      awsRoleArn: {
                         type: "string",
                         description:
                           "Required. AWS role ARN to be used for Federated Identity authentication with Kinesis. Check the Pub/Sub docs for how to set up this role and the required permissions that need to be attached to it.",
                       },
-                      gcp_service_account: {
+                      gcpServiceAccount: {
                         type: "string",
                         description:
                           "Required. The GCP service account to be used for Federated Identity authentication with Kinesis (via a `AssumeRoleWithWebIdentity` call for the provided role). The `aws_role_arn` must be set up with `accounts.google.com:sub` equals to this service account number.",
                       },
                     },
                     required: [
-                      "stream_arn",
-                      "consumer_arn",
-                      "aws_role_arn",
-                      "gcp_service_account",
+                      "streamArn",
+                      "consumerArn",
+                      "awsRoleArn",
+                      "gcpServiceAccount",
                     ],
                     description:
                       "Ingestion settings for Amazon Kinesis Data Streams. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  cloud_storage: {
+                  cloudStorage: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -136,7 +324,7 @@ const updateTopic: AppBlock = {
                         description:
                           'Optional. Cloud Storage bucket. The bucket name must be without any prefix like "gs://". See the [bucket naming requirements] (https://cloud.google.com/storage/docs/buckets#naming).',
                       },
-                      text_format: {
+                      textFormat: {
                         type: "object",
                         properties: {
                           delimiter: {
@@ -148,26 +336,26 @@ const updateTopic: AppBlock = {
                           "Configuration for reading Cloud Storage data in text format. Each line of text as specified by the delimiter will be set to the `data` field of a Pub/Sub message. (Part of 'input_format' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      avro_format: {
+                      avroFormat: {
                         type: "object",
                         properties: {},
                         description:
                           "Configuration for reading Cloud Storage data in Avro binary format. The bytes of each object will be set to the `data` field of a Pub/Sub message. (Part of 'input_format' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      pubsub_avro_format: {
+                      pubsubAvroFormat: {
                         type: "object",
                         properties: {},
                         description:
                           "Configuration for reading Cloud Storage data written via [Cloud Storage subscriptions](https://cloud.google.com/pubsub/docs/cloudstorage). The data and attributes fields of the originally exported Pub/Sub message will be restored when publishing. (Part of 'input_format' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      minimum_object_create_time: {
+                      minimumObjectCreateTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                       },
-                      match_glob: {
+                      matchGlob: {
                         type: "string",
                         description:
                           "Optional. Glob pattern used to match objects that will be ingested. If unset, all objects will be ingested. See the [supported patterns](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob).",
@@ -177,10 +365,10 @@ const updateTopic: AppBlock = {
                       "Ingestion settings for Cloud Storage. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  azure_event_hubs: {
+                  azureEventHubs: {
                     type: "object",
                     properties: {
-                      resource_group: {
+                      resourceGroup: {
                         type: "string",
                         description:
                           "Optional. Name of the resource group within the azure subscription.",
@@ -190,25 +378,25 @@ const updateTopic: AppBlock = {
                         description:
                           "Optional. The name of the Event Hubs namespace.",
                       },
-                      event_hub: {
+                      eventHub: {
                         type: "string",
                         description: "Optional. The name of the Event Hub.",
                       },
-                      client_id: {
+                      clientId: {
                         type: "string",
                         description:
                           "Optional. The client id of the Azure application that is being used to authenticate Pub/Sub.",
                       },
-                      tenant_id: {
+                      tenantId: {
                         type: "string",
                         description:
                           "Optional. The tenant id of the Azure application that is being used to authenticate Pub/Sub.",
                       },
-                      subscription_id: {
+                      subscriptionId: {
                         type: "string",
                         description: "Optional. The Azure subscription id.",
                       },
-                      gcp_service_account: {
+                      gcpServiceAccount: {
                         type: "string",
                         description:
                           "Optional. The GCP service account to be used for Federated Identity authentication.",
@@ -218,10 +406,10 @@ const updateTopic: AppBlock = {
                       "Ingestion settings for Azure Event Hubs. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  aws_msk: {
+                  awsMsk: {
                     type: "object",
                     properties: {
-                      cluster_arn: {
+                      clusterArn: {
                         type: "string",
                         description:
                           "Required. The Amazon Resource Name (ARN) that uniquely identifies the cluster.",
@@ -231,36 +419,36 @@ const updateTopic: AppBlock = {
                         description:
                           "Required. The name of the topic in the Amazon MSK cluster that Pub/Sub will import from.",
                       },
-                      aws_role_arn: {
+                      awsRoleArn: {
                         type: "string",
                         description:
                           "Required. AWS role ARN to be used for Federated Identity authentication with Amazon MSK. Check the Pub/Sub docs for how to set up this role and the required permissions that need to be attached to it.",
                       },
-                      gcp_service_account: {
+                      gcpServiceAccount: {
                         type: "string",
                         description:
                           "Required. The GCP service account to be used for Federated Identity authentication with Amazon MSK (via a `AssumeRoleWithWebIdentity` call for the provided role). The `aws_role_arn` must be set up with `accounts.google.com:sub` equals to this service account number.",
                       },
                     },
                     required: [
-                      "cluster_arn",
+                      "clusterArn",
                       "topic",
-                      "aws_role_arn",
-                      "gcp_service_account",
+                      "awsRoleArn",
+                      "gcpServiceAccount",
                     ],
                     description:
                       "Ingestion settings for Amazon MSK. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  confluent_cloud: {
+                  confluentCloud: {
                     type: "object",
                     properties: {
-                      bootstrap_server: {
+                      bootstrapServer: {
                         type: "string",
                         description:
                           "Required. The address of the bootstrap server. The format is url:port.",
                       },
-                      cluster_id: {
+                      clusterId: {
                         type: "string",
                         description: "Required. The id of the cluster.",
                       },
@@ -269,29 +457,29 @@ const updateTopic: AppBlock = {
                         description:
                           "Required. The name of the topic in the Confluent Cloud cluster that Pub/Sub will import from.",
                       },
-                      identity_pool_id: {
+                      identityPoolId: {
                         type: "string",
                         description:
                           "Required. The id of the identity pool to be used for Federated Identity authentication with Confluent Cloud. See https://docs.confluent.io/cloud/current/security/authenticate/workload-identities/identity-providers/oauth/identity-pools.html#add-oauth-identity-pools.",
                       },
-                      gcp_service_account: {
+                      gcpServiceAccount: {
                         type: "string",
                         description:
                           "Required. The GCP service account to be used for Federated Identity authentication with `identity_pool_id`.",
                       },
                     },
                     required: [
-                      "bootstrap_server",
-                      "cluster_id",
+                      "bootstrapServer",
+                      "clusterId",
                       "topic",
-                      "identity_pool_id",
-                      "gcp_service_account",
+                      "identityPoolId",
+                      "gcpServiceAccount",
                     ],
                     description:
                       "Ingestion settings for Confluent Cloud. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  platform_logs_settings: {
+                  platformLogsSettings: {
                     type: "object",
                     properties: {
                       severity: {
@@ -317,15 +505,15 @@ const updateTopic: AppBlock = {
                   "Settings for an ingestion data source on a topic.",
                 additionalProperties: true,
               },
-              message_transforms: {
+              messageTransforms: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    javascript_udf: {
+                    javascriptUdf: {
                       type: "object",
                       properties: {
-                        function_name: {
+                        functionName: {
                           type: "string",
                           description:
                             "Required. Name of the JavasScript function that should applied to Pub/Sub messages.",
@@ -336,12 +524,12 @@ const updateTopic: AppBlock = {
                             "Required. JavaScript code that contains a function `function_name` with the below signature:  ```   /**   * Transforms a Pub/Sub message.    * @return {(Object<string, (string | Object<string, string>)>|null)} - To   * filter a message, return `null`. To transform a message return a map   * with the following keys:   *   - (required) 'data' : {string}   *   - (optional) 'attributes' : {Object<string, string>}   * Returning empty `attributes` will remove all attributes from the   * message.   *   * @param  {(Object<string, (string | Object<string, string>)>} Pub/Sub   * message. Keys:   *   - (required) 'data' : {string}   *   - (required) 'attributes' : {Object<string, string>}   *   * @param  {Object<string, any>} metadata - Pub/Sub message metadata.   * Keys:   *   - (optional) 'message_id'  : {string}   *   - (optional) 'publish_time': {string} YYYY-MM-DDTHH:MM:SSZ format   *   - (optional) 'ordering_key': {string}   */    function <function_name>(message, metadata) {   } ```",
                         },
                       },
-                      required: ["function_name", "code"],
+                      required: ["functionName", "code"],
                       description:
                         "User-defined JavaScript function that can transform or filter a Pub/Sub message. (Part of 'transform' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    ai_inference: {
+                    aiInference: {
                       type: "object",
                       properties: {
                         endpoint: {
@@ -349,7 +537,7 @@ const updateTopic: AppBlock = {
                           description:
                             "Required. An endpoint to a Vertex AI model of the form `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`. Vertex AI API requests will be sent to this endpoint.",
                         },
-                        unstructured_inference: {
+                        unstructuredInference: {
                           type: "object",
                           properties: {
                             parameters: {
@@ -363,7 +551,7 @@ const updateTopic: AppBlock = {
                             "Configuration for making inferences using arbitrary JSON payloads.",
                           additionalProperties: true,
                         },
-                        service_account_email: {
+                        serviceAccountEmail: {
                           type: "string",
                           description:
                             "Optional. The service account to use to make prediction requests against endpoints. The resource creator or updater that specifies this field must have `iam.serviceAccounts.actAs` permission on the service account. If not specified, the Pub/Sub [service agent]({$universe.dns_names.final_documentation_domain}/iam/docs/service-agents), service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.",
@@ -406,7 +594,7 @@ const updateTopic: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             'Required. Indicates which fields in the provided topic to update. Must be specified and non-empty. Note that if `update_mask` contains "message_storage_policy" but the `message_storage_policy` is not set in the `topic` provided above, then the updated value is determined by the policy configured at the project or organization level.',
@@ -421,11 +609,7 @@ const updateTopic: AppBlock = {
       onEvent: async (input) => {
         const client = await getPublisherClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.topic !== undefined)
-          request.topic = input.event.inputConfig.topic;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateTopic(request, (err: any, response: any) => {
@@ -439,7 +623,8 @@ const updateTopic: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -462,10 +647,10 @@ const updateTopic: AppBlock = {
             description:
               "Optional. See [Creating and managing labels] (https://cloud.google.com/pubsub/docs/labels).",
           },
-          message_storage_policy: {
+          messageStoragePolicy: {
             type: "object",
             properties: {
-              allowed_persistence_regions: {
+              allowedPersistenceRegions: {
                 type: "array",
                 items: {
                   type: "string",
@@ -473,7 +658,7 @@ const updateTopic: AppBlock = {
                 description:
                   "Optional. A list of IDs of Google Cloud regions where messages that are published to the topic may be persisted in storage. Messages published by publishers running in non-allowed Google Cloud regions (or running outside of Google Cloud altogether) are routed for storage in one of the allowed regions. An empty list means that no regions are allowed, and is not a valid configuration.",
               },
-              enforce_in_transit: {
+              enforceInTransit: {
                 type: "boolean",
                 description:
                   "Optional. If true, `allowed_persistence_regions` is also used to enforce in-transit guarantees for messages. That is, Pub/Sub will fail Publish operations on this topic and subscribe operations on any subscription attached to this topic in any region that is not in `allowed_persistence_regions`.",
@@ -483,12 +668,12 @@ const updateTopic: AppBlock = {
               "A policy constraining the storage of messages published to the topic.",
             additionalProperties: true,
           },
-          kms_key_name: {
+          kmsKeyName: {
             type: "string",
             description:
               "Optional. The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic.  The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
           },
-          schema_settings: {
+          schemaSettings: {
             type: "object",
             properties: {
               schema: {
@@ -501,12 +686,12 @@ const updateTopic: AppBlock = {
                 enum: ["ENCODING_UNSPECIFIED", "JSON", "BINARY"],
                 description: "Possible encoding types for messages.",
               },
-              first_revision_id: {
+              firstRevisionId: {
                 type: "string",
                 description:
                   "Optional. The minimum (inclusive) revision allowed for validating messages. If empty or not present, allow any revision to be validated against last_revision or any revision created before.",
               },
-              last_revision_id: {
+              lastRevisionId: {
                 type: "string",
                 description:
                   "Optional. The maximum (inclusive) revision allowed for validating messages. If empty or not present, allow any revision to be validated against first_revision or any revision created after.",
@@ -517,12 +702,12 @@ const updateTopic: AppBlock = {
               "Settings for validating messages published against a schema.",
             additionalProperties: true,
           },
-          satisfies_pzs: {
+          satisfiesPzs: {
             type: "boolean",
             description:
               "Optional. Reserved for future use. This field is set only in responses from the server; it is ignored if it is set in any requests.",
           },
-          message_retention_duration: {
+          messageRetentionDuration: {
             type: "string",
             description: "Duration string (e.g., '1.5s', '300s')",
           },
@@ -532,10 +717,10 @@ const updateTopic: AppBlock = {
             description:
               "Output only. An output-only field indicating the state of the topic.",
           },
-          ingestion_data_source_settings: {
+          ingestionDataSourceSettings: {
             type: "object",
             properties: {
-              aws_kinesis: {
+              awsKinesis: {
                 type: "object",
                 properties: {
                   state: {
@@ -551,38 +736,38 @@ const updateTopic: AppBlock = {
                     description:
                       "Output only. An output-only field that indicates the state of the Kinesis ingestion source.",
                   },
-                  stream_arn: {
+                  streamArn: {
                     type: "string",
                     description:
                       "Required. The Kinesis stream ARN to ingest data from.",
                   },
-                  consumer_arn: {
+                  consumerArn: {
                     type: "string",
                     description:
                       "Required. The Kinesis consumer ARN to used for ingestion in Enhanced Fan-Out mode. The consumer must be already created and ready to be used.",
                   },
-                  aws_role_arn: {
+                  awsRoleArn: {
                     type: "string",
                     description:
                       "Required. AWS role ARN to be used for Federated Identity authentication with Kinesis. Check the Pub/Sub docs for how to set up this role and the required permissions that need to be attached to it.",
                   },
-                  gcp_service_account: {
+                  gcpServiceAccount: {
                     type: "string",
                     description:
                       "Required. The GCP service account to be used for Federated Identity authentication with Kinesis (via a `AssumeRoleWithWebIdentity` call for the provided role). The `aws_role_arn` must be set up with `accounts.google.com:sub` equals to this service account number.",
                   },
                 },
                 required: [
-                  "stream_arn",
-                  "consumer_arn",
-                  "aws_role_arn",
-                  "gcp_service_account",
+                  "streamArn",
+                  "consumerArn",
+                  "awsRoleArn",
+                  "gcpServiceAccount",
                 ],
                 description:
                   "Ingestion settings for Amazon Kinesis Data Streams. (Part of 'source' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              cloud_storage: {
+              cloudStorage: {
                 type: "object",
                 properties: {
                   state: {
@@ -603,7 +788,7 @@ const updateTopic: AppBlock = {
                     description:
                       'Optional. Cloud Storage bucket. The bucket name must be without any prefix like "gs://". See the [bucket naming requirements] (https://cloud.google.com/storage/docs/buckets#naming).',
                   },
-                  text_format: {
+                  textFormat: {
                     type: "object",
                     properties: {
                       delimiter: {
@@ -615,26 +800,26 @@ const updateTopic: AppBlock = {
                       "Configuration for reading Cloud Storage data in text format. Each line of text as specified by the delimiter will be set to the `data` field of a Pub/Sub message. (Part of 'input_format' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  avro_format: {
+                  avroFormat: {
                     type: "object",
                     properties: {},
                     description:
                       "Configuration for reading Cloud Storage data in Avro binary format. The bytes of each object will be set to the `data` field of a Pub/Sub message. (Part of 'input_format' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  pubsub_avro_format: {
+                  pubsubAvroFormat: {
                     type: "object",
                     properties: {},
                     description:
                       "Configuration for reading Cloud Storage data written via [Cloud Storage subscriptions](https://cloud.google.com/pubsub/docs/cloudstorage). The data and attributes fields of the originally exported Pub/Sub message will be restored when publishing. (Part of 'input_format' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  minimum_object_create_time: {
+                  minimumObjectCreateTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                   },
-                  match_glob: {
+                  matchGlob: {
                     type: "string",
                     description:
                       "Optional. Glob pattern used to match objects that will be ingested. If unset, all objects will be ingested. See the [supported patterns](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob).",
@@ -644,7 +829,7 @@ const updateTopic: AppBlock = {
                   "Ingestion settings for Cloud Storage. (Part of 'source' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              azure_event_hubs: {
+              azureEventHubs: {
                 type: "object",
                 properties: {
                   state: {
@@ -662,7 +847,7 @@ const updateTopic: AppBlock = {
                     description:
                       "Output only. An output-only field that indicates the state of the Event Hubs ingestion source.",
                   },
-                  resource_group: {
+                  resourceGroup: {
                     type: "string",
                     description:
                       "Optional. Name of the resource group within the azure subscription.",
@@ -672,25 +857,25 @@ const updateTopic: AppBlock = {
                     description:
                       "Optional. The name of the Event Hubs namespace.",
                   },
-                  event_hub: {
+                  eventHub: {
                     type: "string",
                     description: "Optional. The name of the Event Hub.",
                   },
-                  client_id: {
+                  clientId: {
                     type: "string",
                     description:
                       "Optional. The client id of the Azure application that is being used to authenticate Pub/Sub.",
                   },
-                  tenant_id: {
+                  tenantId: {
                     type: "string",
                     description:
                       "Optional. The tenant id of the Azure application that is being used to authenticate Pub/Sub.",
                   },
-                  subscription_id: {
+                  subscriptionId: {
                     type: "string",
                     description: "Optional. The Azure subscription id.",
                   },
-                  gcp_service_account: {
+                  gcpServiceAccount: {
                     type: "string",
                     description:
                       "Optional. The GCP service account to be used for Federated Identity authentication.",
@@ -700,7 +885,7 @@ const updateTopic: AppBlock = {
                   "Ingestion settings for Azure Event Hubs. (Part of 'source' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              aws_msk: {
+              awsMsk: {
                 type: "object",
                 properties: {
                   state: {
@@ -716,7 +901,7 @@ const updateTopic: AppBlock = {
                     description:
                       "Output only. An output-only field that indicates the state of the Amazon MSK ingestion source.",
                   },
-                  cluster_arn: {
+                  clusterArn: {
                     type: "string",
                     description:
                       "Required. The Amazon Resource Name (ARN) that uniquely identifies the cluster.",
@@ -726,28 +911,28 @@ const updateTopic: AppBlock = {
                     description:
                       "Required. The name of the topic in the Amazon MSK cluster that Pub/Sub will import from.",
                   },
-                  aws_role_arn: {
+                  awsRoleArn: {
                     type: "string",
                     description:
                       "Required. AWS role ARN to be used for Federated Identity authentication with Amazon MSK. Check the Pub/Sub docs for how to set up this role and the required permissions that need to be attached to it.",
                   },
-                  gcp_service_account: {
+                  gcpServiceAccount: {
                     type: "string",
                     description:
                       "Required. The GCP service account to be used for Federated Identity authentication with Amazon MSK (via a `AssumeRoleWithWebIdentity` call for the provided role). The `aws_role_arn` must be set up with `accounts.google.com:sub` equals to this service account number.",
                   },
                 },
                 required: [
-                  "cluster_arn",
+                  "clusterArn",
                   "topic",
-                  "aws_role_arn",
-                  "gcp_service_account",
+                  "awsRoleArn",
+                  "gcpServiceAccount",
                 ],
                 description:
                   "Ingestion settings for Amazon MSK. (Part of 'source' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              confluent_cloud: {
+              confluentCloud: {
                 type: "object",
                 properties: {
                   state: {
@@ -764,12 +949,12 @@ const updateTopic: AppBlock = {
                     description:
                       "Output only. An output-only field that indicates the state of the Confluent Cloud ingestion source.",
                   },
-                  bootstrap_server: {
+                  bootstrapServer: {
                     type: "string",
                     description:
                       "Required. The address of the bootstrap server. The format is url:port.",
                   },
-                  cluster_id: {
+                  clusterId: {
                     type: "string",
                     description: "Required. The id of the cluster.",
                   },
@@ -778,29 +963,29 @@ const updateTopic: AppBlock = {
                     description:
                       "Required. The name of the topic in the Confluent Cloud cluster that Pub/Sub will import from.",
                   },
-                  identity_pool_id: {
+                  identityPoolId: {
                     type: "string",
                     description:
                       "Required. The id of the identity pool to be used for Federated Identity authentication with Confluent Cloud. See https://docs.confluent.io/cloud/current/security/authenticate/workload-identities/identity-providers/oauth/identity-pools.html#add-oauth-identity-pools.",
                   },
-                  gcp_service_account: {
+                  gcpServiceAccount: {
                     type: "string",
                     description:
                       "Required. The GCP service account to be used for Federated Identity authentication with `identity_pool_id`.",
                   },
                 },
                 required: [
-                  "bootstrap_server",
-                  "cluster_id",
+                  "bootstrapServer",
+                  "clusterId",
                   "topic",
-                  "identity_pool_id",
-                  "gcp_service_account",
+                  "identityPoolId",
+                  "gcpServiceAccount",
                 ],
                 description:
                   "Ingestion settings for Confluent Cloud. (Part of 'source' - only one field in this group can be set)",
                 additionalProperties: true,
               },
-              platform_logs_settings: {
+              platformLogsSettings: {
                 type: "object",
                 properties: {
                   severity: {
@@ -824,15 +1009,15 @@ const updateTopic: AppBlock = {
             description: "Settings for an ingestion data source on a topic.",
             additionalProperties: true,
           },
-          message_transforms: {
+          messageTransforms: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                javascript_udf: {
+                javascriptUdf: {
                   type: "object",
                   properties: {
-                    function_name: {
+                    functionName: {
                       type: "string",
                       description:
                         "Required. Name of the JavasScript function that should applied to Pub/Sub messages.",
@@ -843,12 +1028,12 @@ const updateTopic: AppBlock = {
                         "Required. JavaScript code that contains a function `function_name` with the below signature:  ```   /**   * Transforms a Pub/Sub message.    * @return {(Object<string, (string | Object<string, string>)>|null)} - To   * filter a message, return `null`. To transform a message return a map   * with the following keys:   *   - (required) 'data' : {string}   *   - (optional) 'attributes' : {Object<string, string>}   * Returning empty `attributes` will remove all attributes from the   * message.   *   * @param  {(Object<string, (string | Object<string, string>)>} Pub/Sub   * message. Keys:   *   - (required) 'data' : {string}   *   - (required) 'attributes' : {Object<string, string>}   *   * @param  {Object<string, any>} metadata - Pub/Sub message metadata.   * Keys:   *   - (optional) 'message_id'  : {string}   *   - (optional) 'publish_time': {string} YYYY-MM-DDTHH:MM:SSZ format   *   - (optional) 'ordering_key': {string}   */    function <function_name>(message, metadata) {   } ```",
                     },
                   },
-                  required: ["function_name", "code"],
+                  required: ["functionName", "code"],
                   description:
                     "User-defined JavaScript function that can transform or filter a Pub/Sub message. (Part of 'transform' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                ai_inference: {
+                aiInference: {
                   type: "object",
                   properties: {
                     endpoint: {
@@ -856,7 +1041,7 @@ const updateTopic: AppBlock = {
                       description:
                         "Required. An endpoint to a Vertex AI model of the form `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`. Vertex AI API requests will be sent to this endpoint.",
                     },
-                    unstructured_inference: {
+                    unstructuredInference: {
                       type: "object",
                       properties: {
                         parameters: {
@@ -870,7 +1055,7 @@ const updateTopic: AppBlock = {
                         "Configuration for making inferences using arbitrary JSON payloads.",
                       additionalProperties: true,
                     },
-                    service_account_email: {
+                    serviceAccountEmail: {
                       type: "string",
                       description:
                         "Optional. The service account to use to make prediction requests against endpoints. The resource creator or updater that specifies this field must have `iam.serviceAccounts.actAs` permission on the service account. If not specified, the Pub/Sub [service agent]({$universe.dns_names.final_documentation_domain}/iam/docs/service-agents), service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.",

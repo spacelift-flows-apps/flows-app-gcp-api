@@ -1,5 +1,19 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import { getIAMClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  roleId: "role_id",
+  role: {
+    name: "role",
+    fields: {
+      includedPermissions: "included_permissions",
+    },
+  },
+};
+
+const outputMapping = {
+  included_permissions: "includedPermissions",
+};
 
 const createRole: AppBlock = {
   name: "Create Role",
@@ -19,7 +33,7 @@ const createRole: AppBlock = {
           },
           required: false,
         },
-        role_id: {
+        roleId: {
           name: "Role Id",
           description:
             "The role ID to use for this role.  A role ID may contain alphanumeric characters, underscores (`_`), and periods (`.`). It must contain a minimum of 3 characters and a maximum of 64 characters.",
@@ -51,7 +65,7 @@ const createRole: AppBlock = {
                 description:
                   "Optional. A human-readable description for the role.",
               },
-              included_permissions: {
+              includedPermissions: {
                 type: "array",
                 items: {
                   type: "string",
@@ -84,13 +98,7 @@ const createRole: AppBlock = {
       onEvent: async (input) => {
         const client = await getIAMClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.role_id !== undefined)
-          request.role_id = input.event.inputConfig.role_id;
-        if (input.event.inputConfig.role !== undefined)
-          request.role = input.event.inputConfig.role;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createRole(request, (err: any, response: any) => {
@@ -104,7 +112,8 @@ const createRole: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -128,7 +137,7 @@ const createRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          included_permissions: {
+          includedPermissions: {
             type: "array",
             items: {
               type: "string",

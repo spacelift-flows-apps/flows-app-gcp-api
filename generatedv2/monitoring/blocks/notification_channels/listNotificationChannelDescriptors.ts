@@ -1,5 +1,31 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getNotificationChannelServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getNotificationChannelServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  channel_descriptors: {
+    name: "channelDescriptors",
+    fields: {
+      display_name: "displayName",
+      labels: {
+        name: "labels",
+        fields: {
+          value_type: "valueType",
+        },
+      },
+      supported_tiers: "supportedTiers",
+      launch_stage: "launchStage",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listNotificationChannelDescriptors: AppBlock = {
   name: "List Notification Channel Descriptors",
@@ -19,7 +45,7 @@ const listNotificationChannelDescriptors: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "The maximum number of results to return in a single response. If not set to a positive number, a reasonable value will be chosen by the service.",
@@ -30,7 +56,7 @@ const listNotificationChannelDescriptors: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If non-empty, `page_token` must contain a value returned as the `next_page_token` in a previous response to request the next set of results.",
@@ -47,13 +73,7 @@ const listNotificationChannelDescriptors: AppBlock = {
           input.app.config,
         );
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listNotificationChannelDescriptors(
@@ -70,7 +90,8 @@ const listNotificationChannelDescriptors: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -80,7 +101,7 @@ const listNotificationChannelDescriptors: AppBlock = {
       type: {
         type: "object",
         properties: {
-          channel_descriptors: {
+          channelDescriptors: {
             type: "array",
             items: {
               type: "object",
@@ -95,7 +116,7 @@ const listNotificationChannelDescriptors: AppBlock = {
                   description:
                     'The type of notification channel, such as "email" and "sms". To view the full list of channels, see [Channel descriptors](https://cloud.google.com/monitoring/alerts/using-channels-api#ncd). Notification channel types are globally unique.',
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "A human-readable name for the notification channel type.  This form of the name is suitable for a user interface.",
@@ -113,7 +134,7 @@ const listNotificationChannelDescriptors: AppBlock = {
                       key: {
                         type: "string",
                       },
-                      value_type: {
+                      valueType: {
                         type: "string",
                         enum: ["STRING", "BOOL", "INT64"],
                       },
@@ -126,7 +147,7 @@ const listNotificationChannelDescriptors: AppBlock = {
                   description:
                     "The set of labels that must be defined to identify a particular channel of the corresponding type. Each label includes a description for how that field should be populated.",
                 },
-                supported_tiers: {
+                supportedTiers: {
                   type: "array",
                   items: {
                     type: "string",
@@ -141,7 +162,7 @@ const listNotificationChannelDescriptors: AppBlock = {
                   description:
                     "The tiers that support this notification channel; the project service tier must be one of the supported_tiers.",
                 },
-                launch_stage: {
+                launchStage: {
                   type: "string",
                   enum: [
                     "LAUNCH_STAGE_UNSPECIFIED",
@@ -164,7 +185,7 @@ const listNotificationChannelDescriptors: AppBlock = {
             description:
               "The monitored resource descriptors supported for the specified project, optionally filtered.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If not empty, indicates that there may be more results that match the request. Use the value in the `page_token` field in a subsequent request to fetch the next set of results. If empty, all results have been returned.",

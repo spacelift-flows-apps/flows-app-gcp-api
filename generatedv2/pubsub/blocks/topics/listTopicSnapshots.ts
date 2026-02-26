@@ -1,5 +1,14 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import { getPublisherClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  next_page_token: "nextPageToken",
+};
 
 const listTopicSnapshots: AppBlock = {
   name: "List Topic Snapshots",
@@ -19,7 +28,7 @@ const listTopicSnapshots: AppBlock = {
           },
           required: true,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description: "Optional. Maximum number of snapshot names to return.",
           type: {
@@ -29,7 +38,7 @@ const listTopicSnapshots: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Optional. The value returned by the last `ListTopicSnapshotsResponse`; indicates that this is a continuation of a prior `ListTopicSnapshots` call, and that the system should return the next page of data.",
@@ -44,13 +53,7 @@ const listTopicSnapshots: AppBlock = {
       onEvent: async (input) => {
         const client = await getPublisherClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.topic !== undefined)
-          request.topic = input.event.inputConfig.topic;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listTopicSnapshots(request, (err: any, response: any) => {
@@ -64,7 +67,8 @@ const listTopicSnapshots: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -82,7 +86,7 @@ const listTopicSnapshots: AppBlock = {
             description:
               "Optional. The names of the snapshots that match the request.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Optional. If not empty, indicates that there may be more snapshots that match the request; this value should be passed in a new `ListTopicSnapshotsRequest` to get more snapshots.",

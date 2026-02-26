@@ -8,7 +8,7 @@ const listAssociations: AppBlock = {
   inputs: {
     default: {
       config: {
-        target_resource: {
+        targetResource: {
           name: "Target Resource",
           description:
             "The target resource to list associations. It is an organization, or a folder.",
@@ -23,9 +23,9 @@ const listAssociations: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.target_resource !== undefined)
+        if (input.event.inputConfig.targetResource !== undefined)
           queryParams["targetResource"] = String(
-            input.event.inputConfig.target_resource,
+            input.event.inputConfig.targetResource,
           );
 
         const result = await computeFetch({
@@ -52,17 +52,17 @@ const listAssociations: AppBlock = {
             items: {
               type: "object",
               properties: {
-                attachment_target: {
+                attachmentTarget: {
                   type: "string",
                   description:
                     "The target that the firewall policy is attached to.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "[Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.",
                 },
-                firewall_policy_id: {
+                firewallPolicyId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The firewall policy ID of the association.",
@@ -71,7 +71,7 @@ const listAssociations: AppBlock = {
                   type: "string",
                   description: "The name for an association.",
                 },
-                short_name: {
+                shortName: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The short name of the firewall policy of the association.",

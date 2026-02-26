@@ -19,7 +19,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        authorization_policy: {
+        authorizationPolicy: {
           name: "Authorization Policy",
           description:
             "Optional. A URL referring to a networksecurity.AuthorizationPolicy resource that describes how the proxy should authorize inbound traffic. If left blank, access will not be restricted by an authorization policy.   Refer to the AuthorizationPolicy resource for additional details.   authorizationPolicy only applies to a globalTargetHttpsProxy attached toglobalForwardingRules with theloadBalancingScheme set to INTERNAL_SELF_MANAGED.   Note: This field currently has no impact.",
@@ -30,7 +30,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        certificate_map: {
+        certificateMap: {
           name: "Certificate Map",
           description:
             "URL of a certificate map that identifies a certificate map associated with the given target proxy. This field can only be set for Global external Application Load Balancer or Classic Application Load Balancer. For other products use Certificate Manager Certificates instead.  If set, sslCertificates will be ignored.   Accepted format is//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificateMaps/{resourceName}.",
@@ -41,7 +41,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -74,7 +74,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        http_keep_alive_timeout_sec: {
+        httpKeepAliveTimeoutSec: {
           name: "Http Keep Alive Timeout Sec",
           description:
             "Specifies how long to keep a connection open, after completing a response, while there is no matching traffic (in seconds). If an HTTP keep-alive is not specified, a default value (610 seconds) will be used.  For global external Application Load Balancers, the minimum allowed value is 5 seconds and the maximum allowed value is 1200 seconds.  For classic Application Load Balancers, this option is not supported.",
@@ -117,7 +117,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        proxy_bind: {
+        proxyBind: {
           name: "Proxy Bind",
           description:
             "This field only applies when the forwarding rule that references this target proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.  When this field is set to true, Envoy proxies set up inbound traffic interception and bind to the IP address and port specified in the forwarding rule. This is generally useful when using Traffic Director to configure Envoy as a gateway or middle proxy (in other words, not a sidecar proxy). The Envoy proxy listens for inbound requests and handles requests when it receives them.  The default is false.",
@@ -128,7 +128,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        quic_override: {
+        quicOverride: {
           name: "Quic Override",
           description:
             "Specifies the QUIC override policy for this TargetHttpsProxy resource. This setting determines whether the load balancer attempts to negotiate QUIC with clients. You can specify NONE, ENABLE, orDISABLE.     - When quic-override is set to NONE,    Google manages whether QUIC is used.    - When quic-override is set to ENABLE, the    load balancer uses QUIC when possible.    - When quic-override is set to DISABLE, the    load balancer doesn't use QUIC.    - If the quic-override flag is not specified,NONE is implied. Check the QuicOverride enum for the list of possible values.",
@@ -139,7 +139,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description: "[Output Only] Server-defined URL for the resource.",
           type: {
@@ -148,7 +148,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        server_tls_policy: {
+        serverTlsPolicy: {
           name: "Server Tls Policy",
           description:
             "Optional. A URL referring to a networksecurity.ServerTlsPolicy resource that describes how the proxy should authenticate inbound traffic.   serverTlsPolicy only applies to a globalTargetHttpsProxy attached toglobalForwardingRules with theloadBalancingScheme set to INTERNAL_SELF_MANAGED or EXTERNAL orEXTERNAL_MANAGED or INTERNAL_MANAGED. It also applies to a regional TargetHttpsProxy attached to regional forwardingRules with theloadBalancingScheme set to EXTERNAL_MANAGED orINTERNAL_MANAGED. For details whichServerTlsPolicy resources are accepted withINTERNAL_SELF_MANAGED and which with EXTERNAL,INTERNAL_MANAGED, EXTERNAL_MANAGEDloadBalancingScheme consult ServerTlsPolicy documentation.    If left blank, communications are not encrypted.",
@@ -159,7 +159,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        ssl_certificates: {
+        sslCertificates: {
           name: "Ssl Certificates",
           description:
             "URLs to SslCertificate resources that are used to authenticate connections between users and the load balancer. At least one SSL certificate must be specified. SslCertificates do not apply when the load balancing scheme is set to INTERNAL_SELF_MANAGED.  The URLs should refer to a SSL Certificate resource or Certificate Manager Certificate resource. Mixing Classic Certificates and Certificate Manager Certificates is not allowed. Certificate Manager Certificates must include the certificatemanager API namespace. Using Certificate Manager Certificates in this field is not supported by Global external Application Load Balancer or Classic Application Load Balancer, use certificate_map instead.  Currently, you may specify up to 15 Classic SSL Certificates or up to 100 Certificate Manager Certificates.  Certificate Manager Certificates accepted formats are:     - //certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificates/{resourceName}.    - https://certificatemanager.googleapis.com/v1alpha1/projects/{project}/locations/{location}/certificates/{resourceName}.",
@@ -173,7 +173,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        ssl_policy: {
+        sslPolicy: {
           name: "Ssl Policy",
           description:
             "URL of SslPolicy resource that will be associated with the TargetHttpsProxy resource. If not set, the TargetHttpsProxy resource has no SSL policy configured.",
@@ -184,7 +184,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        tls_early_data: {
+        tlsEarlyData: {
           name: "Tls Early Data",
           description:
             'Specifies whether TLS 1.3 0-RTT Data ("Early Data") should be accepted for this service. Early Data allows a TLS resumption handshake to include the initial application payload (a HTTP request) alongside the handshake, reducing the effective round trips to "zero". This applies to TLS 1.3 connections over TCP (HTTP/2) as well as over UDP (QUIC/h3).   This can improve application performance, especially on networks where interruptions may be common, such as on mobile.   Requests with Early Data will have the "Early-Data" HTTP header set on the request, with a value of "1", to allow the backend to determine whether Early Data was included.   Note: TLS Early Data may allow requests to be replayed, as the data is sent to the backend before the handshake has fully completed. Applications that allow idempotent HTTP methods to make non-idempotent changes, such as a GET request updating a database, should not accept Early Data on those requests, and reject requests with the "Early-Data: 1" HTTP header by returning a HTTP 425 (Too Early) status code, in order to remain RFC compliant.   The default value is DISABLED. Check the TlsEarlyData enum for the list of possible values.',
@@ -195,7 +195,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        url_map: {
+        urlMap: {
           name: "Url Map",
           description:
             "A fully-qualified or valid partial URL to the UrlMap resource that defines the mapping from URL to the BackendService. For example, the following are all valid URLs for specifying a URL map:     - https://www.googleapis.compute/v1/projects/project/global/urlMaps/url-map    - projects/project/global/urlMaps/url-map    - global/urlMaps/url-map",
@@ -206,7 +206,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -223,47 +223,47 @@ const insert: AppBlock = {
           pathParams["region"] = String(input.event.inputConfig.region);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.authorization_policy !== undefined)
-          body.authorization_policy =
-            input.event.inputConfig.authorization_policy;
-        if (input.event.inputConfig.certificate_map !== undefined)
-          body.certificate_map = input.event.inputConfig.certificate_map;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.authorizationPolicy !== undefined)
+          body.authorizationPolicy =
+            input.event.inputConfig.authorizationPolicy;
+        if (input.event.inputConfig.certificateMap !== undefined)
+          body.certificateMap = input.event.inputConfig.certificateMap;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
         if (input.event.inputConfig.fingerprint !== undefined)
           body.fingerprint = input.event.inputConfig.fingerprint;
-        if (input.event.inputConfig.http_keep_alive_timeout_sec !== undefined)
-          body.http_keep_alive_timeout_sec =
-            input.event.inputConfig.http_keep_alive_timeout_sec;
+        if (input.event.inputConfig.httpKeepAliveTimeoutSec !== undefined)
+          body.httpKeepAliveTimeoutSec =
+            input.event.inputConfig.httpKeepAliveTimeoutSec;
         if (input.event.inputConfig.id !== undefined)
           body.id = input.event.inputConfig.id;
         if (input.event.inputConfig.kind !== undefined)
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.proxy_bind !== undefined)
-          body.proxy_bind = input.event.inputConfig.proxy_bind;
-        if (input.event.inputConfig.quic_override !== undefined)
-          body.quic_override = input.event.inputConfig.quic_override;
+        if (input.event.inputConfig.proxyBind !== undefined)
+          body.proxyBind = input.event.inputConfig.proxyBind;
+        if (input.event.inputConfig.quicOverride !== undefined)
+          body.quicOverride = input.event.inputConfig.quicOverride;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.server_tls_policy !== undefined)
-          body.server_tls_policy = input.event.inputConfig.server_tls_policy;
-        if (input.event.inputConfig.ssl_certificates !== undefined)
-          body.ssl_certificates = input.event.inputConfig.ssl_certificates;
-        if (input.event.inputConfig.ssl_policy !== undefined)
-          body.ssl_policy = input.event.inputConfig.ssl_policy;
-        if (input.event.inputConfig.tls_early_data !== undefined)
-          body.tls_early_data = input.event.inputConfig.tls_early_data;
-        if (input.event.inputConfig.url_map !== undefined)
-          body.url_map = input.event.inputConfig.url_map;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.serverTlsPolicy !== undefined)
+          body.serverTlsPolicy = input.event.inputConfig.serverTlsPolicy;
+        if (input.event.inputConfig.sslCertificates !== undefined)
+          body.sslCertificates = input.event.inputConfig.sslCertificates;
+        if (input.event.inputConfig.sslPolicy !== undefined)
+          body.sslPolicy = input.event.inputConfig.sslPolicy;
+        if (input.event.inputConfig.tlsEarlyData !== undefined)
+          body.tlsEarlyData = input.event.inputConfig.tlsEarlyData;
+        if (input.event.inputConfig.urlMap !== undefined)
+          body.urlMap = input.event.inputConfig.urlMap;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -285,12 +285,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -299,7 +299,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -317,12 +317,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -377,7 +377,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -395,7 +395,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -406,7 +406,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -416,16 +416,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -462,12 +462,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -476,15 +476,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -504,12 +504,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -524,18 +524,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -548,7 +548,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -559,16 +559,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

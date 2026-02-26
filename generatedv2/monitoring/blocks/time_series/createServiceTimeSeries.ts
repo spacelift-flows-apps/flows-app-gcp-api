@@ -1,5 +1,80 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getMetricServiceClient } from "../../lib/grpcClient.ts";
+import { getMetricServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  timeSeries: {
+    name: "time_series",
+    fields: {
+      metadata: {
+        name: "metadata",
+        fields: {
+          systemLabels: "system_labels",
+          userLabels: "user_labels",
+        },
+      },
+      metricKind: "metric_kind",
+      valueType: "value_type",
+      points: {
+        name: "points",
+        fields: {
+          interval: {
+            name: "interval",
+            fields: {
+              endTime: "end_time",
+              startTime: "start_time",
+            },
+          },
+          value: {
+            name: "value",
+            fields: {
+              boolValue: "bool_value",
+              int64Value: "int64_value",
+              doubleValue: "double_value",
+              stringValue: "string_value",
+              distributionValue: {
+                name: "distribution_value",
+                fields: {
+                  sumOfSquaredDeviation: "sum_of_squared_deviation",
+                  bucketOptions: {
+                    name: "bucket_options",
+                    fields: {
+                      linearBuckets: {
+                        name: "linear_buckets",
+                        fields: {
+                          numFiniteBuckets: "num_finite_buckets",
+                        },
+                      },
+                      exponentialBuckets: {
+                        name: "exponential_buckets",
+                        fields: {
+                          numFiniteBuckets: "num_finite_buckets",
+                          growthFactor: "growth_factor",
+                        },
+                      },
+                      explicitBuckets: "explicit_buckets",
+                    },
+                  },
+                  bucketCounts: "bucket_counts",
+                  exemplars: {
+                    name: "exemplars",
+                    fields: {
+                      attachments: {
+                        name: "attachments",
+                        fields: {
+                          typeUrl: "type_url",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 const createServiceTimeSeries: AppBlock = {
   name: "Create Service Time Series",
@@ -19,7 +94,7 @@ const createServiceTimeSeries: AppBlock = {
           },
           required: true,
         },
-        time_series: {
+        timeSeries: {
           name: "Time Series",
           description:
             "Required. The new data to be added to a list of time series. Adds at most one data point to each of several time series.  The new data point must be more recent than any other point in its time series.  Each `TimeSeries` value must fully specify a unique time series by supplying all label values for the metric and the monitored resource.  The maximum number of `TimeSeries` objects per `Create` request is 200.",
@@ -65,11 +140,11 @@ const createServiceTimeSeries: AppBlock = {
                 metadata: {
                   type: "object",
                   properties: {
-                    system_labels: {
+                    systemLabels: {
                       type: "object",
                       additionalProperties: true,
                     },
-                    user_labels: {
+                    userLabels: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -80,7 +155,7 @@ const createServiceTimeSeries: AppBlock = {
                   description:
                     "Output only. The associated monitored resource metadata. When reading a time series, this field will include metadata labels that are explicitly named in the reduction. When creating a time series, this field is ignored.",
                 },
-                metric_kind: {
+                metricKind: {
                   type: "string",
                   enum: [
                     "METRIC_KIND_UNSPECIFIED",
@@ -91,7 +166,7 @@ const createServiceTimeSeries: AppBlock = {
                   description:
                     "The metric kind of the time series. When listing time series, this metric kind might be different from the metric kind of the associated metric if this time series is an alignment or reduction of other time series.  When creating a time series, this field is optional. If present, it must be the same as the metric kind of the associated metric. If the associated metric's descriptor must be auto-created, then this field specifies the metric kind of the new descriptor and must be either `GAUGE` (the default) or `CUMULATIVE`.",
                 },
-                value_type: {
+                valueType: {
                   type: "string",
                   enum: [
                     "VALUE_TYPE_UNSPECIFIED",
@@ -113,12 +188,12 @@ const createServiceTimeSeries: AppBlock = {
                       interval: {
                         type: "object",
                         properties: {
-                          end_time: {
+                          endTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                           },
-                          start_time: {
+                          startTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -131,27 +206,27 @@ const createServiceTimeSeries: AppBlock = {
                       value: {
                         type: "object",
                         properties: {
-                          bool_value: {
+                          boolValue: {
                             type: "boolean",
                             description:
                               "A Boolean value: `true` or `false`. (Part of 'value' - only one field in this group can be set)",
                           },
-                          int64_value: {
+                          int64Value: {
                             type: "string",
                             description:
                               "64-bit integer as string (Part of 'value' - only one field in this group can be set)",
                           },
-                          double_value: {
+                          doubleValue: {
                             type: "number",
                             description:
                               "A 64-bit double-precision floating-point number. Its magnitude is approximately &plusmn;10<sup>&plusmn;300</sup> and it has 16 significant digits of precision. (Part of 'value' - only one field in this group can be set)",
                           },
-                          string_value: {
+                          stringValue: {
                             type: "string",
                             description:
                               "A variable-length string value. (Part of 'value' - only one field in this group can be set)",
                           },
-                          distribution_value: {
+                          distributionValue: {
                             type: "object",
                             properties: {
                               count: {
@@ -161,7 +236,7 @@ const createServiceTimeSeries: AppBlock = {
                               mean: {
                                 type: "number",
                               },
-                              sum_of_squared_deviation: {
+                              sumOfSquaredDeviation: {
                                 type: "number",
                               },
                               range: {
@@ -178,13 +253,13 @@ const createServiceTimeSeries: AppBlock = {
                                   "Range of numerical values within `min` and `max`.",
                                 additionalProperties: true,
                               },
-                              bucket_options: {
+                              bucketOptions: {
                                 type: "object",
                                 properties: {
-                                  linear_buckets: {
+                                  linearBuckets: {
                                     type: "object",
                                     properties: {
-                                      num_finite_buckets: {
+                                      numFiniteBuckets: {
                                         type: "integer",
                                       },
                                       width: {
@@ -198,13 +273,13 @@ const createServiceTimeSeries: AppBlock = {
                                     description:
                                       "(Part of 'options' - only one field in this group can be set)",
                                   },
-                                  exponential_buckets: {
+                                  exponentialBuckets: {
                                     type: "object",
                                     properties: {
-                                      num_finite_buckets: {
+                                      numFiniteBuckets: {
                                         type: "integer",
                                       },
-                                      growth_factor: {
+                                      growthFactor: {
                                         type: "number",
                                       },
                                       scale: {
@@ -215,7 +290,7 @@ const createServiceTimeSeries: AppBlock = {
                                     description:
                                       "(Part of 'options' - only one field in this group can be set)",
                                   },
-                                  explicit_buckets: {
+                                  explicitBuckets: {
                                     type: "object",
                                     properties: {
                                       bounds: {
@@ -232,7 +307,7 @@ const createServiceTimeSeries: AppBlock = {
                                 },
                                 additionalProperties: true,
                               },
-                              bucket_counts: {
+                              bucketCounts: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -257,7 +332,7 @@ const createServiceTimeSeries: AppBlock = {
                                       items: {
                                         type: "object",
                                         properties: {
-                                          type_url: {
+                                          typeUrl: {
                                             type: "string",
                                           },
                                           value: {
@@ -312,11 +387,7 @@ const createServiceTimeSeries: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.time_series !== undefined)
-          request.time_series = input.event.inputConfig.time_series;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createServiceTimeSeries(request, (err: any, response: any) => {

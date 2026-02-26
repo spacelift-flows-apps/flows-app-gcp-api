@@ -19,27 +19,27 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        autoscaling_policy: {
+        autoscalingPolicy: {
           name: "Autoscaling Policy",
           description:
             "The configuration parameters for the autoscaling algorithm. You can define one or more signals for an autoscaler: cpuUtilization,customMetricUtilizations, andloadBalancingUtilization.  If none of these are specified, the default will be to autoscale based oncpuUtilization to 0.6 or 60%.",
           type: {
             type: "object",
             properties: {
-              cool_down_period_sec: {
+              coolDownPeriodSec: {
                 type: "integer",
                 description:
                   "The number of seconds that your application takes to initialize on a VM instance. This is referred to as the [initialization period](/compute/docs/autoscaler#cool_down_period). Specifying an accurate initialization period improves autoscaler decisions. For example, when scaling out, the autoscaler ignores data from VMs that are still initializing because those VMs might not yet represent normal usage of your application. The default initialization period is 60 seconds.  Initialization periods might vary because of numerous factors. We recommend that you test how long your application takes to initialize. To do this, create a VM and time your application's startup process.",
               },
-              cpu_utilization: {
+              cpuUtilization: {
                 type: "object",
                 properties: {
-                  predictive_method: {
+                  predictiveMethod: {
                     type: "string",
                     description:
                       "Indicates whether predictive autoscaling based on CPU metric is enabled. Valid values are:  * NONE (default). No predictive method is used. The autoscaler scales the group to meet current demand based on real-time metrics. * OPTIMIZE_AVAILABILITY. Predictive autoscaling improves availability by monitoring daily and weekly load patterns and scaling out ahead of anticipated demand. Check the PredictiveMethod enum for the list of possible values.",
                   },
-                  utilization_target: {
+                  utilizationTarget: {
                     type: "number",
                     description:
                       "The target CPU utilization that the autoscaler maintains. Must be a float value in the range (0, 1]. If not specified, the default is0.6.  If the CPU level is below the target utilization, the autoscaler scales in the number of instances until it reaches the minimum number of instances you specified or until the average CPU of your instances reaches the target utilization.  If the average CPU is above the target utilization, the autoscaler scales out until it reaches the maximum number of instances you specified or until the average utilization reaches the target utilization.",
@@ -48,7 +48,7 @@ const insert: AppBlock = {
                 description: "CPU utilization policy.",
                 additionalProperties: true,
               },
-              custom_metric_utilizations: {
+              customMetricUtilizations: {
                 type: "array",
                 items: {
                   type: "object",
@@ -63,17 +63,17 @@ const insert: AppBlock = {
                       description:
                         "The identifier (type) of the Stackdriver Monitoring metric. The metric cannot have negative values.  The metric must have a value type of INT64 orDOUBLE.",
                     },
-                    single_instance_assignment: {
+                    singleInstanceAssignment: {
                       type: "number",
                       description:
                         "If scaling is based on a per-group metric value that represents the total amount of work to be done or resource usage, set this value to an amount assigned for a single instance of the scaled group. Autoscaler keeps the number of instances proportional to the value of this metric. The metric itself does not change value due to group resizing.  A good metric to use with the target is for examplepubsub.googleapis.com/subscription/num_undelivered_messages or a custom metric exporting the total number of requests coming to your instances.  A bad example would be a metric exporting an average or median latency, since this value can't include a chunk assignable to a single instance, it could be better used with utilization_target instead.",
                     },
-                    utilization_target: {
+                    utilizationTarget: {
                       type: "number",
                       description:
                         "The target value of the metric that autoscaler maintains. This must be a positive value. A utilization metric scales number of virtual machines handling requests to increase or decrease proportionally to the metric.  For example, a good metric to use as a utilization_target ishttps://www.googleapis.com/compute/v1/instance/network/received_bytes_count. The autoscaler works to keep this value constant for each of the instances.",
                     },
-                    utilization_target_type: {
+                    utilizationTargetType: {
                       type: "string",
                       description:
                         "Defines how target utilization value is expressed for a Stackdriver Monitoring metric. Either GAUGE,DELTA_PER_SECOND, or DELTA_PER_MINUTE. Check the UtilizationTargetType enum for the list of possible values.",
@@ -85,10 +85,10 @@ const insert: AppBlock = {
                 description:
                   "Configuration parameters of autoscaling based on a custom metric.",
               },
-              load_balancing_utilization: {
+              loadBalancingUtilization: {
                 type: "object",
                 properties: {
-                  utilization_target: {
+                  utilizationTarget: {
                     type: "number",
                     description:
                       "Fraction of backend capacity utilization (set in HTTP(S) load balancing configuration) that the autoscaler maintains. Must be a positive float value. If not defined, the default is 0.8.",
@@ -98,12 +98,12 @@ const insert: AppBlock = {
                   "Configuration parameters of autoscaling based on load balancing.",
                 additionalProperties: true,
               },
-              max_num_replicas: {
+              maxNumReplicas: {
                 type: "integer",
                 description:
                   "The maximum number of instances that the autoscaler can scale out to. This is required when creating or updating an autoscaler. The maximum number of replicas must not be lower than minimal number of replicas.",
               },
-              min_num_replicas: {
+              minNumReplicas: {
                 type: "integer",
                 description:
                   "The minimum number of replicas that the autoscaler can scale in to. This cannot be less than 0. If not provided, autoscaler chooses a default value depending on maximum number of instances allowed.",
@@ -113,10 +113,10 @@ const insert: AppBlock = {
                 description:
                   'Defines the operating mode for this policy. The following modes are available:     - OFF: Disables the autoscaler but maintains its    configuration.    - ONLY_SCALE_OUT: Restricts the autoscaler to add    VM instances only.    - ON: Enables all autoscaler activities according to its    policy.   For more information, see "Turning off or restricting an autoscaler" Check the Mode enum for the list of possible values.',
               },
-              scale_in_control: {
+              scaleInControl: {
                 type: "object",
                 properties: {
-                  max_scaled_in_replicas: {
+                  maxScaledInReplicas: {
                     type: "object",
                     properties: {
                       calculated: {
@@ -139,7 +139,7 @@ const insert: AppBlock = {
                       "Encapsulates numeric value that can be either absolute or relative.",
                     additionalProperties: true,
                   },
-                  time_window_sec: {
+                  timeWindowSec: {
                     type: "integer",
                     description:
                       "How far back autoscaling looks when computing recommendations to include directives regarding slower scale in, as described above.",
@@ -149,7 +149,7 @@ const insert: AppBlock = {
                   "Configuration that allows for slower scale in so that even if Autoscaler recommends an abrupt scale in of a MIG, it will be throttled as specified by the parameters below.",
                 additionalProperties: true,
               },
-              scaling_schedules: {
+              scalingSchedules: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -163,7 +163,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -217,7 +217,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        recommended_size: {
+        recommendedSize: {
           name: "Recommended Size",
           description:
             "Output only. [Output Only] Target recommended MIG size (number of instances) computed by autoscaler. Autoscaler calculates the recommended MIG size even when the autoscaling policy mode is different from ON. This field is empty when autoscaler is not connected to an existing managed instance group or autoscaler did not generate its prediction.",
@@ -239,7 +239,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        scaling_schedule_status: {
+        scalingScheduleStatus: {
           name: "Scaling Schedule Status",
           description:
             "Output only. [Output Only] Status information of existing scaling schedules.",
@@ -253,7 +253,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description: "[Output Only] Server-defined URL for the resource.",
           type: {
@@ -273,7 +273,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        status_details: {
+        statusDetails: {
           name: "Status Details",
           description:
             "[Output Only] Human-readable details about the current state of the autoscaler. Read the documentation forCommonly returned status messages for examples of status messages you might encounter.",
@@ -310,7 +310,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -327,13 +327,13 @@ const insert: AppBlock = {
           pathParams["zone"] = String(input.event.inputConfig.zone);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.autoscaling_policy !== undefined)
-          body.autoscaling_policy = input.event.inputConfig.autoscaling_policy;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.autoscalingPolicy !== undefined)
+          body.autoscalingPolicy = input.event.inputConfig.autoscalingPolicy;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
         if (input.event.inputConfig.id !== undefined)
@@ -342,19 +342,19 @@ const insert: AppBlock = {
           body.kind = input.event.inputConfig.kind;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.recommended_size !== undefined)
-          body.recommended_size = input.event.inputConfig.recommended_size;
+        if (input.event.inputConfig.recommendedSize !== undefined)
+          body.recommendedSize = input.event.inputConfig.recommendedSize;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.scaling_schedule_status !== undefined)
-          body.scaling_schedule_status =
-            input.event.inputConfig.scaling_schedule_status;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
+        if (input.event.inputConfig.scalingScheduleStatus !== undefined)
+          body.scalingScheduleStatus =
+            input.event.inputConfig.scalingScheduleStatus;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
         if (input.event.inputConfig.status !== undefined)
           body.status = input.event.inputConfig.status;
-        if (input.event.inputConfig.status_details !== undefined)
-          body.status_details = input.event.inputConfig.status_details;
+        if (input.event.inputConfig.statusDetails !== undefined)
+          body.statusDetails = input.event.inputConfig.statusDetails;
         if (input.event.inputConfig.target !== undefined)
           body.target = input.event.inputConfig.target;
         if (input.event.inputConfig.zone !== undefined)
@@ -380,12 +380,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -394,7 +394,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -412,12 +412,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -472,7 +472,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -490,7 +490,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -501,7 +501,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -511,16 +511,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -557,12 +557,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -571,15 +571,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -599,12 +599,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -619,18 +619,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -643,7 +643,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -654,16 +654,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

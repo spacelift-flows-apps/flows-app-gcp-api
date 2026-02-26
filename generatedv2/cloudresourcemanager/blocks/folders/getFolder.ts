@@ -1,5 +1,12 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getFoldersClient } from "../../lib/grpcClient.ts";
+import { getFoldersClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  display_name: "displayName",
+  create_time: "createTime",
+  update_time: "updateTime",
+  delete_time: "deleteTime",
+};
 
 const getFolder: AppBlock = {
   name: "Get Folder",
@@ -23,9 +30,7 @@ const getFolder: AppBlock = {
       onEvent: async (input) => {
         const client = await getFoldersClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getFolder(request, (err: any, response: any) => {
@@ -39,7 +44,8 @@ const getFolder: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -59,7 +65,7 @@ const getFolder: AppBlock = {
             description:
               "Required. The folder's parent's resource name. Updates to the folder's parent must be performed using [MoveFolder][google.cloud.resourcemanager.v3.Folders.MoveFolder].",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               "The folder's display name. A folder's display name must be unique amongst its siblings. For example, no two folders with the same parent can share the same display name. The display name must start and end with a letter or digit, may contain letters, digits, spaces, hyphens and underscores and can be no longer than 30 characters. This is captured by the regular expression: `[\\p{L}\\p{N}]([\\p{L}\\p{N}_- ]{0,28}[\\p{L}\\p{N}])?`.",
@@ -70,15 +76,15 @@ const getFolder: AppBlock = {
             description:
               "Output only. The lifecycle state of the folder. Updates to the state must be performed using [DeleteFolder][google.cloud.resourcemanager.v3.Folders.DeleteFolder] and [UndeleteFolder][google.cloud.resourcemanager.v3.Folders.UndeleteFolder].",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          update_time: {
+          updateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          delete_time: {
+          deleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

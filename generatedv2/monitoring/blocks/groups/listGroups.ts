@@ -1,5 +1,25 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getGroupServiceClient } from "../../lib/grpcClient.ts";
+import { getGroupServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  childrenOfGroup: "children_of_group",
+  ancestorsOfGroup: "ancestors_of_group",
+  descendantsOfGroup: "descendants_of_group",
+  pageSize: "page_size",
+  pageToken: "page_token",
+};
+
+const outputMapping = {
+  group: {
+    name: "group",
+    fields: {
+      display_name: "displayName",
+      parent_name: "parentName",
+      is_cluster: "isCluster",
+    },
+  },
+  next_page_token: "nextPageToken",
+};
 
 const listGroups: AppBlock = {
   name: "List Groups",
@@ -19,7 +39,7 @@ const listGroups: AppBlock = {
           },
           required: true,
         },
-        children_of_group: {
+        childrenOfGroup: {
           name: "Children Of Group",
           description:
             "A group name. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  Returns groups whose `parent_name` field contains the group name.  If no groups have this parent, the results are empty.",
@@ -30,7 +50,7 @@ const listGroups: AppBlock = {
           },
           required: false,
         },
-        ancestors_of_group: {
+        ancestorsOfGroup: {
           name: "Ancestors Of Group",
           description:
             "A group name. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  Returns groups that are ancestors of the specified group. The groups are returned in order, starting with the immediate parent and ending with the most distant ancestor.  If the specified group has no immediate parent, the results are empty.",
@@ -41,7 +61,7 @@ const listGroups: AppBlock = {
           },
           required: false,
         },
-        descendants_of_group: {
+        descendantsOfGroup: {
           name: "Descendants Of Group",
           description:
             "A group name. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  Returns the descendants of the specified group.  This is a superset of the results returned by the `children_of_group` filter, and includes children-of-children, and so forth.",
@@ -52,7 +72,7 @@ const listGroups: AppBlock = {
           },
           required: false,
         },
-        page_size: {
+        pageSize: {
           name: "Page Size",
           description:
             "A positive number that is the maximum number of results to return.",
@@ -63,7 +83,7 @@ const listGroups: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "If this field is not empty then it must contain the `next_page_token` value returned by a previous call to this method.  Using this field causes the method to return additional results from the previous method call.",
@@ -78,21 +98,7 @@ const listGroups: AppBlock = {
       onEvent: async (input) => {
         const client = await getGroupServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.children_of_group !== undefined)
-          request.children_of_group = input.event.inputConfig.children_of_group;
-        if (input.event.inputConfig.ancestors_of_group !== undefined)
-          request.ancestors_of_group =
-            input.event.inputConfig.ancestors_of_group;
-        if (input.event.inputConfig.descendants_of_group !== undefined)
-          request.descendants_of_group =
-            input.event.inputConfig.descendants_of_group;
-        if (input.event.inputConfig.page_size !== undefined)
-          request.page_size = input.event.inputConfig.page_size;
-        if (input.event.inputConfig.page_token !== undefined)
-          request.page_token = input.event.inputConfig.page_token;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.listGroups(request, (err: any, response: any) => {
@@ -106,7 +112,8 @@ const listGroups: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -126,12 +133,12 @@ const listGroups: AppBlock = {
                   description:
                     "Output only. The name of this group. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  When creating a group, this field is ignored and a new name is created consisting of the project specified in the call to `CreateGroup` and a unique `[GROUP_ID]` that is generated automatically.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "A user-assigned name for this group, used only for display purposes.",
                 },
-                parent_name: {
+                parentName: {
                   type: "string",
                   description:
                     'The name of the group\'s parent, if it has one. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  For groups with no parent, `parent_name` is the empty string, `""`.',
@@ -141,7 +148,7 @@ const listGroups: AppBlock = {
                   description:
                     "The filter used to determine which monitored resources belong to this group.",
                 },
-                is_cluster: {
+                isCluster: {
                   type: "boolean",
                   description:
                     "If true, the members of this group are considered to be a cluster. The system can perform additional analysis on groups that are clusters.",
@@ -153,7 +160,7 @@ const listGroups: AppBlock = {
             },
             description: "The groups that match the specified filters.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "If there are more results than have been returned, then this field is set to a non-empty value.  To see the additional results, use that value as `page_token` in the next call to this method.",

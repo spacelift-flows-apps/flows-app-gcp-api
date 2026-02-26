@@ -1,5 +1,16 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getMetricServiceClient } from "../../lib/grpcClient.ts";
+import { getMetricServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  display_name: "displayName",
+  labels: {
+    name: "labels",
+    fields: {
+      value_type: "valueType",
+    },
+  },
+  launch_stage: "launchStage",
+};
 
 const getMonitoredResourceDescriptor: AppBlock = {
   name: "Get Monitored Resource Descriptor",
@@ -23,9 +34,7 @@ const getMonitoredResourceDescriptor: AppBlock = {
       onEvent: async (input) => {
         const client = await getMetricServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getMonitoredResourceDescriptor(
@@ -42,7 +51,8 @@ const getMonitoredResourceDescriptor: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -58,7 +68,7 @@ const getMonitoredResourceDescriptor: AppBlock = {
           type: {
             type: "string",
           },
-          display_name: {
+          displayName: {
             type: "string",
           },
           description: {
@@ -72,7 +82,7 @@ const getMonitoredResourceDescriptor: AppBlock = {
                 key: {
                   type: "string",
                 },
-                value_type: {
+                valueType: {
                   type: "string",
                   enum: ["STRING", "BOOL", "INT64"],
                 },
@@ -83,7 +93,7 @@ const getMonitoredResourceDescriptor: AppBlock = {
               additionalProperties: true,
             },
           },
-          launch_stage: {
+          launchStage: {
             type: "string",
             enum: [
               "LAUNCH_STAGE_UNSPECIFIED",

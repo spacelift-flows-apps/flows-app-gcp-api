@@ -1,5 +1,46 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getHsmManagementClient } from "../../lib/grpcClient.ts";
+import { getHsmManagementClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  singleTenantHsmInstanceId: "single_tenant_hsm_instance_id",
+  singleTenantHsmInstance: {
+    name: "single_tenant_hsm_instance",
+    fields: {
+      quorumAuth: {
+        name: "quorum_auth",
+        fields: {
+          totalApproverCount: "total_approver_count",
+        },
+      },
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createSingleTenantHsmInstance: AppBlock = {
   name: "Create Single Tenant Hsm Instance",
@@ -19,7 +60,7 @@ const createSingleTenantHsmInstance: AppBlock = {
           },
           required: true,
         },
-        single_tenant_hsm_instance_id: {
+        singleTenantHsmInstanceId: {
           name: "Single Tenant Hsm Instance Id",
           description:
             "Optional. It must be unique within a location and match the regular expression `[a-zA-Z0-9_-]{1,63}`.",
@@ -30,7 +71,7 @@ const createSingleTenantHsmInstance: AppBlock = {
           },
           required: false,
         },
-        single_tenant_hsm_instance: {
+        singleTenantHsmInstance: {
           name: "Single Tenant Hsm Instance",
           description:
             "Required. An [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] with initial field values.",
@@ -42,21 +83,21 @@ const createSingleTenantHsmInstance: AppBlock = {
                 description:
                   "Identifier. The resource name for this [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] in the format `projects/*/locations/*/singleTenantHsmInstances/*`.",
               },
-              quorum_auth: {
+              quorumAuth: {
                 type: "object",
                 properties: {
-                  total_approver_count: {
+                  totalApproverCount: {
                     type: "integer",
                     description:
                       "Required. The total number of approvers. This is the N value used for M of N quorum auth. Must be greater than or equal to 3 and less than or equal to 16.",
                   },
                 },
-                required: ["total_approver_count"],
+                required: ["totalApproverCount"],
                 description: "Configuration for M of N quorum auth.",
                 additionalProperties: true,
               },
             },
-            required: ["quorum_auth"],
+            required: ["quorumAuth"],
             description:
               "A [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance] represents a single-tenant HSM instance. It can be used for creating [CryptoKeys][google.cloud.kms.v1.CryptoKey] with a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [HSM_SINGLE_TENANT][CryptoKeyVersion.ProtectionLevel.HSM_SINGLE_TENANT], as well as performing cryptographic operations using keys created within the [SingleTenantHsmInstance][google.cloud.kms.v1.SingleTenantHsmInstance].",
             additionalProperties: true,
@@ -67,15 +108,7 @@ const createSingleTenantHsmInstance: AppBlock = {
       onEvent: async (input) => {
         const client = await getHsmManagementClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.single_tenant_hsm_instance_id !== undefined)
-          request.single_tenant_hsm_instance_id =
-            input.event.inputConfig.single_tenant_hsm_instance_id;
-        if (input.event.inputConfig.single_tenant_hsm_instance !== undefined)
-          request.single_tenant_hsm_instance =
-            input.event.inputConfig.single_tenant_hsm_instance;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createSingleTenantHsmInstance(
@@ -92,7 +125,8 @@ const createSingleTenantHsmInstance: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -108,7 +142,7 @@ const createSingleTenantHsmInstance: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -135,7 +169,7 @@ const createSingleTenantHsmInstance: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -154,7 +188,7 @@ const createSingleTenantHsmInstance: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

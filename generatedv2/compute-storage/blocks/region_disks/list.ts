@@ -25,7 +25,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -34,7 +34,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -43,7 +43,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -52,7 +52,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -71,17 +71,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -112,7 +112,7 @@ const list: AppBlock = {
             items: {
               type: "object",
               properties: {
-                access_mode: {
+                accessMode: {
                   type: "string",
                   description:
                     "The access mode of the disk.        - READ_WRITE_SINGLE: The default AccessMode, means the      disk can be attached to single instance in RW mode.      - READ_WRITE_MANY: The AccessMode means the disk can be      attached to multiple instances in RW mode.      - READ_ONLY_MANY: The AccessMode means the disk can be      attached to multiple instances in RO mode.   The AccessMode is only valid for Hyperdisk disk types. Check the AccessMode enum for the list of possible values.",
@@ -122,15 +122,15 @@ const list: AppBlock = {
                   description:
                     "The architecture of the disk. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
                 },
-                async_primary_disk: {
+                asyncPrimaryDisk: {
                   type: "object",
                   properties: {
-                    consistency_group_policy: {
+                    consistencyGroupPolicy: {
                       type: "string",
                       description:
                         "Output only. [Output Only] URL of the DiskConsistencyGroupPolicy if replication was started on the disk as a member of a group.",
                     },
-                    consistency_group_policy_id: {
+                    consistencyGroupPolicyId: {
                       type: "string",
                       description:
                         "Output only. [Output Only] ID of the DiskConsistencyGroupPolicy if replication was started on the disk as a member of a group.",
@@ -140,7 +140,7 @@ const list: AppBlock = {
                       description:
                         "The other disk asynchronously replicated to or from the current disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk    - projects/project/zones/zone/disks/disk    - zones/zone/disks/disk",
                     },
-                    disk_id: {
+                    diskId: {
                       type: "string",
                       description:
                         "Output only. [Output Only] The unique ID of the other disk asynchronously replicated to or from the current disk. This value identifies the exact disk that was used to create this replication. For example, if you started replicating the persistent disk from a disk that was later deleted and recreated under the same name, the disk ID would identify the exact version of the disk that was used.",
@@ -149,7 +149,7 @@ const list: AppBlock = {
                   additionalProperties: true,
                   description: "Disk asynchronously replicated into this disk.",
                 },
-                async_secondary_disks: {
+                asyncSecondaryDisks: {
                   type: "object",
                   additionalProperties: {
                     type: "string",
@@ -157,7 +157,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] A list of disks this disk is asynchronously replicated to.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -167,25 +167,25 @@ const list: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                disk_encryption_key: {
+                diskEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -200,12 +200,12 @@ const list: AppBlock = {
                   description:
                     'Encrypts the disk using a customer-supplied encryption key or a customer-managed encryption key.  Encryption keys do not protect access to metadata of the disk.  After you encrypt a disk with a customer-supplied key, you must provide the same key if you use the disk later. For example, to create a disk snapshot, to create a disk image, to create a machine image, or to attach the disk to a virtual machine.  After you encrypt a disk with a customer-managed key, thediskEncryptionKey.kmsKeyName is set to a key *version* name once the disk is created. The disk is encrypted with this version of the key. In the response, diskEncryptionKey.kmsKeyName appears in the following format:  "diskEncryptionKey.kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeysVersions/version  If you do not provide an encryption key when creating the disk, then the disk is encrypted using an automatically generated key and you don\'t need to provide a key to use the disk later.',
                 },
-                enable_confidential_compute: {
+                enableConfidentialCompute: {
                   type: "boolean",
                   description:
                     "Whether this disk is using confidential compute mode.",
                 },
-                guest_os_features: {
+                guestOsFeatures: {
                   type: "array",
                   items: {
                     type: "object",
@@ -231,7 +231,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Type of the resource. Always compute#disk for disks.",
                 },
-                label_fingerprint: {
+                labelFingerprint: {
                   type: "string",
                   description:
                     "A fingerprint for the labels being applied to this disk, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a disk.",
@@ -244,17 +244,17 @@ const list: AppBlock = {
                   description:
                     "Labels to apply to this disk. These can be later modified by the setLabels method.",
                 },
-                last_attach_timestamp: {
+                lastAttachTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Last attach timestamp inRFC3339 text format.",
                 },
-                last_detach_timestamp: {
+                lastDetachTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Last detach timestamp inRFC3339 text format.",
                 },
-                license_codes: {
+                licenseCodes: {
                   type: "array",
                   items: {
                     type: "string",
@@ -271,7 +271,7 @@ const list: AppBlock = {
                   description:
                     "A list of publicly visible licenses. Reserved for Google's use.",
                 },
-                location_hint: {
+                locationHint: {
                   type: "string",
                   description:
                     "An opaque location hint used to place the disk close to other resources. This field is for use by internal tools that use the public API.",
@@ -288,7 +288,7 @@ const list: AppBlock = {
                 params: {
                   type: "object",
                   properties: {
-                    resource_manager_tags: {
+                    resourceManagerTags: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -300,15 +300,15 @@ const list: AppBlock = {
                   description: "Additional disk params.",
                   additionalProperties: true,
                 },
-                physical_block_size_bytes: {
+                physicalBlockSizeBytes: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                provisioned_iops: {
+                provisionedIops: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                provisioned_throughput: {
+                provisionedThroughput: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
@@ -317,7 +317,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] URL of the region where the disk resides. Only applicable for regional resources. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
                 },
-                replica_zones: {
+                replicaZones: {
                   type: "array",
                   items: {
                     type: "string",
@@ -325,7 +325,7 @@ const list: AppBlock = {
                   description:
                     "URLs of the zones where the disk should be replicated to. Only applicable for regional resources.",
                 },
-                resource_policies: {
+                resourcePolicies: {
                   type: "array",
                   items: {
                     type: "string",
@@ -333,10 +333,10 @@ const list: AppBlock = {
                   description:
                     "Resource policies applied to this disk for automatic snapshot creations.",
                 },
-                resource_status: {
+                resourceStatus: {
                   type: "object",
                   properties: {
-                    async_primary_disk: {
+                    asyncPrimaryDisk: {
                       type: "object",
                       properties: {
                         state: {
@@ -347,7 +347,7 @@ const list: AppBlock = {
                       },
                       additionalProperties: true,
                     },
-                    async_secondary_disks: {
+                    asyncSecondaryDisks: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -360,68 +360,68 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Status information for the disk resource.",
                 },
-                satisfies_pzi: {
+                satisfiesPzi: {
                   type: "boolean",
                   description: "Output only. Reserved for future use.",
                 },
-                satisfies_pzs: {
+                satisfiesPzs: {
                   type: "boolean",
                   description:
                     "Output only. [Output Only] Reserved for future use.",
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
                 },
-                size_gb: {
+                sizeGb: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                source_consistency_group_policy: {
+                sourceConsistencyGroupPolicy: {
                   type: "string",
                   description:
                     "Output only. [Output Only] URL of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
                 },
-                source_consistency_group_policy_id: {
+                sourceConsistencyGroupPolicyId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] ID of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
                 },
-                source_disk: {
+                sourceDisk: {
                   type: "string",
                   description:
                     "The source disk used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        -        https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk       -        https://www.googleapis.com/compute/v1/projects/project/regions/region/disks/disk       -        projects/project/zones/zone/disks/disk       -        projects/project/regions/region/disks/disk       -        zones/zone/disks/disk       -        regions/region/disks/disk",
                 },
-                source_disk_id: {
+                sourceDiskId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The unique ID of the disk used to create this disk. This value identifies the exact disk that was used to create this persistent disk. For example, if you created the persistent disk from a disk that was later deleted and recreated under the same name, the source disk ID would identify the exact version of the disk that was used.",
                 },
-                source_image: {
+                sourceImage: {
                   type: "string",
                   description:
                     "The source image used to create this disk. If the source image is deleted, this field will not be set.  To create a disk with one of the public operating system images, specify the image by its family name. For example, specifyfamily/debian-9 to use the latest Debian 9 image:  projects/debian-cloud/global/images/family/debian-9   Alternatively, use a specific version of a public operating system image:  projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD   To create a disk with a custom image that you created, specify the image name in the following format:  global/images/my-custom-image   You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name:  global/images/family/my-image-family",
                 },
-                source_image_encryption_key: {
+                sourceImageEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -436,45 +436,45 @@ const list: AppBlock = {
                   description:
                     "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.",
                 },
-                source_image_id: {
+                sourceImageId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The ID value of the image used to create this disk. This value identifies the exact image that was used to create this persistent disk. For example, if you created the persistent disk from an image that was later deleted and recreated under the same name, the source image ID would identify the exact version of the image that was used.",
                 },
-                source_instant_snapshot: {
+                sourceInstantSnapshot: {
                   type: "string",
                   description:
                     "The source instant snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/instantSnapshots/instantSnapshot      - projects/project/zones/zone/instantSnapshots/instantSnapshot    - zones/zone/instantSnapshots/instantSnapshot",
                 },
-                source_instant_snapshot_id: {
+                sourceInstantSnapshotId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The unique ID of the instant snapshot used to create this disk. This value identifies the exact instant snapshot that was used to create this persistent disk. For example, if you created the persistent disk from an instant snapshot that was later deleted and recreated under the same name, the source instant snapshot ID would identify the exact version of the instant snapshot that was used.",
                 },
-                source_snapshot: {
+                sourceSnapshot: {
                   type: "string",
                   description:
                     "The source snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/global/snapshots/snapshot    - projects/project/global/snapshots/snapshot      - global/snapshots/snapshot",
                 },
-                source_snapshot_encryption_key: {
+                sourceSnapshotEncryptionKey: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
                     },
-                    kms_key_service_account: {
+                    kmsKeyServiceAccount: {
                       type: "string",
                       description:
                         'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
                     },
-                    raw_key: {
+                    rawKey: {
                       type: "string",
                       description:
                         'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
                     },
-                    rsa_encrypted_key: {
+                    rsaEncryptedKey: {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
@@ -489,12 +489,12 @@ const list: AppBlock = {
                   description:
                     "Thecustomer-supplied encryption key of the source snapshot. Required if the source snapshot is protected by a customer-supplied encryption key.",
                 },
-                source_snapshot_id: {
+                sourceSnapshotId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The unique ID of the snapshot used to create this disk. This value identifies the exact snapshot that was used to create this persistent disk. For example, if you created the persistent disk from a snapshot that was later deleted and recreated under the same name, the source snapshot ID would identify the exact version of the snapshot that was used.",
                 },
-                source_storage_object: {
+                sourceStorageObject: {
                   type: "string",
                   description:
                     "The full Google Cloud Storage URI where the disk image is stored. This file must be a gzip-compressed tarball whose name ends in .tar.gz or virtual machine disk whose name ends in vmdk. Valid URIs may start with gs:// or https://storage.googleapis.com/. This flag is not optimized for creating multiple disks from a source storage object. To create many disks from a source storage object, use gcloud compute images import instead.",
@@ -504,7 +504,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The status of disk creation.        - CREATING: Disk is provisioning.      - RESTORING: Source data is being copied into the      disk.      - FAILED: Disk creation failed.      - READY: Disk is ready for use.      - DELETING: Disk is deleting. Check the Status enum for the list of possible values.",
                 },
-                storage_pool: {
+                storagePool: {
                   type: "string",
                   description:
                     "The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/storagePools/storagePool      - projects/project/zones/zone/storagePools/storagePool    - zones/zone/storagePools/storagePool",
@@ -539,12 +539,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Always compute#diskList for lists of disks.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

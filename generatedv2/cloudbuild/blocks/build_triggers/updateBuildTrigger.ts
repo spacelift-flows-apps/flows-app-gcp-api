@@ -2,7 +2,642 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getCloudBuildClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  projectId: "project_id",
+  triggerId: "trigger_id",
+  trigger: {
+    name: "trigger",
+    fields: {
+      resourceName: "resource_name",
+      triggerTemplate: {
+        name: "trigger_template",
+        fields: {
+          projectId: "project_id",
+          repoName: "repo_name",
+          branchName: "branch_name",
+          tagName: "tag_name",
+          commitSha: "commit_sha",
+          invertRegex: "invert_regex",
+        },
+      },
+      github: {
+        name: "github",
+        fields: {
+          installationId: "installation_id",
+          pullRequest: {
+            name: "pull_request",
+            fields: {
+              commentControl: "comment_control",
+              invertRegex: "invert_regex",
+            },
+          },
+          push: {
+            name: "push",
+            fields: {
+              invertRegex: "invert_regex",
+            },
+          },
+        },
+      },
+      pubsubConfig: {
+        name: "pubsub_config",
+        fields: {
+          serviceAccountEmail: "service_account_email",
+        },
+      },
+      webhookConfig: "webhook_config",
+      build: {
+        name: "build",
+        fields: {
+          source: {
+            name: "source",
+            fields: {
+              storageSource: {
+                name: "storage_source",
+                fields: {
+                  sourceFetcher: "source_fetcher",
+                },
+              },
+              repoSource: {
+                name: "repo_source",
+                fields: {
+                  projectId: "project_id",
+                  repoName: "repo_name",
+                  branchName: "branch_name",
+                  tagName: "tag_name",
+                  commitSha: "commit_sha",
+                  invertRegex: "invert_regex",
+                },
+              },
+              gitSource: "git_source",
+              storageSourceManifest: "storage_source_manifest",
+              connectedRepository: "connected_repository",
+            },
+          },
+          steps: {
+            name: "steps",
+            fields: {
+              waitFor: "wait_for",
+              secretEnv: "secret_env",
+              allowFailure: "allow_failure",
+              allowExitCodes: "allow_exit_codes",
+              automapSubstitutions: "automap_substitutions",
+            },
+          },
+          queueTtl: "queue_ttl",
+          artifacts: {
+            name: "artifacts",
+            fields: {
+              mavenArtifacts: {
+                name: "maven_artifacts",
+                fields: {
+                  artifactId: "artifact_id",
+                  groupId: "group_id",
+                },
+              },
+              goModules: {
+                name: "go_modules",
+                fields: {
+                  repositoryName: "repository_name",
+                  repositoryLocation: "repository_location",
+                  repositoryProjectId: "repository_project_id",
+                  sourcePath: "source_path",
+                  modulePath: "module_path",
+                  moduleVersion: "module_version",
+                },
+              },
+              pythonPackages: "python_packages",
+              npmPackages: {
+                name: "npm_packages",
+                fields: {
+                  packagePath: "package_path",
+                },
+              },
+            },
+          },
+          logsBucket: "logs_bucket",
+          options: {
+            name: "options",
+            fields: {
+              sourceProvenanceHash: "source_provenance_hash",
+              requestedVerifyOption: "requested_verify_option",
+              machineType: "machine_type",
+              diskSizeGb: "disk_size_gb",
+              substitutionOption: "substitution_option",
+              dynamicSubstitutions: "dynamic_substitutions",
+              automapSubstitutions: "automap_substitutions",
+              logStreamingOption: "log_streaming_option",
+              workerPool: "worker_pool",
+              secretEnv: "secret_env",
+              defaultLogsBucketBehavior: "default_logs_bucket_behavior",
+              enableStructuredLogging: "enable_structured_logging",
+            },
+          },
+          secrets: {
+            name: "secrets",
+            fields: {
+              kmsKeyName: "kms_key_name",
+              secretEnv: "secret_env",
+            },
+          },
+          serviceAccount: "service_account",
+          availableSecrets: {
+            name: "available_secrets",
+            fields: {
+              secretManager: {
+                name: "secret_manager",
+                fields: {
+                  versionName: "version_name",
+                },
+              },
+              inline: {
+                name: "inline",
+                fields: {
+                  kmsKeyName: "kms_key_name",
+                  envMap: "env_map",
+                },
+              },
+            },
+          },
+          gitConfig: {
+            name: "git_config",
+            fields: {
+              http: {
+                name: "http",
+                fields: {
+                  proxySecretVersionName: "proxy_secret_version_name",
+                },
+              },
+            },
+          },
+          dependencies: {
+            name: "dependencies",
+            fields: {
+              gitSource: {
+                name: "git_source",
+                fields: {
+                  repository: {
+                    name: "repository",
+                    fields: {
+                      developerConnect: "developer_connect",
+                    },
+                  },
+                  recurseSubmodules: "recurse_submodules",
+                  destPath: "dest_path",
+                },
+              },
+            },
+          },
+        },
+      },
+      gitFileSource: {
+        name: "git_file_source",
+        fields: {
+          repoType: "repo_type",
+          githubEnterpriseConfig: "github_enterprise_config",
+        },
+      },
+      ignoredFiles: "ignored_files",
+      includedFiles: "included_files",
+      sourceToBuild: {
+        name: "source_to_build",
+        fields: {
+          repoType: "repo_type",
+          githubEnterpriseConfig: "github_enterprise_config",
+        },
+      },
+      serviceAccount: "service_account",
+      repositoryEventConfig: {
+        name: "repository_event_config",
+        fields: {
+          pullRequest: {
+            name: "pull_request",
+            fields: {
+              commentControl: "comment_control",
+              invertRegex: "invert_regex",
+            },
+          },
+          push: {
+            name: "push",
+            fields: {
+              invertRegex: "invert_regex",
+            },
+          },
+        },
+      },
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  resource_name: "resourceName",
+  trigger_template: {
+    name: "triggerTemplate",
+    fields: {
+      project_id: "projectId",
+      repo_name: "repoName",
+      branch_name: "branchName",
+      tag_name: "tagName",
+      commit_sha: "commitSha",
+      invert_regex: "invertRegex",
+    },
+  },
+  github: {
+    name: "github",
+    fields: {
+      installation_id: "installationId",
+      pull_request: {
+        name: "pullRequest",
+        fields: {
+          comment_control: "commentControl",
+          invert_regex: "invertRegex",
+        },
+      },
+      push: {
+        name: "push",
+        fields: {
+          invert_regex: "invertRegex",
+        },
+      },
+    },
+  },
+  pubsub_config: {
+    name: "pubsubConfig",
+    fields: {
+      service_account_email: "serviceAccountEmail",
+    },
+  },
+  webhook_config: "webhookConfig",
+  build: {
+    name: "build",
+    fields: {
+      project_id: "projectId",
+      status_detail: "statusDetail",
+      source: {
+        name: "source",
+        fields: {
+          storage_source: {
+            name: "storageSource",
+            fields: {
+              source_fetcher: "sourceFetcher",
+            },
+          },
+          repo_source: {
+            name: "repoSource",
+            fields: {
+              project_id: "projectId",
+              repo_name: "repoName",
+              branch_name: "branchName",
+              tag_name: "tagName",
+              commit_sha: "commitSha",
+              invert_regex: "invertRegex",
+            },
+          },
+          git_source: "gitSource",
+          storage_source_manifest: "storageSourceManifest",
+          connected_repository: "connectedRepository",
+        },
+      },
+      steps: {
+        name: "steps",
+        fields: {
+          wait_for: "waitFor",
+          secret_env: "secretEnv",
+          timing: {
+            name: "timing",
+            fields: {
+              start_time: "startTime",
+              end_time: "endTime",
+            },
+          },
+          pull_timing: {
+            name: "pullTiming",
+            fields: {
+              start_time: "startTime",
+              end_time: "endTime",
+            },
+          },
+          allow_failure: "allowFailure",
+          exit_code: "exitCode",
+          allow_exit_codes: "allowExitCodes",
+          automap_substitutions: "automapSubstitutions",
+        },
+      },
+      results: {
+        name: "results",
+        fields: {
+          images: {
+            name: "images",
+            fields: {
+              push_timing: {
+                name: "pushTiming",
+                fields: {
+                  start_time: "startTime",
+                  end_time: "endTime",
+                },
+              },
+              artifact_registry_package: "artifactRegistryPackage",
+            },
+          },
+          build_step_images: "buildStepImages",
+          artifact_manifest: "artifactManifest",
+          num_artifacts: "numArtifacts",
+          build_step_outputs: "buildStepOutputs",
+          artifact_timing: {
+            name: "artifactTiming",
+            fields: {
+              start_time: "startTime",
+              end_time: "endTime",
+            },
+          },
+          python_packages: {
+            name: "pythonPackages",
+            fields: {
+              file_hashes: {
+                name: "fileHashes",
+                fields: {
+                  file_hash: "fileHash",
+                },
+              },
+              push_timing: {
+                name: "pushTiming",
+                fields: {
+                  start_time: "startTime",
+                  end_time: "endTime",
+                },
+              },
+              artifact_registry_package: "artifactRegistryPackage",
+            },
+          },
+          maven_artifacts: {
+            name: "mavenArtifacts",
+            fields: {
+              file_hashes: {
+                name: "fileHashes",
+                fields: {
+                  file_hash: "fileHash",
+                },
+              },
+              push_timing: {
+                name: "pushTiming",
+                fields: {
+                  start_time: "startTime",
+                  end_time: "endTime",
+                },
+              },
+              artifact_registry_package: "artifactRegistryPackage",
+            },
+          },
+          go_modules: {
+            name: "goModules",
+            fields: {
+              file_hashes: {
+                name: "fileHashes",
+                fields: {
+                  file_hash: "fileHash",
+                },
+              },
+              push_timing: {
+                name: "pushTiming",
+                fields: {
+                  start_time: "startTime",
+                  end_time: "endTime",
+                },
+              },
+              artifact_registry_package: "artifactRegistryPackage",
+            },
+          },
+          npm_packages: {
+            name: "npmPackages",
+            fields: {
+              file_hashes: {
+                name: "fileHashes",
+                fields: {
+                  file_hash: "fileHash",
+                },
+              },
+              push_timing: {
+                name: "pushTiming",
+                fields: {
+                  start_time: "startTime",
+                  end_time: "endTime",
+                },
+              },
+              artifact_registry_package: "artifactRegistryPackage",
+            },
+          },
+        },
+      },
+      create_time: "createTime",
+      start_time: "startTime",
+      finish_time: "finishTime",
+      queue_ttl: "queueTtl",
+      artifacts: {
+        name: "artifacts",
+        fields: {
+          objects: {
+            name: "objects",
+            fields: {
+              timing: {
+                name: "timing",
+                fields: {
+                  start_time: "startTime",
+                  end_time: "endTime",
+                },
+              },
+            },
+          },
+          maven_artifacts: {
+            name: "mavenArtifacts",
+            fields: {
+              artifact_id: "artifactId",
+              group_id: "groupId",
+            },
+          },
+          go_modules: {
+            name: "goModules",
+            fields: {
+              repository_name: "repositoryName",
+              repository_location: "repositoryLocation",
+              repository_project_id: "repositoryProjectId",
+              source_path: "sourcePath",
+              module_path: "modulePath",
+              module_version: "moduleVersion",
+            },
+          },
+          python_packages: "pythonPackages",
+          npm_packages: {
+            name: "npmPackages",
+            fields: {
+              package_path: "packagePath",
+            },
+          },
+        },
+      },
+      logs_bucket: "logsBucket",
+      source_provenance: {
+        name: "sourceProvenance",
+        fields: {
+          resolved_storage_source: {
+            name: "resolvedStorageSource",
+            fields: {
+              source_fetcher: "sourceFetcher",
+            },
+          },
+          resolved_repo_source: {
+            name: "resolvedRepoSource",
+            fields: {
+              project_id: "projectId",
+              repo_name: "repoName",
+              branch_name: "branchName",
+              tag_name: "tagName",
+              commit_sha: "commitSha",
+              invert_regex: "invertRegex",
+            },
+          },
+          resolved_storage_source_manifest: "resolvedStorageSourceManifest",
+          resolved_connected_repository: "resolvedConnectedRepository",
+          resolved_git_source: "resolvedGitSource",
+          file_hashes: "fileHashes",
+        },
+      },
+      build_trigger_id: "buildTriggerId",
+      options: {
+        name: "options",
+        fields: {
+          source_provenance_hash: "sourceProvenanceHash",
+          requested_verify_option: "requestedVerifyOption",
+          machine_type: "machineType",
+          disk_size_gb: "diskSizeGb",
+          substitution_option: "substitutionOption",
+          dynamic_substitutions: "dynamicSubstitutions",
+          automap_substitutions: "automapSubstitutions",
+          log_streaming_option: "logStreamingOption",
+          worker_pool: "workerPool",
+          secret_env: "secretEnv",
+          default_logs_bucket_behavior: "defaultLogsBucketBehavior",
+          enable_structured_logging: "enableStructuredLogging",
+        },
+      },
+      log_url: "logUrl",
+      secrets: {
+        name: "secrets",
+        fields: {
+          kms_key_name: "kmsKeyName",
+          secret_env: "secretEnv",
+        },
+      },
+      approval: {
+        name: "approval",
+        fields: {
+          config: {
+            name: "config",
+            fields: {
+              approval_required: "approvalRequired",
+            },
+          },
+          result: {
+            name: "result",
+            fields: {
+              approver_account: "approverAccount",
+              approval_time: "approvalTime",
+            },
+          },
+        },
+      },
+      service_account: "serviceAccount",
+      available_secrets: {
+        name: "availableSecrets",
+        fields: {
+          secret_manager: {
+            name: "secretManager",
+            fields: {
+              version_name: "versionName",
+            },
+          },
+          inline: {
+            name: "inline",
+            fields: {
+              kms_key_name: "kmsKeyName",
+              env_map: "envMap",
+            },
+          },
+        },
+      },
+      git_config: {
+        name: "gitConfig",
+        fields: {
+          http: {
+            name: "http",
+            fields: {
+              proxy_secret_version_name: "proxySecretVersionName",
+            },
+          },
+        },
+      },
+      failure_info: "failureInfo",
+      dependencies: {
+        name: "dependencies",
+        fields: {
+          git_source: {
+            name: "gitSource",
+            fields: {
+              repository: {
+                name: "repository",
+                fields: {
+                  developer_connect: "developerConnect",
+                },
+              },
+              recurse_submodules: "recurseSubmodules",
+              dest_path: "destPath",
+            },
+          },
+        },
+      },
+    },
+  },
+  git_file_source: {
+    name: "gitFileSource",
+    fields: {
+      repo_type: "repoType",
+      github_enterprise_config: "githubEnterpriseConfig",
+    },
+  },
+  create_time: "createTime",
+  ignored_files: "ignoredFiles",
+  included_files: "includedFiles",
+  source_to_build: {
+    name: "sourceToBuild",
+    fields: {
+      repo_type: "repoType",
+      github_enterprise_config: "githubEnterpriseConfig",
+    },
+  },
+  service_account: "serviceAccount",
+  repository_event_config: {
+    name: "repositoryEventConfig",
+    fields: {
+      repository_type: "repositoryType",
+      pull_request: {
+        name: "pullRequest",
+        fields: {
+          comment_control: "commentControl",
+          invert_regex: "invertRegex",
+        },
+      },
+      push: {
+        name: "push",
+        fields: {
+          invert_regex: "invertRegex",
+        },
+      },
+    },
+  },
+};
 
 const updateBuildTrigger: AppBlock = {
   name: "Update Build Trigger",
@@ -11,7 +646,7 @@ const updateBuildTrigger: AppBlock = {
   inputs: {
     default: {
       config: {
-        project_id: {
+        projectId: {
           name: "Project Id",
           description: "Required. ID of the project that owns the trigger.",
           type: {
@@ -20,7 +655,7 @@ const updateBuildTrigger: AppBlock = {
           },
           required: true,
         },
-        trigger_id: {
+        triggerId: {
           name: "Trigger Id",
           description: "Required. ID of the `BuildTrigger` to update.",
           type: {
@@ -35,7 +670,7 @@ const updateBuildTrigger: AppBlock = {
           type: {
             type: "object",
             properties: {
-              resource_name: {
+              resourceName: {
                 type: "string",
                 description:
                   "The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.",
@@ -56,30 +691,30 @@ const updateBuildTrigger: AppBlock = {
                 },
                 description: "Tags for annotation of a `BuildTrigger`",
               },
-              trigger_template: {
+              triggerTemplate: {
                 type: "object",
                 properties: {
-                  project_id: {
+                  projectId: {
                     type: "string",
                     description:
                       "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
                   },
-                  repo_name: {
+                  repoName: {
                     type: "string",
                     description:
                       "Required. Name of the Cloud Source Repository.",
                   },
-                  branch_name: {
+                  branchName: {
                     type: "string",
                     description:
                       "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                   },
-                  tag_name: {
+                  tagName: {
                     type: "string",
                     description:
                       "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                   },
-                  commit_sha: {
+                  commitSha: {
                     type: "string",
                     description:
                       "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -89,7 +724,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
                   },
-                  invert_regex: {
+                  invertRegex: {
                     type: "boolean",
                     description:
                       "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -103,7 +738,7 @@ const updateBuildTrigger: AppBlock = {
                       "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
                   },
                 },
-                required: ["repo_name"],
+                required: ["repoName"],
                 description:
                   "Location of the source in a Google Cloud Source Repository.",
                 additionalProperties: true,
@@ -111,7 +746,7 @@ const updateBuildTrigger: AppBlock = {
               github: {
                 type: "object",
                 properties: {
-                  installation_id: {
+                  installationId: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
@@ -125,7 +760,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       'Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is "cloud-builders".',
                   },
-                  pull_request: {
+                  pullRequest: {
                     type: "object",
                     properties: {
                       branch: {
@@ -133,7 +768,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Regex of branches to match.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax",
                       },
-                      comment_control: {
+                      commentControl: {
                         type: "string",
                         enum: [
                           "COMMENTS_DISABLED",
@@ -143,7 +778,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "If CommentControl is enabled, depending on the setting, builds may not fire until a repository writer comments `/gcbrun` on a pull request or `/gcbrun` is in the pull request description. Only PR comments that contain `/gcbrun` will trigger builds.  If CommentControl is set to disabled, comments with `/gcbrun` from a user with repository write permission or above will still trigger builds to run.",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "If true, branches that do NOT match the git_ref will trigger a build.",
@@ -166,7 +801,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Regexes matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'git_ref' - only one field in this group can be set)",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "When true, only trigger a build if the revision regex does NOT match the git_ref regex.",
@@ -181,7 +816,7 @@ const updateBuildTrigger: AppBlock = {
                   "GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received.",
                 additionalProperties: true,
               },
-              pubsub_config: {
+              pubsubConfig: {
                 type: "object",
                 properties: {
                   topic: {
@@ -189,7 +824,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.",
                   },
-                  service_account_email: {
+                  serviceAccountEmail: {
                     type: "string",
                     description:
                       "Service account that will make the push request.",
@@ -211,7 +846,7 @@ const updateBuildTrigger: AppBlock = {
                   "PubsubConfig describes the configuration of a trigger that creates a build whenever a Pub/Sub message is published.",
                 additionalProperties: true,
               },
-              webhook_config: {
+              webhookConfig: {
                 type: "object",
                 properties: {
                   secret: {
@@ -242,7 +877,7 @@ const updateBuildTrigger: AppBlock = {
                   source: {
                     type: "object",
                     properties: {
-                      storage_source: {
+                      storageSource: {
                         type: "object",
                         properties: {
                           bucket: {
@@ -259,7 +894,7 @@ const updateBuildTrigger: AppBlock = {
                             type: "string",
                             description: "64-bit integer as string",
                           },
-                          source_fetcher: {
+                          sourceFetcher: {
                             type: "string",
                             enum: [
                               "SOURCE_FETCHER_UNSPECIFIED",
@@ -275,30 +910,30 @@ const updateBuildTrigger: AppBlock = {
                           "Location of the source in an archive file in Cloud Storage. (Part of 'source' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      repo_source: {
+                      repoSource: {
                         type: "object",
                         properties: {
-                          project_id: {
+                          projectId: {
                             type: "string",
                             description:
                               "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
                           },
-                          repo_name: {
+                          repoName: {
                             type: "string",
                             description:
                               "Required. Name of the Cloud Source Repository.",
                           },
-                          branch_name: {
+                          branchName: {
                             type: "string",
                             description:
                               "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                           },
-                          tag_name: {
+                          tagName: {
                             type: "string",
                             description:
                               "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                           },
-                          commit_sha: {
+                          commitSha: {
                             type: "string",
                             description:
                               "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -308,7 +943,7 @@ const updateBuildTrigger: AppBlock = {
                             description:
                               "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
                           },
-                          invert_regex: {
+                          invertRegex: {
                             type: "boolean",
                             description:
                               "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -322,12 +957,12 @@ const updateBuildTrigger: AppBlock = {
                               "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
                           },
                         },
-                        required: ["repo_name"],
+                        required: ["repoName"],
                         description:
                           "Location of the source in a Google Cloud Source Repository. (Part of 'source' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      git_source: {
+                      gitSource: {
                         type: "object",
                         properties: {
                           url: {
@@ -351,7 +986,7 @@ const updateBuildTrigger: AppBlock = {
                           "Location of the source in any accessible Git repository. (Part of 'source' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      storage_source_manifest: {
+                      storageSourceManifest: {
                         type: "object",
                         properties: {
                           bucket: {
@@ -374,7 +1009,7 @@ const updateBuildTrigger: AppBlock = {
                           "Location of the source manifest in Cloud Storage. This feature is in Preview; see description [here](https://github.com/GoogleCloudPlatform/cloud-builders/tree/master/gcs-fetcher). (Part of 'source' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      connected_repository: {
+                      connectedRepository: {
                         type: "object",
                         properties: {
                           repository: {
@@ -439,7 +1074,7 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             "Unique identifier for this build step, used in `wait_for` to reference this build step as a dependency.",
                         },
-                        wait_for: {
+                        waitFor: {
                           type: "array",
                           items: {
                             type: "string",
@@ -452,7 +1087,7 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             "Entrypoint to be used instead of the build step image's default entrypoint. If unset, the image's default entrypoint is used.",
                         },
-                        secret_env: {
+                        secretEnv: {
                           type: "array",
                           items: {
                             type: "string",
@@ -487,12 +1122,12 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "Duration string (e.g., '1.5s', '300s')",
                         },
-                        allow_failure: {
+                        allowFailure: {
                           type: "boolean",
                           description:
                             "Allow this build step to fail without failing the entire build.  If false, the entire build will fail if this step fails. Otherwise, the build will succeed, but this step will still have a failure status. Error information will be reported in the failure_detail field.",
                         },
-                        allow_exit_codes: {
+                        allowExitCodes: {
                           type: "array",
                           items: {
                             type: "integer",
@@ -505,7 +1140,7 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             "A shell script to be executed in the step.  When script is provided, the user cannot specify the entrypoint or args.",
                         },
-                        automap_substitutions: {
+                        automapSubstitutions: {
                           type: "boolean",
                           description:
                             "Option to include built-in and custom substitutions as env variables for this build step. This option will override the global option in BuildOption.",
@@ -529,7 +1164,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "A list of images to be pushed upon the successful completion of all build steps.  The images are pushed using the builder service account's credentials.  The digests of the pushed images will be stored in the `Build` resource's results field.  If any of the images fail to be pushed, the build status is marked `FAILURE`.",
                   },
-                  queue_ttl: {
+                  queueTtl: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
@@ -565,7 +1200,7 @@ const updateBuildTrigger: AppBlock = {
                           "Files in the workspace to upload to Cloud Storage upon successful completion of all build steps.",
                         additionalProperties: true,
                       },
-                      maven_artifacts: {
+                      mavenArtifacts: {
                         type: "array",
                         items: {
                           type: "object",
@@ -580,12 +1215,12 @@ const updateBuildTrigger: AppBlock = {
                               description:
                                 "Optional. Path to an artifact in the build's workspace to be uploaded to Artifact Registry. This can be either an absolute path, e.g. /workspace/my-app/target/my-app-1.0.SNAPSHOT.jar or a relative path from /workspace, e.g. my-app/target/my-app-1.0.SNAPSHOT.jar.",
                             },
-                            artifact_id: {
+                            artifactId: {
                               type: "string",
                               description:
                                 "Maven `artifactId` value used when uploading the artifact to Artifact Registry.",
                             },
-                            group_id: {
+                            groupId: {
                               type: "string",
                               description:
                                 "Maven `groupId` value used when uploading the artifact to Artifact Registry.",
@@ -603,37 +1238,37 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "A list of Maven artifacts to be uploaded to Artifact Registry upon successful completion of all build steps.  Artifacts in the workspace matching specified paths globs will be uploaded to the specified Artifact Registry repository using the builder service account's credentials.  If any artifacts fail to be pushed, the build is marked FAILURE.",
                       },
-                      go_modules: {
+                      goModules: {
                         type: "array",
                         items: {
                           type: "object",
                           properties: {
-                            repository_name: {
+                            repositoryName: {
                               type: "string",
                               description:
                                 "Optional. Artifact Registry repository name.  Specified Go modules will be zipped and uploaded to Artifact Registry with this location as a prefix. e.g. my-go-repo",
                             },
-                            repository_location: {
+                            repositoryLocation: {
                               type: "string",
                               description:
                                 "Optional. Location of the Artifact Registry repository. i.e. us-east1 Defaults to the build’s location.",
                             },
-                            repository_project_id: {
+                            repositoryProjectId: {
                               type: "string",
                               description:
                                 "Optional. Project ID of the Artifact Registry repository. Defaults to the build project.",
                             },
-                            source_path: {
+                            sourcePath: {
                               type: "string",
                               description:
                                 "Optional. Source path of the go.mod file in the build's workspace. If not specified, this will default to the current directory. e.g. ~/code/go/mypackage",
                             },
-                            module_path: {
+                            modulePath: {
                               type: "string",
                               description:
                                 'Optional. The Go module\'s "module path". e.g. example.com/foo/v2',
                             },
-                            module_version: {
+                            moduleVersion: {
                               type: "string",
                               description:
                                 "Optional. The Go module's semantic version in the form vX.Y.Z. e.g. v0.1.1 Pre-release identifiers can also be added by appending a dash and dot separated ASCII alphanumeric characters and hyphens. e.g. v0.2.3-alpha.x.12m.5",
@@ -646,7 +1281,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Optional. A list of Go modules to be uploaded to Artifact Registry upon successful completion of all build steps.  If any objects fail to be pushed, the build is marked FAILURE.",
                       },
-                      python_packages: {
+                      pythonPackages: {
                         type: "array",
                         items: {
                           type: "object",
@@ -672,7 +1307,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "A list of Python packages to be uploaded to Artifact Registry upon successful completion of all build steps.  The build service account credentials will be used to perform the upload.  If any objects fail to be pushed, the build is marked FAILURE.",
                       },
-                      npm_packages: {
+                      npmPackages: {
                         type: "array",
                         items: {
                           type: "object",
@@ -682,7 +1317,7 @@ const updateBuildTrigger: AppBlock = {
                               description:
                                 'Artifact Registry repository, in the form "https://$REGION-npm.pkg.dev/$PROJECT/$REPOSITORY"  Npm package in the workspace specified by path will be zipped and uploaded to Artifact Registry with this location as a prefix.',
                             },
-                            package_path: {
+                            packagePath: {
                               type: "string",
                               description:
                                 "Optional. Path to the package.json. e.g. workspace/path/to/package  Only one of `archive` or `package_path` can be specified.",
@@ -700,7 +1335,7 @@ const updateBuildTrigger: AppBlock = {
                       "Artifacts produced by a build that should be uploaded upon successful completion of all build steps.",
                     additionalProperties: true,
                   },
-                  logs_bucket: {
+                  logsBucket: {
                     type: "string",
                     description:
                       "Cloud Storage bucket where logs should be written (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)). Logs file names will be of the format `${logs_bucket}/log-${build_id}.txt`.",
@@ -708,7 +1343,7 @@ const updateBuildTrigger: AppBlock = {
                   options: {
                     type: "object",
                     properties: {
-                      source_provenance_hash: {
+                      sourceProvenanceHash: {
                         type: "array",
                         items: {
                           type: "string",
@@ -722,12 +1357,12 @@ const updateBuildTrigger: AppBlock = {
                         },
                         description: "Requested hash for SourceProvenance.",
                       },
-                      requested_verify_option: {
+                      requestedVerifyOption: {
                         type: "string",
                         enum: ["NOT_VERIFIED", "VERIFIED"],
                         description: "Requested verifiability options.",
                       },
-                      machine_type: {
+                      machineType: {
                         type: "string",
                         enum: [
                           "UNSPECIFIED",
@@ -740,33 +1375,33 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Compute Engine machine type on which to run the build.",
                       },
-                      disk_size_gb: {
+                      diskSizeGb: {
                         type: "string",
                         description: "64-bit integer as string",
                       },
-                      substitution_option: {
+                      substitutionOption: {
                         type: "string",
                         enum: ["MUST_MATCH", "ALLOW_LOOSE"],
                         description:
                           "Option to specify behavior when there is an error in the substitution checks.  NOTE: this is always set to ALLOW_LOOSE for triggered builds and cannot be overridden in the build configuration file.",
                       },
-                      dynamic_substitutions: {
+                      dynamicSubstitutions: {
                         type: "boolean",
                         description:
                           "Option to specify whether or not to apply bash style string operations to the substitutions.  NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.",
                       },
-                      automap_substitutions: {
+                      automapSubstitutions: {
                         type: "boolean",
                         description:
                           "Option to include built-in and custom substitutions as env variables for all build steps.",
                       },
-                      log_streaming_option: {
+                      logStreamingOption: {
                         type: "string",
                         enum: ["STREAM_DEFAULT", "STREAM_ON", "STREAM_OFF"],
                         description:
                           "Option to define build log streaming behavior to Cloud Storage.",
                       },
-                      worker_pool: {
+                      workerPool: {
                         type: "string",
                         description:
                           "This field deprecated; please use `pool.name` instead.",
@@ -805,7 +1440,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           'A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value.  The elements are of the form "KEY=VALUE" for the environment variable "KEY" being given the value "VALUE".',
                       },
-                      secret_env: {
+                      secretEnv: {
                         type: "array",
                         items: {
                           type: "string",
@@ -836,7 +1471,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Global list of volumes to mount for ALL build steps  Each volume is created as an empty volume prior to starting the build process. Upon completion of the build, volumes and their contents are discarded. Global volume names and paths cannot conflict with the volumes defined a build step.  Using a global volume in a build with only one step is not valid as it is indicative of a build request with an incorrect configuration.",
                       },
-                      default_logs_bucket_behavior: {
+                      defaultLogsBucketBehavior: {
                         type: "string",
                         enum: [
                           "DEFAULT_LOGS_BUCKET_BEHAVIOR_UNSPECIFIED",
@@ -846,7 +1481,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Optional. Option to specify how default logs buckets are setup.",
                       },
-                      enable_structured_logging: {
+                      enableStructuredLogging: {
                         type: "boolean",
                         description:
                           "Optional. Option to specify whether structured logging is enabled.  If true, JSON-formatted logs are parsed as structured logs.",
@@ -876,12 +1511,12 @@ const updateBuildTrigger: AppBlock = {
                     items: {
                       type: "object",
                       properties: {
-                        kms_key_name: {
+                        kmsKeyName: {
                           type: "string",
                           description:
                             "Cloud KMS key name to use to decrypt these envs.",
                         },
-                        secret_env: {
+                        secretEnv: {
                           type: "object",
                           additionalProperties: {
                             type: "string",
@@ -897,20 +1532,20 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Secrets to decrypt using Cloud Key Management Service. Note: Secret Manager is the recommended technique for managing sensitive data with Cloud Build. Use `available_secrets` to configure builds to access secrets from Secret Manager. For instructions, see: https://cloud.google.com/cloud-build/docs/securing-builds/use-secrets",
                   },
-                  service_account: {
+                  serviceAccount: {
                     type: "string",
                     description:
                       "IAM service account whose credentials will be used at build runtime. Must be of the format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}`. ACCOUNT can be email address or uniqueId of the service account.",
                   },
-                  available_secrets: {
+                  availableSecrets: {
                     type: "object",
                     properties: {
-                      secret_manager: {
+                      secretManager: {
                         type: "array",
                         items: {
                           type: "object",
                           properties: {
-                            version_name: {
+                            versionName: {
                               type: "string",
                               description:
                                 "Resource name of the SecretVersion. In format: projects/*/secrets/*/versions/*",
@@ -933,12 +1568,12 @@ const updateBuildTrigger: AppBlock = {
                         items: {
                           type: "object",
                           properties: {
-                            kms_key_name: {
+                            kmsKeyName: {
                               type: "string",
                               description:
                                 "Resource name of Cloud KMS crypto key to decrypt the encrypted value. In format: projects/*/locations/*/keyRings/*/cryptoKeys/*",
                             },
-                            env_map: {
+                            envMap: {
                               type: "object",
                               additionalProperties: {
                                 type: "string",
@@ -958,13 +1593,13 @@ const updateBuildTrigger: AppBlock = {
                     description: "Secrets and secret environment variables.",
                     additionalProperties: true,
                   },
-                  git_config: {
+                  gitConfig: {
                     type: "object",
                     properties: {
                       http: {
                         type: "object",
                         properties: {
-                          proxy_secret_version_name: {
+                          proxySecretVersionName: {
                             type: "string",
                             description:
                               "SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `[protocol://][user[:password]@]proxyhost[:port]`.",
@@ -989,7 +1624,7 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             "If set to true disable all dependency fetching (ignoring the default source as well). (Part of 'dep' - only one field in this group can be set)",
                         },
-                        git_source: {
+                        gitSource: {
                           type: "object",
                           properties: {
                             repository: {
@@ -1000,7 +1635,7 @@ const updateBuildTrigger: AppBlock = {
                                   description:
                                     "Location of the Git repository. (Part of 'repotype' - only one field in this group can be set)",
                                 },
-                                developer_connect: {
+                                developerConnect: {
                                   type: "string",
                                   description:
                                     "The Developer Connect Git repository link formatted as `projects/*/locations/*/connections/*/gitRepositoryLink/*` (Part of 'repotype' - only one field in this group can be set)",
@@ -1014,7 +1649,7 @@ const updateBuildTrigger: AppBlock = {
                               description:
                                 "Required. The revision that we will fetch the repo at.",
                             },
-                            recurse_submodules: {
+                            recurseSubmodules: {
                               type: "boolean",
                               description:
                                 "Optional. True if submodules should be fetched too (default false).",
@@ -1023,13 +1658,13 @@ const updateBuildTrigger: AppBlock = {
                               type: "string",
                               description: "64-bit integer as string",
                             },
-                            dest_path: {
+                            destPath: {
                               type: "string",
                               description:
                                 "Required. Where should the files be placed on the worker.",
                             },
                           },
-                          required: ["repository", "revision", "dest_path"],
+                          required: ["repository", "revision", "destPath"],
                           description:
                             "Represents a git repository as a build dependency. (Part of 'dep' - only one field in this group can be set)",
                           additionalProperties: true,
@@ -1052,7 +1687,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "Path, from the source root, to the build configuration file (i.e. cloudbuild.yaml). (Part of 'build_template' - only one field in this group can be set)",
               },
-              git_file_source: {
+              gitFileSource: {
                 type: "object",
                 properties: {
                   path: {
@@ -1070,7 +1705,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "The fully qualified resource name of the Repos API repository. Either URI or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.",
                   },
-                  repo_type: {
+                  repoType: {
                     type: "string",
                     enum: [
                       "UNKNOWN",
@@ -1086,7 +1721,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "The branch, tag, arbitrary ref, or SHA version of the repo to use when resolving the filename (optional). This field respects the same syntax/resolution as described here: https://git-scm.com/docs/gitrevisions If unspecified, the revision from which the trigger invocation originated is assumed to be the revision from which to read the specified path.",
                   },
-                  github_enterprise_config: {
+                  githubEnterpriseConfig: {
                     type: "string",
                     description:
                       "The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.",
@@ -1109,7 +1744,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "Substitutions for Build resource. The keys must match the following regular expression: `^_[A-Z0-9_]+$`.",
               },
-              ignored_files: {
+              ignoredFiles: {
                 type: "array",
                 items: {
                   type: "string",
@@ -1117,7 +1752,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   'ignored_files and included_files are file glob matches using https://golang.org/pkg/path/filepath/#Match extended with support for "**".  If ignored_files and changed files are both empty, then they are not used to determine whether or not to trigger a build.  If ignored_files is not empty, then we ignore any files that match any of the ignored_file globs. If the change has no files that are outside of the ignored_files globs, then we do not trigger a build.',
               },
-              included_files: {
+              includedFiles: {
                 type: "array",
                 items: {
                   type: "string",
@@ -1129,7 +1764,7 @@ const updateBuildTrigger: AppBlock = {
                 type: "string",
                 description: "Optional. A Common Expression Language string.",
               },
-              source_to_build: {
+              sourceToBuild: {
                 type: "object",
                 properties: {
                   uri: {
@@ -1147,7 +1782,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       'The branch or tag to use. Must start with "refs/" (required).',
                   },
-                  repo_type: {
+                  repoType: {
                     type: "string",
                     enum: [
                       "UNKNOWN",
@@ -1158,7 +1793,7 @@ const updateBuildTrigger: AppBlock = {
                     ],
                     description: "See RepoType below.",
                   },
-                  github_enterprise_config: {
+                  githubEnterpriseConfig: {
                     type: "string",
                     description:
                       "The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.",
@@ -1168,19 +1803,19 @@ const updateBuildTrigger: AppBlock = {
                   "GitRepoSource describes a repo and ref of a code repository.",
                 additionalProperties: true,
               },
-              service_account: {
+              serviceAccount: {
                 type: "string",
                 description:
                   "The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account (`[PROJECT_NUM]@cloudbuild.gserviceaccount.com`) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`",
               },
-              repository_event_config: {
+              repositoryEventConfig: {
                 type: "object",
                 properties: {
                   repository: {
                     type: "string",
                     description: "The resource name of the Repo API resource.",
                   },
-                  pull_request: {
+                  pullRequest: {
                     type: "object",
                     properties: {
                       branch: {
@@ -1188,7 +1823,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Regex of branches to match.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax",
                       },
-                      comment_control: {
+                      commentControl: {
                         type: "string",
                         enum: [
                           "COMMENTS_DISABLED",
@@ -1198,7 +1833,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "If CommentControl is enabled, depending on the setting, builds may not fire until a repository writer comments `/gcbrun` on a pull request or `/gcbrun` is in the pull request description. Only PR comments that contain `/gcbrun` will trigger builds.  If CommentControl is set to disabled, comments with `/gcbrun` from a user with repository write permission or above will still trigger builds to run.",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "If true, branches that do NOT match the git_ref will trigger a build.",
@@ -1221,7 +1856,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Regexes matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'git_ref' - only one field in this group can be set)",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "When true, only trigger a build if the revision regex does NOT match the git_ref regex.",
@@ -1243,7 +1878,7 @@ const updateBuildTrigger: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Update mask for the resource. If this is set, the server will only update the fields specified in the field mask. Otherwise, a full update of the mutable resource fields will be performed.",
@@ -1258,15 +1893,7 @@ const updateBuildTrigger: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.trigger_id !== undefined)
-          request.trigger_id = input.event.inputConfig.trigger_id;
-        if (input.event.inputConfig.trigger !== undefined)
-          request.trigger = input.event.inputConfig.trigger;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.trigger?.resource_name !== undefined) {
@@ -1290,7 +1917,8 @@ const updateBuildTrigger: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -1300,7 +1928,7 @@ const updateBuildTrigger: AppBlock = {
       type: {
         type: "object",
         properties: {
-          resource_name: {
+          resourceName: {
             type: "string",
             description:
               "The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.",
@@ -1325,29 +1953,29 @@ const updateBuildTrigger: AppBlock = {
             },
             description: "Tags for annotation of a `BuildTrigger`",
           },
-          trigger_template: {
+          triggerTemplate: {
             type: "object",
             properties: {
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
               },
-              repo_name: {
+              repoName: {
                 type: "string",
                 description: "Required. Name of the Cloud Source Repository.",
               },
-              branch_name: {
+              branchName: {
                 type: "string",
                 description:
                   "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
               },
-              tag_name: {
+              tagName: {
                 type: "string",
                 description:
                   "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
               },
-              commit_sha: {
+              commitSha: {
                 type: "string",
                 description:
                   "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -1357,7 +1985,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
               },
-              invert_regex: {
+              invertRegex: {
                 type: "boolean",
                 description:
                   "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -1371,7 +1999,7 @@ const updateBuildTrigger: AppBlock = {
                   "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
               },
             },
-            required: ["repo_name"],
+            required: ["repoName"],
             description:
               "Location of the source in a Google Cloud Source Repository.",
             additionalProperties: true,
@@ -1379,7 +2007,7 @@ const updateBuildTrigger: AppBlock = {
           github: {
             type: "object",
             properties: {
-              installation_id: {
+              installationId: {
                 type: "string",
                 description: "64-bit integer as string",
               },
@@ -1393,7 +2021,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   'Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is "cloud-builders".',
               },
-              pull_request: {
+              pullRequest: {
                 type: "object",
                 properties: {
                   branch: {
@@ -1401,7 +2029,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Regex of branches to match.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax",
                   },
-                  comment_control: {
+                  commentControl: {
                     type: "string",
                     enum: [
                       "COMMENTS_DISABLED",
@@ -1411,7 +2039,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "If CommentControl is enabled, depending on the setting, builds may not fire until a repository writer comments `/gcbrun` on a pull request or `/gcbrun` is in the pull request description. Only PR comments that contain `/gcbrun` will trigger builds.  If CommentControl is set to disabled, comments with `/gcbrun` from a user with repository write permission or above will still trigger builds to run.",
                   },
-                  invert_regex: {
+                  invertRegex: {
                     type: "boolean",
                     description:
                       "If true, branches that do NOT match the git_ref will trigger a build.",
@@ -1434,7 +2062,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Regexes matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'git_ref' - only one field in this group can be set)",
                   },
-                  invert_regex: {
+                  invertRegex: {
                     type: "boolean",
                     description:
                       "When true, only trigger a build if the revision regex does NOT match the git_ref regex.",
@@ -1449,7 +2077,7 @@ const updateBuildTrigger: AppBlock = {
               "GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received.",
             additionalProperties: true,
           },
-          pubsub_config: {
+          pubsubConfig: {
             type: "object",
             properties: {
               subscription: {
@@ -1462,7 +2090,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.",
               },
-              service_account_email: {
+              serviceAccountEmail: {
                 type: "string",
                 description: "Service account that will make the push request.",
               },
@@ -1483,7 +2111,7 @@ const updateBuildTrigger: AppBlock = {
               "PubsubConfig describes the configuration of a trigger that creates a build whenever a Pub/Sub message is published.",
             additionalProperties: true,
           },
-          webhook_config: {
+          webhookConfig: {
             type: "object",
             properties: {
               secret: {
@@ -1520,7 +2148,7 @@ const updateBuildTrigger: AppBlock = {
                 type: "string",
                 description: "Output only. Unique identifier of the build.",
               },
-              project_id: {
+              projectId: {
                 type: "string",
                 description: "Output only. ID of the project.",
               },
@@ -1540,7 +2168,7 @@ const updateBuildTrigger: AppBlock = {
                 ],
                 description: "Output only. Status of the build.",
               },
-              status_detail: {
+              statusDetail: {
                 type: "string",
                 description:
                   "Output only. Customer-readable message about the current status.",
@@ -1548,7 +2176,7 @@ const updateBuildTrigger: AppBlock = {
               source: {
                 type: "object",
                 properties: {
-                  storage_source: {
+                  storageSource: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -1565,7 +2193,7 @@ const updateBuildTrigger: AppBlock = {
                         type: "string",
                         description: "64-bit integer as string",
                       },
-                      source_fetcher: {
+                      sourceFetcher: {
                         type: "string",
                         enum: [
                           "SOURCE_FETCHER_UNSPECIFIED",
@@ -1581,30 +2209,30 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source in an archive file in Cloud Storage. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  repo_source: {
+                  repoSource: {
                     type: "object",
                     properties: {
-                      project_id: {
+                      projectId: {
                         type: "string",
                         description:
                           "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
                       },
-                      repo_name: {
+                      repoName: {
                         type: "string",
                         description:
                           "Required. Name of the Cloud Source Repository.",
                       },
-                      branch_name: {
+                      branchName: {
                         type: "string",
                         description:
                           "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                       },
-                      tag_name: {
+                      tagName: {
                         type: "string",
                         description:
                           "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                       },
-                      commit_sha: {
+                      commitSha: {
                         type: "string",
                         description:
                           "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -1614,7 +2242,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -1628,12 +2256,12 @@ const updateBuildTrigger: AppBlock = {
                           "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
                       },
                     },
-                    required: ["repo_name"],
+                    required: ["repoName"],
                     description:
                       "Location of the source in a Google Cloud Source Repository. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  git_source: {
+                  gitSource: {
                     type: "object",
                     properties: {
                       url: {
@@ -1657,7 +2285,7 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source in any accessible Git repository. (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  storage_source_manifest: {
+                  storageSourceManifest: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -1680,7 +2308,7 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source manifest in Cloud Storage. This feature is in Preview; see description [here](https://github.com/GoogleCloudPlatform/cloud-builders/tree/master/gcs-fetcher). (Part of 'source' - only one field in this group can be set)",
                     additionalProperties: true,
                   },
-                  connected_repository: {
+                  connectedRepository: {
                     type: "object",
                     properties: {
                       repository: {
@@ -1745,7 +2373,7 @@ const updateBuildTrigger: AppBlock = {
                       description:
                         "Unique identifier for this build step, used in `wait_for` to reference this build step as a dependency.",
                     },
-                    wait_for: {
+                    waitFor: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1758,7 +2386,7 @@ const updateBuildTrigger: AppBlock = {
                       description:
                         "Entrypoint to be used instead of the build step image's default entrypoint. If unset, the image's default entrypoint is used.",
                     },
-                    secret_env: {
+                    secretEnv: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1792,12 +2420,12 @@ const updateBuildTrigger: AppBlock = {
                     timing: {
                       type: "object",
                       properties: {
-                        start_time: {
+                        startTime: {
                           type: "string",
                           description:
                             "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                         },
-                        end_time: {
+                        endTime: {
                           type: "string",
                           description:
                             "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -1807,15 +2435,15 @@ const updateBuildTrigger: AppBlock = {
                         "Start and end times for a build execution phase.",
                       additionalProperties: true,
                     },
-                    pull_timing: {
+                    pullTiming: {
                       type: "object",
                       properties: {
-                        start_time: {
+                        startTime: {
                           type: "string",
                           description:
                             "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                         },
-                        end_time: {
+                        endTime: {
                           type: "string",
                           description:
                             "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -1846,17 +2474,17 @@ const updateBuildTrigger: AppBlock = {
                       description:
                         "Output only. Status of the build step. At this time, build step status is only updated on build completion; step status is not updated in real-time as the build progresses.",
                     },
-                    allow_failure: {
+                    allowFailure: {
                       type: "boolean",
                       description:
                         "Allow this build step to fail without failing the entire build.  If false, the entire build will fail if this step fails. Otherwise, the build will succeed, but this step will still have a failure status. Error information will be reported in the failure_detail field.",
                     },
-                    exit_code: {
+                    exitCode: {
                       type: "integer",
                       description:
                         "Output only. Return code from running the step.",
                     },
-                    allow_exit_codes: {
+                    allowExitCodes: {
                       type: "array",
                       items: {
                         type: "integer",
@@ -1869,7 +2497,7 @@ const updateBuildTrigger: AppBlock = {
                       description:
                         "A shell script to be executed in the step.  When script is provided, the user cannot specify the entrypoint or args.",
                     },
-                    automap_substitutions: {
+                    automapSubstitutions: {
                       type: "boolean",
                       description:
                         "Option to include built-in and custom substitutions as env variables for this build step. This option will override the global option in BuildOption.",
@@ -1898,15 +2526,15 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "Docker Registry 2.0 digest.",
                         },
-                        push_timing: {
+                        pushTiming: {
                           type: "object",
                           properties: {
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                             },
-                            end_time: {
+                            endTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -1916,7 +2544,7 @@ const updateBuildTrigger: AppBlock = {
                             "Start and end times for a build execution phase.",
                           additionalProperties: true,
                         },
-                        artifact_registry_package: {
+                        artifactRegistryPackage: {
                           type: "string",
                           description:
                             "Output only. Path to the artifact in Artifact Registry.",
@@ -1928,7 +2556,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Container images that were built as a part of the build.",
                   },
-                  build_step_images: {
+                  buildStepImages: {
                     type: "array",
                     items: {
                       type: "string",
@@ -1936,16 +2564,16 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "List of build step digests, in the order corresponding to build step indices.",
                   },
-                  artifact_manifest: {
+                  artifactManifest: {
                     type: "string",
                     description:
                       "Path to the artifact manifest for non-container artifacts uploaded to Cloud Storage. Only populated when artifacts are uploaded to Cloud Storage.",
                   },
-                  num_artifacts: {
+                  numArtifacts: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
-                  build_step_outputs: {
+                  buildStepOutputs: {
                     type: "array",
                     items: {
                       type: "string",
@@ -1954,15 +2582,15 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "List of build step outputs, produced by builder images, in the order corresponding to build step indices.  [Cloud Builders](https://cloud.google.com/cloud-build/docs/cloud-builders) can produce this output by writing to `$BUILDER_OUTPUT/output`. Only the first 50KB of data is stored. Note that the `$BUILDER_OUTPUT` variable is read-only and can't be substituted.",
                   },
-                  artifact_timing: {
+                  artifactTiming: {
                     type: "object",
                     properties: {
-                      start_time: {
+                      startTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                       },
-                      end_time: {
+                      endTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -1972,7 +2600,7 @@ const updateBuildTrigger: AppBlock = {
                       "Start and end times for a build execution phase.",
                     additionalProperties: true,
                   },
-                  python_packages: {
+                  pythonPackages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -1981,10 +2609,10 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "URI of the uploaded artifact.",
                         },
-                        file_hashes: {
+                        fileHashes: {
                           type: "object",
                           properties: {
-                            file_hash: {
+                            fileHash: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -2017,15 +2645,15 @@ const updateBuildTrigger: AppBlock = {
                             "Container message for hashes of byte content of files, used in SourceProvenance messages to verify integrity of source input to the build.",
                           additionalProperties: true,
                         },
-                        push_timing: {
+                        pushTiming: {
                           type: "object",
                           properties: {
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                             },
-                            end_time: {
+                            endTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -2035,7 +2663,7 @@ const updateBuildTrigger: AppBlock = {
                             "Start and end times for a build execution phase.",
                           additionalProperties: true,
                         },
-                        artifact_registry_package: {
+                        artifactRegistryPackage: {
                           type: "string",
                           description:
                             "Output only. Path to the artifact in Artifact Registry.",
@@ -2048,7 +2676,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Python artifacts uploaded to Artifact Registry at the end of the build.",
                   },
-                  maven_artifacts: {
+                  mavenArtifacts: {
                     type: "array",
                     items: {
                       type: "object",
@@ -2057,10 +2685,10 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "URI of the uploaded artifact.",
                         },
-                        file_hashes: {
+                        fileHashes: {
                           type: "object",
                           properties: {
-                            file_hash: {
+                            fileHash: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -2093,15 +2721,15 @@ const updateBuildTrigger: AppBlock = {
                             "Container message for hashes of byte content of files, used in SourceProvenance messages to verify integrity of source input to the build.",
                           additionalProperties: true,
                         },
-                        push_timing: {
+                        pushTiming: {
                           type: "object",
                           properties: {
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                             },
-                            end_time: {
+                            endTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -2111,7 +2739,7 @@ const updateBuildTrigger: AppBlock = {
                             "Start and end times for a build execution phase.",
                           additionalProperties: true,
                         },
-                        artifact_registry_package: {
+                        artifactRegistryPackage: {
                           type: "string",
                           description:
                             "Output only. Path to the artifact in Artifact Registry.",
@@ -2124,7 +2752,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Maven artifacts uploaded to Artifact Registry at the end of the build.",
                   },
-                  go_modules: {
+                  goModules: {
                     type: "array",
                     items: {
                       type: "object",
@@ -2133,10 +2761,10 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "URI of the uploaded artifact.",
                         },
-                        file_hashes: {
+                        fileHashes: {
                           type: "object",
                           properties: {
-                            file_hash: {
+                            fileHash: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -2169,15 +2797,15 @@ const updateBuildTrigger: AppBlock = {
                             "Container message for hashes of byte content of files, used in SourceProvenance messages to verify integrity of source input to the build.",
                           additionalProperties: true,
                         },
-                        push_timing: {
+                        pushTiming: {
                           type: "object",
                           properties: {
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                             },
-                            end_time: {
+                            endTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -2187,7 +2815,7 @@ const updateBuildTrigger: AppBlock = {
                             "Start and end times for a build execution phase.",
                           additionalProperties: true,
                         },
-                        artifact_registry_package: {
+                        artifactRegistryPackage: {
                           type: "string",
                           description:
                             "Output only. Path to the artifact in Artifact Registry.",
@@ -2200,7 +2828,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Optional. Go module artifacts uploaded to Artifact Registry at the end of the build.",
                   },
-                  npm_packages: {
+                  npmPackages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -2209,10 +2837,10 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "URI of the uploaded npm package.",
                         },
-                        file_hashes: {
+                        fileHashes: {
                           type: "object",
                           properties: {
-                            file_hash: {
+                            fileHash: {
                               type: "array",
                               items: {
                                 type: "object",
@@ -2245,15 +2873,15 @@ const updateBuildTrigger: AppBlock = {
                             "Container message for hashes of byte content of files, used in SourceProvenance messages to verify integrity of source input to the build.",
                           additionalProperties: true,
                         },
-                        push_timing: {
+                        pushTiming: {
                           type: "object",
                           properties: {
-                            start_time: {
+                            startTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                             },
-                            end_time: {
+                            endTime: {
                               type: "string",
                               description:
                                 "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -2263,7 +2891,7 @@ const updateBuildTrigger: AppBlock = {
                             "Start and end times for a build execution phase.",
                           additionalProperties: true,
                         },
-                        artifact_registry_package: {
+                        artifactRegistryPackage: {
                           type: "string",
                           description:
                             "Output only. Path to the artifact in Artifact Registry.",
@@ -2280,15 +2908,15 @@ const updateBuildTrigger: AppBlock = {
                 description: "Artifacts created by the build pipeline.",
                 additionalProperties: true,
               },
-              create_time: {
+              createTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              start_time: {
+              startTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              finish_time: {
+              finishTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -2304,7 +2932,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "A list of images to be pushed upon the successful completion of all build steps.  The images are pushed using the builder service account's credentials.  The digests of the pushed images will be stored in the `Build` resource's results field.  If any of the images fail to be pushed, the build status is marked `FAILURE`.",
               },
-              queue_ttl: {
+              queueTtl: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
@@ -2338,12 +2966,12 @@ const updateBuildTrigger: AppBlock = {
                       timing: {
                         type: "object",
                         properties: {
-                          start_time: {
+                          startTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                           },
-                          end_time: {
+                          endTime: {
                             type: "string",
                             description:
                               "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -2358,7 +2986,7 @@ const updateBuildTrigger: AppBlock = {
                       "Files in the workspace to upload to Cloud Storage upon successful completion of all build steps.",
                     additionalProperties: true,
                   },
-                  maven_artifacts: {
+                  mavenArtifacts: {
                     type: "array",
                     items: {
                       type: "object",
@@ -2373,12 +3001,12 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             "Optional. Path to an artifact in the build's workspace to be uploaded to Artifact Registry. This can be either an absolute path, e.g. /workspace/my-app/target/my-app-1.0.SNAPSHOT.jar or a relative path from /workspace, e.g. my-app/target/my-app-1.0.SNAPSHOT.jar.",
                         },
-                        artifact_id: {
+                        artifactId: {
                           type: "string",
                           description:
                             "Maven `artifactId` value used when uploading the artifact to Artifact Registry.",
                         },
-                        group_id: {
+                        groupId: {
                           type: "string",
                           description:
                             "Maven `groupId` value used when uploading the artifact to Artifact Registry.",
@@ -2396,37 +3024,37 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "A list of Maven artifacts to be uploaded to Artifact Registry upon successful completion of all build steps.  Artifacts in the workspace matching specified paths globs will be uploaded to the specified Artifact Registry repository using the builder service account's credentials.  If any artifacts fail to be pushed, the build is marked FAILURE.",
                   },
-                  go_modules: {
+                  goModules: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        repository_name: {
+                        repositoryName: {
                           type: "string",
                           description:
                             "Optional. Artifact Registry repository name.  Specified Go modules will be zipped and uploaded to Artifact Registry with this location as a prefix. e.g. my-go-repo",
                         },
-                        repository_location: {
+                        repositoryLocation: {
                           type: "string",
                           description:
                             "Optional. Location of the Artifact Registry repository. i.e. us-east1 Defaults to the build’s location.",
                         },
-                        repository_project_id: {
+                        repositoryProjectId: {
                           type: "string",
                           description:
                             "Optional. Project ID of the Artifact Registry repository. Defaults to the build project.",
                         },
-                        source_path: {
+                        sourcePath: {
                           type: "string",
                           description:
                             "Optional. Source path of the go.mod file in the build's workspace. If not specified, this will default to the current directory. e.g. ~/code/go/mypackage",
                         },
-                        module_path: {
+                        modulePath: {
                           type: "string",
                           description:
                             'Optional. The Go module\'s "module path". e.g. example.com/foo/v2',
                         },
-                        module_version: {
+                        moduleVersion: {
                           type: "string",
                           description:
                             "Optional. The Go module's semantic version in the form vX.Y.Z. e.g. v0.1.1 Pre-release identifiers can also be added by appending a dash and dot separated ASCII alphanumeric characters and hyphens. e.g. v0.2.3-alpha.x.12m.5",
@@ -2439,7 +3067,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Optional. A list of Go modules to be uploaded to Artifact Registry upon successful completion of all build steps.  If any objects fail to be pushed, the build is marked FAILURE.",
                   },
-                  python_packages: {
+                  pythonPackages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -2465,7 +3093,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "A list of Python packages to be uploaded to Artifact Registry upon successful completion of all build steps.  The build service account credentials will be used to perform the upload.  If any objects fail to be pushed, the build is marked FAILURE.",
                   },
-                  npm_packages: {
+                  npmPackages: {
                     type: "array",
                     items: {
                       type: "object",
@@ -2475,7 +3103,7 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             'Artifact Registry repository, in the form "https://$REGION-npm.pkg.dev/$PROJECT/$REPOSITORY"  Npm package in the workspace specified by path will be zipped and uploaded to Artifact Registry with this location as a prefix.',
                         },
-                        package_path: {
+                        packagePath: {
                           type: "string",
                           description:
                             "Optional. Path to the package.json. e.g. workspace/path/to/package  Only one of `archive` or `package_path` can be specified.",
@@ -2493,15 +3121,15 @@ const updateBuildTrigger: AppBlock = {
                   "Artifacts produced by a build that should be uploaded upon successful completion of all build steps.",
                 additionalProperties: true,
               },
-              logs_bucket: {
+              logsBucket: {
                 type: "string",
                 description:
                   "Cloud Storage bucket where logs should be written (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)). Logs file names will be of the format `${logs_bucket}/log-${build_id}.txt`.",
               },
-              source_provenance: {
+              sourceProvenance: {
                 type: "object",
                 properties: {
-                  resolved_storage_source: {
+                  resolvedStorageSource: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -2518,7 +3146,7 @@ const updateBuildTrigger: AppBlock = {
                         type: "string",
                         description: "64-bit integer as string",
                       },
-                      source_fetcher: {
+                      sourceFetcher: {
                         type: "string",
                         enum: [
                           "SOURCE_FETCHER_UNSPECIFIED",
@@ -2534,30 +3162,30 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source in an archive file in Cloud Storage.",
                     additionalProperties: true,
                   },
-                  resolved_repo_source: {
+                  resolvedRepoSource: {
                     type: "object",
                     properties: {
-                      project_id: {
+                      projectId: {
                         type: "string",
                         description:
                           "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
                       },
-                      repo_name: {
+                      repoName: {
                         type: "string",
                         description:
                           "Required. Name of the Cloud Source Repository.",
                       },
-                      branch_name: {
+                      branchName: {
                         type: "string",
                         description:
                           "Regex matching branches to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                       },
-                      tag_name: {
+                      tagName: {
                         type: "string",
                         description:
                           "Regex matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'revision' - only one field in this group can be set)",
                       },
-                      commit_sha: {
+                      commitSha: {
                         type: "string",
                         description:
                           "Explicit commit SHA to build. (Part of 'revision' - only one field in this group can be set)",
@@ -2567,7 +3195,7 @@ const updateBuildTrigger: AppBlock = {
                         description:
                           "Optional. Directory, relative to the source root, in which to run the build.  This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
                       },
-                      invert_regex: {
+                      invertRegex: {
                         type: "boolean",
                         description:
                           "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
@@ -2581,12 +3209,12 @@ const updateBuildTrigger: AppBlock = {
                           "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
                       },
                     },
-                    required: ["repo_name"],
+                    required: ["repoName"],
                     description:
                       "Location of the source in a Google Cloud Source Repository.",
                     additionalProperties: true,
                   },
-                  resolved_storage_source_manifest: {
+                  resolvedStorageSourceManifest: {
                     type: "object",
                     properties: {
                       bucket: {
@@ -2609,7 +3237,7 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source manifest in Cloud Storage. This feature is in Preview; see description [here](https://github.com/GoogleCloudPlatform/cloud-builders/tree/master/gcs-fetcher).",
                     additionalProperties: true,
                   },
-                  resolved_connected_repository: {
+                  resolvedConnectedRepository: {
                     type: "object",
                     properties: {
                       repository: {
@@ -2633,7 +3261,7 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source in a 2nd-gen Google Cloud Build repository resource.",
                     additionalProperties: true,
                   },
-                  resolved_git_source: {
+                  resolvedGitSource: {
                     type: "object",
                     properties: {
                       url: {
@@ -2657,7 +3285,7 @@ const updateBuildTrigger: AppBlock = {
                       "Location of the source in any accessible Git repository.",
                     additionalProperties: true,
                   },
-                  file_hashes: {
+                  fileHashes: {
                     type: "object",
                     additionalProperties: {
                       type: "string",
@@ -2670,7 +3298,7 @@ const updateBuildTrigger: AppBlock = {
                   "Provenance of the source. Ways to find the original source, or verify that some source was used for this build.",
                 additionalProperties: true,
               },
-              build_trigger_id: {
+              buildTriggerId: {
                 type: "string",
                 description:
                   "Output only. The ID of the `BuildTrigger` that triggered this build, if it was triggered automatically.",
@@ -2678,7 +3306,7 @@ const updateBuildTrigger: AppBlock = {
               options: {
                 type: "object",
                 properties: {
-                  source_provenance_hash: {
+                  sourceProvenanceHash: {
                     type: "array",
                     items: {
                       type: "string",
@@ -2686,12 +3314,12 @@ const updateBuildTrigger: AppBlock = {
                     },
                     description: "Requested hash for SourceProvenance.",
                   },
-                  requested_verify_option: {
+                  requestedVerifyOption: {
                     type: "string",
                     enum: ["NOT_VERIFIED", "VERIFIED"],
                     description: "Requested verifiability options.",
                   },
-                  machine_type: {
+                  machineType: {
                     type: "string",
                     enum: [
                       "UNSPECIFIED",
@@ -2704,33 +3332,33 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Compute Engine machine type on which to run the build.",
                   },
-                  disk_size_gb: {
+                  diskSizeGb: {
                     type: "string",
                     description: "64-bit integer as string",
                   },
-                  substitution_option: {
+                  substitutionOption: {
                     type: "string",
                     enum: ["MUST_MATCH", "ALLOW_LOOSE"],
                     description:
                       "Option to specify behavior when there is an error in the substitution checks.  NOTE: this is always set to ALLOW_LOOSE for triggered builds and cannot be overridden in the build configuration file.",
                   },
-                  dynamic_substitutions: {
+                  dynamicSubstitutions: {
                     type: "boolean",
                     description:
                       "Option to specify whether or not to apply bash style string operations to the substitutions.  NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.",
                   },
-                  automap_substitutions: {
+                  automapSubstitutions: {
                     type: "boolean",
                     description:
                       "Option to include built-in and custom substitutions as env variables for all build steps.",
                   },
-                  log_streaming_option: {
+                  logStreamingOption: {
                     type: "string",
                     enum: ["STREAM_DEFAULT", "STREAM_ON", "STREAM_OFF"],
                     description:
                       "Option to define build log streaming behavior to Cloud Storage.",
                   },
-                  worker_pool: {
+                  workerPool: {
                     type: "string",
                     description:
                       "This field deprecated; please use `pool.name` instead.",
@@ -2769,7 +3397,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       'A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value.  The elements are of the form "KEY=VALUE" for the environment variable "KEY" being given the value "VALUE".',
                   },
-                  secret_env: {
+                  secretEnv: {
                     type: "array",
                     items: {
                       type: "string",
@@ -2800,7 +3428,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Global list of volumes to mount for ALL build steps  Each volume is created as an empty volume prior to starting the build process. Upon completion of the build, volumes and their contents are discarded. Global volume names and paths cannot conflict with the volumes defined a build step.  Using a global volume in a build with only one step is not valid as it is indicative of a build request with an incorrect configuration.",
                   },
-                  default_logs_bucket_behavior: {
+                  defaultLogsBucketBehavior: {
                     type: "string",
                     enum: [
                       "DEFAULT_LOGS_BUCKET_BEHAVIOR_UNSPECIFIED",
@@ -2810,7 +3438,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Optional. Option to specify how default logs buckets are setup.",
                   },
-                  enable_structured_logging: {
+                  enableStructuredLogging: {
                     type: "boolean",
                     description:
                       "Optional. Option to specify whether structured logging is enabled.  If true, JSON-formatted logs are parsed as structured logs.",
@@ -2820,7 +3448,7 @@ const updateBuildTrigger: AppBlock = {
                   "Optional arguments to enable specific features of builds.",
                 additionalProperties: true,
               },
-              log_url: {
+              logUrl: {
                 type: "string",
                 description:
                   "Output only. URL to logs for this build in Google Cloud Console.",
@@ -2845,12 +3473,12 @@ const updateBuildTrigger: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    kms_key_name: {
+                    kmsKeyName: {
                       type: "string",
                       description:
                         "Cloud KMS key name to use to decrypt these envs.",
                     },
-                    secret_env: {
+                    secretEnv: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -2892,7 +3520,7 @@ const updateBuildTrigger: AppBlock = {
                   config: {
                     type: "object",
                     properties: {
-                      approval_required: {
+                      approvalRequired: {
                         type: "boolean",
                         description:
                           "Whether or not approval is needed. If this is set on a build, it will become pending when created, and will need to be explicitly approved to start.",
@@ -2905,12 +3533,12 @@ const updateBuildTrigger: AppBlock = {
                   result: {
                     type: "object",
                     properties: {
-                      approver_account: {
+                      approverAccount: {
                         type: "string",
                         description:
                           "Output only. Email of the user that called the ApproveBuild API to approve or reject a build at the time that the API was called.",
                       },
-                      approval_time: {
+                      approvalTime: {
                         type: "string",
                         description:
                           "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -2942,20 +3570,20 @@ const updateBuildTrigger: AppBlock = {
                   "BuildApproval describes a build's approval configuration, state, and result.",
                 additionalProperties: true,
               },
-              service_account: {
+              serviceAccount: {
                 type: "string",
                 description:
                   "IAM service account whose credentials will be used at build runtime. Must be of the format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}`. ACCOUNT can be email address or uniqueId of the service account.",
               },
-              available_secrets: {
+              availableSecrets: {
                 type: "object",
                 properties: {
-                  secret_manager: {
+                  secretManager: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        version_name: {
+                        versionName: {
                           type: "string",
                           description:
                             "Resource name of the SecretVersion. In format: projects/*/secrets/*/versions/*",
@@ -2978,12 +3606,12 @@ const updateBuildTrigger: AppBlock = {
                     items: {
                       type: "object",
                       properties: {
-                        kms_key_name: {
+                        kmsKeyName: {
                           type: "string",
                           description:
                             "Resource name of Cloud KMS crypto key to decrypt the encrypted value. In format: projects/*/locations/*/keyRings/*/cryptoKeys/*",
                         },
-                        env_map: {
+                        envMap: {
                           type: "object",
                           additionalProperties: {
                             type: "string",
@@ -3030,13 +3658,13 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "Output only. Non-fatal problems encountered during the execution of the build.",
               },
-              git_config: {
+              gitConfig: {
                 type: "object",
                 properties: {
                   http: {
                     type: "object",
                     properties: {
-                      proxy_secret_version_name: {
+                      proxySecretVersionName: {
                         type: "string",
                         description:
                           "SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `[protocol://][user[:password]@]proxyhost[:port]`.",
@@ -3050,7 +3678,7 @@ const updateBuildTrigger: AppBlock = {
                 description: "GitConfig is a configuration for git operations.",
                 additionalProperties: true,
               },
-              failure_info: {
+              failureInfo: {
                 type: "object",
                 properties: {
                   type: {
@@ -3086,7 +3714,7 @@ const updateBuildTrigger: AppBlock = {
                       description:
                         "If set to true disable all dependency fetching (ignoring the default source as well). (Part of 'dep' - only one field in this group can be set)",
                     },
-                    git_source: {
+                    gitSource: {
                       type: "object",
                       properties: {
                         repository: {
@@ -3097,7 +3725,7 @@ const updateBuildTrigger: AppBlock = {
                               description:
                                 "Location of the Git repository. (Part of 'repotype' - only one field in this group can be set)",
                             },
-                            developer_connect: {
+                            developerConnect: {
                               type: "string",
                               description:
                                 "The Developer Connect Git repository link formatted as `projects/*/locations/*/connections/*/gitRepositoryLink/*` (Part of 'repotype' - only one field in this group can be set)",
@@ -3111,7 +3739,7 @@ const updateBuildTrigger: AppBlock = {
                           description:
                             "Required. The revision that we will fetch the repo at.",
                         },
-                        recurse_submodules: {
+                        recurseSubmodules: {
                           type: "boolean",
                           description:
                             "Optional. True if submodules should be fetched too (default false).",
@@ -3120,13 +3748,13 @@ const updateBuildTrigger: AppBlock = {
                           type: "string",
                           description: "64-bit integer as string",
                         },
-                        dest_path: {
+                        destPath: {
                           type: "string",
                           description:
                             "Required. Where should the files be placed on the worker.",
                         },
                       },
-                      required: ["repository", "revision", "dest_path"],
+                      required: ["repository", "revision", "destPath"],
                       description:
                         "Represents a git repository as a build dependency. (Part of 'dep' - only one field in this group can be set)",
                       additionalProperties: true,
@@ -3149,7 +3777,7 @@ const updateBuildTrigger: AppBlock = {
             description:
               "Path, from the source root, to the build configuration file (i.e. cloudbuild.yaml). (Part of 'build_template' - only one field in this group can be set)",
           },
-          git_file_source: {
+          gitFileSource: {
             type: "object",
             properties: {
               path: {
@@ -3167,7 +3795,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "The fully qualified resource name of the Repos API repository. Either URI or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.",
               },
-              repo_type: {
+              repoType: {
                 type: "string",
                 enum: [
                   "UNKNOWN",
@@ -3183,7 +3811,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "The branch, tag, arbitrary ref, or SHA version of the repo to use when resolving the filename (optional). This field respects the same syntax/resolution as described here: https://git-scm.com/docs/gitrevisions If unspecified, the revision from which the trigger invocation originated is assumed to be the revision from which to read the specified path.",
               },
-              github_enterprise_config: {
+              githubEnterpriseConfig: {
                 type: "string",
                 description:
                   "The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.",
@@ -3193,7 +3821,7 @@ const updateBuildTrigger: AppBlock = {
               "GitFileSource describes a file within a (possibly remote) code repository. (Part of 'build_template' - only one field in this group can be set)",
             additionalProperties: true,
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -3210,7 +3838,7 @@ const updateBuildTrigger: AppBlock = {
             description:
               "Substitutions for Build resource. The keys must match the following regular expression: `^_[A-Z0-9_]+$`.",
           },
-          ignored_files: {
+          ignoredFiles: {
             type: "array",
             items: {
               type: "string",
@@ -3218,7 +3846,7 @@ const updateBuildTrigger: AppBlock = {
             description:
               'ignored_files and included_files are file glob matches using https://golang.org/pkg/path/filepath/#Match extended with support for "**".  If ignored_files and changed files are both empty, then they are not used to determine whether or not to trigger a build.  If ignored_files is not empty, then we ignore any files that match any of the ignored_file globs. If the change has no files that are outside of the ignored_files globs, then we do not trigger a build.',
           },
-          included_files: {
+          includedFiles: {
             type: "array",
             items: {
               type: "string",
@@ -3230,7 +3858,7 @@ const updateBuildTrigger: AppBlock = {
             type: "string",
             description: "Optional. A Common Expression Language string.",
           },
-          source_to_build: {
+          sourceToBuild: {
             type: "object",
             properties: {
               uri: {
@@ -3248,7 +3876,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   'The branch or tag to use. Must start with "refs/" (required).',
               },
-              repo_type: {
+              repoType: {
                 type: "string",
                 enum: [
                   "UNKNOWN",
@@ -3259,7 +3887,7 @@ const updateBuildTrigger: AppBlock = {
                 ],
                 description: "See RepoType below.",
               },
-              github_enterprise_config: {
+              githubEnterpriseConfig: {
                 type: "string",
                 description:
                   "The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.",
@@ -3269,19 +3897,19 @@ const updateBuildTrigger: AppBlock = {
               "GitRepoSource describes a repo and ref of a code repository.",
             additionalProperties: true,
           },
-          service_account: {
+          serviceAccount: {
             type: "string",
             description:
               "The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account (`[PROJECT_NUM]@cloudbuild.gserviceaccount.com`) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`",
           },
-          repository_event_config: {
+          repositoryEventConfig: {
             type: "object",
             properties: {
               repository: {
                 type: "string",
                 description: "The resource name of the Repo API resource.",
               },
-              repository_type: {
+              repositoryType: {
                 type: "string",
                 enum: [
                   "REPOSITORY_TYPE_UNSPECIFIED",
@@ -3292,7 +3920,7 @@ const updateBuildTrigger: AppBlock = {
                 description:
                   "Output only. The type of the SCM vendor the repository points to.",
               },
-              pull_request: {
+              pullRequest: {
                 type: "object",
                 properties: {
                   branch: {
@@ -3300,7 +3928,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Regex of branches to match.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax",
                   },
-                  comment_control: {
+                  commentControl: {
                     type: "string",
                     enum: [
                       "COMMENTS_DISABLED",
@@ -3310,7 +3938,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "If CommentControl is enabled, depending on the setting, builds may not fire until a repository writer comments `/gcbrun` on a pull request or `/gcbrun` is in the pull request description. Only PR comments that contain `/gcbrun` will trigger builds.  If CommentControl is set to disabled, comments with `/gcbrun` from a user with repository write permission or above will still trigger builds to run.",
                   },
-                  invert_regex: {
+                  invertRegex: {
                     type: "boolean",
                     description:
                       "If true, branches that do NOT match the git_ref will trigger a build.",
@@ -3333,7 +3961,7 @@ const updateBuildTrigger: AppBlock = {
                     description:
                       "Regexes matching tags to build.  The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax (Part of 'git_ref' - only one field in this group can be set)",
                   },
-                  invert_regex: {
+                  invertRegex: {
                     type: "boolean",
                     description:
                       "When true, only trigger a build if the revision regex does NOT match the git_ref regex.",

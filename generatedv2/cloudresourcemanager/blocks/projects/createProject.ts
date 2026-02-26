@@ -1,5 +1,41 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getProjectsClient } from "../../lib/grpcClient.ts";
+import { getProjectsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  project: {
+    name: "project",
+    fields: {
+      projectId: "project_id",
+      displayName: "display_name",
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const createProject: AppBlock = {
   name: "Create Project",
@@ -20,12 +56,12 @@ const createProject: AppBlock = {
                 description:
                   "Optional. A reference to a parent Resource. eg., `organizations/123` or `folders/876`.",
               },
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Immutable. The unique, user-assigned id of the project. It must be 6 to 30 lowercase ASCII letters, digits, or hyphens. It must start with a letter. Trailing hyphens are prohibited.  Example: `tokyo-rain-123`",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   "Optional. A user-assigned display name of the project. When present it must be between 4 to 30 characters. Allowed characters are: lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point.  Example: `My Project`",
@@ -49,9 +85,7 @@ const createProject: AppBlock = {
       onEvent: async (input) => {
         const client = await getProjectsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.createProject(request, (err: any, response: any) => {
@@ -65,7 +99,8 @@ const createProject: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -81,7 +116,7 @@ const createProject: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -108,7 +143,7 @@ const createProject: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -127,7 +162,7 @@ const createProject: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

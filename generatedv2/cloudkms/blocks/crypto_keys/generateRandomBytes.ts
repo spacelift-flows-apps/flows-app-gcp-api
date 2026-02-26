@@ -1,5 +1,17 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  lengthBytes: "length_bytes",
+  protectionLevel: "protection_level",
+};
+
+const outputMapping = {
+  data_crc32c: "dataCrc32c",
+};
 
 const generateRandomBytes: AppBlock = {
   name: "Generate Random Bytes",
@@ -19,7 +31,7 @@ const generateRandomBytes: AppBlock = {
           },
           required: false,
         },
-        length_bytes: {
+        lengthBytes: {
           name: "Length Bytes",
           description:
             "The length in bytes of the amount of randomness to retrieve.  Minimum 8 bytes, maximum 1024 bytes.",
@@ -30,7 +42,7 @@ const generateRandomBytes: AppBlock = {
           },
           required: false,
         },
-        protection_level: {
+        protectionLevel: {
           name: "Protection Level",
           description:
             "The [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] to use when generating the random data. Currently, only [HSM][google.cloud.kms.v1.ProtectionLevel.HSM] protection level is supported.",
@@ -53,13 +65,7 @@ const generateRandomBytes: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.location !== undefined)
-          request.location = input.event.inputConfig.location;
-        if (input.event.inputConfig.length_bytes !== undefined)
-          request.length_bytes = input.event.inputConfig.length_bytes;
-        if (input.event.inputConfig.protection_level !== undefined)
-          request.protection_level = input.event.inputConfig.protection_level;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.generateRandomBytes(request, (err: any, response: any) => {
@@ -73,7 +79,8 @@ const generateRandomBytes: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -87,7 +94,7 @@ const generateRandomBytes: AppBlock = {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          data_crc32c: {
+          dataCrc32c: {
             type: "string",
             description: "64-bit integer as string",
           },

@@ -16,7 +16,7 @@ const listDisks: AppBlock = {
           },
           required: true,
         },
-        storage_pool: {
+        storagePool: {
           name: "Storage Pool",
           description: "Name of the storage pool to list disks of.",
           type: {
@@ -33,7 +33,7 @@ const listDisks: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -42,7 +42,7 @@ const listDisks: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -51,7 +51,7 @@ const listDisks: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -60,7 +60,7 @@ const listDisks: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -75,25 +75,25 @@ const listDisks: AppBlock = {
         pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.zone !== undefined)
           pathParams["zone"] = String(input.event.inputConfig.zone);
-        if (input.event.inputConfig.storage_pool !== undefined)
+        if (input.event.inputConfig.storagePool !== undefined)
           pathParams["storage_pool"] = String(
-            input.event.inputConfig.storage_pool,
+            input.event.inputConfig.storagePool,
           );
 
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -128,7 +128,7 @@ const listDisks: AppBlock = {
             items: {
               type: "object",
               properties: {
-                attached_instances: {
+                attachedInstances: {
                   type: "array",
                   items: {
                     type: "string",
@@ -136,7 +136,7 @@ const listDisks: AppBlock = {
                   description:
                     "Output only. [Output Only] Instances this disk is attached to.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -151,15 +151,15 @@ const listDisks: AppBlock = {
                   description:
                     "Output only. [Output Only] The name of the disk.",
                 },
-                provisioned_iops: {
+                provisionedIops: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                provisioned_throughput: {
+                provisionedThroughput: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                resource_policies: {
+                resourcePolicies: {
                   type: "array",
                   items: {
                     type: "string",
@@ -167,7 +167,7 @@ const listDisks: AppBlock = {
                   description:
                     "Output only. [Output Only] Resource policies applied to disk for automatic snapshot creations.",
                 },
-                size_gb: {
+                sizeGb: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
@@ -180,7 +180,7 @@ const listDisks: AppBlock = {
                   type: "string",
                   description: "Output only. [Output Only] The disk type.",
                 },
-                used_bytes: {
+                usedBytes: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
@@ -194,12 +194,12 @@ const listDisks: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Alwayscompute#storagePoolListDisks for lists of disks in a storagePool.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "Output only. [Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

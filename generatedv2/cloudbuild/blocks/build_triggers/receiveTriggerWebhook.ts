@@ -1,5 +1,21 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getCloudBuildClient } from "../../lib/grpcClient.ts";
+import { getCloudBuildClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  body: {
+    name: "body",
+    fields: {
+      contentType: "content_type",
+      extensions: {
+        name: "extensions",
+        fields: {
+          typeUrl: "type_url",
+        },
+      },
+    },
+  },
+  projectId: "project_id",
+};
 
 const receiveTriggerWebhook: AppBlock = {
   name: "Receive Trigger Webhook",
@@ -25,7 +41,7 @@ const receiveTriggerWebhook: AppBlock = {
           type: {
             type: "object",
             properties: {
-              content_type: {
+              contentType: {
                 type: "string",
               },
               data: {
@@ -37,7 +53,7 @@ const receiveTriggerWebhook: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -54,7 +70,7 @@ const receiveTriggerWebhook: AppBlock = {
           },
           required: false,
         },
-        project_id: {
+        projectId: {
           name: "Project Id",
           description: "Project in which the specified trigger lives",
           type: {
@@ -87,17 +103,7 @@ const receiveTriggerWebhook: AppBlock = {
       onEvent: async (input) => {
         const client = await getCloudBuildClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.body !== undefined)
-          request.body = input.event.inputConfig.body;
-        if (input.event.inputConfig.project_id !== undefined)
-          request.project_id = input.event.inputConfig.project_id;
-        if (input.event.inputConfig.trigger !== undefined)
-          request.trigger = input.event.inputConfig.trigger;
-        if (input.event.inputConfig.secret !== undefined)
-          request.secret = input.event.inputConfig.secret;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.receiveTriggerWebhook(request, (err: any, response: any) => {

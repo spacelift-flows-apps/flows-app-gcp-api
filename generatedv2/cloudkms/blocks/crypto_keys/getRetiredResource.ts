@@ -1,5 +1,14 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getKeyManagementServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  original_resource: "originalResource",
+  resource_type: "resourceType",
+  delete_time: "deleteTime",
+};
 
 const getRetiredResource: AppBlock = {
   name: "Get Retired Resource",
@@ -23,9 +32,7 @@ const getRetiredResource: AppBlock = {
       onEvent: async (input) => {
         const client = await getKeyManagementServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.getRetiredResource(request, (err: any, response: any) => {
@@ -39,7 +46,8 @@ const getRetiredResource: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -54,17 +62,17 @@ const getRetiredResource: AppBlock = {
             description:
               "Output only. Identifier. The resource name for this [RetiredResource][google.cloud.kms.v1.RetiredResource] in the format `projects/*/locations/*/retiredResources/*`.",
           },
-          original_resource: {
+          originalResource: {
             type: "string",
             description:
               "Output only. The full resource name of the original [CryptoKey][google.cloud.kms.v1.CryptoKey] that was deleted in the format `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
           },
-          resource_type: {
+          resourceType: {
             type: "string",
             description:
               "Output only. The resource type of the original deleted resource.",
           },
-          delete_time: {
+          deleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

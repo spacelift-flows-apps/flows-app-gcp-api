@@ -19,7 +19,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        connected_endpoints: {
+        connectedEndpoints: {
           name: "Connected Endpoints",
           description:
             "Output only. [Output Only] An array of connections for all the consumers connected to this service attachment.",
@@ -28,7 +28,7 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                consumer_network: {
+                consumerNetwork: {
                   type: "string",
                   description: "The url of the consumer network.",
                 },
@@ -36,7 +36,7 @@ const insert: AppBlock = {
                   type: "string",
                   description: "The url of a connected endpoint.",
                 },
-                nat_ips: {
+                natIps: {
                   type: "array",
                   items: {
                     type: "string",
@@ -44,12 +44,12 @@ const insert: AppBlock = {
                   description:
                     "NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.",
                 },
-                propagated_connection_count: {
+                propagatedConnectionCount: {
                   type: "integer",
                   description:
                     "The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.",
                 },
-                psc_connection_id: {
+                pscConnectionId: {
                   type: "string",
                   description: "64-bit integer as string",
                 },
@@ -68,7 +68,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        connection_preference: {
+        connectionPreference: {
           name: "Connection Preference",
           description:
             "The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules. Check the ConnectionPreference enum for the list of possible values.",
@@ -79,7 +79,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        consumer_accept_lists: {
+        consumerAcceptLists: {
           name: "Consumer Accept Lists",
           description:
             "Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.",
@@ -88,17 +88,17 @@ const insert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                connection_limit: {
+                connectionLimit: {
                   type: "integer",
                   description:
                     "The value of the limit to set. For endpoint_url, the limit should be no more than 1.",
                 },
-                network_url: {
+                networkUrl: {
                   type: "string",
                   description:
                     "The network URL for the network to set the limit for.",
                 },
-                project_id_or_num: {
+                projectIdOrNum: {
                   type: "string",
                   description:
                     "The project id or number for the project to set the limit for.",
@@ -111,7 +111,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        consumer_reject_lists: {
+        consumerRejectLists: {
           name: "Consumer Reject Lists",
           description:
             "Specifies a list of projects or networks that are not allowed to connect to this service attachment. The project can be specified using its project ID or project number and the network can be specified using its URL. A given service attachment can manage connections at either the project or network level. Therefore, both the reject and accept lists for a given service attachment must contain either only projects or only networks.",
@@ -125,7 +125,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        creation_timestamp: {
+        creationTimestamp: {
           name: "Creation Timestamp",
           description:
             "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -147,7 +147,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        domain_names: {
+        domainNames: {
           name: "Domain Names",
           description:
             'If specified, the domain name will be used during the integration between the PSC connected endpoints and the Cloud DNS. For example, this is a valid domain name: "p.mycompany.com.". Current max number of domain names supported is 1.',
@@ -161,7 +161,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        enable_proxy_protocol: {
+        enableProxyProtocol: {
           name: "Enable Proxy Protocol",
           description:
             "If true, enable the proxy protocol which is for supplying client TCP/IP address data in TCP connections that traverse proxies on their way to destination servers.",
@@ -227,7 +227,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        nat_subnets: {
+        natSubnets: {
           name: "Nat Subnets",
           description:
             "An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.",
@@ -241,7 +241,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        producer_forwarding_rule: {
+        producerForwardingRule: {
           name: "Producer Forwarding Rule",
           description:
             "The URL of a forwarding rule with loadBalancingScheme INTERNAL* that is serving the endpoint identified by this service attachment.",
@@ -252,7 +252,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        propagated_connection_limit: {
+        propagatedConnectionLimit: {
           name: "Propagated Connection Limit",
           description:
             "The number of consumer spokes that connected Private Service Connect endpoints can be propagated to through Network Connectivity Center. This limit lets the service producer limit how many propagated Private Service Connect connections can be established to this service attachment from a single consumer.  If the connection preference of the service attachment is ACCEPT_MANUAL, the limit applies to each project or network that is listed in the consumer accept list. If the connection preference of the service attachment is ACCEPT_AUTOMATIC, the limit applies to each project that contains a connected endpoint.  If unspecified, the default propagated connection limit is 250.",
@@ -263,7 +263,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        psc_service_attachment_id: {
+        pscServiceAttachmentId: {
           name: "Psc Service Attachment Id",
           description:
             "Output only. [Output Only] An 128-bit global unique ID of the PSC service attachment.",
@@ -285,7 +285,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        reconcile_connections: {
+        reconcileConnections: {
           name: "Reconcile Connections",
           description:
             "This flag determines whether a consumer accept/reject list change can reconcile the statuses of existing ACCEPTED or REJECTED PSC endpoints.       -  If false, connection policy update will only affect existing PENDING     PSC endpoints. Existing ACCEPTED/REJECTED endpoints will remain untouched     regardless how the connection policy is modified .    -  If true,     update will affect both PENDING and ACCEPTED/REJECTED PSC endpoints. For     example, an ACCEPTED PSC endpoint will be moved to REJECTED if its project     is added to the reject list.   For newly created service attachment, this boolean defaults to false.",
@@ -296,7 +296,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        self_link: {
+        selfLink: {
           name: "Self Link",
           description:
             "Output only. [Output Only] Server-defined URL for the resource.",
@@ -307,7 +307,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        target_service: {
+        targetService: {
           name: "Target Service",
           description:
             "The URL of a service serving the endpoint identified by this service attachment.",
@@ -318,7 +318,7 @@ const insert: AppBlock = {
           },
           required: false,
         },
-        request_id: {
+        requestId: {
           name: "Request Id",
           description:
             "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
@@ -335,30 +335,29 @@ const insert: AppBlock = {
           pathParams["region"] = String(input.event.inputConfig.region);
 
         const queryParams: Record<string, string> = {};
-        if (input.event.inputConfig.request_id !== undefined)
-          queryParams["requestId"] = String(input.event.inputConfig.request_id);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
         const body: Record<string, any> = {};
-        if (input.event.inputConfig.connected_endpoints !== undefined)
-          body.connected_endpoints =
-            input.event.inputConfig.connected_endpoints;
-        if (input.event.inputConfig.connection_preference !== undefined)
-          body.connection_preference =
-            input.event.inputConfig.connection_preference;
-        if (input.event.inputConfig.consumer_accept_lists !== undefined)
-          body.consumer_accept_lists =
-            input.event.inputConfig.consumer_accept_lists;
-        if (input.event.inputConfig.consumer_reject_lists !== undefined)
-          body.consumer_reject_lists =
-            input.event.inputConfig.consumer_reject_lists;
-        if (input.event.inputConfig.creation_timestamp !== undefined)
-          body.creation_timestamp = input.event.inputConfig.creation_timestamp;
+        if (input.event.inputConfig.connectedEndpoints !== undefined)
+          body.connectedEndpoints = input.event.inputConfig.connectedEndpoints;
+        if (input.event.inputConfig.connectionPreference !== undefined)
+          body.connectionPreference =
+            input.event.inputConfig.connectionPreference;
+        if (input.event.inputConfig.consumerAcceptLists !== undefined)
+          body.consumerAcceptLists =
+            input.event.inputConfig.consumerAcceptLists;
+        if (input.event.inputConfig.consumerRejectLists !== undefined)
+          body.consumerRejectLists =
+            input.event.inputConfig.consumerRejectLists;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
         if (input.event.inputConfig.description !== undefined)
           body.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.domain_names !== undefined)
-          body.domain_names = input.event.inputConfig.domain_names;
-        if (input.event.inputConfig.enable_proxy_protocol !== undefined)
-          body.enable_proxy_protocol =
-            input.event.inputConfig.enable_proxy_protocol;
+        if (input.event.inputConfig.domainNames !== undefined)
+          body.domainNames = input.event.inputConfig.domainNames;
+        if (input.event.inputConfig.enableProxyProtocol !== undefined)
+          body.enableProxyProtocol =
+            input.event.inputConfig.enableProxyProtocol;
         if (input.event.inputConfig.fingerprint !== undefined)
           body.fingerprint = input.event.inputConfig.fingerprint;
         if (input.event.inputConfig.id !== undefined)
@@ -369,26 +368,26 @@ const insert: AppBlock = {
           body.metadata = input.event.inputConfig.metadata;
         if (input.event.inputConfig.name !== undefined)
           body.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.nat_subnets !== undefined)
-          body.nat_subnets = input.event.inputConfig.nat_subnets;
-        if (input.event.inputConfig.producer_forwarding_rule !== undefined)
-          body.producer_forwarding_rule =
-            input.event.inputConfig.producer_forwarding_rule;
-        if (input.event.inputConfig.propagated_connection_limit !== undefined)
-          body.propagated_connection_limit =
-            input.event.inputConfig.propagated_connection_limit;
-        if (input.event.inputConfig.psc_service_attachment_id !== undefined)
-          body.psc_service_attachment_id =
-            input.event.inputConfig.psc_service_attachment_id;
-        if (input.event.inputConfig.reconcile_connections !== undefined)
-          body.reconcile_connections =
-            input.event.inputConfig.reconcile_connections;
+        if (input.event.inputConfig.natSubnets !== undefined)
+          body.natSubnets = input.event.inputConfig.natSubnets;
+        if (input.event.inputConfig.producerForwardingRule !== undefined)
+          body.producerForwardingRule =
+            input.event.inputConfig.producerForwardingRule;
+        if (input.event.inputConfig.propagatedConnectionLimit !== undefined)
+          body.propagatedConnectionLimit =
+            input.event.inputConfig.propagatedConnectionLimit;
+        if (input.event.inputConfig.pscServiceAttachmentId !== undefined)
+          body.pscServiceAttachmentId =
+            input.event.inputConfig.pscServiceAttachmentId;
+        if (input.event.inputConfig.reconcileConnections !== undefined)
+          body.reconcileConnections =
+            input.event.inputConfig.reconcileConnections;
         if (input.event.inputConfig.region !== undefined)
           body.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.self_link !== undefined)
-          body.self_link = input.event.inputConfig.self_link;
-        if (input.event.inputConfig.target_service !== undefined)
-          body.target_service = input.event.inputConfig.target_service;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.targetService !== undefined)
+          body.targetService = input.event.inputConfig.targetService;
 
         const result = await computeFetch({
           config: input.app.config,
@@ -410,12 +409,12 @@ const insert: AppBlock = {
       type: {
         type: "object",
         properties: {
-          client_operation_id: {
+          clientOperationId: {
             type: "string",
             description:
               "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
@@ -424,7 +423,7 @@ const insert: AppBlock = {
             description:
               "[Output Only] A textual description of the operation, which is set when the operation is created.",
           },
-          end_time: {
+          endTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
@@ -442,12 +441,12 @@ const insert: AppBlock = {
                       description:
                         "[Output Only] The error type identifier for this error.",
                     },
-                    error_details: {
+                    errorDetails: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          error_info: {
+                          errorInfo: {
                             type: "object",
                             properties: {
                               domain: {
@@ -502,7 +501,7 @@ const insert: AppBlock = {
                               "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
                             additionalProperties: true,
                           },
-                          localized_message: {
+                          localizedMessage: {
                             type: "object",
                             properties: {
                               locale: {
@@ -520,7 +519,7 @@ const insert: AppBlock = {
                               "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
                             additionalProperties: true,
                           },
-                          quota_info: {
+                          quotaInfo: {
                             type: "object",
                             properties: {
                               dimensions: {
@@ -531,7 +530,7 @@ const insert: AppBlock = {
                                 description:
                                   "The map holding related quota dimensions.",
                               },
-                              future_limit: {
+                              futureLimit: {
                                 type: "number",
                                 description:
                                   "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
@@ -541,16 +540,16 @@ const insert: AppBlock = {
                                 description:
                                   "Current effective quota limit. The limit's unit depends on the quota type or metric.",
                               },
-                              limit_name: {
+                              limitName: {
                                 type: "string",
                                 description: "The name of the quota limit.",
                               },
-                              metric_name: {
+                              metricName: {
                                 type: "string",
                                 description:
                                   "The Compute Engine quota metric name.",
                               },
-                              rollout_status: {
+                              rolloutStatus: {
                                 type: "string",
                                 description:
                                   "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
@@ -587,12 +586,12 @@ const insert: AppBlock = {
               "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
             additionalProperties: true,
           },
-          http_error_message: {
+          httpErrorMessage: {
             type: "string",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          http_error_status_code: {
+          httpErrorStatusCode: {
             type: "integer",
             description:
               "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
@@ -601,15 +600,15 @@ const insert: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          insert_time: {
+          insertTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          instances_bulk_insert_operation_metadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              per_location_status: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -629,12 +628,12 @@ const insert: AppBlock = {
             type: "string",
             description: "[Output Only] Name of the operation.",
           },
-          operation_group_id: {
+          operationGroupId: {
             type: "string",
             description:
               "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
           },
-          operation_type: {
+          operationType: {
             type: "string",
             description:
               "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
@@ -649,18 +648,18 @@ const insert: AppBlock = {
             description:
               "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          set_common_instance_metadata_operation_metadata: {
+          setCommonInstanceMetadataOperationMetadata: {
             type: "object",
             properties: {
-              client_operation_id: {
+              clientOperationId: {
                 type: "string",
                 description: "[Output Only] The client operation id.",
               },
-              per_location_operations: {
+              perLocationOperations: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -673,7 +672,7 @@ const insert: AppBlock = {
             description:
               "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
-          start_time: {
+          startTime: {
             type: "string",
             description:
               "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
@@ -684,16 +683,16 @@ const insert: AppBlock = {
             description:
               "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
-          status_message: {
+          statusMessage: {
             type: "string",
             description:
               "[Output Only] An optional textual description of the current status of the operation.",
           },
-          target_id: {
+          targetId: {
             type: "string",
             description: "64-bit integer as string",
           },
-          target_link: {
+          targetLink: {
             type: "string",
             description:
               "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",

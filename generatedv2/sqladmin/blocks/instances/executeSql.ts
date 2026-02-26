@@ -1,5 +1,68 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlInstancesServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  body: {
+    name: "body",
+    fields: {
+      sqlStatement: "sql_statement",
+      autoIamAuthn: "auto_iam_authn",
+      rowLimit: "row_limit",
+      partialResultMode: "partial_result_mode",
+    },
+  },
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      sql_statement_execution_time: "sqlStatementExecutionTime",
+    },
+  },
+  results: {
+    name: "results",
+    fields: {
+      rows: {
+        name: "rows",
+        fields: {
+          values: {
+            name: "values",
+            fields: {
+              null_value: "nullValue",
+            },
+          },
+        },
+      },
+      partial_result: "partialResult",
+      status: {
+        name: "status",
+        fields: {
+          details: {
+            name: "details",
+            fields: {
+              type_url: "typeUrl",
+            },
+          },
+        },
+      },
+    },
+  },
+  status: {
+    name: "status",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+};
 
 const executeSql: AppBlock = {
   name: "Execute Sql",
@@ -41,7 +104,7 @@ const executeSql: AppBlock = {
                 description:
                   "Optional. The name of an existing database user to connect to the database. When `auto_iam_authn` is set to true, this field is ignored and the API caller's IAM user is used.",
               },
-              sql_statement: {
+              sqlStatement: {
                 type: "string",
                 description:
                   "Required. SQL statements to run on the database. It can be a single statement or a sequence of statements separated by semicolons.",
@@ -51,16 +114,16 @@ const executeSql: AppBlock = {
                 description:
                   "Optional. Name of the database on which the statement will be executed.",
               },
-              auto_iam_authn: {
+              autoIamAuthn: {
                 type: "boolean",
                 description:
                   "Optional. When set to true, the API caller identity associated with the request is used for database authentication. The API caller must be an IAM user in the database.",
               },
-              row_limit: {
+              rowLimit: {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              partial_result_mode: {
+              partialResultMode: {
                 type: "string",
                 enum: [
                   "PARTIAL_RESULT_MODE_UNSPECIFIED",
@@ -76,7 +139,7 @@ const executeSql: AppBlock = {
                   "Optional. Specifies the name of the application that is making the request. This field is used for telemetry. Only alphanumeric characters, dashes, and underscores are allowed. The maximum length is 32 characters.",
               },
             },
-            required: ["sql_statement"],
+            required: ["sqlStatement"],
             description: "The request payload used to execute SQL statements.",
             additionalProperties: true,
           },
@@ -86,13 +149,7 @@ const executeSql: AppBlock = {
       onEvent: async (input) => {
         const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.instance !== undefined)
-          request.instance = input.event.inputConfig.instance;
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.body !== undefined)
-          request.body = input.event.inputConfig.body;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.executeSql(request, (err: any, response: any) => {
@@ -106,7 +163,8 @@ const executeSql: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -142,7 +200,7 @@ const executeSql: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              sql_statement_execution_time: {
+              sqlStatementExecutionTime: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
@@ -190,7 +248,7 @@ const executeSql: AppBlock = {
                               type: "string",
                               description: "The cell value in string format.",
                             },
-                            null_value: {
+                            nullValue: {
                               type: "boolean",
                               description:
                                 "If cell value is null, then this flag will be set to true.",
@@ -211,7 +269,7 @@ const executeSql: AppBlock = {
                   type: "string",
                   description: "Message related to the SQL execution result.",
                 },
-                partial_result: {
+                partialResult: {
                   type: "boolean",
                   description:
                     "Set to true if the SQL execution's result is truncated due to size limits or an error retrieving results.",
@@ -230,7 +288,7 @@ const executeSql: AppBlock = {
                       items: {
                         type: "object",
                         properties: {
-                          type_url: {
+                          typeUrl: {
                             type: "string",
                           },
                           value: {
@@ -268,7 +326,7 @@ const executeSql: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {

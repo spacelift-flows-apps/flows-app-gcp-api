@@ -1,5 +1,42 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getProjectsClient } from "../../lib/grpcClient.ts";
+import { getProjectsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  project: {
+    name: "project",
+    fields: {
+      projectId: "project_id",
+      displayName: "display_name",
+    },
+  },
+  updateMask: "update_mask",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const updateProject: AppBlock = {
   name: "Update Project",
@@ -19,12 +56,12 @@ const updateProject: AppBlock = {
                 description:
                   "Optional. A reference to a parent Resource. eg., `organizations/123` or `folders/876`.",
               },
-              project_id: {
+              projectId: {
                 type: "string",
                 description:
                   "Immutable. The unique, user-assigned id of the project. It must be 6 to 30 lowercase ASCII letters, digits, or hyphens. It must start with a letter. Trailing hyphens are prohibited.  Example: `tokyo-rain-123`",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   "Optional. A user-assigned display name of the project. When present it must be between 4 to 30 characters. Allowed characters are: lowercase and uppercase letters, numbers, hyphen, single-quote, double-quote, space, and exclamation point.  Example: `My Project`",
@@ -44,7 +81,7 @@ const updateProject: AppBlock = {
           },
           required: true,
         },
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description: "Optional. An update mask to selectively update fields.",
           type: {
@@ -58,11 +95,7 @@ const updateProject: AppBlock = {
       onEvent: async (input) => {
         const client = await getProjectsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.project !== undefined)
-          request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateProject(request, (err: any, response: any) => {
@@ -76,7 +109,8 @@ const updateProject: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -92,7 +126,7 @@ const updateProject: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -119,7 +153,7 @@ const updateProject: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -138,7 +172,7 @@ const updateProject: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

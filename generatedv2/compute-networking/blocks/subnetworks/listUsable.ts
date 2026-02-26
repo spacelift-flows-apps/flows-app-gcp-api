@@ -17,7 +17,7 @@ const listUsable: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const listUsable: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const listUsable: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const listUsable: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -53,7 +53,7 @@ const listUsable: AppBlock = {
           },
           required: false,
         },
-        service_project: {
+        serviceProject: {
           name: "Service Project",
           description:
             "The project id or project number in which the subnetwork is intended to be used. Only applied for Shared VPC. See [Shared VPC documentation](https://cloud.google.com/vpc/docs/shared-vpc/)",
@@ -70,21 +70,21 @@ const listUsable: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
-        if (input.event.inputConfig.service_project !== undefined)
+        if (input.event.inputConfig.serviceProject !== undefined)
           queryParams["serviceProject"] = String(
-            input.event.inputConfig.service_project,
+            input.event.inputConfig.serviceProject,
           );
 
         const result = await computeFetch({
@@ -116,22 +116,22 @@ const listUsable: AppBlock = {
             items: {
               type: "object",
               properties: {
-                external_ipv6_prefix: {
+                externalIpv6Prefix: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The external IPv6 address range that is assigned to this subnetwork.",
                 },
-                internal_ipv6_prefix: {
+                internalIpv6Prefix: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The internal IPv6 address range that is assigned to this subnetwork.",
                 },
-                ip_cidr_range: {
+                ipCidrRange: {
                   type: "string",
                   description:
                     "The range of internal addresses that are owned by this subnetwork.",
                 },
-                ipv6_access_type: {
+                ipv6AccessType: {
                   type: "string",
                   description:
                     "The access type of IPv6 address this subnet holds. It's immutable and can only be specified during creation or the first time the subnet is updated into IPV4_IPV6 dual stack. Check the Ipv6AccessType enum for the list of possible values.",
@@ -150,17 +150,17 @@ const listUsable: AppBlock = {
                   description:
                     "The role of subnetwork. Currently, this field is only used when purpose is set to GLOBAL_MANAGED_PROXY orREGIONAL_MANAGED_PROXY. The value can be set toACTIVE or BACKUP. An ACTIVE subnetwork is one that is currently being used for Envoy-based load balancers in a region. A BACKUP subnetwork is one that is ready to be promoted to ACTIVE or is currently draining. This field can be updated with a patch request. Check the Role enum for the list of possible values.",
                 },
-                secondary_ip_ranges: {
+                secondaryIpRanges: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      ip_cidr_range: {
+                      ipCidrRange: {
                         type: "string",
                         description:
                           "The range of IP addresses belonging to this subnetwork secondary range.",
                       },
-                      range_name: {
+                      rangeName: {
                         type: "string",
                         description:
                           "The name associated with this subnetwork secondary range, used when adding an alias IP range to a VM instance. The name must be 1-63 characters long, and comply withRFC1035. The name must be unique within the subnetwork.",
@@ -171,7 +171,7 @@ const listUsable: AppBlock = {
                   },
                   description: "Secondary IP ranges.",
                 },
-                stack_type: {
+                stackType: {
                   type: "string",
                   description:
                     "The stack type for the subnet. If set to IPV4_ONLY, new VMs in the subnet are assigned IPv4 addresses only. If set toIPV4_IPV6, new VMs in the subnet can be assigned both IPv4 and IPv6 addresses. If not specified, IPV4_ONLY is used.  This field can be both set at resource creation time and updated usingpatch. Check the StackType enum for the list of possible values.",
@@ -192,17 +192,17 @@ const listUsable: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Alwayscompute#usableSubnetworksAggregatedList for aggregated lists of usable subnetworks.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results. In special cases listUsable may return 0 subnetworks andnextPageToken which still should be used to get the next page of results.",
           },
-          scoped_warnings: {
+          scopedWarnings: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                scope_name: {
+                scopeName: {
                   type: "string",
                   description:
                     "Name of the scope containing this set of Subnetworks.",
@@ -251,7 +251,7 @@ const listUsable: AppBlock = {
             description:
               "Output only. [Output Only] Informational warning messages for failures encountered from scopes.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

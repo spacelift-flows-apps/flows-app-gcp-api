@@ -8,7 +8,7 @@ const get: AppBlock = {
   inputs: {
     default: {
       config: {
-        public_advertised_prefix: {
+        publicAdvertisedPrefix: {
           name: "Public Advertised Prefix",
           description: "Name of the PublicAdvertisedPrefix resource to return.",
           type: {
@@ -20,9 +20,9 @@ const get: AppBlock = {
       onEvent: async (input) => {
         const pathParams: Record<string, string> = {};
         pathParams.project = input.app.config.projectId as string;
-        if (input.event.inputConfig.public_advertised_prefix !== undefined)
+        if (input.event.inputConfig.publicAdvertisedPrefix !== undefined)
           pathParams["public_advertised_prefix"] = String(
-            input.event.inputConfig.public_advertised_prefix,
+            input.event.inputConfig.publicAdvertisedPrefix,
           );
 
         const result = await computeFetch({
@@ -43,12 +43,12 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          byoip_api_version: {
+          byoipApiVersion: {
             type: "string",
             description:
               "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -58,7 +58,7 @@ const get: AppBlock = {
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
           },
-          dns_verification_ip: {
+          dnsVerificationIp: {
             type: "string",
             description: "The address to be used for reverse DNS verification.",
           },
@@ -71,12 +71,12 @@ const get: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          ip_cidr_range: {
+          ipCidrRange: {
             type: "string",
             description:
               "The address range, in CIDR format, represented by this public advertised prefix.",
           },
-          ipv6_access_type: {
+          ipv6AccessType: {
             type: "string",
             description:
               "The internet access type for IPv6 Public Advertised Prefixes. Check the Ipv6AccessType enum for the list of possible values.",
@@ -91,17 +91,17 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
-          pdp_scope: {
+          pdpScope: {
             type: "string",
             description:
               "Specifies how child public delegated prefix will be scoped. It could be one of following values:        - `REGIONAL`: The public delegated prefix is regional only. The      provisioning will take a few minutes.      - `GLOBAL`: The public delegated prefix is global only. The      provisioning will take ~4 weeks.      - `GLOBAL_AND_REGIONAL` [output only]: The public delegated prefixes is       BYOIP V1 legacy prefix. This is output only value and no longer       supported in BYOIP V2. Check the PdpScope enum for the list of possible values.",
           },
-          public_delegated_prefixs: {
+          publicDelegatedPrefixs: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                ip_range: {
+                ipRange: {
                   type: "string",
                   description:
                     "The IP address range of the public delegated prefix",
@@ -133,12 +133,12 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] The list of public delegated prefixes that exist for this public advertised prefix.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for the resource.",
           },
-          shared_secret: {
+          sharedSecret: {
             type: "string",
             description:
               "[Output Only] The shared secret to be used for reverse DNS verification.",

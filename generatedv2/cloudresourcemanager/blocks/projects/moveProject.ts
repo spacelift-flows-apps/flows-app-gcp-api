@@ -1,5 +1,35 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getProjectsClient } from "../../lib/grpcClient.ts";
+import { getProjectsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  destinationParent: "destination_parent",
+};
+
+const outputMapping = {
+  metadata: {
+    name: "metadata",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+  error: {
+    name: "error",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  response: {
+    name: "response",
+    fields: {
+      type_url: "typeUrl",
+    },
+  },
+};
 
 const moveProject: AppBlock = {
   name: "Move Project",
@@ -17,7 +47,7 @@ const moveProject: AppBlock = {
           },
           required: true,
         },
-        destination_parent: {
+        destinationParent: {
           name: "Destination Parent",
           description: "Required. The new parent to move the Project under.",
           type: {
@@ -30,12 +60,7 @@ const moveProject: AppBlock = {
       onEvent: async (input) => {
         const client = await getProjectsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.destination_parent !== undefined)
-          request.destination_parent =
-            input.event.inputConfig.destination_parent;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.moveProject(request, (err: any, response: any) => {
@@ -49,7 +74,8 @@ const moveProject: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -65,7 +91,7 @@ const moveProject: AppBlock = {
           metadata: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {
@@ -92,7 +118,7 @@ const moveProject: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -111,7 +137,7 @@ const moveProject: AppBlock = {
           response: {
             type: "object",
             properties: {
-              type_url: {
+              typeUrl: {
                 type: "string",
               },
               value: {

@@ -1,5 +1,314 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getAlertPolicyServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getAlertPolicyServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  updateMask: "update_mask",
+  alertPolicy: {
+    name: "alert_policy",
+    fields: {
+      displayName: "display_name",
+      documentation: {
+        name: "documentation",
+        fields: {
+          mimeType: "mime_type",
+          links: {
+            name: "links",
+            fields: {
+              displayName: "display_name",
+            },
+          },
+        },
+      },
+      userLabels: "user_labels",
+      conditions: {
+        name: "conditions",
+        fields: {
+          displayName: "display_name",
+          conditionThreshold: {
+            name: "condition_threshold",
+            fields: {
+              aggregations: {
+                name: "aggregations",
+                fields: {
+                  alignmentPeriod: "alignment_period",
+                  perSeriesAligner: "per_series_aligner",
+                  crossSeriesReducer: "cross_series_reducer",
+                  groupByFields: "group_by_fields",
+                },
+              },
+              denominatorFilter: "denominator_filter",
+              denominatorAggregations: {
+                name: "denominator_aggregations",
+                fields: {
+                  alignmentPeriod: "alignment_period",
+                  perSeriesAligner: "per_series_aligner",
+                  crossSeriesReducer: "cross_series_reducer",
+                  groupByFields: "group_by_fields",
+                },
+              },
+              forecastOptions: {
+                name: "forecast_options",
+                fields: {
+                  forecastHorizon: "forecast_horizon",
+                },
+              },
+              thresholdValue: "threshold_value",
+              evaluationMissingData: "evaluation_missing_data",
+            },
+          },
+          conditionAbsent: {
+            name: "condition_absent",
+            fields: {
+              aggregations: {
+                name: "aggregations",
+                fields: {
+                  alignmentPeriod: "alignment_period",
+                  perSeriesAligner: "per_series_aligner",
+                  crossSeriesReducer: "cross_series_reducer",
+                  groupByFields: "group_by_fields",
+                },
+              },
+            },
+          },
+          conditionMatchedLog: {
+            name: "condition_matched_log",
+            fields: {
+              labelExtractors: "label_extractors",
+            },
+          },
+          conditionMonitoringQueryLanguage: {
+            name: "condition_monitoring_query_language",
+            fields: {
+              evaluationMissingData: "evaluation_missing_data",
+            },
+          },
+          conditionPrometheusQueryLanguage: {
+            name: "condition_prometheus_query_language",
+            fields: {
+              evaluationInterval: "evaluation_interval",
+              ruleGroup: "rule_group",
+              alertRule: "alert_rule",
+              disableMetricValidation: "disable_metric_validation",
+            },
+          },
+          conditionSql: {
+            name: "condition_sql",
+            fields: {
+              hourly: {
+                name: "hourly",
+                fields: {
+                  minuteOffset: "minute_offset",
+                },
+              },
+              daily: {
+                name: "daily",
+                fields: {
+                  executionTime: "execution_time",
+                },
+              },
+              rowCountTest: "row_count_test",
+              booleanTest: "boolean_test",
+            },
+          },
+        },
+      },
+      validity: {
+        name: "validity",
+        fields: {
+          details: {
+            name: "details",
+            fields: {
+              typeUrl: "type_url",
+            },
+          },
+        },
+      },
+      notificationChannels: "notification_channels",
+      creationRecord: {
+        name: "creation_record",
+        fields: {
+          mutateTime: "mutate_time",
+          mutatedBy: "mutated_by",
+        },
+      },
+      mutationRecord: {
+        name: "mutation_record",
+        fields: {
+          mutateTime: "mutate_time",
+          mutatedBy: "mutated_by",
+        },
+      },
+      alertStrategy: {
+        name: "alert_strategy",
+        fields: {
+          notificationRateLimit: "notification_rate_limit",
+          notificationPrompts: "notification_prompts",
+          autoClose: "auto_close",
+          notificationChannelStrategy: {
+            name: "notification_channel_strategy",
+            fields: {
+              notificationChannelNames: "notification_channel_names",
+              renotifyInterval: "renotify_interval",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const outputMapping = {
+  display_name: "displayName",
+  documentation: {
+    name: "documentation",
+    fields: {
+      mime_type: "mimeType",
+      links: {
+        name: "links",
+        fields: {
+          display_name: "displayName",
+        },
+      },
+    },
+  },
+  user_labels: "userLabels",
+  conditions: {
+    name: "conditions",
+    fields: {
+      display_name: "displayName",
+      condition_threshold: {
+        name: "conditionThreshold",
+        fields: {
+          aggregations: {
+            name: "aggregations",
+            fields: {
+              alignment_period: "alignmentPeriod",
+              per_series_aligner: "perSeriesAligner",
+              cross_series_reducer: "crossSeriesReducer",
+              group_by_fields: "groupByFields",
+            },
+          },
+          denominator_filter: "denominatorFilter",
+          denominator_aggregations: {
+            name: "denominatorAggregations",
+            fields: {
+              alignment_period: "alignmentPeriod",
+              per_series_aligner: "perSeriesAligner",
+              cross_series_reducer: "crossSeriesReducer",
+              group_by_fields: "groupByFields",
+            },
+          },
+          forecast_options: {
+            name: "forecastOptions",
+            fields: {
+              forecast_horizon: "forecastHorizon",
+            },
+          },
+          threshold_value: "thresholdValue",
+          evaluation_missing_data: "evaluationMissingData",
+        },
+      },
+      condition_absent: {
+        name: "conditionAbsent",
+        fields: {
+          aggregations: {
+            name: "aggregations",
+            fields: {
+              alignment_period: "alignmentPeriod",
+              per_series_aligner: "perSeriesAligner",
+              cross_series_reducer: "crossSeriesReducer",
+              group_by_fields: "groupByFields",
+            },
+          },
+        },
+      },
+      condition_matched_log: {
+        name: "conditionMatchedLog",
+        fields: {
+          label_extractors: "labelExtractors",
+        },
+      },
+      condition_monitoring_query_language: {
+        name: "conditionMonitoringQueryLanguage",
+        fields: {
+          evaluation_missing_data: "evaluationMissingData",
+        },
+      },
+      condition_prometheus_query_language: {
+        name: "conditionPrometheusQueryLanguage",
+        fields: {
+          evaluation_interval: "evaluationInterval",
+          rule_group: "ruleGroup",
+          alert_rule: "alertRule",
+          disable_metric_validation: "disableMetricValidation",
+        },
+      },
+      condition_sql: {
+        name: "conditionSql",
+        fields: {
+          hourly: {
+            name: "hourly",
+            fields: {
+              minute_offset: "minuteOffset",
+            },
+          },
+          daily: {
+            name: "daily",
+            fields: {
+              execution_time: "executionTime",
+            },
+          },
+          row_count_test: "rowCountTest",
+          boolean_test: "booleanTest",
+        },
+      },
+    },
+  },
+  validity: {
+    name: "validity",
+    fields: {
+      details: {
+        name: "details",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  notification_channels: "notificationChannels",
+  creation_record: {
+    name: "creationRecord",
+    fields: {
+      mutate_time: "mutateTime",
+      mutated_by: "mutatedBy",
+    },
+  },
+  mutation_record: {
+    name: "mutationRecord",
+    fields: {
+      mutate_time: "mutateTime",
+      mutated_by: "mutatedBy",
+    },
+  },
+  alert_strategy: {
+    name: "alertStrategy",
+    fields: {
+      notification_rate_limit: "notificationRateLimit",
+      notification_prompts: "notificationPrompts",
+      auto_close: "autoClose",
+      notification_channel_strategy: {
+        name: "notificationChannelStrategy",
+        fields: {
+          notification_channel_names: "notificationChannelNames",
+          renotify_interval: "renotifyInterval",
+        },
+      },
+    },
+  },
+};
 
 const updateAlertPolicy: AppBlock = {
   name: "Update Alert Policy",
@@ -8,7 +317,7 @@ const updateAlertPolicy: AppBlock = {
   inputs: {
     default: {
       config: {
-        update_mask: {
+        updateMask: {
           name: "Update Mask",
           description:
             "Optional. A list of alerting policy field names. If this field is not empty, each listed field in the existing alerting policy is set to the value of the corresponding field in the supplied policy (`alert_policy`), or to the field's default value if the field is not in the supplied alerting policy.  Fields not listed retain their previous value.  Examples of valid field masks include `display_name`, `documentation`, `documentation.content`, `documentation.mime_type`, `user_labels`, `user_label.nameofkey`, `enabled`, `conditions`, `combiner`, etc.  If this field is empty, then the supplied alerting policy replaces the existing policy. It is the same as deleting the existing policy and adding the supplied policy, except for the following:  +   The new policy will have the same `[ALERT_POLICY_ID]` as the former     policy. This gives you continuity with the former policy in your     notifications and incidents. +   Conditions in the new policy will keep their former `[CONDITION_ID]` if     the supplied condition includes the `name` field with that     `[CONDITION_ID]`. If the supplied condition omits the `name` field,     then a new `[CONDITION_ID]` is created.",
@@ -19,7 +328,7 @@ const updateAlertPolicy: AppBlock = {
           },
           required: false,
         },
-        alert_policy: {
+        alertPolicy: {
           name: "Alert Policy",
           description:
             "Required. The updated alerting policy or the updated values for the fields listed in `update_mask`. If `update_mask` is not empty, any fields in this policy that are not in `update_mask` are ignored.",
@@ -31,7 +340,7 @@ const updateAlertPolicy: AppBlock = {
                 description:
                   "Identifier. Required if the policy exists. The resource name for this policy. The format is:      projects/[PROJECT_ID_OR_NUMBER]/alertPolicies/[ALERT_POLICY_ID]  `[ALERT_POLICY_ID]` is assigned by Cloud Monitoring when the policy is created. When calling the [alertPolicies.create][google.monitoring.v3.AlertPolicyService.CreateAlertPolicy] method, do not include the `name` field in the alerting policy passed as part of the request.",
               },
-              display_name: {
+              displayName: {
                 type: "string",
                 description:
                   'A short name or phrase used to identify the policy in dashboards, notifications, and incidents. To avoid confusion, don\'t use the same display name for multiple policies in the same project. The name is limited to 512 Unicode characters.  The convention for the display_name of a PrometheusQueryLanguageCondition is "{rule group name}/{alert name}", where the {rule group name} and {alert name} should be taken from the corresponding Prometheus configuration file. This convention is not enforced. In any case the display_name is not a unique key of the AlertPolicy.',
@@ -44,7 +353,7 @@ const updateAlertPolicy: AppBlock = {
                     description:
                       "The body of the documentation, interpreted according to `mime_type`. The content may not exceed 8,192 Unicode characters and may not exceed more than 10,240 bytes when encoded in UTF-8 format, whichever is smaller. This text can be [templatized by using variables](https://cloud.google.com/monitoring/alerts/doc-variables#doc-vars).",
                   },
-                  mime_type: {
+                  mimeType: {
                     type: "string",
                     description:
                       'The format of the `content` field. Presently, only the value `"text/markdown"` is supported. See [Markdown](https://en.wikipedia.org/wiki/Markdown) for more information.',
@@ -59,7 +368,7 @@ const updateAlertPolicy: AppBlock = {
                     items: {
                       type: "object",
                       properties: {
-                        display_name: {
+                        displayName: {
                           type: "string",
                           description:
                             'A short display name for the link. The display name must not be empty or exceed 63 characters. Example: "playbook".',
@@ -82,7 +391,7 @@ const updateAlertPolicy: AppBlock = {
                   "Documentation that is included in the notifications and incidents pertaining to this policy.",
                 additionalProperties: true,
               },
-              user_labels: {
+              userLabels: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -100,12 +409,12 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         "Required if the condition exists. The unique resource name for this condition. Its format is:      projects/[PROJECT_ID_OR_NUMBER]/alertPolicies/[POLICY_ID]/conditions/[CONDITION_ID]  `[CONDITION_ID]` is assigned by Cloud Monitoring when the condition is created as part of a new or updated alerting policy.  When calling the [alertPolicies.create][google.monitoring.v3.AlertPolicyService.CreateAlertPolicy] method, do not include the `name` field in the conditions of the requested alerting policy. Cloud Monitoring creates the condition identifiers and includes them in the new policy.  When calling the [alertPolicies.update][google.monitoring.v3.AlertPolicyService.UpdateAlertPolicy] method to update a policy, including a condition `name` causes the existing condition to be updated. Conditions without names are added to the updated policy. Existing conditions are deleted if they are not updated.  Best practice is to preserve `[CONDITION_ID]` if you make only small changes, such as those to condition thresholds, durations, or trigger values.  Otherwise, treat the change as a new condition and let the existing condition be deleted.",
                     },
-                    display_name: {
+                    displayName: {
                       type: "string",
                       description:
                         "A short name or phrase used to identify the condition in dashboards, notifications, and incidents. To avoid confusion, don't use the same display name for multiple conditions in the same policy.",
                     },
-                    condition_threshold: {
+                    conditionThreshold: {
                       type: "object",
                       properties: {
                         filter: {
@@ -118,12 +427,12 @@ const updateAlertPolicy: AppBlock = {
                           items: {
                             type: "object",
                             properties: {
-                              alignment_period: {
+                              alignmentPeriod: {
                                 type: "string",
                                 description:
                                   "Duration string (e.g., '1.5s', '300s')",
                               },
-                              per_series_aligner: {
+                              perSeriesAligner: {
                                 type: "string",
                                 enum: [
                                   "ALIGN_NONE",
@@ -149,7 +458,7 @@ const updateAlertPolicy: AppBlock = {
                                 description:
                                   "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
                               },
-                              cross_series_reducer: {
+                              crossSeriesReducer: {
                                 type: "string",
                                 enum: [
                                   "REDUCE_NONE",
@@ -170,7 +479,7 @@ const updateAlertPolicy: AppBlock = {
                                 description:
                                   "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
                               },
-                              group_by_fields: {
+                              groupByFields: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -186,22 +495,22 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "Specifies the alignment of data points in individual time series as well as how to combine the retrieved time series together (such as when aggregating multiple streams on each resource to a single stream for each resource or when aggregating streams across all members of a group of resources). Multiple aggregations are applied in the order specified.  This field is similar to the one in the [`ListTimeSeries` request](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list). It is advisable to use the `ListTimeSeries` method when debugging this field.",
                         },
-                        denominator_filter: {
+                        denominatorFilter: {
                           type: "string",
                           description:
                             "A [filter](https://cloud.google.com/monitoring/api/v3/filters) that identifies a time series that should be used as the denominator of a ratio that will be compared with the threshold. If a `denominator_filter` is specified, the time series specified by the `filter` field will be used as the numerator.  The filter must specify the metric type and optionally may contain restrictions on resource type, resource labels, and metric labels. This field may not exceed 2048 Unicode characters in length.",
                         },
-                        denominator_aggregations: {
+                        denominatorAggregations: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              alignment_period: {
+                              alignmentPeriod: {
                                 type: "string",
                                 description:
                                   "Duration string (e.g., '1.5s', '300s')",
                               },
-                              per_series_aligner: {
+                              perSeriesAligner: {
                                 type: "string",
                                 enum: [
                                   "ALIGN_NONE",
@@ -227,7 +536,7 @@ const updateAlertPolicy: AppBlock = {
                                 description:
                                   "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
                               },
-                              cross_series_reducer: {
+                              crossSeriesReducer: {
                                 type: "string",
                                 enum: [
                                   "REDUCE_NONE",
@@ -248,7 +557,7 @@ const updateAlertPolicy: AppBlock = {
                                 description:
                                   "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
                               },
-                              group_by_fields: {
+                              groupByFields: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -264,16 +573,16 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "Specifies the alignment of data points in individual time series selected by `denominatorFilter` as well as how to combine the retrieved time series together (such as when aggregating multiple streams on each resource to a single stream for each resource or when aggregating streams across all members of a group of resources).  When computing ratios, the `aggregations` and `denominator_aggregations` fields must use the same alignment period and produce time series that have the same periodicity and labels.",
                         },
-                        forecast_options: {
+                        forecastOptions: {
                           type: "object",
                           properties: {
-                            forecast_horizon: {
+                            forecastHorizon: {
                               type: "string",
                               description:
                                 "Duration string (e.g., '1.5s', '300s')",
                             },
                           },
-                          required: ["forecast_horizon"],
+                          required: ["forecastHorizon"],
                           description:
                             "Options used when forecasting the time series and testing the predicted value against the threshold.",
                           additionalProperties: true,
@@ -292,7 +601,7 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "Specifies an ordering relationship on two arguments, called `left` and `right`.",
                         },
-                        threshold_value: {
+                        thresholdValue: {
                           type: "number",
                           description:
                             "A value against which to compare the time series.",
@@ -319,7 +628,7 @@ const updateAlertPolicy: AppBlock = {
                             "Specifies how many time series must fail a predicate to trigger a condition. If not specified, then a `{count: 1}` trigger is used.",
                           additionalProperties: true,
                         },
-                        evaluation_missing_data: {
+                        evaluationMissingData: {
                           type: "string",
                           enum: [
                             "EVALUATION_MISSING_DATA_UNSPECIFIED",
@@ -336,7 +645,7 @@ const updateAlertPolicy: AppBlock = {
                         "A condition type that compares a collection of time series against a threshold. (Part of 'condition' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    condition_absent: {
+                    conditionAbsent: {
                       type: "object",
                       properties: {
                         filter: {
@@ -349,12 +658,12 @@ const updateAlertPolicy: AppBlock = {
                           items: {
                             type: "object",
                             properties: {
-                              alignment_period: {
+                              alignmentPeriod: {
                                 type: "string",
                                 description:
                                   "Duration string (e.g., '1.5s', '300s')",
                               },
-                              per_series_aligner: {
+                              perSeriesAligner: {
                                 type: "string",
                                 enum: [
                                   "ALIGN_NONE",
@@ -380,7 +689,7 @@ const updateAlertPolicy: AppBlock = {
                                 description:
                                   "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
                               },
-                              cross_series_reducer: {
+                              crossSeriesReducer: {
                                 type: "string",
                                 enum: [
                                   "REDUCE_NONE",
@@ -401,7 +710,7 @@ const updateAlertPolicy: AppBlock = {
                                 description:
                                   "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
                               },
-                              group_by_fields: {
+                              groupByFields: {
                                 type: "array",
                                 items: {
                                   type: "string",
@@ -445,7 +754,7 @@ const updateAlertPolicy: AppBlock = {
                         "A condition type that checks that monitored resources are reporting data. The configuration defines a metric and a set of monitored resources. The predicate is considered in violation when a time series for the specified metric of a monitored resource does not include any data in the specified `duration`. (Part of 'condition' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    condition_matched_log: {
+                    conditionMatchedLog: {
                       type: "object",
                       properties: {
                         filter: {
@@ -453,7 +762,7 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "Required. A logs-based filter. See [Advanced Logs Queries](https://cloud.google.com/logging/docs/view/advanced-queries) for how this filter should be constructed.",
                         },
-                        label_extractors: {
+                        labelExtractors: {
                           type: "object",
                           additionalProperties: {
                             type: "string",
@@ -467,7 +776,7 @@ const updateAlertPolicy: AppBlock = {
                         "A condition type that checks whether a log message in the [scoping project](https://cloud.google.com/monitoring/api/v3#project_name) satisfies the given filter. Logs from other projects in the metrics scope are not evaluated. (Part of 'condition' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    condition_monitoring_query_language: {
+                    conditionMonitoringQueryLanguage: {
                       type: "object",
                       properties: {
                         query: {
@@ -497,7 +806,7 @@ const updateAlertPolicy: AppBlock = {
                             "Specifies how many time series must fail a predicate to trigger a condition. If not specified, then a `{count: 1}` trigger is used.",
                           additionalProperties: true,
                         },
-                        evaluation_missing_data: {
+                        evaluationMissingData: {
                           type: "string",
                           enum: [
                             "EVALUATION_MISSING_DATA_UNSPECIFIED",
@@ -513,7 +822,7 @@ const updateAlertPolicy: AppBlock = {
                         "A condition type that allows alerting policies to be defined using [Monitoring Query Language](https://cloud.google.com/monitoring/mql). (Part of 'condition' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    condition_prometheus_query_language: {
+                    conditionPrometheusQueryLanguage: {
                       type: "object",
                       properties: {
                         query: {
@@ -525,7 +834,7 @@ const updateAlertPolicy: AppBlock = {
                           type: "string",
                           description: "Duration string (e.g., '1.5s', '300s')",
                         },
-                        evaluation_interval: {
+                        evaluationInterval: {
                           type: "string",
                           description: "Duration string (e.g., '1.5s', '300s')",
                         },
@@ -537,17 +846,17 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             'Optional. Labels to add to or overwrite in the PromQL query result. Label names [must be valid](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels). Label values can be [templatized by using variables](https://cloud.google.com/monitoring/alerts/doc-variables#doc-vars). The only available variable names are the names of the labels in the PromQL result, including "__name__" and "value". "labels" may be empty.',
                         },
-                        rule_group: {
+                        ruleGroup: {
                           type: "string",
                           description:
                             "Optional. The rule group name of this alert in the corresponding Prometheus configuration file.  Some external tools may require this field to be populated correctly in order to refer to the original Prometheus configuration file. The rule group name and the alert name are necessary to update the relevant AlertPolicies in case the definition of the rule group changes in the future.  This field is optional. If this field is not empty, then it must contain a valid UTF-8 string. This field may not exceed 2048 Unicode characters in length.",
                         },
-                        alert_rule: {
+                        alertRule: {
                           type: "string",
                           description:
                             "Optional. The alerting rule name of this alert in the corresponding Prometheus configuration file.  Some external tools may require this field to be populated correctly in order to refer to the original Prometheus configuration file. The rule group name and the alert name are necessary to update the relevant AlertPolicies in case the definition of the rule group changes in the future.  This field is optional. If this field is not empty, then it must be a [valid Prometheus label name](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels). This field may not exceed 2048 Unicode characters in length.",
                         },
-                        disable_metric_validation: {
+                        disableMetricValidation: {
                           type: "boolean",
                           description:
                             "Optional. Whether to disable metric existence validation for this condition.  This allows alerting policies to be defined on metrics that do not yet exist, improving advanced customer workflows such as configuring alerting policies using Terraform.  Users with the `monitoring.alertPolicyViewer` role are able to see the name of the non-existent metric in the alerting policy condition.",
@@ -558,7 +867,7 @@ const updateAlertPolicy: AppBlock = {
                         "A condition type that allows alerting policies to be defined using [Prometheus Query Language (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/).  The PrometheusQueryLanguageCondition message contains information from a Prometheus alerting rule and its associated rule group.  A Prometheus alerting rule is described [here](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/). The semantics of a Prometheus alerting rule is described [here](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#rule).  A Prometheus rule group is described [here](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/). The semantics of a Prometheus rule group is described [here](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#rule_group).  Because Cloud Alerting has no representation of a Prometheus rule group resource, we must embed the information of the parent rule group inside each of the conditions that refer to it. We must also update the contents of all Prometheus alerts in case the information of their rule group changes.  The PrometheusQueryLanguageCondition protocol buffer combines the information of the corresponding rule group and alerting rule. The structure of the PrometheusQueryLanguageCondition protocol buffer does NOT mimic the structure of the Prometheus rule group and alerting rule YAML declarations. The PrometheusQueryLanguageCondition protocol buffer may change in the future to support future rule group and/or alerting rule features. There are no new such features at the present time (2023-06-26). (Part of 'condition' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    condition_sql: {
+                    conditionSql: {
                       type: "object",
                       properties: {
                         query: {
@@ -588,7 +897,7 @@ const updateAlertPolicy: AppBlock = {
                               description:
                                 "Required. The number of hours between runs. Must be greater than or equal to 1 hour and less than or equal to 48 hours.",
                             },
-                            minute_offset: {
+                            minuteOffset: {
                               type: "integer",
                               description:
                                 "Optional. The number of minutes after the hour (in UTC) to run the query. Must be greater than or equal to 0 minutes and less than or equal to 59 minutes.  If left unspecified, then an arbitrary offset is used.",
@@ -607,7 +916,7 @@ const updateAlertPolicy: AppBlock = {
                               description:
                                 "Required. The number of days between runs. Must be greater than or equal to 1 day and less than or equal to 31 days.",
                             },
-                            execution_time: {
+                            executionTime: {
                               type: "object",
                               properties: {
                                 hours: {
@@ -633,7 +942,7 @@ const updateAlertPolicy: AppBlock = {
                             "Used to schedule the query to run every so many days. (Part of 'schedule' - only one field in this group can be set)",
                           additionalProperties: true,
                         },
-                        row_count_test: {
+                        rowCountTest: {
                           type: "object",
                           properties: {
                             comparison: {
@@ -660,7 +969,7 @@ const updateAlertPolicy: AppBlock = {
                             "A test that checks if the number of rows in the result set violates some threshold. (Part of 'evaluate' - only one field in this group can be set)",
                           additionalProperties: true,
                         },
-                        boolean_test: {
+                        booleanTest: {
                           type: "object",
                           properties: {
                             column: {
@@ -718,7 +1027,7 @@ const updateAlertPolicy: AppBlock = {
                     items: {
                       type: "object",
                       properties: {
-                        type_url: {
+                        typeUrl: {
                           type: "string",
                         },
                         value: {
@@ -734,7 +1043,7 @@ const updateAlertPolicy: AppBlock = {
                 description:
                   "Read-only description of how the alerting policy is invalid. This field is only set when the alerting policy is invalid. An invalid alerting policy will not generate incidents.",
               },
-              notification_channels: {
+              notificationChannels: {
                 type: "array",
                 items: {
                   type: "string",
@@ -742,15 +1051,15 @@ const updateAlertPolicy: AppBlock = {
                 description:
                   "Identifies the notification channels to which notifications should be sent when incidents are opened or closed or when new violations occur on an already opened incident. Each element of this array corresponds to the `name` field in each of the [`NotificationChannel`][google.monitoring.v3.NotificationChannel] objects that are returned from the [`ListNotificationChannels`] [google.monitoring.v3.NotificationChannelService.ListNotificationChannels] method. The format of the entries in this field is:      projects/[PROJECT_ID_OR_NUMBER]/notificationChannels/[CHANNEL_ID]",
               },
-              creation_record: {
+              creationRecord: {
                 type: "object",
                 properties: {
-                  mutate_time: {
+                  mutateTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                   },
-                  mutated_by: {
+                  mutatedBy: {
                     type: "string",
                     description:
                       "The email address of the user making the change.",
@@ -759,15 +1068,15 @@ const updateAlertPolicy: AppBlock = {
                 description: "Describes a change made to a configuration.",
                 additionalProperties: true,
               },
-              mutation_record: {
+              mutationRecord: {
                 type: "object",
                 properties: {
-                  mutate_time: {
+                  mutateTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                   },
-                  mutated_by: {
+                  mutatedBy: {
                     type: "string",
                     description:
                       "The email address of the user making the change.",
@@ -776,10 +1085,10 @@ const updateAlertPolicy: AppBlock = {
                 description: "Describes a change made to a configuration.",
                 additionalProperties: true,
               },
-              alert_strategy: {
+              alertStrategy: {
                 type: "object",
                 properties: {
-                  notification_rate_limit: {
+                  notificationRateLimit: {
                     type: "object",
                     properties: {
                       period: {
@@ -791,7 +1100,7 @@ const updateAlertPolicy: AppBlock = {
                       "Control over the rate of notifications sent to this alerting policy's notification channels.",
                     additionalProperties: true,
                   },
-                  notification_prompts: {
+                  notificationPrompts: {
                     type: "array",
                     items: {
                       type: "string",
@@ -804,16 +1113,16 @@ const updateAlertPolicy: AppBlock = {
                     description:
                       "For log-based alert policies, the notification prompts is always [OPENED]. For non log-based alert policies, the notification prompts can be [OPENED] or [OPENED, CLOSED].",
                   },
-                  auto_close: {
+                  autoClose: {
                     type: "string",
                     description: "Duration string (e.g., '1.5s', '300s')",
                   },
-                  notification_channel_strategy: {
+                  notificationChannelStrategy: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        notification_channel_names: {
+                        notificationChannelNames: {
                           type: "array",
                           items: {
                             type: "string",
@@ -821,7 +1130,7 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "The full REST resource name for the notification channels that these settings apply to. Each of these correspond to the name field in one of the NotificationChannel objects referenced in the notification_channels field of this AlertPolicy. The format is:      projects/[PROJECT_ID_OR_NUMBER]/notificationChannels/[CHANNEL_ID]",
                         },
-                        renotify_interval: {
+                        renotifyInterval: {
                           type: "string",
                           description: "Duration string (e.g., '1.5s', '300s')",
                         },
@@ -855,11 +1164,7 @@ const updateAlertPolicy: AppBlock = {
       onEvent: async (input) => {
         const client = await getAlertPolicyServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.update_mask !== undefined)
-          request.update_mask = input.event.inputConfig.update_mask;
-        if (input.event.inputConfig.alert_policy !== undefined)
-          request.alert_policy = input.event.inputConfig.alert_policy;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.updateAlertPolicy(request, (err: any, response: any) => {
@@ -873,7 +1178,8 @@ const updateAlertPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -888,7 +1194,7 @@ const updateAlertPolicy: AppBlock = {
             description:
               "Identifier. Required if the policy exists. The resource name for this policy. The format is:      projects/[PROJECT_ID_OR_NUMBER]/alertPolicies/[ALERT_POLICY_ID]  `[ALERT_POLICY_ID]` is assigned by Cloud Monitoring when the policy is created. When calling the [alertPolicies.create][google.monitoring.v3.AlertPolicyService.CreateAlertPolicy] method, do not include the `name` field in the alerting policy passed as part of the request.",
           },
-          display_name: {
+          displayName: {
             type: "string",
             description:
               'A short name or phrase used to identify the policy in dashboards, notifications, and incidents. To avoid confusion, don\'t use the same display name for multiple policies in the same project. The name is limited to 512 Unicode characters.  The convention for the display_name of a PrometheusQueryLanguageCondition is "{rule group name}/{alert name}", where the {rule group name} and {alert name} should be taken from the corresponding Prometheus configuration file. This convention is not enforced. In any case the display_name is not a unique key of the AlertPolicy.',
@@ -901,7 +1207,7 @@ const updateAlertPolicy: AppBlock = {
                 description:
                   "The body of the documentation, interpreted according to `mime_type`. The content may not exceed 8,192 Unicode characters and may not exceed more than 10,240 bytes when encoded in UTF-8 format, whichever is smaller. This text can be [templatized by using variables](https://cloud.google.com/monitoring/alerts/doc-variables#doc-vars).",
               },
-              mime_type: {
+              mimeType: {
                 type: "string",
                 description:
                   'The format of the `content` field. Presently, only the value `"text/markdown"` is supported. See [Markdown](https://en.wikipedia.org/wiki/Markdown) for more information.',
@@ -916,7 +1222,7 @@ const updateAlertPolicy: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    display_name: {
+                    displayName: {
                       type: "string",
                       description:
                         'A short display name for the link. The display name must not be empty or exceed 63 characters. Example: "playbook".',
@@ -939,7 +1245,7 @@ const updateAlertPolicy: AppBlock = {
               "Documentation that is included in the notifications and incidents pertaining to this policy.",
             additionalProperties: true,
           },
-          user_labels: {
+          userLabels: {
             type: "object",
             additionalProperties: {
               type: "string",
@@ -957,12 +1263,12 @@ const updateAlertPolicy: AppBlock = {
                   description:
                     "Required if the condition exists. The unique resource name for this condition. Its format is:      projects/[PROJECT_ID_OR_NUMBER]/alertPolicies/[POLICY_ID]/conditions/[CONDITION_ID]  `[CONDITION_ID]` is assigned by Cloud Monitoring when the condition is created as part of a new or updated alerting policy.  When calling the [alertPolicies.create][google.monitoring.v3.AlertPolicyService.CreateAlertPolicy] method, do not include the `name` field in the conditions of the requested alerting policy. Cloud Monitoring creates the condition identifiers and includes them in the new policy.  When calling the [alertPolicies.update][google.monitoring.v3.AlertPolicyService.UpdateAlertPolicy] method to update a policy, including a condition `name` causes the existing condition to be updated. Conditions without names are added to the updated policy. Existing conditions are deleted if they are not updated.  Best practice is to preserve `[CONDITION_ID]` if you make only small changes, such as those to condition thresholds, durations, or trigger values.  Otherwise, treat the change as a new condition and let the existing condition be deleted.",
                 },
-                display_name: {
+                displayName: {
                   type: "string",
                   description:
                     "A short name or phrase used to identify the condition in dashboards, notifications, and incidents. To avoid confusion, don't use the same display name for multiple conditions in the same policy.",
                 },
-                condition_threshold: {
+                conditionThreshold: {
                   type: "object",
                   properties: {
                     filter: {
@@ -975,12 +1281,12 @@ const updateAlertPolicy: AppBlock = {
                       items: {
                         type: "object",
                         properties: {
-                          alignment_period: {
+                          alignmentPeriod: {
                             type: "string",
                             description:
                               "Duration string (e.g., '1.5s', '300s')",
                           },
-                          per_series_aligner: {
+                          perSeriesAligner: {
                             type: "string",
                             enum: [
                               "ALIGN_NONE",
@@ -1006,7 +1312,7 @@ const updateAlertPolicy: AppBlock = {
                             description:
                               "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
                           },
-                          cross_series_reducer: {
+                          crossSeriesReducer: {
                             type: "string",
                             enum: [
                               "REDUCE_NONE",
@@ -1027,7 +1333,7 @@ const updateAlertPolicy: AppBlock = {
                             description:
                               "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
                           },
-                          group_by_fields: {
+                          groupByFields: {
                             type: "array",
                             items: {
                               type: "string",
@@ -1043,22 +1349,22 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         "Specifies the alignment of data points in individual time series as well as how to combine the retrieved time series together (such as when aggregating multiple streams on each resource to a single stream for each resource or when aggregating streams across all members of a group of resources). Multiple aggregations are applied in the order specified.  This field is similar to the one in the [`ListTimeSeries` request](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list). It is advisable to use the `ListTimeSeries` method when debugging this field.",
                     },
-                    denominator_filter: {
+                    denominatorFilter: {
                       type: "string",
                       description:
                         "A [filter](https://cloud.google.com/monitoring/api/v3/filters) that identifies a time series that should be used as the denominator of a ratio that will be compared with the threshold. If a `denominator_filter` is specified, the time series specified by the `filter` field will be used as the numerator.  The filter must specify the metric type and optionally may contain restrictions on resource type, resource labels, and metric labels. This field may not exceed 2048 Unicode characters in length.",
                     },
-                    denominator_aggregations: {
+                    denominatorAggregations: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          alignment_period: {
+                          alignmentPeriod: {
                             type: "string",
                             description:
                               "Duration string (e.g., '1.5s', '300s')",
                           },
-                          per_series_aligner: {
+                          perSeriesAligner: {
                             type: "string",
                             enum: [
                               "ALIGN_NONE",
@@ -1084,7 +1390,7 @@ const updateAlertPolicy: AppBlock = {
                             description:
                               "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
                           },
-                          cross_series_reducer: {
+                          crossSeriesReducer: {
                             type: "string",
                             enum: [
                               "REDUCE_NONE",
@@ -1105,7 +1411,7 @@ const updateAlertPolicy: AppBlock = {
                             description:
                               "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
                           },
-                          group_by_fields: {
+                          groupByFields: {
                             type: "array",
                             items: {
                               type: "string",
@@ -1121,15 +1427,15 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         "Specifies the alignment of data points in individual time series selected by `denominatorFilter` as well as how to combine the retrieved time series together (such as when aggregating multiple streams on each resource to a single stream for each resource or when aggregating streams across all members of a group of resources).  When computing ratios, the `aggregations` and `denominator_aggregations` fields must use the same alignment period and produce time series that have the same periodicity and labels.",
                     },
-                    forecast_options: {
+                    forecastOptions: {
                       type: "object",
                       properties: {
-                        forecast_horizon: {
+                        forecastHorizon: {
                           type: "string",
                           description: "Duration string (e.g., '1.5s', '300s')",
                         },
                       },
-                      required: ["forecast_horizon"],
+                      required: ["forecastHorizon"],
                       description:
                         "Options used when forecasting the time series and testing the predicted value against the threshold.",
                       additionalProperties: true,
@@ -1148,7 +1454,7 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         "Specifies an ordering relationship on two arguments, called `left` and `right`.",
                     },
-                    threshold_value: {
+                    thresholdValue: {
                       type: "number",
                       description:
                         "A value against which to compare the time series.",
@@ -1175,7 +1481,7 @@ const updateAlertPolicy: AppBlock = {
                         "Specifies how many time series must fail a predicate to trigger a condition. If not specified, then a `{count: 1}` trigger is used.",
                       additionalProperties: true,
                     },
-                    evaluation_missing_data: {
+                    evaluationMissingData: {
                       type: "string",
                       enum: [
                         "EVALUATION_MISSING_DATA_UNSPECIFIED",
@@ -1192,7 +1498,7 @@ const updateAlertPolicy: AppBlock = {
                     "A condition type that compares a collection of time series against a threshold. (Part of 'condition' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                condition_absent: {
+                conditionAbsent: {
                   type: "object",
                   properties: {
                     filter: {
@@ -1205,12 +1511,12 @@ const updateAlertPolicy: AppBlock = {
                       items: {
                         type: "object",
                         properties: {
-                          alignment_period: {
+                          alignmentPeriod: {
                             type: "string",
                             description:
                               "Duration string (e.g., '1.5s', '300s')",
                           },
-                          per_series_aligner: {
+                          perSeriesAligner: {
                             type: "string",
                             enum: [
                               "ALIGN_NONE",
@@ -1236,7 +1542,7 @@ const updateAlertPolicy: AppBlock = {
                             description:
                               "An `Aligner` describes how to bring the data points in a single time series into temporal alignment. Except for `ALIGN_NONE`, all alignments cause all the data points in an `alignment_period` to be mathematically grouped together, resulting in a single data point for each `alignment_period` with end timestamp at the end of the period.  Not all alignment operations may be applied to all time series. The valid choices depend on the `metric_kind` and `value_type` of the original time series. Alignment can change the `metric_kind` or the `value_type` of the time series.  Time series data must be aligned in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified and not equal to `ALIGN_NONE` and `alignment_period` must be specified; otherwise, an error is returned.",
                           },
-                          cross_series_reducer: {
+                          crossSeriesReducer: {
                             type: "string",
                             enum: [
                               "REDUCE_NONE",
@@ -1257,7 +1563,7 @@ const updateAlertPolicy: AppBlock = {
                             description:
                               "The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.  Not all reducer operations can be applied to all time series. The valid choices depend on the `metric_kind` and the `value_type` of the original time series. Reduction can yield a time series with a different `metric_kind` or `value_type` than the input time series.  Time series data must first be aligned (see `per_series_aligner`) in order to perform cross-time series reduction. If `cross_series_reducer` is specified, then `per_series_aligner` must be specified, and must not be `ALIGN_NONE`. An `alignment_period` must also be specified; otherwise, an error is returned.",
                           },
-                          group_by_fields: {
+                          groupByFields: {
                             type: "array",
                             items: {
                               type: "string",
@@ -1301,7 +1607,7 @@ const updateAlertPolicy: AppBlock = {
                     "A condition type that checks that monitored resources are reporting data. The configuration defines a metric and a set of monitored resources. The predicate is considered in violation when a time series for the specified metric of a monitored resource does not include any data in the specified `duration`. (Part of 'condition' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                condition_matched_log: {
+                conditionMatchedLog: {
                   type: "object",
                   properties: {
                     filter: {
@@ -1309,7 +1615,7 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         "Required. A logs-based filter. See [Advanced Logs Queries](https://cloud.google.com/logging/docs/view/advanced-queries) for how this filter should be constructed.",
                     },
-                    label_extractors: {
+                    labelExtractors: {
                       type: "object",
                       additionalProperties: {
                         type: "string",
@@ -1323,7 +1629,7 @@ const updateAlertPolicy: AppBlock = {
                     "A condition type that checks whether a log message in the [scoping project](https://cloud.google.com/monitoring/api/v3#project_name) satisfies the given filter. Logs from other projects in the metrics scope are not evaluated. (Part of 'condition' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                condition_monitoring_query_language: {
+                conditionMonitoringQueryLanguage: {
                   type: "object",
                   properties: {
                     query: {
@@ -1353,7 +1659,7 @@ const updateAlertPolicy: AppBlock = {
                         "Specifies how many time series must fail a predicate to trigger a condition. If not specified, then a `{count: 1}` trigger is used.",
                       additionalProperties: true,
                     },
-                    evaluation_missing_data: {
+                    evaluationMissingData: {
                       type: "string",
                       enum: [
                         "EVALUATION_MISSING_DATA_UNSPECIFIED",
@@ -1369,7 +1675,7 @@ const updateAlertPolicy: AppBlock = {
                     "A condition type that allows alerting policies to be defined using [Monitoring Query Language](https://cloud.google.com/monitoring/mql). (Part of 'condition' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                condition_prometheus_query_language: {
+                conditionPrometheusQueryLanguage: {
                   type: "object",
                   properties: {
                     query: {
@@ -1381,7 +1687,7 @@ const updateAlertPolicy: AppBlock = {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
-                    evaluation_interval: {
+                    evaluationInterval: {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
@@ -1393,17 +1699,17 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         'Optional. Labels to add to or overwrite in the PromQL query result. Label names [must be valid](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels). Label values can be [templatized by using variables](https://cloud.google.com/monitoring/alerts/doc-variables#doc-vars). The only available variable names are the names of the labels in the PromQL result, including "__name__" and "value". "labels" may be empty.',
                     },
-                    rule_group: {
+                    ruleGroup: {
                       type: "string",
                       description:
                         "Optional. The rule group name of this alert in the corresponding Prometheus configuration file.  Some external tools may require this field to be populated correctly in order to refer to the original Prometheus configuration file. The rule group name and the alert name are necessary to update the relevant AlertPolicies in case the definition of the rule group changes in the future.  This field is optional. If this field is not empty, then it must contain a valid UTF-8 string. This field may not exceed 2048 Unicode characters in length.",
                     },
-                    alert_rule: {
+                    alertRule: {
                       type: "string",
                       description:
                         "Optional. The alerting rule name of this alert in the corresponding Prometheus configuration file.  Some external tools may require this field to be populated correctly in order to refer to the original Prometheus configuration file. The rule group name and the alert name are necessary to update the relevant AlertPolicies in case the definition of the rule group changes in the future.  This field is optional. If this field is not empty, then it must be a [valid Prometheus label name](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels). This field may not exceed 2048 Unicode characters in length.",
                     },
-                    disable_metric_validation: {
+                    disableMetricValidation: {
                       type: "boolean",
                       description:
                         "Optional. Whether to disable metric existence validation for this condition.  This allows alerting policies to be defined on metrics that do not yet exist, improving advanced customer workflows such as configuring alerting policies using Terraform.  Users with the `monitoring.alertPolicyViewer` role are able to see the name of the non-existent metric in the alerting policy condition.",
@@ -1414,7 +1720,7 @@ const updateAlertPolicy: AppBlock = {
                     "A condition type that allows alerting policies to be defined using [Prometheus Query Language (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/).  The PrometheusQueryLanguageCondition message contains information from a Prometheus alerting rule and its associated rule group.  A Prometheus alerting rule is described [here](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/). The semantics of a Prometheus alerting rule is described [here](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#rule).  A Prometheus rule group is described [here](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/). The semantics of a Prometheus rule group is described [here](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#rule_group).  Because Cloud Alerting has no representation of a Prometheus rule group resource, we must embed the information of the parent rule group inside each of the conditions that refer to it. We must also update the contents of all Prometheus alerts in case the information of their rule group changes.  The PrometheusQueryLanguageCondition protocol buffer combines the information of the corresponding rule group and alerting rule. The structure of the PrometheusQueryLanguageCondition protocol buffer does NOT mimic the structure of the Prometheus rule group and alerting rule YAML declarations. The PrometheusQueryLanguageCondition protocol buffer may change in the future to support future rule group and/or alerting rule features. There are no new such features at the present time (2023-06-26). (Part of 'condition' - only one field in this group can be set)",
                   additionalProperties: true,
                 },
-                condition_sql: {
+                conditionSql: {
                   type: "object",
                   properties: {
                     query: {
@@ -1444,7 +1750,7 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "Required. The number of hours between runs. Must be greater than or equal to 1 hour and less than or equal to 48 hours.",
                         },
-                        minute_offset: {
+                        minuteOffset: {
                           type: "integer",
                           description:
                             "Optional. The number of minutes after the hour (in UTC) to run the query. Must be greater than or equal to 0 minutes and less than or equal to 59 minutes.  If left unspecified, then an arbitrary offset is used.",
@@ -1463,7 +1769,7 @@ const updateAlertPolicy: AppBlock = {
                           description:
                             "Required. The number of days between runs. Must be greater than or equal to 1 day and less than or equal to 31 days.",
                         },
-                        execution_time: {
+                        executionTime: {
                           type: "object",
                           properties: {
                             hours: {
@@ -1489,7 +1795,7 @@ const updateAlertPolicy: AppBlock = {
                         "Used to schedule the query to run every so many days. (Part of 'schedule' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    row_count_test: {
+                    rowCountTest: {
                       type: "object",
                       properties: {
                         comparison: {
@@ -1516,7 +1822,7 @@ const updateAlertPolicy: AppBlock = {
                         "A test that checks if the number of rows in the result set violates some threshold. (Part of 'evaluate' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    boolean_test: {
+                    booleanTest: {
                       type: "object",
                       properties: {
                         column: {
@@ -1574,7 +1880,7 @@ const updateAlertPolicy: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    type_url: {
+                    typeUrl: {
                       type: "string",
                     },
                     value: {
@@ -1590,7 +1896,7 @@ const updateAlertPolicy: AppBlock = {
             description:
               "Read-only description of how the alerting policy is invalid. This field is only set when the alerting policy is invalid. An invalid alerting policy will not generate incidents.",
           },
-          notification_channels: {
+          notificationChannels: {
             type: "array",
             items: {
               type: "string",
@@ -1598,14 +1904,14 @@ const updateAlertPolicy: AppBlock = {
             description:
               "Identifies the notification channels to which notifications should be sent when incidents are opened or closed or when new violations occur on an already opened incident. Each element of this array corresponds to the `name` field in each of the [`NotificationChannel`][google.monitoring.v3.NotificationChannel] objects that are returned from the [`ListNotificationChannels`] [google.monitoring.v3.NotificationChannelService.ListNotificationChannels] method. The format of the entries in this field is:      projects/[PROJECT_ID_OR_NUMBER]/notificationChannels/[CHANNEL_ID]",
           },
-          creation_record: {
+          creationRecord: {
             type: "object",
             properties: {
-              mutate_time: {
+              mutateTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              mutated_by: {
+              mutatedBy: {
                 type: "string",
                 description: "The email address of the user making the change.",
               },
@@ -1613,14 +1919,14 @@ const updateAlertPolicy: AppBlock = {
             description: "Describes a change made to a configuration.",
             additionalProperties: true,
           },
-          mutation_record: {
+          mutationRecord: {
             type: "object",
             properties: {
-              mutate_time: {
+              mutateTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
-              mutated_by: {
+              mutatedBy: {
                 type: "string",
                 description: "The email address of the user making the change.",
               },
@@ -1628,10 +1934,10 @@ const updateAlertPolicy: AppBlock = {
             description: "Describes a change made to a configuration.",
             additionalProperties: true,
           },
-          alert_strategy: {
+          alertStrategy: {
             type: "object",
             properties: {
-              notification_rate_limit: {
+              notificationRateLimit: {
                 type: "object",
                 properties: {
                   period: {
@@ -1643,7 +1949,7 @@ const updateAlertPolicy: AppBlock = {
                   "Control over the rate of notifications sent to this alerting policy's notification channels.",
                 additionalProperties: true,
               },
-              notification_prompts: {
+              notificationPrompts: {
                 type: "array",
                 items: {
                   type: "string",
@@ -1652,16 +1958,16 @@ const updateAlertPolicy: AppBlock = {
                 description:
                   "For log-based alert policies, the notification prompts is always [OPENED]. For non log-based alert policies, the notification prompts can be [OPENED] or [OPENED, CLOSED].",
               },
-              auto_close: {
+              autoClose: {
                 type: "string",
                 description: "Duration string (e.g., '1.5s', '300s')",
               },
-              notification_channel_strategy: {
+              notificationChannelStrategy: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    notification_channel_names: {
+                    notificationChannelNames: {
                       type: "array",
                       items: {
                         type: "string",
@@ -1669,7 +1975,7 @@ const updateAlertPolicy: AppBlock = {
                       description:
                         "The full REST resource name for the notification channels that these settings apply to. Each of these correspond to the name field in one of the NotificationChannel objects referenced in the notification_channels field of this AlertPolicy. The format is:      projects/[PROJECT_ID_OR_NUMBER]/notificationChannels/[CHANNEL_ID]",
                     },
-                    renotify_interval: {
+                    renotifyInterval: {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },

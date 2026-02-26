@@ -1,5 +1,14 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  revisionId: "revision_id",
+};
+
+const outputMapping = {
+  revision_id: "revisionId",
+  revision_create_time: "revisionCreateTime",
+};
 
 const deleteSchemaRevision: AppBlock = {
   name: "Delete Schema Revision",
@@ -19,7 +28,7 @@ const deleteSchemaRevision: AppBlock = {
           },
           required: true,
         },
-        revision_id: {
+        revisionId: {
           name: "Revision Id",
           description:
             "Optional. This field is deprecated and should not be used for specifying the revision ID. The revision ID should be specified via the `name` parameter.",
@@ -34,11 +43,7 @@ const deleteSchemaRevision: AppBlock = {
       onEvent: async (input) => {
         const client = await getSchemaServiceClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.name !== undefined)
-          request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.revision_id !== undefined)
-          request.revision_id = input.event.inputConfig.revision_id;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteSchemaRevision(request, (err: any, response: any) => {
@@ -52,7 +57,8 @@ const deleteSchemaRevision: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -77,12 +83,12 @@ const deleteSchemaRevision: AppBlock = {
             description:
               "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
-          revision_id: {
+          revisionId: {
             type: "string",
             description:
               "Output only. Immutable. The revision ID of the schema.",
           },
-          revision_create_time: {
+          revisionCreateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

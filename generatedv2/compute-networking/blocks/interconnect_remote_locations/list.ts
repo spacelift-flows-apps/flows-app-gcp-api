@@ -17,7 +17,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        max_results: {
+        maxResults: {
           name: "Max Results",
           description:
             "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
@@ -26,7 +26,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        order_by: {
+        orderBy: {
           name: "Order By",
           description:
             'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
@@ -35,7 +35,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        page_token: {
+        pageToken: {
           name: "Page Token",
           description:
             "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
@@ -44,7 +44,7 @@ const list: AppBlock = {
           },
           required: false,
         },
-        return_partial_success: {
+        returnPartialSuccess: {
           name: "Return Partial Success",
           description:
             "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
@@ -61,17 +61,17 @@ const list: AppBlock = {
         const queryParams: Record<string, string> = {};
         if (input.event.inputConfig.filter !== undefined)
           queryParams["filter"] = String(input.event.inputConfig.filter);
-        if (input.event.inputConfig.max_results !== undefined)
+        if (input.event.inputConfig.maxResults !== undefined)
           queryParams["maxResults"] = String(
-            input.event.inputConfig.max_results,
+            input.event.inputConfig.maxResults,
           );
-        if (input.event.inputConfig.order_by !== undefined)
-          queryParams["orderBy"] = String(input.event.inputConfig.order_by);
-        if (input.event.inputConfig.page_token !== undefined)
-          queryParams["pageToken"] = String(input.event.inputConfig.page_token);
-        if (input.event.inputConfig.return_partial_success !== undefined)
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
           queryParams["returnPartialSuccess"] = String(
-            input.event.inputConfig.return_partial_success,
+            input.event.inputConfig.returnPartialSuccess,
           );
 
         const result = await computeFetch({
@@ -108,15 +108,15 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] The postal address of the Point of Presence, each line in the address is separated by a newline character.",
                 },
-                attachment_configuration_constraints: {
+                attachmentConfigurationConstraints: {
                   type: "object",
                   properties: {
-                    bgp_md5: {
+                    bgpMd5: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Whether the attachment's BGP session requires/allows/disallows BGP MD5 authentication. This can take one of the following values: MD5_OPTIONAL, MD5_REQUIRED, MD5_UNSUPPORTED.  For example, a Cross-Cloud Interconnect connection to a remote cloud provider that requires BGP MD5 authentication has the interconnectRemoteLocation attachment_configuration_constraints.bgp_md5 field set to MD5_REQUIRED, and that property is propagated to the attachment. Similarly, if BGP MD5 is MD5_UNSUPPORTED, an error is returned if MD5 is requested. Check the BgpMd5 enum for the list of possible values.",
                     },
-                    bgp_peer_asn_ranges: {
+                    bgpPeerAsnRanges: {
                       type: "array",
                       items: {
                         type: "object",
@@ -146,17 +146,17 @@ const list: AppBlock = {
                 constraints: {
                   type: "object",
                   properties: {
-                    port_pair_remote_location: {
+                    portPairRemoteLocation: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Port pair remote location constraints, which can take one of the following values: PORT_PAIR_UNCONSTRAINED_REMOTE_LOCATION, PORT_PAIR_MATCHING_REMOTE_LOCATION.  Google Cloud API refers only to individual ports, but the UI uses this field when ordering a pair of ports, to prevent users from accidentally ordering something that is incompatible with their cloud provider. Specifically, when ordering a redundant pair of Cross-Cloud Interconnect ports, and one of them uses a remote location with portPairMatchingRemoteLocation set to matching, the UI requires that both ports use the same remote location. Check the PortPairRemoteLocation enum for the list of possible values.",
                     },
-                    port_pair_vlan: {
+                    portPairVlan: {
                       type: "string",
                       description:
                         "Output only. [Output Only] Port pair VLAN constraints, which can take one of the following values: PORT_PAIR_UNCONSTRAINED_VLAN, PORT_PAIR_MATCHING_VLAN Check the PortPairVlan enum for the list of possible values.",
                     },
-                    subnet_length_range: {
+                    subnetLengthRange: {
                       type: "object",
                       properties: {
                         max: {
@@ -180,7 +180,7 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Continent for this location, which can take one of the following values:     - AFRICA    - ASIA_PAC    - EUROPE    - NORTH_AMERICA    - SOUTH_AMERICA Check the Continent enum for the list of possible values.",
                 },
-                creation_timestamp: {
+                creationTimestamp: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -190,12 +190,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] An optional description of the resource.",
                 },
-                facility_provider: {
+                facilityProvider: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The name of the provider for this facility (e.g., EQUINIX).",
                 },
-                facility_provider_facility_id: {
+                facilityProviderFacilityId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] A provider-assigned Identifier for this facility (e.g., Ashburn-DC1).",
@@ -214,17 +214,17 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Link Aggregation Control Protocol (LACP) constraints, which can take one of the following values: LACP_SUPPORTED, LACP_UNSUPPORTED Check the Lacp enum for the list of possible values.",
                 },
-                max_lag_size100_gbps: {
+                maxLagSize100Gbps: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] The maximum number of 100 Gbps ports supported in a link aggregation group (LAG). When linkType is 100 Gbps, requestedLinkCount cannot exceed max_lag_size_100_gbps.",
                 },
-                max_lag_size10_gbps: {
+                maxLagSize10Gbps: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] The maximum number of 10 Gbps ports supported in a link aggregation group (LAG). When linkType is 10 Gbps, requestedLinkCount cannot exceed max_lag_size_10_gbps.",
                 },
-                max_lag_size400_gbps: {
+                maxLagSize400Gbps: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] The maximum number of 400 Gbps ports supported in a link aggregation group (LAG). When linkType is 400 Gbps, requestedLinkCount cannot exceed max_lag_size_400_gbps.",
@@ -234,17 +234,17 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Name of the resource.",
                 },
-                peeringdb_facility_id: {
+                peeringdbFacilityId: {
                   type: "string",
                   description:
                     "Output only. [Output Only] The peeringdb identifier for this facility (corresponding with a netfac type in peeringdb).",
                 },
-                permitted_connections: {
+                permittedConnections: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      interconnect_location: {
+                      interconnectLocation: {
                         type: "string",
                         description:
                           "Output only. [Output Only] URL of an Interconnect location that is permitted to connect to this Interconnect remote location.",
@@ -255,12 +255,12 @@ const list: AppBlock = {
                   description:
                     "Output only. [Output Only] Permitted connections.",
                 },
-                remote_service: {
+                remoteService: {
                   type: "string",
                   description:
                     'Output only. [Output Only] Indicates the service provider present at the remote location. Example values: "Amazon Web Services", "Microsoft Azure".',
                 },
-                self_link: {
+                selfLink: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Server-defined URL for the resource.",
@@ -282,12 +282,12 @@ const list: AppBlock = {
             description:
               "Output only. [Output Only] Type of resource. Alwayscompute#interconnectRemoteLocationList for lists of interconnect remote locations.",
           },
-          next_page_token: {
+          nextPageToken: {
             type: "string",
             description:
               "[Output Only] This token lets you get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource.",

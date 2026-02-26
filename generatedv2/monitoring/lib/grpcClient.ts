@@ -73,6 +73,33 @@ export function createRoutingMetadata(
   return metadata;
 }
 
+/** Mapping between field name conventions. String = simple rename; Object = rename + recurse. */
+export type FieldNameMapping = Record<
+  string,
+  string | { name: string; fields: FieldNameMapping }
+>;
+
+/** Recursively convert object keys using a field name mapping. */
+export function convertKeys(obj: any, mapping: FieldNameMapping): any {
+  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map((item) => convertKeys(item, mapping));
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
+    const fieldDef = mapping[key];
+    if (!fieldDef) {
+      result[key] = value;
+      continue;
+    }
+    if (typeof fieldDef === "string") {
+      result[fieldDef] = value;
+    } else {
+      result[fieldDef.name] = convertKeys(value, fieldDef.fields);
+    }
+  }
+  return result;
+}
+
 export async function getAlertPolicyServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -108,11 +135,11 @@ export async function getServiceMonitoringServiceClient(
   return new Service("monitoring.googleapis.com:443", credentials);
 }
 
-export async function getUptimeCheckServiceClient(
+export async function getQueryServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.monitoring.v3", "UptimeCheckService");
+  const Service = getService("google.monitoring.v3", "QueryService");
   return new Service("monitoring.googleapis.com:443", credentials);
 }
 
@@ -135,10 +162,10 @@ export async function getNotificationChannelServiceClient(
   return new Service("monitoring.googleapis.com:443", credentials);
 }
 
-export async function getQueryServiceClient(
+export async function getUptimeCheckServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.monitoring.v3", "QueryService");
+  const Service = getService("google.monitoring.v3", "UptimeCheckService");
   return new Service("monitoring.googleapis.com:443", credentials);
 }

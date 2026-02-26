@@ -2,7 +2,143 @@ import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
   createRoutingMetadata,
+  convertKeys,
 } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  destination: {
+    name: "destination",
+    fields: {
+      storageClass: "storage_class",
+      contentEncoding: "content_encoding",
+      contentDisposition: "content_disposition",
+      cacheControl: "cache_control",
+      acl: {
+        name: "acl",
+        fields: {
+          entityId: "entity_id",
+          projectTeam: {
+            name: "project_team",
+            fields: {
+              projectNumber: "project_number",
+            },
+          },
+        },
+      },
+      contentLanguage: "content_language",
+      contentType: "content_type",
+      kmsKey: "kms_key",
+      temporaryHold: "temporary_hold",
+      retentionExpireTime: "retention_expire_time",
+      eventBasedHold: "event_based_hold",
+      customerEncryption: {
+        name: "customer_encryption",
+        fields: {
+          encryptionAlgorithm: "encryption_algorithm",
+          keySha256Bytes: "key_sha256_bytes",
+        },
+      },
+      customTime: "custom_time",
+      retention: {
+        name: "retention",
+        fields: {
+          retainUntilTime: "retain_until_time",
+        },
+      },
+    },
+  },
+  sourceObjects: {
+    name: "source_objects",
+    fields: {
+      objectPreconditions: {
+        name: "object_preconditions",
+        fields: {
+          ifGenerationMatch: "if_generation_match",
+        },
+      },
+    },
+  },
+  destinationPredefinedAcl: "destination_predefined_acl",
+  ifGenerationMatch: "if_generation_match",
+  ifMetagenerationMatch: "if_metageneration_match",
+  kmsKey: "kms_key",
+  commonObjectRequestParams: {
+    name: "common_object_request_params",
+    fields: {
+      encryptionAlgorithm: "encryption_algorithm",
+      encryptionKeyBytes: "encryption_key_bytes",
+      encryptionKeySha256Bytes: "encryption_key_sha256_bytes",
+    },
+  },
+  objectChecksums: {
+    name: "object_checksums",
+    fields: {
+      md5Hash: "md5_hash",
+    },
+  },
+  deleteSourceObjects: "delete_source_objects",
+};
+
+const outputMapping = {
+  restore_token: "restoreToken",
+  storage_class: "storageClass",
+  content_encoding: "contentEncoding",
+  content_disposition: "contentDisposition",
+  cache_control: "cacheControl",
+  acl: {
+    name: "acl",
+    fields: {
+      entity_alt: "entityAlt",
+      entity_id: "entityId",
+      project_team: {
+        name: "projectTeam",
+        fields: {
+          project_number: "projectNumber",
+        },
+      },
+    },
+  },
+  content_language: "contentLanguage",
+  delete_time: "deleteTime",
+  finalize_time: "finalizeTime",
+  content_type: "contentType",
+  create_time: "createTime",
+  component_count: "componentCount",
+  checksums: {
+    name: "checksums",
+    fields: {
+      md5_hash: "md5Hash",
+    },
+  },
+  update_time: "updateTime",
+  kms_key: "kmsKey",
+  update_storage_class_time: "updateStorageClassTime",
+  temporary_hold: "temporaryHold",
+  retention_expire_time: "retentionExpireTime",
+  event_based_hold: "eventBasedHold",
+  owner: {
+    name: "owner",
+    fields: {
+      entity_id: "entityId",
+    },
+  },
+  customer_encryption: {
+    name: "customerEncryption",
+    fields: {
+      encryption_algorithm: "encryptionAlgorithm",
+      key_sha256_bytes: "keySha256Bytes",
+    },
+  },
+  custom_time: "customTime",
+  soft_delete_time: "softDeleteTime",
+  hard_delete_time: "hardDeleteTime",
+  retention: {
+    name: "retention",
+    fields: {
+      retain_until_time: "retainUntilTime",
+    },
+  },
+};
 
 const composeObject: AppBlock = {
   name: "Compose Object",
@@ -36,21 +172,21 @@ const composeObject: AppBlock = {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              storage_class: {
+              storageClass: {
                 type: "string",
                 description: "Optional. Storage class of the object.",
               },
-              content_encoding: {
+              contentEncoding: {
                 type: "string",
                 description:
                   "Optional. Content-Encoding of the object data, matching [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)",
               },
-              content_disposition: {
+              contentDisposition: {
                 type: "string",
                 description:
                   "Optional. Content-Disposition of the object data, matching [RFC 6266](https://tools.ietf.org/html/rfc6266).",
               },
-              cache_control: {
+              cacheControl: {
                 type: "string",
                 description:
                   "Optional. Cache-Control directive for the object data, matching [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2). If omitted, and the object is accessible to all anonymous users, the default is `public, max-age=3600`.",
@@ -75,7 +211,7 @@ const composeObject: AppBlock = {
                       description:
                         "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                     },
-                    entity_id: {
+                    entityId: {
                       type: "string",
                       description: "Optional. The ID for the entity, if any.",
                     },
@@ -94,10 +230,10 @@ const composeObject: AppBlock = {
                       description:
                         "Optional. The domain associated with the entity, if any.",
                     },
-                    project_team: {
+                    projectTeam: {
                       type: "object",
                       properties: {
-                        project_number: {
+                        projectNumber: {
                           type: "string",
                           description: "Optional. The project number.",
                         },
@@ -117,27 +253,27 @@ const composeObject: AppBlock = {
                 description:
                   "Optional. Access controls on the object. If `iam_config.uniform_bucket_level_access` is enabled on the parent bucket, requests to set, read, or modify acl is an error.",
               },
-              content_language: {
+              contentLanguage: {
                 type: "string",
                 description:
                   "Optional. Content-Language of the object data, matching [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).",
               },
-              content_type: {
+              contentType: {
                 type: "string",
                 description:
                   "Optional. Content-Type of the object data, matching [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5). If an object is stored without a Content-Type, it is served as `application/octet-stream`.",
               },
-              kms_key: {
+              kmsKey: {
                 type: "string",
                 description:
                   "Optional. Cloud KMS Key used to encrypt this object, if the object is encrypted by such a key.",
               },
-              temporary_hold: {
+              temporaryHold: {
                 type: "boolean",
                 description:
                   "Optional. Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.  A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
               },
-              retention_expire_time: {
+              retentionExpireTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -164,19 +300,19 @@ const composeObject: AppBlock = {
                 description: "All contexts of an object grouped by type.",
                 additionalProperties: true,
               },
-              event_based_hold: {
+              eventBasedHold: {
                 type: "boolean",
                 description:
                   "Whether an object is under event-based hold. An event-based hold is a way to force the retention of an object until after some event occurs. Once the hold is released by explicitly setting this field to `false`, the object becomes subject to any bucket-level retention policy, except that the retention duration is calculated from the time the event based hold was lifted, rather than the time the object was created.  In a `WriteObject` request, not setting this field implies that the value should be taken from the parent bucket's `default_event_based_hold` field. In a response, this field is always set to `true` or `false`.",
               },
-              customer_encryption: {
+              customerEncryption: {
                 type: "object",
                 properties: {
-                  encryption_algorithm: {
+                  encryptionAlgorithm: {
                     type: "string",
                     description: "Optional. The encryption algorithm.",
                   },
-                  key_sha256_bytes: {
+                  keySha256Bytes: {
                     type: "string",
                     description: "Base64-encoded bytes",
                   },
@@ -185,7 +321,7 @@ const composeObject: AppBlock = {
                   "Describes the customer-supplied encryption key mechanism used to store an object's data at rest.",
                 additionalProperties: true,
               },
-              custom_time: {
+              customTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -197,7 +333,7 @@ const composeObject: AppBlock = {
                     enum: ["MODE_UNSPECIFIED", "UNLOCKED", "LOCKED"],
                     description: "Optional. The mode of the Retention.",
                   },
-                  retain_until_time: {
+                  retainUntilTime: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -213,7 +349,7 @@ const composeObject: AppBlock = {
           },
           required: true,
         },
-        source_objects: {
+        sourceObjects: {
           name: "Source Objects",
           description:
             "Optional. The list of source objects that is concatenated into a single object.",
@@ -231,10 +367,10 @@ const composeObject: AppBlock = {
                   type: "string",
                   description: "64-bit integer as string",
                 },
-                object_preconditions: {
+                objectPreconditions: {
                   type: "object",
                   properties: {
-                    if_generation_match: {
+                    ifGenerationMatch: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
@@ -254,7 +390,7 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        destination_predefined_acl: {
+        destinationPredefinedAcl: {
           name: "Destination Predefined Acl",
           description:
             "Optional. Apply a predefined set of access controls to the destination object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`, `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.",
@@ -265,7 +401,7 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        if_generation_match: {
+        ifGenerationMatch: {
           name: "If Generation Match",
           description:
             "Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.",
@@ -275,7 +411,7 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        if_metageneration_match: {
+        ifMetagenerationMatch: {
           name: "If Metageneration Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration matches the given value.",
@@ -285,7 +421,7 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        kms_key: {
+        kmsKey: {
           name: "Kms Key",
           description:
             "Optional. Resource name of the Cloud KMS key, of the form `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`, that is used to encrypt the object. Overrides the object metadata's `kms_key_name` value, if any.",
@@ -296,23 +432,23 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        common_object_request_params: {
+        commonObjectRequestParams: {
           name: "Common Object Request Params",
           description:
             "Optional. A set of parameters common to Storage API requests concerning an object.",
           type: {
             type: "object",
             properties: {
-              encryption_algorithm: {
+              encryptionAlgorithm: {
                 type: "string",
                 description:
                   "Optional. Encryption algorithm used with the Customer-Supplied Encryption Keys feature.",
               },
-              encryption_key_bytes: {
+              encryptionKeyBytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              encryption_key_sha256_bytes: {
+              encryptionKeySha256Bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -322,7 +458,7 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        object_checksums: {
+        objectChecksums: {
           name: "Object Checksums",
           description:
             "Optional. The checksums of the complete object. This is validated against the combined checksums of the component objects.",
@@ -334,7 +470,7 @@ const composeObject: AppBlock = {
                 description:
                   "CRC32C digest of the object data. Computed by the Cloud Storage service for all written objects. If set in a WriteObjectRequest, service validates that the stored object matches this checksum.",
               },
-              md5_hash: {
+              md5Hash: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -345,7 +481,7 @@ const composeObject: AppBlock = {
           },
           required: false,
         },
-        delete_source_objects: {
+        deleteSourceObjects: {
           name: "Delete Source Objects",
           description:
             "Whether the source objects should be deleted in the compose request.",
@@ -360,30 +496,7 @@ const composeObject: AppBlock = {
       onEvent: async (input) => {
         const client = await getStorageClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.destination !== undefined)
-          request.destination = input.event.inputConfig.destination;
-        if (input.event.inputConfig.source_objects !== undefined)
-          request.source_objects = input.event.inputConfig.source_objects;
-        if (input.event.inputConfig.destination_predefined_acl !== undefined)
-          request.destination_predefined_acl =
-            input.event.inputConfig.destination_predefined_acl;
-        if (input.event.inputConfig.if_generation_match !== undefined)
-          request.if_generation_match =
-            input.event.inputConfig.if_generation_match;
-        if (input.event.inputConfig.if_metageneration_match !== undefined)
-          request.if_metageneration_match =
-            input.event.inputConfig.if_metageneration_match;
-        if (input.event.inputConfig.kms_key !== undefined)
-          request.kms_key = input.event.inputConfig.kms_key;
-        if (input.event.inputConfig.common_object_request_params !== undefined)
-          request.common_object_request_params =
-            input.event.inputConfig.common_object_request_params;
-        if (input.event.inputConfig.object_checksums !== undefined)
-          request.object_checksums = input.event.inputConfig.object_checksums;
-        if (input.event.inputConfig.delete_source_objects !== undefined)
-          request.delete_source_objects =
-            input.event.inputConfig.delete_source_objects;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const routingParams: Record<string, string> = {};
         if (request.destination?.bucket !== undefined)
@@ -401,7 +514,8 @@ const composeObject: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -430,7 +544,7 @@ const composeObject: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          restore_token: {
+          restoreToken: {
             type: "string",
             description:
               "Output only. Restore token used to differentiate deleted objects with the same name and generation. This field is output only, and only set for deleted objects in HNS buckets.",
@@ -439,7 +553,7 @@ const composeObject: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          storage_class: {
+          storageClass: {
             type: "string",
             description: "Optional. Storage class of the object.",
           },
@@ -447,17 +561,17 @@ const composeObject: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          content_encoding: {
+          contentEncoding: {
             type: "string",
             description:
               "Optional. Content-Encoding of the object data, matching [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)",
           },
-          content_disposition: {
+          contentDisposition: {
             type: "string",
             description:
               "Optional. Content-Disposition of the object data, matching [RFC 6266](https://tools.ietf.org/html/rfc6266).",
           },
-          cache_control: {
+          cacheControl: {
             type: "string",
             description:
               "Optional. Cache-Control directive for the object data, matching [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2). If omitted, and the object is accessible to all anonymous users, the default is `public, max-age=3600`.",
@@ -481,12 +595,12 @@ const composeObject: AppBlock = {
                   description:
                     "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                 },
-                entity_alt: {
+                entityAlt: {
                   type: "string",
                   description:
                     "Output only. The alternative entity format, if exists. For project entities, `project-{team}-{projectid}` format is returned in the response.",
                 },
-                entity_id: {
+                entityId: {
                   type: "string",
                   description: "Optional. The ID for the entity, if any.",
                 },
@@ -505,10 +619,10 @@ const composeObject: AppBlock = {
                   description:
                     "Optional. The domain associated with the entity, if any.",
                 },
-                project_team: {
+                projectTeam: {
                   type: "object",
                   properties: {
-                    project_number: {
+                    projectNumber: {
                       type: "string",
                       description: "Optional. The project number.",
                     },
@@ -528,29 +642,29 @@ const composeObject: AppBlock = {
             description:
               "Optional. Access controls on the object. If `iam_config.uniform_bucket_level_access` is enabled on the parent bucket, requests to set, read, or modify acl is an error.",
           },
-          content_language: {
+          contentLanguage: {
             type: "string",
             description:
               "Optional. Content-Language of the object data, matching [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).",
           },
-          delete_time: {
+          deleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          finalize_time: {
+          finalizeTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          content_type: {
+          contentType: {
             type: "string",
             description:
               "Optional. Content-Type of the object data, matching [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5). If an object is stored without a Content-Type, it is served as `application/octet-stream`.",
           },
-          create_time: {
+          createTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          component_count: {
+          componentCount: {
             type: "integer",
             description:
               "Output only. Number of underlying components that make up this object. Components are accumulated by compose operations.",
@@ -563,7 +677,7 @@ const composeObject: AppBlock = {
                 description:
                   "CRC32C digest of the object data. Computed by the Cloud Storage service for all written objects. If set in a WriteObjectRequest, service validates that the stored object matches this checksum.",
               },
-              md5_hash: {
+              md5Hash: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -572,25 +686,25 @@ const composeObject: AppBlock = {
               "Message used for storing full (not subrange) object checksums.",
             additionalProperties: true,
           },
-          update_time: {
+          updateTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          kms_key: {
+          kmsKey: {
             type: "string",
             description:
               "Optional. Cloud KMS Key used to encrypt this object, if the object is encrypted by such a key.",
           },
-          update_storage_class_time: {
+          updateStorageClassTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          temporary_hold: {
+          temporaryHold: {
             type: "boolean",
             description:
               "Optional. Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.  A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
           },
-          retention_expire_time: {
+          retentionExpireTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -617,7 +731,7 @@ const composeObject: AppBlock = {
             description: "All contexts of an object grouped by type.",
             additionalProperties: true,
           },
-          event_based_hold: {
+          eventBasedHold: {
             type: "boolean",
             description:
               "Whether an object is under event-based hold. An event-based hold is a way to force the retention of an object until after some event occurs. Once the hold is released by explicitly setting this field to `false`, the object becomes subject to any bucket-level retention policy, except that the retention duration is calculated from the time the event based hold was lifted, rather than the time the object was created.  In a `WriteObject` request, not setting this field implies that the value should be taken from the parent bucket's `default_event_based_hold` field. In a response, this field is always set to `true` or `false`.",
@@ -630,7 +744,7 @@ const composeObject: AppBlock = {
                 description:
                   "Optional. The entity, in the form `user-`*userId*.",
               },
-              entity_id: {
+              entityId: {
                 type: "string",
                 description: "Optional. The ID for the entity.",
               },
@@ -638,14 +752,14 @@ const composeObject: AppBlock = {
             description: "The owner of a specific resource.",
             additionalProperties: true,
           },
-          customer_encryption: {
+          customerEncryption: {
             type: "object",
             properties: {
-              encryption_algorithm: {
+              encryptionAlgorithm: {
                 type: "string",
                 description: "Optional. The encryption algorithm.",
               },
-              key_sha256_bytes: {
+              keySha256Bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -654,15 +768,15 @@ const composeObject: AppBlock = {
               "Describes the customer-supplied encryption key mechanism used to store an object's data at rest.",
             additionalProperties: true,
           },
-          custom_time: {
+          customTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          soft_delete_time: {
+          softDeleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          hard_delete_time: {
+          hardDeleteTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -674,7 +788,7 @@ const composeObject: AppBlock = {
                 enum: ["MODE_UNSPECIFIED", "UNLOCKED", "LOCKED"],
                 description: "Optional. The mode of the Retention.",
               },
-              retain_until_time: {
+              retainUntilTime: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },

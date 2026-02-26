@@ -21,17 +21,23 @@ export interface SchemaMapperOptions {
   maxDepth: number;
 }
 
-const INPUT_SCHEMA_OPTIONS: SchemaMapperOptions = {
+export const INPUT_SCHEMA_OPTIONS: SchemaMapperOptions = {
   excludeOutputOnly: true,
   excludeInputOnly: false,
   maxDepth: 8,
 };
 
-const OUTPUT_SCHEMA_OPTIONS: SchemaMapperOptions = {
+export const OUTPUT_SCHEMA_OPTIONS: SchemaMapperOptions = {
   excludeOutputOnly: false,
   excludeInputOnly: true,
   maxDepth: 8,
 };
+
+/** Mapping between field name conventions. String = simple rename; Object = rename + recurse. */
+export type FieldNameMapping = Record<
+  string,
+  string | { name: string; fields: FieldNameMapping }
+>;
 
 /** Well-known proto types that get special JSON Schema treatment */
 const WELL_KNOWN_TYPES: Record<string, any> = {
@@ -158,10 +164,10 @@ export function messageToSchema(
 
     const fieldSchema = fieldToSchema(field, options, new Set(visited));
     if (fieldSchema) {
-      properties[field.name] = fieldSchema;
+      properties[field.jsonName] = fieldSchema;
 
       if (field.behaviors.includes(FieldBehavior.REQUIRED)) {
-        required.push(field.name);
+        required.push(field.jsonName);
       }
     }
   }
@@ -255,7 +261,7 @@ export function fieldToSchema(
  * Generate a JSON Schema for a message's fields suitable for Flows block input config.
  * Excludes OUTPUT_ONLY fields, marks REQUIRED fields.
  *
- * Returns an object where keys are proto field names (snake_case) and values are Flows config field definitions.
+ * Returns an object where keys are camelCase (jsonName) field names and values are Flows config field definitions.
  */
 export function messageToInputConfig(
   message: ParsedMessage,
@@ -269,13 +275,13 @@ export function messageToInputConfig(
     const fieldSchema = fieldToSchema(field, options);
     if (!fieldSchema) continue;
 
-    // Humanize field name: "bucket_id" -> "Bucket Id"
+    // Humanize from snake_case name (explicit word boundaries): "bucket_id" -> "Bucket Id"
     const humanName = field.name
       .split("_")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
 
-    config[field.name] = {
+    config[field.jsonName] = {
       name: humanName,
       description: field.comment || `${humanName} field`,
       type: fieldSchema,
@@ -298,4 +304,65 @@ export function messageToOutputSchema(message: ParsedMessage): any {
   }
 
   return messageToSchema(message, OUTPUT_SCHEMA_OPTIONS);
+}
+
+/**
+ * Generate a field name mapping for converting between camelCase and snake_case.
+ *
+ * @param direction "toProto" maps camelCase→snake_case (for request inputs),
+ *                  "fromProto" maps snake_case→camelCase (for response outputs).
+ *
+ * Identity mappings (where from === to) are omitted unless the field has nested
+ * sub-fields that need conversion. Map fields are always treated as leaves.
+ */
+export function generateFieldMapping(
+  message: ParsedMessage,
+  direction: "toProto" | "fromProto",
+  options: SchemaMapperOptions,
+  visited: Set<string> = new Set(),
+): FieldNameMapping {
+  if (visited.has(message.fullName) || visited.size >= options.maxDepth) {
+    return {};
+  }
+
+  visited.add(message.fullName);
+  const mapping: FieldNameMapping = {};
+
+  for (const field of message.fields) {
+    if (shouldExcludeField(field, options)) continue;
+
+    const fromKey =
+      direction === "toProto" ? field.jsonName : field.name;
+    const toKey =
+      direction === "toProto" ? field.name : field.jsonName;
+
+    // Check if this field has nested message fields that need mapping
+    let subMapping: FieldNameMapping | undefined;
+    if (
+      field.isMessage &&
+      !field.isMap &&
+      field.resolvedType
+    ) {
+      const fullName = field.resolvedType.fullName.replace(/^\./, "");
+      if (!(fullName in WELL_KNOWN_TYPES)) {
+        subMapping = generateFieldMapping(
+          field.resolvedType,
+          direction,
+          options,
+          new Set(visited),
+        );
+        if (Object.keys(subMapping).length === 0) subMapping = undefined;
+      }
+    }
+
+    if (subMapping) {
+      mapping[fromKey] = { name: toKey, fields: subMapping };
+    } else if (fromKey !== toKey) {
+      mapping[fromKey] = toKey;
+    }
+    // else: identity mapping with no nested fields — omit
+  }
+
+  visited.delete(message.fullName);
+  return mapping;
 }

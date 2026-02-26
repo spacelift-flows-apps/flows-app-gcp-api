@@ -1,5 +1,12 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getRepositoryManagerClient } from "../../lib/grpcClient.ts";
+import {
+  getRepositoryManagerClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  expiration_time: "expirationTime",
+};
 
 const fetchReadWriteToken: AppBlock = {
   name: "Fetch Read Write Token",
@@ -23,9 +30,7 @@ const fetchReadWriteToken: AppBlock = {
       onEvent: async (input) => {
         const client = await getRepositoryManagerClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.repository !== undefined)
-          request.repository = input.event.inputConfig.repository;
+        const request = { ...input.event.inputConfig };
 
         const result = await new Promise<any>((resolve, reject) => {
           client.fetchReadWriteToken(request, (err: any, response: any) => {
@@ -39,7 +44,8 @@ const fetchReadWriteToken: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -53,7 +59,7 @@ const fetchReadWriteToken: AppBlock = {
             type: "string",
             description: "The token content.",
           },
-          expiration_time: {
+          expirationTime: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

@@ -1,5 +1,59 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getBuildsClient } from "../../lib/grpcClient.ts";
+import { getBuildsClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  storageSource: "storage_source",
+  imageUri: "image_uri",
+  buildpackBuild: {
+    name: "buildpack_build",
+    fields: {
+      functionTarget: "function_target",
+      cacheImageUri: "cache_image_uri",
+      baseImage: "base_image",
+      environmentVariables: "environment_variables",
+      enableAutomaticUpdates: "enable_automatic_updates",
+      projectDescriptor: "project_descriptor",
+    },
+  },
+  dockerBuild: "docker_build",
+  serviceAccount: "service_account",
+  workerPool: "worker_pool",
+  machineType: "machine_type",
+  releaseTrack: "release_track",
+};
+
+const outputMapping = {
+  build_operation: {
+    name: "buildOperation",
+    fields: {
+      metadata: {
+        name: "metadata",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+      error: {
+        name: "error",
+        fields: {
+          details: {
+            name: "details",
+            fields: {
+              type_url: "typeUrl",
+            },
+          },
+        },
+      },
+      response: {
+        name: "response",
+        fields: {
+          type_url: "typeUrl",
+        },
+      },
+    },
+  },
+  base_image_uri: "baseImageUri",
+  base_image_warning: "baseImageWarning",
+};
 
 const submitBuild: AppBlock = {
   name: "Submit Build",
@@ -19,7 +73,7 @@ const submitBuild: AppBlock = {
           },
           required: true,
         },
-        storage_source: {
+        storageSource: {
           name: "Storage Source",
           description: "Required. Source for the build.",
           type: {
@@ -47,7 +101,7 @@ const submitBuild: AppBlock = {
           },
           required: true,
         },
-        image_uri: {
+        imageUri: {
           name: "Image Uri",
           description:
             "Required. Artifact Registry URI to store the built image.",
@@ -58,7 +112,7 @@ const submitBuild: AppBlock = {
           },
           required: true,
         },
-        buildpack_build: {
+        buildpackBuild: {
           name: "Buildpack Build",
           description: "Build the source using Buildpacks.",
           type: {
@@ -69,21 +123,21 @@ const submitBuild: AppBlock = {
                 description:
                   "The runtime name, e.g. 'go113'. Leave blank for generic builds.",
               },
-              function_target: {
+              functionTarget: {
                 type: "string",
                 description:
                   "Optional. Name of the function target if the source is a function source. Required for function builds.",
               },
-              cache_image_uri: {
+              cacheImageUri: {
                 type: "string",
                 description:
                   "Optional. cache_image_uri is the GCR/AR URL where the cache image will be stored. cache_image_uri is optional and omitting it will disable caching. This URL must be stable across builds. It is used to derive a build-specific temporary URL by substituting the tag with the build ID. The build will clean up the temporary image on a best-effort basis.",
               },
-              base_image: {
+              baseImage: {
                 type: "string",
                 description: "Optional. The base image to use for the build.",
               },
-              environment_variables: {
+              environmentVariables: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -91,12 +145,12 @@ const submitBuild: AppBlock = {
                 description:
                   "Optional. User-provided build-time environment variables.",
               },
-              enable_automatic_updates: {
+              enableAutomaticUpdates: {
                 type: "boolean",
                 description:
                   "Optional. Whether or not the application container will be enrolled in automatic base image updates. When true, the application will be built on a scratch base image, so the base layers can be appended at run time.",
               },
-              project_descriptor: {
+              projectDescriptor: {
                 type: "string",
                 description:
                   "Optional. project_descriptor stores the path to the project descriptor file. When empty, it means that there is no project descriptor file in the source.",
@@ -108,7 +162,7 @@ const submitBuild: AppBlock = {
           },
           required: false,
         },
-        docker_build: {
+        dockerBuild: {
           name: "Docker Build",
           description:
             "Build the source using Docker. This means the source has a Dockerfile.",
@@ -121,7 +175,7 @@ const submitBuild: AppBlock = {
           },
           required: false,
         },
-        service_account: {
+        serviceAccount: {
           name: "Service Account",
           description:
             "Optional. The service account to use for the build. If not set, the default Cloud Build service account for the project will be used.",
@@ -132,7 +186,7 @@ const submitBuild: AppBlock = {
           },
           required: false,
         },
-        worker_pool: {
+        workerPool: {
           name: "Worker Pool",
           description:
             "Optional. Name of the Cloud Build Custom Worker Pool that should be used to build the function. The format of this field is `projects/{project}/locations/{region}/workerPools/{workerPool}` where `{project}` and `{region}` are the project id and region respectively where the worker pool is defined and `{workerPool}` is the short name of the worker pool.",
@@ -155,7 +209,7 @@ const submitBuild: AppBlock = {
           },
           required: false,
         },
-        machine_type: {
+        machineType: {
           name: "Machine Type",
           description:
             "Optional. The machine type from default pool to use for the build. If left blank, cloudbuild will use a sensible default. Currently only E2_HIGHCPU_8 is supported. If worker_pool is set, this field will be ignored.",
@@ -166,7 +220,7 @@ const submitBuild: AppBlock = {
           },
           required: false,
         },
-        release_track: {
+        releaseTrack: {
           name: "Release Track",
           description:
             "Optional. The release track of the client that initiated the build request.",
@@ -201,29 +255,7 @@ const submitBuild: AppBlock = {
       onEvent: async (input) => {
         const client = await getBuildsClient(input.app.config);
 
-        const request: Record<string, any> = {};
-        if (input.event.inputConfig.parent !== undefined)
-          request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.storage_source !== undefined)
-          request.storage_source = input.event.inputConfig.storage_source;
-        if (input.event.inputConfig.image_uri !== undefined)
-          request.image_uri = input.event.inputConfig.image_uri;
-        if (input.event.inputConfig.buildpack_build !== undefined)
-          request.buildpack_build = input.event.inputConfig.buildpack_build;
-        if (input.event.inputConfig.docker_build !== undefined)
-          request.docker_build = input.event.inputConfig.docker_build;
-        if (input.event.inputConfig.service_account !== undefined)
-          request.service_account = input.event.inputConfig.service_account;
-        if (input.event.inputConfig.worker_pool !== undefined)
-          request.worker_pool = input.event.inputConfig.worker_pool;
-        if (input.event.inputConfig.tags !== undefined)
-          request.tags = input.event.inputConfig.tags;
-        if (input.event.inputConfig.machine_type !== undefined)
-          request.machine_type = input.event.inputConfig.machine_type;
-        if (input.event.inputConfig.release_track !== undefined)
-          request.release_track = input.event.inputConfig.release_track;
-        if (input.event.inputConfig.client !== undefined)
-          request.client = input.event.inputConfig.client;
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.submitBuild(request, (err: any, response: any) => {
@@ -237,7 +269,8 @@ const submitBuild: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -247,7 +280,7 @@ const submitBuild: AppBlock = {
       type: {
         type: "object",
         properties: {
-          build_operation: {
+          buildOperation: {
             type: "object",
             properties: {
               name: {
@@ -256,7 +289,7 @@ const submitBuild: AppBlock = {
               metadata: {
                 type: "object",
                 properties: {
-                  type_url: {
+                  typeUrl: {
                     type: "string",
                   },
                   value: {
@@ -283,7 +316,7 @@ const submitBuild: AppBlock = {
                     items: {
                       type: "object",
                       properties: {
-                        type_url: {
+                        typeUrl: {
                           type: "string",
                         },
                         value: {
@@ -302,7 +335,7 @@ const submitBuild: AppBlock = {
               response: {
                 type: "object",
                 properties: {
-                  type_url: {
+                  typeUrl: {
                     type: "string",
                   },
                   value: {
@@ -319,12 +352,12 @@ const submitBuild: AppBlock = {
             description:
               "Cloud Build operation to be polled via CloudBuild API.",
           },
-          base_image_uri: {
+          baseImageUri: {
             type: "string",
             description:
               "URI of the base builder image in Artifact Registry being used in the build. Used to opt into automatic base image updates.",
           },
-          base_image_warning: {
+          baseImageWarning: {
             type: "string",
             description: "Warning message for the base image.",
           },

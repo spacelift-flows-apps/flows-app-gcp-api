@@ -41,17 +41,17 @@ const get: AppBlock = {
       type: {
         type: "object",
         properties: {
-          I_pv4_range: {
+          IPv4Range: {
             type: "string",
             description:
               "Deprecated in favor of subnet mode networks. The range of internal addresses that are legal on this network. This range is aCIDR specification, for example:192.168.0.0/16. Provided by the client when the network is created.",
           },
-          auto_create_subnetworks: {
+          autoCreateSubnetworks: {
             type: "boolean",
             description:
               "Must be set to create a VPC network. If not set, a legacy network is created.  When set to true, the VPC network is created in auto mode. When set to false, the VPC network is created in custom mode.  An auto mode VPC network starts with one subnet per region. Each subnet has a predetermined range as described inAuto mode VPC network IP ranges.  For custom mode VPC networks, you can add subnets using the subnetworksinsert method.",
           },
-          creation_timestamp: {
+          creationTimestamp: {
             type: "string",
             description:
               "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
@@ -61,17 +61,17 @@ const get: AppBlock = {
             description:
               "An optional description of this resource. Provide this field when you create the resource.",
           },
-          enable_ula_internal_ipv6: {
+          enableUlaInternalIpv6: {
             type: "boolean",
             description:
               "Enable ULA internal ipv6 on this network. Enabling this feature will assign a /48 from google defined ULA prefix fd20::/20. .",
           },
-          firewall_policy: {
+          firewallPolicy: {
             type: "string",
             description:
               "Output only. [Output Only] URL of the firewall policy the network is associated with.",
           },
-          gateway_i_pv4: {
+          gatewayIPv4: {
             type: "string",
             description:
               "[Output Only] The gateway address for default routing out of the network, selected by Google Cloud.",
@@ -80,7 +80,7 @@ const get: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          internal_ipv6_range: {
+          internalIpv6Range: {
             type: "string",
             description:
               "When enabling ula internal ipv6, caller optionally can specify the /48 range they want from the google defined ULA prefix fd20::/20. The input must be a valid /48 ULA IPv6 address and must be within the fd20::/20. Operation will fail if the speficied /48 is already in used by another resource. If the field is not speficied, then a /48 range will be randomly allocated from fd20::/20 and returned via this field. .",
@@ -100,12 +100,12 @@ const get: AppBlock = {
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all following characters (except for the last character) must be a dash, lowercase letter, or digit. The last character must be a lowercase letter or digit.",
           },
-          network_firewall_policy_enforcement_order: {
+          networkFirewallPolicyEnforcementOrder: {
             type: "string",
             description:
               "The network firewall policy enforcement order. Can be either AFTER_CLASSIC_FIREWALL or BEFORE_CLASSIC_FIREWALL. Defaults to AFTER_CLASSIC_FIREWALL if the field is not specified. Check the NetworkFirewallPolicyEnforcementOrder enum for the list of possible values.",
           },
-          network_profile: {
+          networkProfile: {
             type: "string",
             description:
               "A full or partial URL of the network profile to apply to this network. This field can be set only at resource creation time. For example, the following are valid URLs:     - https://www.googleapis.com/compute/{api_version}/projects/{project_id}/global/networkProfiles/{network_profile_name}    - projects/{project_id}/global/networkProfiles/{network_profile_name}",
@@ -113,7 +113,7 @@ const get: AppBlock = {
           params: {
             type: "object",
             properties: {
-              resource_manager_tags: {
+              resourceManagerTags: {
                 type: "object",
                 additionalProperties: {
                   type: "string",
@@ -130,23 +130,23 @@ const get: AppBlock = {
             items: {
               type: "object",
               properties: {
-                auto_create_routes: {
+                autoCreateRoutes: {
                   type: "boolean",
                   description:
                     "This field will be deprecated soon. Use theexchange_subnet_routes field instead. Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
                 },
-                connection_status: {
+                connectionStatus: {
                   type: "object",
                   properties: {
-                    consensus_state: {
+                    consensusState: {
                       type: "object",
                       properties: {
-                        delete_status: {
+                        deleteStatus: {
                           type: "string",
                           description:
                             "The status of the delete request. Check the DeleteStatus enum for the list of possible values.",
                         },
-                        update_status: {
+                        updateStatus: {
                           type: "string",
                           description:
                             "The status of the update request. Check the UpdateStatus enum for the list of possible values.",
@@ -156,30 +156,30 @@ const get: AppBlock = {
                         "The status of update/delete for a consensus peering connection. Only set when connection_status.update_strategy isCONSENSUS or a network peering is proposing to update the strategy to CONSENSUS.",
                       additionalProperties: true,
                     },
-                    traffic_configuration: {
+                    trafficConfiguration: {
                       type: "object",
                       properties: {
-                        export_custom_routes_to_peer: {
+                        exportCustomRoutesToPeer: {
                           type: "boolean",
                           description:
                             "Whether custom routes are being exported to the peer network.",
                         },
-                        export_subnet_routes_with_public_ip_to_peer: {
+                        exportSubnetRoutesWithPublicIpToPeer: {
                           type: "boolean",
                           description:
                             "Whether subnet routes with public IP ranges are being exported to the peer network.",
                         },
-                        import_custom_routes_from_peer: {
+                        importCustomRoutesFromPeer: {
                           type: "boolean",
                           description:
                             "Whether custom routes are being imported from the peer network.",
                         },
-                        import_subnet_routes_with_public_ip_from_peer: {
+                        importSubnetRoutesWithPublicIpFromPeer: {
                           type: "boolean",
                           description:
                             "Whether subnet routes with public IP ranges are being imported from the peer network.",
                         },
-                        stack_type: {
+                        stackType: {
                           type: "string",
                           description:
                             "Which IP version(s) of traffic and routes are being imported or exported between peer networks. Check the StackType enum for the list of possible values.",
@@ -189,7 +189,7 @@ const get: AppBlock = {
                       description:
                         "The active connectivity settings for the peering connection based on the settings of the network peerings.",
                     },
-                    update_strategy: {
+                    updateStrategy: {
                       type: "string",
                       description:
                         "The update strategy determines the update/delete semantics for this peering connection. Check the UpdateStrategy enum for the list of possible values.",
@@ -199,27 +199,27 @@ const get: AppBlock = {
                     "[Output Only] Describes the state of a peering connection, not just the local peering. This field provides information about the effective settings for the connection as a whole, including pending delete/update requests for CONSENSUS peerings.",
                   additionalProperties: true,
                 },
-                exchange_subnet_routes: {
+                exchangeSubnetRoutes: {
                   type: "boolean",
                   description:
                     "Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
                 },
-                export_custom_routes: {
+                exportCustomRoutes: {
                   type: "boolean",
                   description:
                     "Whether to export the custom routes to peer network. The default value is false.",
                 },
-                export_subnet_routes_with_public_ip: {
+                exportSubnetRoutesWithPublicIp: {
                   type: "boolean",
                   description:
                     "Whether subnet routes with public IP range are exported. The default value is true, all subnet routes are exported.IPv4 special-use ranges are always exported to peers and are not controlled by this field.",
                 },
-                import_custom_routes: {
+                importCustomRoutes: {
                   type: "boolean",
                   description:
                     "Whether to import the custom routes from peer network. The default value is false.",
                 },
-                import_subnet_routes_with_public_ip: {
+                importSubnetRoutesWithPublicIp: {
                   type: "boolean",
                   description:
                     "Whether subnet routes with public IP range are imported. The default value is false.IPv4 special-use ranges are always imported from peers and are not controlled by this field.",
@@ -234,12 +234,12 @@ const get: AppBlock = {
                   description:
                     "The URL of the peer network. It can be either full URL or partial URL. The peer network may belong to a different project. If the partial URL does not contain project, it is assumed that the peer network is in the same project as the current network.",
                 },
-                peer_mtu: {
+                peerMtu: {
                   type: "integer",
                   description:
                     "Output only. [Output Only] Maximum Transmission Unit in bytes of the peer network.",
                 },
-                stack_type: {
+                stackType: {
                   type: "string",
                   description:
                     "Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Check the StackType enum for the list of possible values.",
@@ -249,12 +249,12 @@ const get: AppBlock = {
                   description:
                     "Output only. [Output Only] State for the peering, either `ACTIVE` or `INACTIVE`. The peering is `ACTIVE` when there's a matching configuration in the peer network. Check the State enum for the list of possible values.",
                 },
-                state_details: {
+                stateDetails: {
                   type: "string",
                   description:
                     "Output only. [Output Only] Details about the current state of the peering.",
                 },
-                update_strategy: {
+                updateStrategy: {
                   type: "string",
                   description:
                     "The update strategy determines the semantics for updates and deletes to the peering connection configuration. Check the UpdateStrategy enum for the list of possible values.",
@@ -267,35 +267,35 @@ const get: AppBlock = {
             description:
               "Output only. [Output Only] A list of network peerings for the resource.",
           },
-          routing_config: {
+          routingConfig: {
             type: "object",
             properties: {
-              bgp_always_compare_med: {
+              bgpAlwaysCompareMed: {
                 type: "boolean",
                 description:
                   "Enable comparison of Multi-Exit Discriminators (MED) across routes with different neighbor ASNs when using the STANDARD BGP best path selection algorithm.",
               },
-              bgp_best_path_selection_mode: {
+              bgpBestPathSelectionMode: {
                 type: "string",
                 description:
                   "The BGP best path selection algorithm to be employed within this network for dynamic routes learned by Cloud Routers. Can be LEGACY (default) or STANDARD. Check the BgpBestPathSelectionMode enum for the list of possible values.",
               },
-              bgp_inter_region_cost: {
+              bgpInterRegionCost: {
                 type: "string",
                 description:
                   "Allows to define a preferred approach for handling inter-region cost in the selection process when using the STANDARD BGP best path selection algorithm. Can be DEFAULT orADD_COST_TO_MED. Check the BgpInterRegionCost enum for the list of possible values.",
               },
-              effective_bgp_always_compare_med: {
+              effectiveBgpAlwaysCompareMed: {
                 type: "boolean",
                 description:
                   "Output only. [Output Only] Effective value of the bgp_always_compare_med field.",
               },
-              effective_bgp_inter_region_cost: {
+              effectiveBgpInterRegionCost: {
                 type: "string",
                 description:
                   "Output only. [Output Only] Effective value of the bgp_inter_region_cost field. Check the EffectiveBgpInterRegionCost enum for the list of possible values.",
               },
-              routing_mode: {
+              routingMode: {
                 type: "string",
                 description:
                   "The network-wide routing mode to use. If set to REGIONAL, this network's Cloud Routers will only advertise routes with subnets of this network in the same region as the router. If set toGLOBAL, this network's Cloud Routers will advertise routes with all subnets of this network, across regions. Check the RoutingMode enum for the list of possible values.",
@@ -305,11 +305,11 @@ const get: AppBlock = {
               "A routing configuration attached to a network resource. The message includes the list of routers associated with the network, and a flag indicating the type of routing behavior to enforce network-wide.",
             additionalProperties: true,
           },
-          self_link: {
+          selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          self_link_with_id: {
+          selfLinkWithId: {
             type: "string",
             description:
               "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
