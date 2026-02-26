@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const signJwt: AppBlock = {
   name: "Sign JWT",
@@ -40,8 +44,9 @@ const signJwt: AppBlock = {
         if (input.event.inputConfig.payload !== undefined)
           request.payload = input.event.inputConfig.payload;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.signJwt(request, (err: any, response: any) => {
+          client.signJwt(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -52,7 +57,7 @@ const signJwt: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

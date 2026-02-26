@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import {
+  getSubscriberClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const modifyPushConfig: AppBlock = {
   name: "Modify Push Config",
@@ -93,8 +97,9 @@ const modifyPushConfig: AppBlock = {
         if (input.event.inputConfig.pushConfig !== undefined)
           request.pushConfig = input.event.inputConfig.pushConfig;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.modifyPushConfig(request, (err: any, response: any) => {
+          client.modifyPushConfig(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -105,7 +110,7 @@ const modifyPushConfig: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

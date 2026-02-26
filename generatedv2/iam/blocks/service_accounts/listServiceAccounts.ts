@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const listServiceAccounts: AppBlock = {
   name: "List Service Accounts",
@@ -53,19 +57,23 @@ const listServiceAccounts: AppBlock = {
         if (input.event.inputConfig.pageToken !== undefined)
           request.pageToken = input.event.inputConfig.pageToken;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listServiceAccounts(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.listServiceAccounts(
+            protoRequest,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

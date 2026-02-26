@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import {
+  getSubscriberClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const acknowledge: AppBlock = {
   name: "Acknowledge",
@@ -43,8 +47,9 @@ const acknowledge: AppBlock = {
         if (input.event.inputConfig.ackIds !== undefined)
           request.ackIds = input.event.inputConfig.ackIds;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.acknowledge(request, (err: any, response: any) => {
+          client.acknowledge(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -55,7 +60,7 @@ const acknowledge: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

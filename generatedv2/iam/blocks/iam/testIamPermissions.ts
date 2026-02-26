@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const testIamPermissions: AppBlock = {
   name: "Test IAM Permissions",
@@ -37,8 +41,9 @@ const testIamPermissions: AppBlock = {
         if (input.event.inputConfig.permissions !== undefined)
           request.permissions = input.event.inputConfig.permissions;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.testIamPermissions(request, (err: any, response: any) => {
+          client.testIamPermissions(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -49,7 +54,7 @@ const testIamPermissions: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

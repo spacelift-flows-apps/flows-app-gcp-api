@@ -83,7 +83,7 @@ export function generateBlockSource(block: GeneratedBlock): string {
   const clientFactory = `get${block.serviceName}Client`;
 
   // Build import list
-  const grpcImports = [clientFactory];
+  const grpcImports = [clientFactory, "toSnakeCase", "toCamelCase"];
   if (hasRouting) grpcImports.push("createRoutingMetadata");
 
   // Clean description
@@ -97,8 +97,8 @@ export function generateBlockSource(block: GeneratedBlock): string {
 
   // gRPC call args: with or without metadata
   const callArgs = hasRouting
-    ? `request, metadata, (err: any, response: any)`
-    : `request, (err: any, response: any)`;
+    ? `protoRequest, metadata, (err: any, response: any)`
+    : `protoRequest, (err: any, response: any)`;
 
   const source = `import { AppBlock, events } from "@slflows/sdk/v1";
 import { ${grpcImports.join(", ")} } from "../../lib/grpcClient.ts";
@@ -117,6 +117,7 @@ const ${block.blockName}: AppBlock = {
 ${requestAssembly}
 
 ${routingCode}
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
           client.${block.rpcMethodName}(${callArgs} => {
             if (err) reject(new Error(\`gRPC error [\${err.code}]: \${err.details || err.message}\`));
@@ -124,7 +125,7 @@ ${routingCode}
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSchemaServiceClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const listSchemas: AppBlock = {
   name: "List Schemas",
@@ -65,8 +69,9 @@ const listSchemas: AppBlock = {
         if (input.event.inputConfig.pageToken !== undefined)
           request.pageToken = input.event.inputConfig.pageToken;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listSchemas(request, (err: any, response: any) => {
+          client.listSchemas(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -77,7 +82,7 @@ const listSchemas: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

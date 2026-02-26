@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const getServiceAccount: AppBlock = {
   name: "Get Service Account",
@@ -27,8 +31,9 @@ const getServiceAccount: AppBlock = {
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getServiceAccount(request, (err: any, response: any) => {
+          client.getServiceAccount(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -39,7 +44,7 @@ const getServiceAccount: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const deleteServiceAccount: AppBlock = {
   name: "Delete Service Account",
@@ -27,19 +31,23 @@ const deleteServiceAccount: AppBlock = {
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteServiceAccount(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.deleteServiceAccount(
+            protoRequest,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

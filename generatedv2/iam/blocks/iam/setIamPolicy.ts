@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const setIamPolicy: AppBlock = {
   name: "Set IAM Policy",
@@ -128,8 +132,9 @@ const setIamPolicy: AppBlock = {
         if (input.event.inputConfig.updateMask !== undefined)
           request.updateMask = input.event.inputConfig.updateMask;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.setIamPolicy(request, (err: any, response: any) => {
+          client.setIamPolicy(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -140,7 +145,7 @@ const setIamPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const patchServiceAccount: AppBlock = {
   name: "Patch Service Account",
@@ -60,19 +64,23 @@ const patchServiceAccount: AppBlock = {
         if (input.event.inputConfig.updateMask !== undefined)
           request.updateMask = input.event.inputConfig.updateMask;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.patchServiceAccount(request, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.patchServiceAccount(
+            protoRequest,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import {
+  getPublisherClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const publish: AppBlock = {
   name: "Publish",
@@ -73,8 +77,9 @@ const publish: AppBlock = {
         if (input.event.inputConfig.messages !== undefined)
           request.messages = input.event.inputConfig.messages;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.publish(request, (err: any, response: any) => {
+          client.publish(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -85,7 +90,7 @@ const publish: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

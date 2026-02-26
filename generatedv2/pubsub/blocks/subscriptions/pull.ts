@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import {
+  getSubscriberClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const pull: AppBlock = {
   name: "Pull",
@@ -53,8 +57,9 @@ const pull: AppBlock = {
         if (input.event.inputConfig.maxMessages !== undefined)
           request.maxMessages = input.event.inputConfig.maxMessages;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.pull(request, (err: any, response: any) => {
+          client.pull(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -65,7 +70,7 @@ const pull: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

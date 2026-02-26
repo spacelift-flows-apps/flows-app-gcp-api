@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSchemaServiceClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const deleteSchema: AppBlock = {
   name: "Delete Schema",
@@ -27,8 +31,9 @@ const deleteSchema: AppBlock = {
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteSchema(request, (err: any, response: any) => {
+          client.deleteSchema(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -39,7 +44,7 @@ const deleteSchema: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

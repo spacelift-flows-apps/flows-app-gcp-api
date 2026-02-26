@@ -7406,6 +7406,35 @@
           ]
         },
         {
+          "name": "RoutingRule",
+          "field": [
+            {
+              "name": "routing_parameters",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "RoutingParameter"
+            }
+          ]
+        },
+        {
+          "name": "RoutingParameter",
+          "field": [
+            {
+              "name": "field",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "path_template",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
           "name": "ResourceDescriptor",
           "field": [
             {
@@ -7497,35 +7526,6 @@
             },
             {
               "name": "child_type",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "RoutingRule",
-          "field": [
-            {
-              "name": "routing_parameters",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "RoutingParameter"
-            }
-          ]
-        },
-        {
-          "name": "RoutingParameter",
-          "field": [
-            {
-              "name": "field",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "path_template",
               "number": 2,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_STRING"
@@ -7821,6 +7821,14 @@
           "type": "TYPE_STRING"
         },
         {
+          "name": "routing",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 72295729,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "RoutingRule"
+        },
+        {
           "name": "resource_reference",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1055,
@@ -7845,14 +7853,6 @@
           "typeName": "ResourceDescriptor"
         },
         {
-          "name": "routing",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 72295729,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "RoutingRule"
-        },
-        {
           "name": "http",
           "extendee": ".google.protobuf.MethodOptions",
           "number": 72295728,
@@ -7874,6 +7874,82 @@
       "name": "google_iam_v1.proto",
       "package": "google.iam.v1",
       "messageType": [
+        {
+          "name": "SetIamPolicyRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "policy",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Policy",
+              "options": {}
+            },
+            {
+              "name": "update_mask",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask"
+            }
+          ]
+        },
+        {
+          "name": "GetIamPolicyRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "options",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "GetPolicyOptions"
+            }
+          ]
+        },
+        {
+          "name": "TestIamPermissionsRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "permissions",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "TestIamPermissionsResponse",
+          "field": [
+            {
+              "name": "permissions",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
         {
           "name": "Policy",
           "field": [
@@ -8103,82 +8179,6 @@
                   "number": 2
                 }
               ]
-            }
-          ]
-        },
-        {
-          "name": "SetIamPolicyRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "policy",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Policy",
-              "options": {}
-            },
-            {
-              "name": "update_mask",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.FieldMask"
-            }
-          ]
-        },
-        {
-          "name": "GetIamPolicyRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "options",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "GetPolicyOptions"
-            }
-          ]
-        },
-        {
-          "name": "TestIamPermissionsRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "permissions",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "TestIamPermissionsResponse",
-          "field": [
-            {
-              "name": "permissions",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
             }
           ]
         },

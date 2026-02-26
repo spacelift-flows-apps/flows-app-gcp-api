@@ -1,6 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
+  toSnakeCase,
+  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -161,19 +163,24 @@ const moveObject: AppBlock = {
         if (request.bucket !== undefined)
           routingParams["bucket"] = String(request.bucket);
         const metadata = createRoutingMetadata(routingParams);
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.moveObject(request, metadata, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
-            else resolve(response);
-          });
+          client.moveObject(
+            protoRequest,
+            metadata,
+            (err: any, response: any) => {
+              if (err)
+                reject(
+                  new Error(
+                    `gRPC error [${err.code}]: ${err.details || err.message}`,
+                  ),
+                );
+              else resolve(response);
+            },
+          );
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import {
+  getPublisherClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const listTopics: AppBlock = {
   name: "List Topics",
@@ -51,8 +55,9 @@ const listTopics: AppBlock = {
         if (input.event.inputConfig.pageToken !== undefined)
           request.pageToken = input.event.inputConfig.pageToken;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listTopics(request, (err: any, response: any) => {
+          client.listTopics(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -63,7 +68,7 @@ const listTopics: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

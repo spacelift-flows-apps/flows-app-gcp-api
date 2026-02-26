@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import {
+  getSubscriberClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const getSnapshot: AppBlock = {
   name: "Get Snapshot",
@@ -27,8 +31,9 @@ const getSnapshot: AppBlock = {
         if (input.event.inputConfig.snapshot !== undefined)
           request.snapshot = input.event.inputConfig.snapshot;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getSnapshot(request, (err: any, response: any) => {
+          client.getSnapshot(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -39,7 +44,7 @@ const getSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

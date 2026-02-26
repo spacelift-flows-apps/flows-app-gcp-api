@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import {
+  getSubscriberClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const deleteSubscription: AppBlock = {
   name: "Delete Subscription",
@@ -27,8 +31,9 @@ const deleteSubscription: AppBlock = {
         if (input.event.inputConfig.subscription !== undefined)
           request.subscription = input.event.inputConfig.subscription;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteSubscription(request, (err: any, response: any) => {
+          client.deleteSubscription(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -39,7 +44,7 @@ const deleteSubscription: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSubscriberClient } from "../../lib/grpcClient.ts";
+import {
+  getSubscriberClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const updateSnapshot: AppBlock = {
   name: "Update Snapshot",
@@ -63,8 +67,9 @@ const updateSnapshot: AppBlock = {
         if (input.event.inputConfig.updateMask !== undefined)
           request.updateMask = input.event.inputConfig.updateMask;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.updateSnapshot(request, (err: any, response: any) => {
+          client.updateSnapshot(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -75,7 +80,7 @@ const updateSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

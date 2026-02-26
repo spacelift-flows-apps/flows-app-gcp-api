@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getPublisherClient } from "../../lib/grpcClient.ts";
+import {
+  getPublisherClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const createTopic: AppBlock = {
   name: "Create Topic",
@@ -480,8 +484,9 @@ const createTopic: AppBlock = {
         if (input.event.inputConfig.tags !== undefined)
           request.tags = input.event.inputConfig.tags;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.createTopic(request, (err: any, response: any) => {
+          client.createTopic(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -492,7 +497,7 @@ const createTopic: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

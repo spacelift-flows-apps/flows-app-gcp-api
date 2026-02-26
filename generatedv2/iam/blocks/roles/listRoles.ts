@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const listRoles: AppBlock = {
   name: "List Roles",
@@ -77,8 +81,9 @@ const listRoles: AppBlock = {
         if (input.event.inputConfig.showDeleted !== undefined)
           request.showDeleted = input.event.inputConfig.showDeleted;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listRoles(request, (err: any, response: any) => {
+          client.listRoles(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -89,7 +94,7 @@ const listRoles: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

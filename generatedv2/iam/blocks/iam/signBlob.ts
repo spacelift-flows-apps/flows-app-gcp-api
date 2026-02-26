@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const signBlob: AppBlock = {
   name: "Sign Blob",
@@ -39,8 +43,9 @@ const signBlob: AppBlock = {
         if (input.event.inputConfig.bytesToSign !== undefined)
           request.bytesToSign = input.event.inputConfig.bytesToSign;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.signBlob(request, (err: any, response: any) => {
+          client.signBlob(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -51,7 +56,7 @@ const signBlob: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

@@ -1,5 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getIAMClient } from "../../lib/grpcClient.ts";
+import {
+  getIAMClient,
+  toSnakeCase,
+  toCamelCase,
+} from "../../lib/grpcClient.ts";
 
 const lintPolicy: AppBlock = {
   name: "Lint Policy",
@@ -55,8 +59,9 @@ const lintPolicy: AppBlock = {
         if (input.event.inputConfig.condition !== undefined)
           request.condition = input.event.inputConfig.condition;
 
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.lintPolicy(request, (err: any, response: any) => {
+          client.lintPolicy(protoRequest, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -67,7 +72,7 @@ const lintPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

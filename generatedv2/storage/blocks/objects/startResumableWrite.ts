@@ -1,6 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
+  toSnakeCase,
+  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -324,9 +326,10 @@ const startResumableWrite: AppBlock = {
             request.writeObjectSpec?.resource?.bucket,
           );
         const metadata = createRoutingMetadata(routingParams);
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
           client.startResumableWrite(
-            request,
+            protoRequest,
             metadata,
             (err: any, response: any) => {
               if (err)
@@ -340,7 +343,7 @@ const startResumableWrite: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },

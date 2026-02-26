@@ -1,6 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
+  toSnakeCase,
+  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -56,9 +58,10 @@ const testIamPermissions: AppBlock = {
           if (m) routingParams["bucket"] = m[1];
         }
         const metadata = createRoutingMetadata(routingParams);
+        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
           client.testIamPermissions(
-            request,
+            protoRequest,
             metadata,
             (err: any, response: any) => {
               if (err)
@@ -72,7 +75,7 @@ const testIamPermissions: AppBlock = {
           );
         });
 
-        await events.emit(result || {});
+        await events.emit(result ? toCamelCase(result) : {});
       },
     },
   },
