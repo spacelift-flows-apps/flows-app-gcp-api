@@ -431,3 +431,93 @@ Common modification points:
 - **App scaffolding**: `grpc/appGenerator.ts` — change `main.ts` template, `grpcClient.ts` template, dependencies
 - **Categorization**: `grpc/naming.ts` — add `RESOURCE_PATTERNS` entries for new resource types
 - **Service configs**: `grpc/protoGenerator.ts` — add/modify services in `SERVICES`
+
+## REST-Based Compute Engine Generator (`scriptsv2/compute/`)
+
+The `scriptsv2/compute/` directory contains a separate code generator for GCP Compute Engine, which only exposes REST APIs (no gRPC). It generates 5 Flows apps in `generatedv2/compute-*` from a single 85K-line proto file (`local/googleapis/google/cloud/compute/v1/compute.proto`) with 109 services and ~2000 RPCs.
+
+### Quick Reference
+
+```bash
+# Generate a single compute app
+npx tsx scriptsv2/compute/computeGenerator.ts compute-instances
+
+# Generate all 5 compute apps
+npx tsx scriptsv2/compute/computeGenerator.ts
+
+# Typecheck a generated compute app
+cd generatedv2/compute-instances && npm run typecheck
+```
+
+Available apps: `compute-instances`, `compute-load-balancing`, `compute-networking`, `compute-security`, `compute-storage` (configured in `scriptsv2/compute/computeGenerator.ts` `COMPUTE_APPS` object).
+
+### Pipeline Overview
+
+1. **Parse** proto via shared `grpc/protoParser.ts` — reuses the gRPC parser for services, RPCs, messages, enums
+2. **Parse HTTP annotations** (`compute/httpAnnotationParser.ts`): Regex-parse `google.api.http` options from raw proto source to get REST method, URL template, and body field for each RPC
+3. **Classify fields**: For each RPC, split request message fields into path params (from URL `{param}`), body field (from `body:` annotation), and query params (everything else)
+4. **Generate block source** (`compute/blockGenerator.ts`): Create TypeScript block files using `fetch()` via a shared `computeFetch` helper
+5. **Write app** (`compute/appGenerator.ts`): Write `main.ts`, `lib/restClient.ts`, `blocks/index.ts`, `package.json`, `tsconfig.json`, `VERSION`, then run `npm install` and `npm run format`
+
+### Generator Files
+
+| File | Purpose |
+|------|---------|
+| `compute/computeGenerator.ts` | CLI entry point, 5 app configs (`COMPUTE_APPS` object) |
+| `compute/httpAnnotationParser.ts` | Parse `google.api.http` annotations from proto source |
+| `compute/blockGenerator.ts` | REST block `.ts` file generation using `computeFetch` |
+| `compute/appGenerator.ts` | App scaffolding (main.ts, restClient.ts, package.json, etc.) |
+| `compute/types.ts` | Compute-specific types + re-exports from `grpc/types.ts` |
+
+### Reused from gRPC Generator
+
+The compute generator imports directly from `../grpc/`:
+- **`types.ts`**: `ParsedMessage`, `ParsedField`, `ParsedRPC`, `ParsedService`, `ParsedProtoResult`, `GeneratedBlock`
+- **`naming.ts`**: `rpcToBlockName`, `humanizePascalCase`, `categoryToDirName`, `cleanComment`
+- **`schemaMapper.ts`**: `messageToInputConfig`, `messageToOutputSchema`
+- **`protoParser.ts`**: `parseProtoFiles`
+- **`appGenerator.ts`**: `generateTsConfig`
+
+### Generated App Structure
+
+```
+generatedv2/compute-{category}/
+├── main.ts                    # App definition with projectId + auth config
+├── lib/restClient.ts          # Shared REST client (computeFetch), auth handling
+├── blocks/
+│   ├── index.ts               # Block registry
+│   ├── {category}/            # One dir per service (e.g., instances/, disks/)
+│   │   └── {blockName}.ts     # One file per RPC
+├── package.json               # Only @slflows/sdk + google-auth-library (no gRPC deps)
+├── tsconfig.json
+└── VERSION
+```
+
+### Key Design Decisions
+
+**REST-only, no gRPC.** Compute Engine is the only major GCP service without a gRPC endpoint. Blocks use `fetch()` via a shared `computeFetch` wrapper instead of gRPC clients. No `protos.json` is needed at runtime.
+
+**`project` from app config.** All compute URLs contain `{project}`. This is always sourced from `input.app.config.projectId`, never from block input config. The `project` field is excluded from block input configs.
+
+**Category = service name.** Each Compute Engine proto service IS a resource type (e.g., `Instances`, `Disks`). Category is derived from service name via `humanizePascalCase`.
+
+**Body field flattening.** For POST/PUT/PATCH RPCs with a `body:` annotation (e.g., `body: "instance_resource"`), the referenced field's message sub-fields are flattened into block input config. At runtime, they're assembled into a request body object.
+
+**Query param keys use `jsonName` (camelCase).** The REST API expects camelCase query params (`requestId`, `maxResults`). Input config keys remain snake_case. The `ParsedField.jsonName` provides the camelCase mapping for URL query parameters.
+
+**HTTP annotation keys are composite.** Annotations are keyed as `ServiceName.RPCName` (e.g., `Instances.Get`) because many services share RPC names like `Get`, `List`, `Delete`.
+
+### Modifying the Compute Generator
+
+When changing the compute generator, re-run and typecheck:
+
+```bash
+npx tsx scriptsv2/compute/computeGenerator.ts
+for dir in generatedv2/compute-*/; do (cd "$dir" && npm run typecheck); done
+```
+
+Common modification points:
+- **REST client template**: `compute/appGenerator.ts` — change `computeFetch`, auth logic, URL building
+- **Block template**: `compute/blockGenerator.ts` — change block structure, field classification, fetch call pattern
+- **HTTP parsing**: `compute/httpAnnotationParser.ts` — change how `google.api.http` annotations are extracted
+- **App configs**: `compute/computeGenerator.ts` — add/modify apps in `COMPUTE_APPS`, change service-to-app assignments
