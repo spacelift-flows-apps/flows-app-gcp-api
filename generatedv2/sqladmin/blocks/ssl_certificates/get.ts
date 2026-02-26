@@ -1,58 +1,37 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+import {
+  getSqlSslCertsServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  sha1Fingerprint: "sha1_fingerprint",
+};
 
 const outputMapping = {
-  sqlserver_user_details: {
-    name: "sqlserverUserDetails",
-    fields: {
-      server_roles: "serverRoles",
-    },
-  },
-  iam_email: "iamEmail",
-  password_policy: {
-    name: "passwordPolicy",
-    fields: {
-      allowed_failed_attempts: "allowedFailedAttempts",
-      password_expiration_duration: "passwordExpirationDuration",
-      enable_failed_attempts_check: "enableFailedAttemptsCheck",
-      status: {
-        name: "status",
-        fields: {
-          password_expiration_time: "passwordExpirationTime",
-        },
-      },
-      enable_password_verification: "enablePasswordVerification",
-    },
-  },
-  dual_password_type: "dualPasswordType",
-  iam_status: "iamStatus",
-  database_roles: "databaseRoles",
+  cert_serial_number: "certSerialNumber",
+  create_time: "createTime",
+  common_name: "commonName",
+  expiration_time: "expirationTime",
+  sha1_fingerprint: "sha1Fingerprint",
+  self_link: "selfLink",
 };
 
 const get: AppBlock = {
   name: "Get",
   description: `Retrieves a resource containing information about a user.`,
-  category: "Users",
+  category: "SSL Certificates",
   inputs: {
     default: {
       config: {
         instance: {
           name: "Instance",
           description:
-            "Database instance ID. This does not include the project ID.",
+            "Cloud SQL instance ID. This does not include the project ID.",
           type: {
             type: "string",
             description:
-              "Database instance ID. This does not include the project ID.",
-          },
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "User of the instance.",
-          type: {
-            type: "string",
-            description: "User of the instance.",
+              "Cloud SQL instance ID. This does not include the project ID.",
           },
           required: false,
         },
@@ -66,20 +45,20 @@ const get: AppBlock = {
           },
           required: false,
         },
-        host: {
-          name: "Host",
-          description: "Host of a user of the instance.",
+        sha1Fingerprint: {
+          name: "Sha1 Fingerprint",
+          description: "Sha1 FingerPrint.",
           type: {
             type: "string",
-            description: "Host of a user of the instance.",
+            description: "Sha1 FingerPrint.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        const client = await getSqlUsersServiceClient(input.app.config);
+        const client = await getSqlSslCertsServiceClient(input.app.config);
 
-        const request = { ...input.event.inputConfig };
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.get(request, (err: any, response: any) => {
@@ -106,143 +85,42 @@ const get: AppBlock = {
         properties: {
           kind: {
             type: "string",
-            description: "This is always `sql#user`.",
+            description: "This is always `sql#sslCert`.",
           },
-          password: {
+          certSerialNumber: {
             type: "string",
-            description: "The password for the user.",
+            description: "Serial number, as extracted from the certificate.",
           },
-          etag: {
+          cert: {
             type: "string",
-            description:
-              "This field is deprecated and will be removed from a future version of the API.",
+            description: "PEM representation.",
           },
-          name: {
+          createTime: {
             type: "string",
-            description:
-              "The name of the user in the Cloud SQL instance. Can be omitted for `update` because it is already specified in the URL.",
+            description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          host: {
+          commonName: {
             type: "string",
-            description:
-              "Optional. The host from which the user can connect. For `insert` operations, host defaults to an empty string. For `update` operations, host is specified as part of the request URL. The host name cannot be updated after insertion.  For a MySQL instance, it's required; for a PostgreSQL or SQL Server instance, it's optional.",
+            description: "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
+          },
+          expirationTime: {
+            type: "string",
+            description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+          },
+          sha1Fingerprint: {
+            type: "string",
+            description: "Sha1 Fingerprint.",
           },
           instance: {
             type: "string",
-            description:
-              "The name of the Cloud SQL instance. This does not include the project ID. Can be omitted for `update` because it is already specified on the URL.",
+            description: "Name of the database instance.",
           },
-          project: {
+          selfLink: {
             type: "string",
-            description:
-              "The project ID of the project containing the Cloud SQL database. The Google apps domain is prefixed if applicable. Can be omitted for `update` because it is already specified on the URL.",
-          },
-          type: {
-            type: "string",
-            enum: [
-              "BUILT_IN",
-              "CLOUD_IAM_USER",
-              "CLOUD_IAM_SERVICE_ACCOUNT",
-              "CLOUD_IAM_GROUP",
-              "CLOUD_IAM_GROUP_USER",
-              "CLOUD_IAM_GROUP_SERVICE_ACCOUNT",
-              "ENTRAID_USER",
-            ],
-            description:
-              "The user type. It determines the method to authenticate the user during login. The default is the database's built-in user type.",
-          },
-          sqlserverUserDetails: {
-            type: "object",
-            properties: {
-              disabled: {
-                type: "boolean",
-                description: "If the user has been disabled",
-              },
-              serverRoles: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
-                description: "The server roles for this user",
-              },
-            },
-            description:
-              "Represents a Sql Server user on the Cloud SQL instance.",
-            additionalProperties: true,
-          },
-          iamEmail: {
-            type: "string",
-            description:
-              "Optional. The full email for an IAM user. For normal database users, this will not be filled. Only applicable to MySQL database users.",
-          },
-          passwordPolicy: {
-            type: "object",
-            properties: {
-              allowedFailedAttempts: {
-                type: "integer",
-                description:
-                  "Number of failed login attempts allowed before user get locked.",
-              },
-              passwordExpirationDuration: {
-                type: "string",
-                description: "Duration string (e.g., '1.5s', '300s')",
-              },
-              enableFailedAttemptsCheck: {
-                type: "boolean",
-                description:
-                  "If true, failed login attempts check will be enabled.",
-              },
-              status: {
-                type: "object",
-                properties: {
-                  locked: {
-                    type: "boolean",
-                    description:
-                      "If true, user does not have login privileges.",
-                  },
-                  passwordExpirationTime: {
-                    type: "string",
-                    description:
-                      "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
-                  },
-                },
-                description: "Read-only password status.",
-                additionalProperties: true,
-              },
-              enablePasswordVerification: {
-                type: "boolean",
-                description:
-                  "If true, the user must specify the current password before changing the password. This flag is supported only for MySQL.",
-              },
-            },
-            description: "User level password validation policy.",
-            additionalProperties: true,
-          },
-          dualPasswordType: {
-            type: "string",
-            enum: [
-              "DUAL_PASSWORD_TYPE_UNSPECIFIED",
-              "NO_MODIFY_DUAL_PASSWORD",
-              "NO_DUAL_PASSWORD",
-              "DUAL_PASSWORD",
-            ],
-            description: "Dual password status for the user.",
-          },
-          iamStatus: {
-            type: "string",
-            enum: ["IAM_STATUS_UNSPECIFIED", "INACTIVE", "ACTIVE"],
-            description:
-              "Indicates if a group is active or inactive for IAM database authentication.",
-          },
-          databaseRoles: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description: "Optional. Role memberships of the user",
+            description: "The URI of this resource.",
           },
         },
-        description: "A Cloud SQL user resource.",
+        description: "SslCerts Resource",
         additionalProperties: true,
       },
     },

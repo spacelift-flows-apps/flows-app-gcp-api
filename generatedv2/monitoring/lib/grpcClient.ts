@@ -124,6 +124,17 @@ export async function getMetricServiceClient(
   return new Service("monitoring.googleapis.com:443", credentials);
 }
 
+export async function getNotificationChannelServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService(
+    "google.monitoring.v3",
+    "NotificationChannelService",
+  );
+  return new Service("monitoring.googleapis.com:443", credentials);
+}
+
 export async function getQueryServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -139,17 +150,6 @@ export async function getServiceMonitoringServiceClient(
   const Service = getService(
     "google.monitoring.v3",
     "ServiceMonitoringService",
-  );
-  return new Service("monitoring.googleapis.com:443", credentials);
-}
-
-export async function getNotificationChannelServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService(
-    "google.monitoring.v3",
-    "NotificationChannelService",
   );
   return new Service("monitoring.googleapis.com:443", credentials);
 }

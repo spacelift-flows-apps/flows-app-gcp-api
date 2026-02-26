@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+import {
+  getSqlBackupRunsServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
 
 const outputMapping = {
   target_link: "targetLink",
@@ -156,36 +159,28 @@ const outputMapping = {
 const deleteOperation: AppBlock = {
   name: "Delete",
   description: `Deletes a user from a Cloud SQL instance.`,
-  category: "Users",
+  category: "Backup Runs",
   inputs: {
     default: {
       config: {
-        host: {
-          name: "Host",
-          description: "Host of the user in the instance.",
+        id: {
+          name: "Id",
+          description:
+            "The ID of the backup run to delete. To find a backup run ID, use the [list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/backupRuns/list) method.",
           type: {
             type: "string",
-            description: "Host of the user in the instance.",
+            description: "64-bit integer as string",
           },
           required: false,
         },
         instance: {
           name: "Instance",
           description:
-            "Database instance ID. This does not include the project ID.",
+            "Cloud SQL instance ID. This does not include the project ID.",
           type: {
             type: "string",
             description:
-              "Database instance ID. This does not include the project ID.",
-          },
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Name of the user in the instance.",
-          type: {
-            type: "string",
-            description: "Name of the user in the instance.",
+              "Cloud SQL instance ID. This does not include the project ID.",
           },
           required: false,
         },
@@ -201,7 +196,7 @@ const deleteOperation: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        const client = await getSqlUsersServiceClient(input.app.config);
+        const client = await getSqlBackupRunsServiceClient(input.app.config);
 
         const request = { ...input.event.inputConfig };
 

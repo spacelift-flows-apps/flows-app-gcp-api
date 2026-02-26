@@ -251,6 +251,11 @@ async function generateApp(
     }
   }
 
+  // Sort blocks deterministically (protobufjs iteration order is not stable)
+  blocks.sort((a, b) =>
+    `${a.categoryDir}/${a.blockName}`.localeCompare(`${b.categoryDir}/${b.blockName}`),
+  );
+
   console.log(`  Generating ${blocks.length} blocks...`);
 
   // Generate block source code (keyed by categoryDir/blockName for uniqueness)

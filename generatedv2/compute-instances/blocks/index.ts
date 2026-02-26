@@ -17,8 +17,8 @@ import instance_group_managers_abandonInstances from "./instance_group_managers/
 import instance_group_managers_aggregatedList from "./instance_group_managers/aggregatedList.ts";
 import instance_group_managers_applyUpdatesToInstances from "./instance_group_managers/applyUpdatesToInstances.ts";
 import instance_group_managers_createInstances from "./instance_group_managers/createInstances.ts";
-import instance_group_managers_deleteOperation from "./instance_group_managers/deleteOperation.ts";
 import instance_group_managers_deleteInstances from "./instance_group_managers/deleteInstances.ts";
+import instance_group_managers_deleteOperation from "./instance_group_managers/deleteOperation.ts";
 import instance_group_managers_deletePerInstanceConfigs from "./instance_group_managers/deletePerInstanceConfigs.ts";
 import instance_group_managers_get from "./instance_group_managers/get.ts";
 import instance_group_managers_insert from "./instance_group_managers/insert.ts";
@@ -59,9 +59,9 @@ import instances_addResourcePolicies from "./instances/addResourcePolicies.ts";
 import instances_aggregatedList from "./instances/aggregatedList.ts";
 import instances_attachDisk from "./instances/attachDisk.ts";
 import instances_bulkInsert from "./instances/bulkInsert.ts";
-import instances_deleteOperation from "./instances/deleteOperation.ts";
 import instances_deleteAccessConfig from "./instances/deleteAccessConfig.ts";
 import instances_deleteNetworkInterface from "./instances/deleteNetworkInterface.ts";
+import instances_deleteOperation from "./instances/deleteOperation.ts";
 import instances_detachDisk from "./instances/detachDisk.ts";
 import instances_get from "./instances/get.ts";
 import instances_getEffectiveFirewalls from "./instances/getEffectiveFirewalls.ts";
@@ -118,8 +118,8 @@ import region_autoscalers_update from "./region_autoscalers/update.ts";
 import region_instance_group_managers_abandonInstances from "./region_instance_group_managers/abandonInstances.ts";
 import region_instance_group_managers_applyUpdatesToInstances from "./region_instance_group_managers/applyUpdatesToInstances.ts";
 import region_instance_group_managers_createInstances from "./region_instance_group_managers/createInstances.ts";
-import region_instance_group_managers_deleteOperation from "./region_instance_group_managers/deleteOperation.ts";
 import region_instance_group_managers_deleteInstances from "./region_instance_group_managers/deleteInstances.ts";
+import region_instance_group_managers_deleteOperation from "./region_instance_group_managers/deleteOperation.ts";
 import region_instance_group_managers_deletePerInstanceConfigs from "./region_instance_group_managers/deletePerInstanceConfigs.ts";
 import region_instance_group_managers_get from "./region_instance_group_managers/get.ts";
 import region_instance_group_managers_insert from "./region_instance_group_managers/insert.ts";
@@ -181,10 +181,10 @@ export const blocks = {
     instance_group_managers_applyUpdatesToInstances,
   instance_group_managers_createInstances:
     instance_group_managers_createInstances,
-  instance_group_managers_deleteOperation:
-    instance_group_managers_deleteOperation,
   instance_group_managers_deleteInstances:
     instance_group_managers_deleteInstances,
+  instance_group_managers_deleteOperation:
+    instance_group_managers_deleteOperation,
   instance_group_managers_deletePerInstanceConfigs:
     instance_group_managers_deletePerInstanceConfigs,
   instance_group_managers_get: instance_group_managers_get,
@@ -236,9 +236,9 @@ export const blocks = {
   instances_aggregatedList: instances_aggregatedList,
   instances_attachDisk: instances_attachDisk,
   instances_bulkInsert: instances_bulkInsert,
-  instances_deleteOperation: instances_deleteOperation,
   instances_deleteAccessConfig: instances_deleteAccessConfig,
   instances_deleteNetworkInterface: instances_deleteNetworkInterface,
+  instances_deleteOperation: instances_deleteOperation,
   instances_detachDisk: instances_detachDisk,
   instances_get: instances_get,
   instances_getEffectiveFirewalls: instances_getEffectiveFirewalls,
@@ -300,10 +300,10 @@ export const blocks = {
     region_instance_group_managers_applyUpdatesToInstances,
   region_instance_group_managers_createInstances:
     region_instance_group_managers_createInstances,
-  region_instance_group_managers_deleteOperation:
-    region_instance_group_managers_deleteOperation,
   region_instance_group_managers_deleteInstances:
     region_instance_group_managers_deleteInstances,
+  region_instance_group_managers_deleteOperation:
+    region_instance_group_managers_deleteOperation,
   region_instance_group_managers_deletePerInstanceConfigs:
     region_instance_group_managers_deletePerInstanceConfigs,
   region_instance_group_managers_get: region_instance_group_managers_get,

@@ -257,11 +257,16 @@ async function generateService(
 
   console.log(`  Generating ${blocks.length} blocks...`);
 
+  // Sort blocks deterministically (protobufjs iteration order is not stable)
+  blocks.sort((a, b) =>
+    `${a.categoryDir}/${a.blockName}`.localeCompare(`${b.categoryDir}/${b.blockName}`),
+  );
+
   // Step 4: Generate block source code
   const blockSources = new Map<string, string>();
   for (const block of blocks) {
     const source = generateBlockSource(block);
-    blockSources.set(block.blockName, source);
+    blockSources.set(`${block.categoryDir}/${block.blockName}`, source);
   }
 
   // Step 5: Write all files

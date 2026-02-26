@@ -1,5 +1,8 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+import {
+  getSqlDatabasesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
 
 const outputMapping = {
   target_link: "targetLink",
@@ -156,16 +159,16 @@ const outputMapping = {
 const deleteOperation: AppBlock = {
   name: "Delete",
   description: `Deletes a user from a Cloud SQL instance.`,
-  category: "Users",
+  category: "Databases",
   inputs: {
     default: {
       config: {
-        host: {
-          name: "Host",
-          description: "Host of the user in the instance.",
+        database: {
+          name: "Database",
+          description: "Name of the database to be deleted in the instance.",
           type: {
             type: "string",
-            description: "Host of the user in the instance.",
+            description: "Name of the database to be deleted in the instance.",
           },
           required: false,
         },
@@ -177,15 +180,6 @@ const deleteOperation: AppBlock = {
             type: "string",
             description:
               "Database instance ID. This does not include the project ID.",
-          },
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Name of the user in the instance.",
-          type: {
-            type: "string",
-            description: "Name of the user in the instance.",
           },
           required: false,
         },
@@ -201,7 +195,7 @@ const deleteOperation: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        const client = await getSqlUsersServiceClient(input.app.config);
+        const client = await getSqlDatabasesServiceClient(input.app.config);
 
         const request = { ...input.event.inputConfig };
 

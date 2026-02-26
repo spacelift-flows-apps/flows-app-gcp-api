@@ -1,25 +1,54 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlTiersServiceClient } from "../../lib/grpcClient.ts";
+import {
+  getSqlSslCertsServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  items: {
+    name: "items",
+    fields: {
+      cert_serial_number: "certSerialNumber",
+      create_time: "createTime",
+      common_name: "commonName",
+      expiration_time: "expirationTime",
+      sha1_fingerprint: "sha1Fingerprint",
+      self_link: "selfLink",
+    },
+  },
+};
 
 const list: AppBlock = {
   name: "List",
   description: `Lists users in the specified Cloud SQL instance.`,
-  category: "Tiers",
+  category: "SSL Certificates",
   inputs: {
     default: {
       config: {
-        project: {
-          name: "Project",
-          description: "Project ID of the project for which to list tiers.",
+        instance: {
+          name: "Instance",
+          description:
+            "Cloud SQL instance ID. This does not include the project ID.",
           type: {
             type: "string",
-            description: "Project ID of the project for which to list tiers.",
+            description:
+              "Cloud SQL instance ID. This does not include the project ID.",
+          },
+          required: false,
+        },
+        project: {
+          name: "Project",
+          description: "Project ID of the project that contains the instance.",
+          type: {
+            type: "string",
+            description:
+              "Project ID of the project that contains the instance.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        const client = await getSqlTiersServiceClient(input.app.config);
+        const client = await getSqlSslCertsServiceClient(input.app.config);
 
         const request = { ...input.event.inputConfig };
 
@@ -35,7 +64,8 @@ const list: AppBlock = {
           });
         });
 
-        await events.emit(result || {});
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
       },
     },
   },
@@ -47,45 +77,61 @@ const list: AppBlock = {
         properties: {
           kind: {
             type: "string",
-            description: "This is always `sql#tiersList`.",
+            description: "This is always `sql#sslCertsList`.",
           },
           items: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                tier: {
-                  type: "string",
-                  description:
-                    "An identifier for the machine type, for example, `db-custom-1-3840`. For related information, see [Pricing](/sql/pricing).",
-                },
-                RAM: {
-                  type: "string",
-                  description: "64-bit integer as string",
-                },
                 kind: {
                   type: "string",
-                  description: "This is always `sql#tier`.",
+                  description: "This is always `sql#sslCert`.",
                 },
-                Disk_Quota: {
+                certSerialNumber: {
                   type: "string",
-                  description: "64-bit integer as string",
+                  description:
+                    "Serial number, as extracted from the certificate.",
                 },
-                region: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description: "The applicable regions for this tier.",
+                cert: {
+                  type: "string",
+                  description: "PEM representation.",
+                },
+                createTime: {
+                  type: "string",
+                  description:
+                    "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                },
+                commonName: {
+                  type: "string",
+                  description:
+                    "User supplied name.  Constrained to [a-zA-Z.-_ ]+.",
+                },
+                expirationTime: {
+                  type: "string",
+                  description:
+                    "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                },
+                sha1Fingerprint: {
+                  type: "string",
+                  description: "Sha1 Fingerprint.",
+                },
+                instance: {
+                  type: "string",
+                  description: "Name of the database instance.",
+                },
+                selfLink: {
+                  type: "string",
+                  description: "The URI of this resource.",
                 },
               },
-              description: "A Google Cloud SQL service tier resource.",
+              description: "SslCerts Resource",
               additionalProperties: true,
             },
-            description: "List of tiers.",
+            description: "List of client certificates for the instance.",
           },
         },
-        description: "Tiers list response.",
+        description: "SslCerts list response.",
         additionalProperties: true,
       },
     },

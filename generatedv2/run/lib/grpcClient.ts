@@ -14,10 +14,14 @@ function getService(packagePath: string, serviceName: string): any {
   let current: any = grpcObject;
   for (const part of parts) {
     current = current[part];
-    if (!current) throw new Error(`Package path not found: ${packagePath} (failed at '${part}')`);
+    if (!current)
+      throw new Error(
+        `Package path not found: ${packagePath} (failed at '${part}')`,
+      );
   }
   const service = current[serviceName];
-  if (!service) throw new Error(`Service not found: ${serviceName} in ${packagePath}`);
+  if (!service)
+    throw new Error(`Service not found: ${serviceName} in ${packagePath}`);
   return service;
 }
 
@@ -55,7 +59,9 @@ async function createCredentials(
   );
 }
 
-export function createRoutingMetadata(params: Record<string, string>): grpc.Metadata {
+export function createRoutingMetadata(
+  params: Record<string, string>,
+): grpc.Metadata {
   const metadata = new grpc.Metadata();
   const parts = Object.entries(params)
     .filter(([, v]) => v !== undefined && v !== "")
@@ -94,19 +100,25 @@ export function convertKeys(obj: any, mapping: FieldNameMapping): any {
   return result;
 }
 
-export async function getBuildsClient(config: Record<string, any>): Promise<any> {
+export async function getBuildsClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "Builds");
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getExecutionsClient(config: Record<string, any>): Promise<any> {
+export async function getExecutionsClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "Executions");
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getInstancesClient(config: Record<string, any>): Promise<any> {
+export async function getInstancesClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "Instances");
   return new Service("run.googleapis.com:443", credentials);
@@ -118,25 +130,33 @@ export async function getJobsClient(config: Record<string, any>): Promise<any> {
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getRevisionsClient(config: Record<string, any>): Promise<any> {
+export async function getRevisionsClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "Revisions");
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getServicesClient(config: Record<string, any>): Promise<any> {
+export async function getServicesClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "Services");
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getTasksClient(config: Record<string, any>): Promise<any> {
+export async function getTasksClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "Tasks");
   return new Service("run.googleapis.com:443", credentials);
 }
 
-export async function getWorkerPoolsClient(config: Record<string, any>): Promise<any> {
+export async function getWorkerPoolsClient(
+  config: Record<string, any>,
+): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.run.v2", "WorkerPools");
   return new Service("run.googleapis.com:443", credentials);

@@ -308,8 +308,8 @@ export async function writeAppFiles(
     fs.mkdirSync(path.join(outputDir, "blocks", cat), { recursive: true });
   }
 
-  // Collect service names for grpcClient generation
-  const serviceNames = [...new Set(blocks.map((b) => b.serviceName))];
+  // Collect service names for grpcClient generation (sorted for determinism)
+  const serviceNames = [...new Set(blocks.map((b) => b.serviceName))].sort();
 
   // Determine the proto package path (e.g. "google.pubsub.v1")
   const protoPackage = protoResult.services[0]?.fullName
@@ -336,7 +336,7 @@ export async function writeAppFiles(
 
   // Write block files
   for (const block of blocks) {
-    const source = blockSources.get(block.blockName);
+    const source = blockSources.get(`${block.categoryDir}/${block.blockName}`);
     if (source) {
       const filePath = path.join(
         outputDir,

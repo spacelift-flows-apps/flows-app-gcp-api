@@ -135,6 +135,14 @@ export async function getTagBindingsClient(
   return new Service("cloudresourcemanager.googleapis.com:443", credentials);
 }
 
+export async function getTagHoldsClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.cloud.resourcemanager.v3", "TagHolds");
+  return new Service("cloudresourcemanager.googleapis.com:443", credentials);
+}
+
 export async function getTagKeysClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -148,13 +156,5 @@ export async function getTagValuesClient(
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.resourcemanager.v3", "TagValues");
-  return new Service("cloudresourcemanager.googleapis.com:443", credentials);
-}
-
-export async function getTagHoldsClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.resourcemanager.v3", "TagHolds");
   return new Service("cloudresourcemanager.googleapis.com:443", credentials);
 }

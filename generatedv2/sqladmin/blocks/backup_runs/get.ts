@@ -1,58 +1,57 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+import {
+  getSqlBackupRunsServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
 
 const outputMapping = {
-  sqlserver_user_details: {
-    name: "sqlserverUserDetails",
+  enqueued_time: "enqueuedTime",
+  start_time: "startTime",
+  end_time: "endTime",
+  window_start_time: "windowStartTime",
+  self_link: "selfLink",
+  database_version: "databaseVersion",
+  disk_encryption_configuration: {
+    name: "diskEncryptionConfiguration",
     fields: {
-      server_roles: "serverRoles",
+      kms_key_name: "kmsKeyName",
     },
   },
-  iam_email: "iamEmail",
-  password_policy: {
-    name: "passwordPolicy",
+  disk_encryption_status: {
+    name: "diskEncryptionStatus",
     fields: {
-      allowed_failed_attempts: "allowedFailedAttempts",
-      password_expiration_duration: "passwordExpirationDuration",
-      enable_failed_attempts_check: "enableFailedAttemptsCheck",
-      status: {
-        name: "status",
-        fields: {
-          password_expiration_time: "passwordExpirationTime",
-        },
-      },
-      enable_password_verification: "enablePasswordVerification",
+      kms_key_version_name: "kmsKeyVersionName",
     },
   },
-  dual_password_type: "dualPasswordType",
-  iam_status: "iamStatus",
-  database_roles: "databaseRoles",
+  backup_kind: "backupKind",
+  time_zone: "timeZone",
+  max_chargeable_bytes: "maxChargeableBytes",
 };
 
 const get: AppBlock = {
   name: "Get",
   description: `Retrieves a resource containing information about a user.`,
-  category: "Users",
+  category: "Backup Runs",
   inputs: {
     default: {
       config: {
-        instance: {
-          name: "Instance",
-          description:
-            "Database instance ID. This does not include the project ID.",
+        id: {
+          name: "Id",
+          description: "The ID of this backup run.",
           type: {
             type: "string",
-            description:
-              "Database instance ID. This does not include the project ID.",
+            description: "64-bit integer as string",
           },
           required: false,
         },
-        name: {
-          name: "Name",
-          description: "User of the instance.",
+        instance: {
+          name: "Instance",
+          description:
+            "Cloud SQL instance ID. This does not include the project ID.",
           type: {
             type: "string",
-            description: "User of the instance.",
+            description:
+              "Cloud SQL instance ID. This does not include the project ID.",
           },
           required: false,
         },
@@ -66,18 +65,9 @@ const get: AppBlock = {
           },
           required: false,
         },
-        host: {
-          name: "Host",
-          description: "Host of a user of the instance.",
-          type: {
-            type: "string",
-            description: "Host of a user of the instance.",
-          },
-          required: false,
-        },
       },
       onEvent: async (input) => {
-        const client = await getSqlUsersServiceClient(input.app.config);
+        const client = await getSqlBackupRunsServiceClient(input.app.config);
 
         const request = { ...input.event.inputConfig };
 
@@ -106,143 +96,191 @@ const get: AppBlock = {
         properties: {
           kind: {
             type: "string",
-            description: "This is always `sql#user`.",
+            description: "This is always `sql#backupRun`.",
           },
-          password: {
+          status: {
             type: "string",
-            description: "The password for the user.",
+            enum: [
+              "SQL_BACKUP_RUN_STATUS_UNSPECIFIED",
+              "ENQUEUED",
+              "OVERDUE",
+              "RUNNING",
+              "FAILED",
+              "SUCCESSFUL",
+              "SKIPPED",
+              "DELETION_PENDING",
+              "DELETION_FAILED",
+              "DELETED",
+            ],
+            description: "The status of a backup run.",
           },
-          etag: {
+          enqueuedTime: {
             type: "string",
-            description:
-              "This field is deprecated and will be removed from a future version of the API.",
+            description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          name: {
+          id: {
             type: "string",
-            description:
-              "The name of the user in the Cloud SQL instance. Can be omitted for `update` because it is already specified in the URL.",
+            description: "64-bit integer as string",
           },
-          host: {
+          startTime: {
             type: "string",
-            description:
-              "Optional. The host from which the user can connect. For `insert` operations, host defaults to an empty string. For `update` operations, host is specified as part of the request URL. The host name cannot be updated after insertion.  For a MySQL instance, it's required; for a PostgreSQL or SQL Server instance, it's optional.",
+            description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          instance: {
+          endTime: {
             type: "string",
-            description:
-              "The name of the Cloud SQL instance. This does not include the project ID. Can be omitted for `update` because it is already specified on the URL.",
+            description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          project: {
-            type: "string",
-            description:
-              "The project ID of the project containing the Cloud SQL database. The Google apps domain is prefixed if applicable. Can be omitted for `update` because it is already specified on the URL.",
+          error: {
+            type: "object",
+            properties: {
+              kind: {
+                type: "string",
+                description: "This is always `sql#operationError`.",
+              },
+              code: {
+                type: "string",
+                description: "Identifies the specific error that occurred.",
+              },
+              message: {
+                type: "string",
+                description:
+                  "Additional information about the error encountered.",
+              },
+            },
+            description: "Database instance operation error.",
+            additionalProperties: true,
           },
           type: {
             type: "string",
-            enum: [
-              "BUILT_IN",
-              "CLOUD_IAM_USER",
-              "CLOUD_IAM_SERVICE_ACCOUNT",
-              "CLOUD_IAM_GROUP",
-              "CLOUD_IAM_GROUP_USER",
-              "CLOUD_IAM_GROUP_SERVICE_ACCOUNT",
-              "ENTRAID_USER",
-            ],
-            description:
-              "The user type. It determines the method to authenticate the user during login. The default is the database's built-in user type.",
+            enum: ["SQL_BACKUP_RUN_TYPE_UNSPECIFIED", "AUTOMATED", "ON_DEMAND"],
+            description: "Type of backup (i.e. automated, on demand, etc).",
           },
-          sqlserverUserDetails: {
-            type: "object",
-            properties: {
-              disabled: {
-                type: "boolean",
-                description: "If the user has been disabled",
-              },
-              serverRoles: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
-                description: "The server roles for this user",
-              },
-            },
-            description:
-              "Represents a Sql Server user on the Cloud SQL instance.",
-            additionalProperties: true,
-          },
-          iamEmail: {
+          description: {
             type: "string",
             description:
-              "Optional. The full email for an IAM user. For normal database users, this will not be filled. Only applicable to MySQL database users.",
+              "The description of this run, only applicable to on-demand backups.",
           },
-          passwordPolicy: {
+          windowStartTime: {
+            type: "string",
+            description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+          },
+          instance: {
+            type: "string",
+            description: "Name of the database instance.",
+          },
+          selfLink: {
+            type: "string",
+            description: "The URI of this resource.",
+          },
+          location: {
+            type: "string",
+            description: "Location of the backups.",
+          },
+          databaseVersion: {
+            type: "string",
+            enum: [
+              "SQL_DATABASE_VERSION_UNSPECIFIED",
+              "MYSQL_5_1",
+              "MYSQL_5_5",
+              "MYSQL_5_6",
+              "MYSQL_5_7",
+              "MYSQL_8_0",
+              "MYSQL_8_0_18",
+              "MYSQL_8_0_26",
+              "MYSQL_8_0_27",
+              "MYSQL_8_0_28",
+              "MYSQL_8_0_29",
+              "MYSQL_8_0_30",
+              "MYSQL_8_0_31",
+              "MYSQL_8_0_32",
+              "MYSQL_8_0_33",
+              "MYSQL_8_0_34",
+              "MYSQL_8_0_35",
+              "MYSQL_8_0_36",
+              "MYSQL_8_0_37",
+              "MYSQL_8_0_39",
+              "MYSQL_8_0_40",
+              "MYSQL_8_0_41",
+              "MYSQL_8_0_42",
+              "MYSQL_8_0_43",
+              "MYSQL_8_0_44",
+              "MYSQL_8_0_45",
+              "MYSQL_8_0_46",
+              "MYSQL_8_4",
+              "MYSQL_9_7",
+              "SQLSERVER_2017_STANDARD",
+              "SQLSERVER_2017_ENTERPRISE",
+              "SQLSERVER_2017_EXPRESS",
+              "SQLSERVER_2017_WEB",
+              "POSTGRES_9_6",
+              "POSTGRES_10",
+              "POSTGRES_11",
+              "POSTGRES_12",
+              "POSTGRES_13",
+              "POSTGRES_14",
+              "POSTGRES_15",
+              "POSTGRES_16",
+              "POSTGRES_17",
+              "POSTGRES_18",
+              "SQLSERVER_2019_STANDARD",
+              "SQLSERVER_2019_ENTERPRISE",
+              "SQLSERVER_2019_EXPRESS",
+              "SQLSERVER_2019_WEB",
+              "SQLSERVER_2022_STANDARD",
+              "SQLSERVER_2022_ENTERPRISE",
+              "SQLSERVER_2022_EXPRESS",
+              "SQLSERVER_2022_WEB",
+            ],
+            description: "The database engine type and version.",
+          },
+          diskEncryptionConfiguration: {
             type: "object",
             properties: {
-              allowedFailedAttempts: {
-                type: "integer",
-                description:
-                  "Number of failed login attempts allowed before user get locked.",
-              },
-              passwordExpirationDuration: {
+              kmsKeyName: {
                 type: "string",
-                description: "Duration string (e.g., '1.5s', '300s')",
+                description: "Resource name of KMS key for disk encryption",
               },
-              enableFailedAttemptsCheck: {
-                type: "boolean",
+              kind: {
+                type: "string",
                 description:
-                  "If true, failed login attempts check will be enabled.",
-              },
-              status: {
-                type: "object",
-                properties: {
-                  locked: {
-                    type: "boolean",
-                    description:
-                      "If true, user does not have login privileges.",
-                  },
-                  passwordExpirationTime: {
-                    type: "string",
-                    description:
-                      "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
-                  },
-                },
-                description: "Read-only password status.",
-                additionalProperties: true,
-              },
-              enablePasswordVerification: {
-                type: "boolean",
-                description:
-                  "If true, the user must specify the current password before changing the password. This flag is supported only for MySQL.",
+                  "This is always `sql#diskEncryptionConfiguration`.",
               },
             },
-            description: "User level password validation policy.",
+            description: "Disk encryption configuration for an instance.",
             additionalProperties: true,
           },
-          dualPasswordType: {
-            type: "string",
-            enum: [
-              "DUAL_PASSWORD_TYPE_UNSPECIFIED",
-              "NO_MODIFY_DUAL_PASSWORD",
-              "NO_DUAL_PASSWORD",
-              "DUAL_PASSWORD",
-            ],
-            description: "Dual password status for the user.",
-          },
-          iamStatus: {
-            type: "string",
-            enum: ["IAM_STATUS_UNSPECIFIED", "INACTIVE", "ACTIVE"],
-            description:
-              "Indicates if a group is active or inactive for IAM database authentication.",
-          },
-          databaseRoles: {
-            type: "array",
-            items: {
-              type: "string",
+          diskEncryptionStatus: {
+            type: "object",
+            properties: {
+              kmsKeyVersionName: {
+                type: "string",
+                description:
+                  "KMS key version used to encrypt the Cloud SQL instance resource",
+              },
+              kind: {
+                type: "string",
+                description: "This is always `sql#diskEncryptionStatus`.",
+              },
             },
-            description: "Optional. Role memberships of the user",
+            description: "Disk encryption status for an instance.",
+            additionalProperties: true,
+          },
+          backupKind: {
+            type: "string",
+            enum: ["SQL_BACKUP_KIND_UNSPECIFIED", "SNAPSHOT", "PHYSICAL"],
+            description: "Defines the supported backup kinds.",
+          },
+          timeZone: {
+            type: "string",
+            description:
+              "Backup time zone to prevent restores to an instance with a different time zone. Now relevant only for SQL Server.",
+          },
+          maxChargeableBytes: {
+            type: "string",
+            description: "64-bit integer as string",
           },
         },
-        description: "A Cloud SQL user resource.",
+        description: "A BackupRun resource.",
         additionalProperties: true,
       },
     },

@@ -640,11 +640,14 @@ export async function parseProtoFiles(
     { longs: String, enums: String, bytes: String },
   );
 
+  // Sort descriptor set for deterministic output (protobufjs ordering is not stable)
+  const sortedDescriptorSetJson = sortDescriptorSet(descriptorSetJson);
+
   return {
     services,
     messages: allMessages,
     enums: allEnums,
-    descriptorSetJson,
+    descriptorSetJson: sortedDescriptorSetJson,
   };
 }
 
@@ -713,4 +716,45 @@ function convertService(
     rpcs,
     comment: sourceComments.get(service.name),
   };
+}
+
+/**
+ * Deep-sort a FileDescriptorSet JSON for deterministic output.
+ * protobufjs produces non-deterministic ordering of messages, enums,
+ * extensions, object keys, and file-level options.
+ */
+function sortDescriptorSet(descriptorSet: any): any {
+  if (!descriptorSet?.file) return descriptorSet;
+
+  // File-level options (javaPackage, goPackage, etc.) are not used by
+  // gRPC proto-loader at runtime and vary non-deterministically when
+  // protobufjs merges multiple source files into one descriptor entry.
+  for (const file of descriptorSet.file) {
+    delete file.options;
+  }
+
+  return deepSortKeys(descriptorSet);
+}
+
+/**
+ * Recursively sort all object keys and named arrays for deterministic JSON output.
+ * Arrays of objects with a `name` field are sorted by name.
+ */
+function deepSortKeys(value: any): any {
+  if (value === null || value === undefined || typeof value !== "object") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    const sorted = value.map(deepSortKeys);
+    // Sort arrays of objects by `name` if all elements have one
+    if (sorted.length > 0 && sorted.every((v: any) => typeof v === "object" && v !== null && "name" in v)) {
+      sorted.sort((a: any, b: any) => String(a.name).localeCompare(String(b.name)));
+    }
+    return sorted;
+  }
+  const result: Record<string, any> = {};
+  for (const key of Object.keys(value).sort()) {
+    result[key] = deepSortKeys(value[key]);
+  }
+  return result;
 }

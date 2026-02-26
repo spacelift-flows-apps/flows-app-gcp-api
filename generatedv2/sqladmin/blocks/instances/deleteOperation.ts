@@ -1,5 +1,15 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+import {
+  getSqlInstancesServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  enableFinalBackup: "enable_final_backup",
+  finalBackupTtlDays: "final_backup_ttl_days",
+  finalBackupExpiryTime: "final_backup_expiry_time",
+  finalBackupDescription: "final_backup_description",
+};
 
 const outputMapping = {
   target_link: "targetLink",
@@ -156,54 +166,78 @@ const outputMapping = {
 const deleteOperation: AppBlock = {
   name: "Delete",
   description: `Deletes a user from a Cloud SQL instance.`,
-  category: "Users",
+  category: "Instances",
   inputs: {
     default: {
       config: {
-        host: {
-          name: "Host",
-          description: "Host of the user in the instance.",
-          type: {
-            type: "string",
-            description: "Host of the user in the instance.",
-          },
-          required: false,
-        },
         instance: {
           name: "Instance",
           description:
-            "Database instance ID. This does not include the project ID.",
+            "Cloud SQL instance ID. This does not include the project ID.",
           type: {
             type: "string",
             description:
-              "Database instance ID. This does not include the project ID.",
-          },
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Name of the user in the instance.",
-          type: {
-            type: "string",
-            description: "Name of the user in the instance.",
+              "Cloud SQL instance ID. This does not include the project ID.",
           },
           required: false,
         },
         project: {
           name: "Project",
-          description: "Project ID of the project that contains the instance.",
+          description:
+            "Project ID of the project that contains the instance to be deleted.",
           type: {
             type: "string",
             description:
-              "Project ID of the project that contains the instance.",
+              "Project ID of the project that contains the instance to be deleted.",
+          },
+          required: false,
+        },
+        enableFinalBackup: {
+          name: "Enable Final Backup",
+          description:
+            "Flag to opt-in for final backup. By default, it is turned off.",
+          type: {
+            type: "boolean",
+            description:
+              "Flag to opt-in for final backup. By default, it is turned off.",
+          },
+          required: false,
+        },
+        finalBackupTtlDays: {
+          name: "Final Backup Ttl Days",
+          description: "Optional. Retention period of the final backup.",
+          type: {
+            type: "string",
+            description:
+              "64-bit integer as string (Part of 'expiration' - only one field in this group can be set)",
+          },
+          required: false,
+        },
+        finalBackupExpiryTime: {
+          name: "Final Backup Expiry Time",
+          description:
+            "Optional. Final Backup expiration time. Timestamp in UTC of when this resource is considered expired.",
+          type: {
+            type: "string",
+            description:
+              "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z') (Part of 'expiration' - only one field in this group can be set)",
+          },
+          required: false,
+        },
+        finalBackupDescription: {
+          name: "Final Backup Description",
+          description: "Optional. The description of the final backup.",
+          type: {
+            type: "string",
+            description: "Optional. The description of the final backup.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        const client = await getSqlUsersServiceClient(input.app.config);
+        const client = await getSqlInstancesServiceClient(input.app.config);
 
-        const request = { ...input.event.inputConfig };
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.delete(request, (err: any, response: any) => {

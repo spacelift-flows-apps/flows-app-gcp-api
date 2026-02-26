@@ -1,5 +1,12 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { getSqlUsersServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+import {
+  getSqlSslCertsServiceClient,
+  convertKeys,
+} from "../../lib/grpcClient.ts";
+
+const inputMapping = {
+  sha1Fingerprint: "sha1_fingerprint",
+};
 
 const outputMapping = {
   target_link: "targetLink",
@@ -156,36 +163,18 @@ const outputMapping = {
 const deleteOperation: AppBlock = {
   name: "Delete",
   description: `Deletes a user from a Cloud SQL instance.`,
-  category: "Users",
+  category: "SSL Certificates",
   inputs: {
     default: {
       config: {
-        host: {
-          name: "Host",
-          description: "Host of the user in the instance.",
-          type: {
-            type: "string",
-            description: "Host of the user in the instance.",
-          },
-          required: false,
-        },
         instance: {
           name: "Instance",
           description:
-            "Database instance ID. This does not include the project ID.",
+            "Cloud SQL instance ID. This does not include the project ID.",
           type: {
             type: "string",
             description:
-              "Database instance ID. This does not include the project ID.",
-          },
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Name of the user in the instance.",
-          type: {
-            type: "string",
-            description: "Name of the user in the instance.",
+              "Cloud SQL instance ID. This does not include the project ID.",
           },
           required: false,
         },
@@ -199,11 +188,20 @@ const deleteOperation: AppBlock = {
           },
           required: false,
         },
+        sha1Fingerprint: {
+          name: "Sha1 Fingerprint",
+          description: "Sha1 FingerPrint.",
+          type: {
+            type: "string",
+            description: "Sha1 FingerPrint.",
+          },
+          required: false,
+        },
       },
       onEvent: async (input) => {
-        const client = await getSqlUsersServiceClient(input.app.config);
+        const client = await getSqlSslCertsServiceClient(input.app.config);
 
-        const request = { ...input.event.inputConfig };
+        const request = convertKeys(input.event.inputConfig, inputMapping);
 
         const result = await new Promise<any>((resolve, reject) => {
           client.delete(request, (err: any, response: any) => {
