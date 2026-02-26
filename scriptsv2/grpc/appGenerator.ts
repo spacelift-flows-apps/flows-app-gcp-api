@@ -267,6 +267,10 @@ export async function writeAppFiles(
 ): Promise<void> {
   const outputDir = path.resolve(config.outputDir);
 
+  // Wipe generated directories to remove stale files
+  fs.rmSync(path.join(outputDir, "blocks"), { recursive: true, force: true });
+  fs.rmSync(path.join(outputDir, "lib"), { recursive: true, force: true });
+
   // Create directory structure
   fs.mkdirSync(path.join(outputDir, "lib"), { recursive: true });
   fs.mkdirSync(path.join(outputDir, "blocks"), { recursive: true });
