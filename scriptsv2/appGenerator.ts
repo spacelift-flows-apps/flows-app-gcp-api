@@ -179,14 +179,18 @@ ${clientFactories}
  * Generate the blocks/index.ts file with all block imports and exports.
  */
 export function generateBlocksIndex(blocks: GeneratedBlock[]): string {
+  // Use category_blockName as the import identifier to avoid collisions
+  // when multiple services share RPC names (e.g. GetIamPolicy).
+  const importId = (b: GeneratedBlock) => `${b.categoryDir}_${b.blockName}`;
+
   const imports = blocks
     .map(
-      (b) => `import ${b.blockName} from "./${b.categoryDir}/${b.blockName}.ts";`,
+      (b) => `import ${importId(b)} from "./${b.categoryDir}/${b.blockName}.ts";`,
     )
     .join("\n");
 
   const entries = blocks
-    .map((b) => `  ${b.categoryDir}_${b.blockName}: ${b.blockName},`)
+    .map((b) => `  ${importId(b)}: ${importId(b)},`)
     .join("\n");
 
   return `${imports}

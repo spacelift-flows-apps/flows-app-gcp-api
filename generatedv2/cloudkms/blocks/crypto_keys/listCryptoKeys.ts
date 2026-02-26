@@ -1,0 +1,533 @@
+import { AppBlock, events } from "@slflows/sdk/v1";
+import { getKeyManagementServiceClient } from "../../lib/grpcClient.ts";
+
+const listCryptoKeys: AppBlock = {
+  name: "List Crypto Keys",
+  description: `Lists [CryptoKeys][google.cloud.kms.v1.CryptoKey].`,
+  category: "Crypto Keys",
+  inputs: {
+    default: {
+      config: {
+        parent: {
+          name: "Parent",
+          description:
+            "Required. The resource name of the [KeyRing][google.cloud.kms.v1.KeyRing] to list, in the format `projects/*/locations/*/keyRings/*`.",
+          type: {
+            type: "string",
+            description:
+              "Required. The resource name of the [KeyRing][google.cloud.kms.v1.KeyRing] to list, in the format `projects/*/locations/*/keyRings/*`.",
+          },
+          required: true,
+        },
+        page_size: {
+          name: "Page Size",
+          description:
+            "Optional. Optional limit on the number of [CryptoKeys][google.cloud.kms.v1.CryptoKey] to include in the response. Further [CryptoKeys][google.cloud.kms.v1.CryptoKey] can subsequently be obtained by including the [ListCryptoKeysResponse.next_page_token][google.cloud.kms.v1.ListCryptoKeysResponse.next_page_token] in a subsequent request.  If unspecified, the server will pick an appropriate default.",
+          type: {
+            type: "integer",
+            description:
+              "Optional. Optional limit on the number of [CryptoKeys][google.cloud.kms.v1.CryptoKey] to include in the response. Further [CryptoKeys][google.cloud.kms.v1.CryptoKey] can subsequently be obtained by including the [ListCryptoKeysResponse.next_page_token][google.cloud.kms.v1.ListCryptoKeysResponse.next_page_token] in a subsequent request.  If unspecified, the server will pick an appropriate default.",
+          },
+          required: false,
+        },
+        page_token: {
+          name: "Page Token",
+          description:
+            "Optional. Optional pagination token, returned earlier via [ListCryptoKeysResponse.next_page_token][google.cloud.kms.v1.ListCryptoKeysResponse.next_page_token].",
+          type: {
+            type: "string",
+            description:
+              "Optional. Optional pagination token, returned earlier via [ListCryptoKeysResponse.next_page_token][google.cloud.kms.v1.ListCryptoKeysResponse.next_page_token].",
+          },
+          required: false,
+        },
+        version_view: {
+          name: "Version View",
+          description:
+            "The fields of the primary version to include in the response.",
+          type: {
+            type: "string",
+            enum: ["CRYPTO_KEY_VERSION_VIEW_UNSPECIFIED", "FULL"],
+            description:
+              "The fields of the primary version to include in the response.",
+          },
+          required: false,
+        },
+        filter: {
+          name: "Filter",
+          description:
+            "Optional. Only include resources that match the filter in the response. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+          type: {
+            type: "string",
+            description:
+              "Optional. Only include resources that match the filter in the response. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+          },
+          required: false,
+        },
+        order_by: {
+          name: "Order By",
+          description:
+            "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+          type: {
+            type: "string",
+            description:
+              "Optional. Specify how the results should be sorted. If not specified, the results will be sorted in the default order. For more information, see [Sorting and filtering list results](https://cloud.google.com/kms/docs/sorting-and-filtering).",
+          },
+          required: false,
+        },
+      },
+      onEvent: async (input) => {
+        const client = await getKeyManagementServiceClient(input.app.config);
+
+        const request: Record<string, any> = {};
+        if (input.event.inputConfig.parent !== undefined)
+          request.parent = input.event.inputConfig.parent;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
+        if (input.event.inputConfig.version_view !== undefined)
+          request.version_view = input.event.inputConfig.version_view;
+        if (input.event.inputConfig.filter !== undefined)
+          request.filter = input.event.inputConfig.filter;
+        if (input.event.inputConfig.order_by !== undefined)
+          request.order_by = input.event.inputConfig.order_by;
+
+        const result = await new Promise<any>((resolve, reject) => {
+          client.listCryptoKeys(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
+        });
+
+        await events.emit(result || {});
+      },
+    },
+  },
+  outputs: {
+    default: {
+      possiblePrimaryParents: ["default"],
+      type: {
+        type: "object",
+        properties: {
+          crypto_keys: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                name: {
+                  type: "string",
+                  description:
+                    "Output only. The resource name for this [CryptoKey][google.cloud.kms.v1.CryptoKey] in the format `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
+                },
+                primary: {
+                  type: "object",
+                  properties: {
+                    name: {
+                      type: "string",
+                      description:
+                        "Output only. The resource name for this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] in the format `projects/*/locations/*/keyRings/*/cryptoKeys/*/cryptoKeyVersions/*`.",
+                    },
+                    state: {
+                      type: "string",
+                      enum: [
+                        "CRYPTO_KEY_VERSION_STATE_UNSPECIFIED",
+                        "PENDING_GENERATION",
+                        "ENABLED",
+                        "DISABLED",
+                        "DESTROYED",
+                        "DESTROY_SCHEDULED",
+                        "PENDING_IMPORT",
+                        "IMPORT_FAILED",
+                        "GENERATION_FAILED",
+                        "PENDING_EXTERNAL_DESTRUCTION",
+                        "EXTERNAL_DESTRUCTION_FAILED",
+                      ],
+                      description:
+                        "The current state of the [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion].",
+                    },
+                    protection_level: {
+                      type: "string",
+                      enum: [
+                        "PROTECTION_LEVEL_UNSPECIFIED",
+                        "SOFTWARE",
+                        "HSM",
+                        "EXTERNAL",
+                        "EXTERNAL_VPC",
+                        "HSM_SINGLE_TENANT",
+                      ],
+                      description:
+                        "[ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] specifies how cryptographic operations are performed. For more information, see [Protection levels] (https://cloud.google.com/kms/docs/algorithms#protection_levels).",
+                    },
+                    algorithm: {
+                      type: "string",
+                      enum: [
+                        "CRYPTO_KEY_VERSION_ALGORITHM_UNSPECIFIED",
+                        "GOOGLE_SYMMETRIC_ENCRYPTION",
+                        "AES_128_GCM",
+                        "AES_256_GCM",
+                        "AES_128_CBC",
+                        "AES_256_CBC",
+                        "AES_128_CTR",
+                        "AES_256_CTR",
+                        "RSA_SIGN_PSS_2048_SHA256",
+                        "RSA_SIGN_PSS_3072_SHA256",
+                        "RSA_SIGN_PSS_4096_SHA256",
+                        "RSA_SIGN_PSS_4096_SHA512",
+                        "RSA_SIGN_PKCS1_2048_SHA256",
+                        "RSA_SIGN_PKCS1_3072_SHA256",
+                        "RSA_SIGN_PKCS1_4096_SHA256",
+                        "RSA_SIGN_PKCS1_4096_SHA512",
+                        "RSA_SIGN_RAW_PKCS1_2048",
+                        "RSA_SIGN_RAW_PKCS1_3072",
+                        "RSA_SIGN_RAW_PKCS1_4096",
+                        "RSA_DECRYPT_OAEP_2048_SHA256",
+                        "RSA_DECRYPT_OAEP_3072_SHA256",
+                        "RSA_DECRYPT_OAEP_4096_SHA256",
+                        "RSA_DECRYPT_OAEP_4096_SHA512",
+                        "RSA_DECRYPT_OAEP_2048_SHA1",
+                        "RSA_DECRYPT_OAEP_3072_SHA1",
+                        "RSA_DECRYPT_OAEP_4096_SHA1",
+                        "EC_SIGN_P256_SHA256",
+                        "EC_SIGN_P384_SHA384",
+                        "EC_SIGN_SECP256K1_SHA256",
+                        "EC_SIGN_ED25519",
+                        "HMAC_SHA256",
+                        "HMAC_SHA1",
+                        "HMAC_SHA384",
+                        "HMAC_SHA512",
+                        "HMAC_SHA224",
+                        "EXTERNAL_SYMMETRIC_ENCRYPTION",
+                        "ML_KEM_768",
+                        "ML_KEM_1024",
+                        "KEM_XWING",
+                        "PQ_SIGN_ML_DSA_44",
+                        "PQ_SIGN_ML_DSA_65",
+                        "PQ_SIGN_ML_DSA_87",
+                        "PQ_SIGN_SLH_DSA_SHA2_128S",
+                        "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
+                        "PQ_SIGN_ML_DSA_44_EXTERNAL_MU",
+                        "PQ_SIGN_ML_DSA_65_EXTERNAL_MU",
+                        "PQ_SIGN_ML_DSA_87_EXTERNAL_MU",
+                      ],
+                      description:
+                        "Output only. The [CryptoKeyVersionAlgorithm][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm] that this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] supports.",
+                    },
+                    attestation: {
+                      type: "object",
+                      properties: {
+                        format: {
+                          type: "string",
+                          enum: [
+                            "ATTESTATION_FORMAT_UNSPECIFIED",
+                            "CAVIUM_V1_COMPRESSED",
+                            "CAVIUM_V2_COMPRESSED",
+                          ],
+                          description:
+                            "Output only. The format of the attestation data.",
+                        },
+                        content: {
+                          type: "string",
+                          description: "Base64-encoded bytes",
+                        },
+                        cert_chains: {
+                          type: "object",
+                          properties: {
+                            cavium_certs: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Cavium certificate chain corresponding to the attestation.",
+                            },
+                            google_card_certs: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Google card certificate chain corresponding to the attestation.",
+                            },
+                            google_partition_certs: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Google partition certificate chain corresponding to the attestation.",
+                            },
+                          },
+                          description:
+                            "Certificate chains needed to verify the attestation. Certificates in chains are PEM-encoded and are ordered based on https://tools.ietf.org/html/rfc5246#section-7.4.2.",
+                          additionalProperties: true,
+                        },
+                      },
+                      description:
+                        "Contains an HSM-generated attestation about a key operation. For more information, see [Verifying attestations] (https://cloud.google.com/kms/docs/attest-key).",
+                      additionalProperties: true,
+                    },
+                    create_time: {
+                      type: "string",
+                      description:
+                        "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                    },
+                    generate_time: {
+                      type: "string",
+                      description:
+                        "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                    },
+                    destroy_time: {
+                      type: "string",
+                      description:
+                        "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                    },
+                    destroy_event_time: {
+                      type: "string",
+                      description:
+                        "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                    },
+                    import_job: {
+                      type: "string",
+                      description:
+                        "Output only. The name of the [ImportJob][google.cloud.kms.v1.ImportJob] used in the most recent import of this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion]. Only present if the underlying key material was imported.",
+                    },
+                    import_time: {
+                      type: "string",
+                      description:
+                        "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                    },
+                    import_failure_reason: {
+                      type: "string",
+                      description:
+                        "Output only. The root cause of the most recent import failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [IMPORT_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.IMPORT_FAILED].",
+                    },
+                    generation_failure_reason: {
+                      type: "string",
+                      description:
+                        "Output only. The root cause of the most recent generation failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [GENERATION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.GENERATION_FAILED].",
+                    },
+                    external_destruction_failure_reason: {
+                      type: "string",
+                      description:
+                        "Output only. The root cause of the most recent external destruction failure. Only present if [state][google.cloud.kms.v1.CryptoKeyVersion.state] is [EXTERNAL_DESTRUCTION_FAILED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.EXTERNAL_DESTRUCTION_FAILED].",
+                    },
+                    external_protection_level_options: {
+                      type: "object",
+                      properties: {
+                        external_key_uri: {
+                          type: "string",
+                          description:
+                            "The URI for an external resource that this [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] represents.",
+                        },
+                        ekm_connection_key_path: {
+                          type: "string",
+                          description:
+                            'The path to the external key material on the EKM when using [EkmConnection][google.cloud.kms.v1.EkmConnection] e.g., "v0/my/key". Set this field instead of external_key_uri when using an [EkmConnection][google.cloud.kms.v1.EkmConnection].',
+                        },
+                      },
+                      description:
+                        "ExternalProtectionLevelOptions stores a group of additional fields for configuring a [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] that are specific to the [EXTERNAL][google.cloud.kms.v1.ProtectionLevel.EXTERNAL] protection level and [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC] protection levels.",
+                      additionalProperties: true,
+                    },
+                    reimport_eligible: {
+                      type: "boolean",
+                      description:
+                        "Output only. Whether or not this key version is eligible for reimport, by being specified as a target in [ImportCryptoKeyVersionRequest.crypto_key_version][google.cloud.kms.v1.ImportCryptoKeyVersionRequest.crypto_key_version].",
+                    },
+                  },
+                  description:
+                    "A [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] represents an individual cryptographic key, and the associated key material.  An [ENABLED][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionState.ENABLED] version can be used for cryptographic operations.  For security reasons, the raw cryptographic key material represented by a [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] can never be viewed or exported. It can only be used to encrypt, decrypt, or sign data when an authorized user or application invokes Cloud KMS.",
+                  additionalProperties: true,
+                },
+                purpose: {
+                  type: "string",
+                  enum: [
+                    "CRYPTO_KEY_PURPOSE_UNSPECIFIED",
+                    "ENCRYPT_DECRYPT",
+                    "ASYMMETRIC_SIGN",
+                    "ASYMMETRIC_DECRYPT",
+                    "RAW_ENCRYPT_DECRYPT",
+                    "MAC",
+                    "KEY_ENCAPSULATION",
+                  ],
+                  description:
+                    "Immutable. The immutable purpose of this [CryptoKey][google.cloud.kms.v1.CryptoKey].",
+                },
+                create_time: {
+                  type: "string",
+                  description:
+                    "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                },
+                next_rotation_time: {
+                  type: "string",
+                  description:
+                    "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
+                },
+                rotation_period: {
+                  type: "string",
+                  description: "Duration string (e.g., '1.5s', '300s')",
+                },
+                version_template: {
+                  type: "object",
+                  properties: {
+                    protection_level: {
+                      type: "string",
+                      enum: [
+                        "PROTECTION_LEVEL_UNSPECIFIED",
+                        "SOFTWARE",
+                        "HSM",
+                        "EXTERNAL",
+                        "EXTERNAL_VPC",
+                        "HSM_SINGLE_TENANT",
+                      ],
+                      description:
+                        "[ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] specifies how cryptographic operations are performed. For more information, see [Protection levels] (https://cloud.google.com/kms/docs/algorithms#protection_levels).",
+                    },
+                    algorithm: {
+                      type: "string",
+                      enum: [
+                        "CRYPTO_KEY_VERSION_ALGORITHM_UNSPECIFIED",
+                        "GOOGLE_SYMMETRIC_ENCRYPTION",
+                        "AES_128_GCM",
+                        "AES_256_GCM",
+                        "AES_128_CBC",
+                        "AES_256_CBC",
+                        "AES_128_CTR",
+                        "AES_256_CTR",
+                        "RSA_SIGN_PSS_2048_SHA256",
+                        "RSA_SIGN_PSS_3072_SHA256",
+                        "RSA_SIGN_PSS_4096_SHA256",
+                        "RSA_SIGN_PSS_4096_SHA512",
+                        "RSA_SIGN_PKCS1_2048_SHA256",
+                        "RSA_SIGN_PKCS1_3072_SHA256",
+                        "RSA_SIGN_PKCS1_4096_SHA256",
+                        "RSA_SIGN_PKCS1_4096_SHA512",
+                        "RSA_SIGN_RAW_PKCS1_2048",
+                        "RSA_SIGN_RAW_PKCS1_3072",
+                        "RSA_SIGN_RAW_PKCS1_4096",
+                        "RSA_DECRYPT_OAEP_2048_SHA256",
+                        "RSA_DECRYPT_OAEP_3072_SHA256",
+                        "RSA_DECRYPT_OAEP_4096_SHA256",
+                        "RSA_DECRYPT_OAEP_4096_SHA512",
+                        "RSA_DECRYPT_OAEP_2048_SHA1",
+                        "RSA_DECRYPT_OAEP_3072_SHA1",
+                        "RSA_DECRYPT_OAEP_4096_SHA1",
+                        "EC_SIGN_P256_SHA256",
+                        "EC_SIGN_P384_SHA384",
+                        "EC_SIGN_SECP256K1_SHA256",
+                        "EC_SIGN_ED25519",
+                        "HMAC_SHA256",
+                        "HMAC_SHA1",
+                        "HMAC_SHA384",
+                        "HMAC_SHA512",
+                        "HMAC_SHA224",
+                        "EXTERNAL_SYMMETRIC_ENCRYPTION",
+                        "ML_KEM_768",
+                        "ML_KEM_1024",
+                        "KEM_XWING",
+                        "PQ_SIGN_ML_DSA_44",
+                        "PQ_SIGN_ML_DSA_65",
+                        "PQ_SIGN_ML_DSA_87",
+                        "PQ_SIGN_SLH_DSA_SHA2_128S",
+                        "PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256",
+                        "PQ_SIGN_ML_DSA_44_EXTERNAL_MU",
+                        "PQ_SIGN_ML_DSA_65_EXTERNAL_MU",
+                        "PQ_SIGN_ML_DSA_87_EXTERNAL_MU",
+                      ],
+                      description:
+                        "Required. [Algorithm][google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm] to use when creating a [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] based on this template.  For backwards compatibility, GOOGLE_SYMMETRIC_ENCRYPTION is implied if both this field is omitted and [CryptoKey.purpose][google.cloud.kms.v1.CryptoKey.purpose] is [ENCRYPT_DECRYPT][google.cloud.kms.v1.CryptoKey.CryptoKeyPurpose.ENCRYPT_DECRYPT].",
+                    },
+                  },
+                  required: ["algorithm"],
+                  description:
+                    "A [CryptoKeyVersionTemplate][google.cloud.kms.v1.CryptoKeyVersionTemplate] specifies the properties to use when creating a new [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion], either manually with [CreateCryptoKeyVersion][google.cloud.kms.v1.KeyManagementService.CreateCryptoKeyVersion] or automatically as a result of auto-rotation.",
+                  additionalProperties: true,
+                },
+                labels: {
+                  type: "object",
+                  additionalProperties: {
+                    type: "string",
+                  },
+                  description:
+                    "Labels with user-defined metadata. For more information, see [Labeling Keys](https://cloud.google.com/kms/docs/labeling-keys).",
+                },
+                import_only: {
+                  type: "boolean",
+                  description:
+                    "Immutable. Whether this key may contain imported versions only.",
+                },
+                destroy_scheduled_duration: {
+                  type: "string",
+                  description: "Duration string (e.g., '1.5s', '300s')",
+                },
+                crypto_key_backend: {
+                  type: "string",
+                  description:
+                    "Immutable. The resource name of the backend environment where the key material for all [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] associated with this [CryptoKey][google.cloud.kms.v1.CryptoKey] reside and where all related cryptographic operations are performed. Only applicable if [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] have a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [EXTERNAL_VPC][google.cloud.kms.v1.ProtectionLevel.EXTERNAL_VPC], with the resource name in the format `projects/*/locations/*/ekmConnections/*`. Only applicable if [CryptoKeyVersions][google.cloud.kms.v1.CryptoKeyVersion] have a [ProtectionLevel][google.cloud.kms.v1.ProtectionLevel] of [HSM_SINGLE_TENANT][google.cloud.kms.v1.ProtectionLevel.HSM_SINGLE_TENANT], with the resource name in the format `projects/*/locations/*/singleTenantHsmInstances/*`. Note, this list is non-exhaustive and may apply to additional [ProtectionLevels][google.cloud.kms.v1.ProtectionLevel] in the future.",
+                },
+                key_access_justifications_policy: {
+                  type: "object",
+                  properties: {
+                    allowed_access_reasons: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                        enum: [
+                          "REASON_UNSPECIFIED",
+                          "CUSTOMER_INITIATED_SUPPORT",
+                          "GOOGLE_INITIATED_SERVICE",
+                          "THIRD_PARTY_DATA_REQUEST",
+                          "GOOGLE_INITIATED_REVIEW",
+                          "CUSTOMER_INITIATED_ACCESS",
+                          "GOOGLE_INITIATED_SYSTEM_OPERATION",
+                          "REASON_NOT_EXPECTED",
+                          "MODIFIED_CUSTOMER_INITIATED_ACCESS",
+                          "MODIFIED_GOOGLE_INITIATED_SYSTEM_OPERATION",
+                          "GOOGLE_RESPONSE_TO_PRODUCTION_ALERT",
+                          "CUSTOMER_AUTHORIZED_WORKFLOW_SERVICING",
+                        ],
+                        description:
+                          "Describes the reason for a data access. Please refer to https://cloud.google.com/assured-workloads/key-access-justifications/docs/justification-codes for the detailed semantic meaning of justification reason codes.",
+                      },
+                      description:
+                        "The list of allowed reasons for access to a [CryptoKey][google.cloud.kms.v1.CryptoKey]. Zero allowed access reasons means all encrypt, decrypt, and sign operations for the [CryptoKey][google.cloud.kms.v1.CryptoKey] associated with this policy will fail.",
+                    },
+                  },
+                  description:
+                    "A [KeyAccessJustificationsPolicy][google.cloud.kms.v1.KeyAccessJustificationsPolicy] specifies zero or more allowed [AccessReason][google.cloud.kms.v1.AccessReason] values for encrypt, decrypt, and sign operations on a [CryptoKey][google.cloud.kms.v1.CryptoKey].",
+                  additionalProperties: true,
+                },
+              },
+              description:
+                "A [CryptoKey][google.cloud.kms.v1.CryptoKey] represents a logical key that can be used for cryptographic operations.  A [CryptoKey][google.cloud.kms.v1.CryptoKey] is made up of zero or more [versions][google.cloud.kms.v1.CryptoKeyVersion], which represent the actual key material used in cryptographic operations.",
+              additionalProperties: true,
+            },
+            description:
+              "The list of [CryptoKeys][google.cloud.kms.v1.CryptoKey].",
+          },
+          next_page_token: {
+            type: "string",
+            description:
+              "A token to retrieve next page of results. Pass this value in [ListCryptoKeysRequest.page_token][google.cloud.kms.v1.ListCryptoKeysRequest.page_token] to retrieve the next page of results.",
+          },
+          total_size: {
+            type: "integer",
+            description:
+              "The total number of [CryptoKeys][google.cloud.kms.v1.CryptoKey] that matched the query.  This field is not populated if [ListCryptoKeysRequest.filter][google.cloud.kms.v1.ListCryptoKeysRequest.filter] is applied.",
+          },
+        },
+        description:
+          "Response message for [KeyManagementService.ListCryptoKeys][google.cloud.kms.v1.KeyManagementService.ListCryptoKeys].",
+        additionalProperties: true,
+      },
+    },
+  },
+};
+
+export default listCryptoKeys;

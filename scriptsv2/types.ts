@@ -127,6 +127,8 @@ export interface ParsedProtoResult {
 export interface ServiceConfig {
   /** Proto files to load (relative to project root) */
   protoFiles: string[];
+  /** Proto directories — all .proto files in these dirs will be included */
+  protoDirs?: string[];
   /** gRPC host (e.g. "pubsub.googleapis.com") */
   host: string;
   /** App title (e.g. "Cloud Pub/Sub") */

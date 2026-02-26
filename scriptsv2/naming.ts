@@ -82,7 +82,7 @@ export function rpcToHumanName(category: string, rpcName: string): string {
  * Order matters - first match wins. More specific patterns should come first.
  */
 const RESOURCE_PATTERNS: Array<{ pattern: RegExp; category: string }> = [
-  // Pubsub-specific
+  // Pubsub
   { pattern: /snapshot/i, category: "Snapshots" },
   { pattern: /subscription/i, category: "Subscriptions" },
   { pattern: /topic/i, category: "Topics" },
@@ -98,17 +98,123 @@ const RESOURCE_PATTERNS: Array<{ pattern: RegExp; category: string }> = [
   // IAM (used by multiple services)
   { pattern: /iampoli/i, category: "IAM" },
   { pattern: /iampermission/i, category: "IAM" },
+  // Cloud Build
+  { pattern: /workerpool/i, category: "Worker Pools" },
+  { pattern: /buildtrigger|trigger/i, category: "Build Triggers" },
+  { pattern: /repository/i, category: "Repositories" },
+  { pattern: /connection/i, category: "Connections" },
+  // Cloud KMS (more specific first)
+  { pattern: /cryptokeyversion/i, category: "Crypto Key Versions" },
+  { pattern: /cryptokey/i, category: "Crypto Keys" },
+  { pattern: /keyring/i, category: "Key Rings" },
+  { pattern: /importjob/i, category: "Import Jobs" },
+  { pattern: /ekmconnection|ekmconfig/i, category: "EKM" },
+  // Resource Manager
+  { pattern: /tagbinding/i, category: "Tag Bindings" },
+  { pattern: /taghold/i, category: "Tag Holds" },
+  { pattern: /tagkey/i, category: "Tag Keys" },
+  { pattern: /tagvalue/i, category: "Tag Values" },
+  { pattern: /folder/i, category: "Folders" },
+  { pattern: /organization/i, category: "Organizations" },
+  { pattern: /project/i, category: "Projects" },
+  // GKE
+  { pattern: /nodepool/i, category: "Node Pools" },
+  { pattern: /cluster/i, category: "Clusters" },
+  // Monitoring (more specific first)
+  { pattern: /alertpolic/i, category: "Alert Policies" },
+  { pattern: /uptimecheck/i, category: "Uptime Checks" },
+  { pattern: /notificationchannel/i, category: "Notification Channels" },
+  { pattern: /metricdescriptor/i, category: "Metric Descriptors" },
+  { pattern: /monitoredresource/i, category: "Monitored Resources" },
+  { pattern: /timeseries/i, category: "Time Series" },
+  { pattern: /snooze/i, category: "Snoozes" },
+  { pattern: /dashboard/i, category: "Dashboards" },
+  // Cloud Run
+  { pattern: /execution/i, category: "Executions" },
+  { pattern: /revision/i, category: "Revisions" },
+  // Secret Manager (more specific first)
+  { pattern: /secretversion/i, category: "Secret Versions" },
+  { pattern: /secret/i, category: "Secrets" },
+  // Cloud SQL (more specific first)
+  { pattern: /backuprun/i, category: "Backup Runs" },
+  { pattern: /backup/i, category: "Backups" },
+  { pattern: /sslcert/i, category: "SSL Certificates" },
+  { pattern: /database/i, category: "Databases" },
+  { pattern: /flag/i, category: "Flags" },
+  { pattern: /tier/i, category: "Tiers" },
 ];
 
 /**
  * Service-level category defaults when no resource pattern matches.
  */
 const SERVICE_DEFAULTS: Record<string, string> = {
+  // Pubsub
   Publisher: "Topics",
   Subscriber: "Subscriptions",
   SchemaService: "Schemas",
+  // Cloud Storage
   Storage: "Objects",
+  // IAM Admin
   IAM: "IAM",
+  // Cloud Build
+  CloudBuild: "Builds",
+  RepositoryManager: "Repositories",
+  // Cloud Functions
+  FunctionService: "Functions",
+  // Cloud KMS
+  KeyManagementService: "Crypto Keys",
+  AutokeyAdmin: "Autokey",
+  Autokey: "Autokey",
+  HsmManagementService: "HSM",
+  EkmService: "EKM",
+  // Resource Manager
+  Projects: "Projects",
+  Folders: "Folders",
+  Organizations: "Organizations",
+  TagKeys: "Tag Keys",
+  TagValues: "Tag Values",
+  TagBindings: "Tag Bindings",
+  TagHolds: "Tag Holds",
+  // GKE
+  ClusterManager: "Clusters",
+  // Monitoring
+  MetricService: "Time Series",
+  GroupService: "Groups",
+  AlertPolicyService: "Alert Policies",
+  NotificationChannelService: "Notification Channels",
+  QueryService: "Time Series",
+  SnoozeService: "Snoozes",
+  ServiceMonitoringService: "Services",
+  UptimeCheckService: "Uptime Checks",
+  DashboardsService: "Dashboards",
+  // Cloud Run
+  Services: "Services",
+  Jobs: "Jobs",
+  Tasks: "Tasks",
+  Executions: "Executions",
+  Revisions: "Revisions",
+  Builds: "Builds",
+  WorkerPools: "Worker Pools",
+  Instances: "Instances",
+  // Secret Manager
+  SecretManagerService: "Secrets",
+  // Cloud SQL
+  SqlInstancesService: "Instances",
+  SqlDatabasesService: "Databases",
+  SqlBackupRunsService: "Backup Runs",
+  SqlBackupsService: "Backups",
+  SqlOperationsService: "Operations",
+  SqlUsersService: "Users",
+  SqlSslCertsService: "SSL Certificates",
+  SqlFlagsService: "Flags",
+  SqlTiersService: "Tiers",
+  SqlConnectService: "Connect",
+  SqlAvailableDatabaseVersionsService: "Database Versions",
+  SqlRegionsService: "Regions",
+  SqlIamPoliciesService: "IAM",
+  SqlInstanceNamesService: "Instances",
+  SqlFeatureEligibilityService: "Feature Eligibility",
+  SqlEventsService: "Events",
 };
 
 /**

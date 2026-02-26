@@ -1,65 +1,74 @@
-import listServiceAccounts from "./service_accounts/listServiceAccounts.ts";
-import getServiceAccount from "./service_accounts/getServiceAccount.ts";
-import createServiceAccount from "./service_accounts/createServiceAccount.ts";
-import updateServiceAccount from "./service_accounts/updateServiceAccount.ts";
-import patchServiceAccount from "./service_accounts/patchServiceAccount.ts";
-import deleteServiceAccount from "./service_accounts/deleteServiceAccount.ts";
-import undeleteServiceAccount from "./service_accounts/undeleteServiceAccount.ts";
-import enableServiceAccount from "./service_accounts/enableServiceAccount.ts";
-import disableServiceAccount from "./service_accounts/disableServiceAccount.ts";
-import listServiceAccountKeys from "./service_account_keys/listServiceAccountKeys.ts";
-import getServiceAccountKey from "./service_account_keys/getServiceAccountKey.ts";
-import createServiceAccountKey from "./service_account_keys/createServiceAccountKey.ts";
-import uploadServiceAccountKey from "./service_account_keys/uploadServiceAccountKey.ts";
-import deleteServiceAccountKey from "./service_account_keys/deleteServiceAccountKey.ts";
-import disableServiceAccountKey from "./service_account_keys/disableServiceAccountKey.ts";
-import enableServiceAccountKey from "./service_account_keys/enableServiceAccountKey.ts";
-import signBlob from "./iam/signBlob.ts";
-import signJwt from "./iam/signJwt.ts";
-import getIamPolicy from "./iam/getIamPolicy.ts";
-import setIamPolicy from "./iam/setIamPolicy.ts";
-import testIamPermissions from "./iam/testIamPermissions.ts";
-import queryGrantableRoles from "./roles/queryGrantableRoles.ts";
-import listRoles from "./roles/listRoles.ts";
-import getRole from "./roles/getRole.ts";
-import createRole from "./roles/createRole.ts";
-import updateRole from "./roles/updateRole.ts";
-import deleteRole from "./roles/deleteRole.ts";
-import undeleteRole from "./roles/undeleteRole.ts";
-import queryTestablePermissions from "./iam/queryTestablePermissions.ts";
-import queryAuditableServices from "./iam/queryAuditableServices.ts";
-import lintPolicy from "./iam/lintPolicy.ts";
+import service_accounts_listServiceAccounts from "./service_accounts/listServiceAccounts.ts";
+import service_accounts_getServiceAccount from "./service_accounts/getServiceAccount.ts";
+import service_accounts_createServiceAccount from "./service_accounts/createServiceAccount.ts";
+import service_accounts_updateServiceAccount from "./service_accounts/updateServiceAccount.ts";
+import service_accounts_patchServiceAccount from "./service_accounts/patchServiceAccount.ts";
+import service_accounts_deleteServiceAccount from "./service_accounts/deleteServiceAccount.ts";
+import service_accounts_undeleteServiceAccount from "./service_accounts/undeleteServiceAccount.ts";
+import service_accounts_enableServiceAccount from "./service_accounts/enableServiceAccount.ts";
+import service_accounts_disableServiceAccount from "./service_accounts/disableServiceAccount.ts";
+import service_account_keys_listServiceAccountKeys from "./service_account_keys/listServiceAccountKeys.ts";
+import service_account_keys_getServiceAccountKey from "./service_account_keys/getServiceAccountKey.ts";
+import service_account_keys_createServiceAccountKey from "./service_account_keys/createServiceAccountKey.ts";
+import service_account_keys_uploadServiceAccountKey from "./service_account_keys/uploadServiceAccountKey.ts";
+import service_account_keys_deleteServiceAccountKey from "./service_account_keys/deleteServiceAccountKey.ts";
+import service_account_keys_disableServiceAccountKey from "./service_account_keys/disableServiceAccountKey.ts";
+import service_account_keys_enableServiceAccountKey from "./service_account_keys/enableServiceAccountKey.ts";
+import iam_signBlob from "./iam/signBlob.ts";
+import iam_signJwt from "./iam/signJwt.ts";
+import iam_getIamPolicy from "./iam/getIamPolicy.ts";
+import iam_setIamPolicy from "./iam/setIamPolicy.ts";
+import iam_testIamPermissions from "./iam/testIamPermissions.ts";
+import roles_queryGrantableRoles from "./roles/queryGrantableRoles.ts";
+import roles_listRoles from "./roles/listRoles.ts";
+import roles_getRole from "./roles/getRole.ts";
+import roles_createRole from "./roles/createRole.ts";
+import roles_updateRole from "./roles/updateRole.ts";
+import roles_deleteRole from "./roles/deleteRole.ts";
+import roles_undeleteRole from "./roles/undeleteRole.ts";
+import iam_queryTestablePermissions from "./iam/queryTestablePermissions.ts";
+import iam_queryAuditableServices from "./iam/queryAuditableServices.ts";
+import iam_lintPolicy from "./iam/lintPolicy.ts";
 
 export const blocks = {
-  service_accounts_listServiceAccounts: listServiceAccounts,
-  service_accounts_getServiceAccount: getServiceAccount,
-  service_accounts_createServiceAccount: createServiceAccount,
-  service_accounts_updateServiceAccount: updateServiceAccount,
-  service_accounts_patchServiceAccount: patchServiceAccount,
-  service_accounts_deleteServiceAccount: deleteServiceAccount,
-  service_accounts_undeleteServiceAccount: undeleteServiceAccount,
-  service_accounts_enableServiceAccount: enableServiceAccount,
-  service_accounts_disableServiceAccount: disableServiceAccount,
-  service_account_keys_listServiceAccountKeys: listServiceAccountKeys,
-  service_account_keys_getServiceAccountKey: getServiceAccountKey,
-  service_account_keys_createServiceAccountKey: createServiceAccountKey,
-  service_account_keys_uploadServiceAccountKey: uploadServiceAccountKey,
-  service_account_keys_deleteServiceAccountKey: deleteServiceAccountKey,
-  service_account_keys_disableServiceAccountKey: disableServiceAccountKey,
-  service_account_keys_enableServiceAccountKey: enableServiceAccountKey,
-  iam_signBlob: signBlob,
-  iam_signJwt: signJwt,
-  iam_getIamPolicy: getIamPolicy,
-  iam_setIamPolicy: setIamPolicy,
-  iam_testIamPermissions: testIamPermissions,
-  roles_queryGrantableRoles: queryGrantableRoles,
-  roles_listRoles: listRoles,
-  roles_getRole: getRole,
-  roles_createRole: createRole,
-  roles_updateRole: updateRole,
-  roles_deleteRole: deleteRole,
-  roles_undeleteRole: undeleteRole,
-  iam_queryTestablePermissions: queryTestablePermissions,
-  iam_queryAuditableServices: queryAuditableServices,
-  iam_lintPolicy: lintPolicy,
+  service_accounts_listServiceAccounts: service_accounts_listServiceAccounts,
+  service_accounts_getServiceAccount: service_accounts_getServiceAccount,
+  service_accounts_createServiceAccount: service_accounts_createServiceAccount,
+  service_accounts_updateServiceAccount: service_accounts_updateServiceAccount,
+  service_accounts_patchServiceAccount: service_accounts_patchServiceAccount,
+  service_accounts_deleteServiceAccount: service_accounts_deleteServiceAccount,
+  service_accounts_undeleteServiceAccount:
+    service_accounts_undeleteServiceAccount,
+  service_accounts_enableServiceAccount: service_accounts_enableServiceAccount,
+  service_accounts_disableServiceAccount:
+    service_accounts_disableServiceAccount,
+  service_account_keys_listServiceAccountKeys:
+    service_account_keys_listServiceAccountKeys,
+  service_account_keys_getServiceAccountKey:
+    service_account_keys_getServiceAccountKey,
+  service_account_keys_createServiceAccountKey:
+    service_account_keys_createServiceAccountKey,
+  service_account_keys_uploadServiceAccountKey:
+    service_account_keys_uploadServiceAccountKey,
+  service_account_keys_deleteServiceAccountKey:
+    service_account_keys_deleteServiceAccountKey,
+  service_account_keys_disableServiceAccountKey:
+    service_account_keys_disableServiceAccountKey,
+  service_account_keys_enableServiceAccountKey:
+    service_account_keys_enableServiceAccountKey,
+  iam_signBlob: iam_signBlob,
+  iam_signJwt: iam_signJwt,
+  iam_getIamPolicy: iam_getIamPolicy,
+  iam_setIamPolicy: iam_setIamPolicy,
+  iam_testIamPermissions: iam_testIamPermissions,
+  roles_queryGrantableRoles: roles_queryGrantableRoles,
+  roles_listRoles: roles_listRoles,
+  roles_getRole: roles_getRole,
+  roles_createRole: roles_createRole,
+  roles_updateRole: roles_updateRole,
+  roles_deleteRole: roles_deleteRole,
+  roles_undeleteRole: roles_undeleteRole,
+  iam_queryTestablePermissions: iam_queryTestablePermissions,
+  iam_queryAuditableServices: iam_queryAuditableServices,
+  iam_lintPolicy: iam_lintPolicy,
 };

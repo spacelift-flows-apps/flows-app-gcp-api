@@ -11,6 +11,8 @@
  *   npx tsx scriptsv2/protoGenerator.ts          # generates all configured services
  */
 
+import fs from "fs";
+import path from "path";
 import { parseProtoFiles } from "./protoParser.ts";
 import { generateBlockSource } from "./blockGenerator.ts";
 import { writeAppFiles } from "./appGenerator.ts";
@@ -22,6 +24,49 @@ import {
   categoryToDirName,
 } from "./naming.ts";
 import { GeneratedBlock, ServiceConfig } from "./types.ts";
+
+const PROJECT_ROOT = path.resolve(".");
+
+/**
+ * Resolve all proto files from a ServiceConfig.
+ * Expands protoDirs to individual .proto file paths.
+ */
+function resolveProtoFiles(config: ServiceConfig): string[] {
+  const files = [...config.protoFiles];
+  for (const dir of config.protoDirs ?? []) {
+    const absDir = path.resolve(PROJECT_ROOT, dir);
+    const entries = fs.readdirSync(absDir).filter((f) => f.endsWith(".proto"));
+    files.push(...entries.map((f) => path.join(dir, f)));
+  }
+  return files;
+}
+
+/**
+ * Derive target proto packages from a ServiceConfig.
+ * Used to filter out imported services (e.g. google.iam.v1.IAMPolicy).
+ */
+function deriveTargetPackages(config: ServiceConfig): string[] {
+  const packages = new Set<string>();
+
+  // From individual proto files
+  for (const f of config.protoFiles) {
+    // "local/googleapis/google/storage/v2/storage.proto" -> ".google.storage.v2"
+    const parts = f
+      .replace(/^local\/googleapis\//, "")
+      .replace(/\/[^/]+\.proto$/, "")
+      .split("/");
+    packages.add("." + parts.join("."));
+  }
+
+  // From proto directories
+  for (const dir of config.protoDirs ?? []) {
+    // "local/googleapis/google/monitoring/v3" -> ".google.monitoring.v3"
+    const parts = dir.replace(/^local\/googleapis\//, "").split("/");
+    packages.add("." + parts.join("."));
+  }
+
+  return [...packages];
+}
 
 /** Service configurations. Add new services here to extend the generator. */
 const SERVICES: Record<string, ServiceConfig> = {
@@ -48,6 +93,74 @@ const SERVICES: Record<string, ServiceConfig> = {
     title: "Cloud Storage",
     outputDir: "generatedv2/storage",
   },
+  cloudbuild: {
+    protoFiles: [],
+    protoDirs: [
+      "local/googleapis/google/devtools/cloudbuild/v1",
+      "local/googleapis/google/devtools/cloudbuild/v2",
+    ],
+    host: "cloudbuild.googleapis.com",
+    title: "Cloud Build",
+    outputDir: "generatedv2/cloudbuild",
+  },
+  cloudfunctions: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/cloud/functions/v2"],
+    host: "cloudfunctions.googleapis.com",
+    title: "Cloud Functions",
+    outputDir: "generatedv2/cloudfunctions",
+  },
+  cloudkms: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/cloud/kms/v1"],
+    host: "cloudkms.googleapis.com",
+    title: "Cloud KMS",
+    outputDir: "generatedv2/cloudkms",
+  },
+  cloudresourcemanager: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/cloud/resourcemanager/v3"],
+    host: "cloudresourcemanager.googleapis.com",
+    title: "Cloud Resource Manager",
+    outputDir: "generatedv2/cloudresourcemanager",
+  },
+  container: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/container/v1"],
+    host: "container.googleapis.com",
+    title: "Google Kubernetes Engine",
+    outputDir: "generatedv2/container",
+  },
+  monitoring: {
+    protoFiles: [],
+    protoDirs: [
+      "local/googleapis/google/monitoring/v3",
+    ],
+    host: "monitoring.googleapis.com",
+    title: "Cloud Monitoring",
+    outputDir: "generatedv2/monitoring",
+  },
+  run: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/cloud/run/v2"],
+    host: "run.googleapis.com",
+    title: "Cloud Run",
+    outputDir: "generatedv2/run",
+  },
+  secretmanager: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/cloud/secretmanager/v1"],
+    host: "secretmanager.googleapis.com",
+    title: "Secret Manager",
+    outputDir: "generatedv2/secretmanager",
+  },
+  sqladmin: {
+    protoFiles: [],
+    protoDirs: ["local/googleapis/google/cloud/sql/v1"],
+    host: "sqladmin.googleapis.com",
+    title: "Cloud SQL Admin",
+    outputDir: "generatedv2/sqladmin",
+  },
 };
 
 async function generateService(
@@ -56,9 +169,12 @@ async function generateService(
 ): Promise<void> {
   console.log(`\n📦 Generating ${config.title} (${serviceName})...`);
 
+  // Resolve proto files (expand directories)
+  const protoFiles = resolveProtoFiles(config);
+
   // Step 1: Parse proto files
-  console.log("  Parsing proto files...");
-  const protoResult = await parseProtoFiles(config.protoFiles);
+  console.log(`  Parsing ${protoFiles.length} proto files...`);
+  const protoResult = await parseProtoFiles(protoFiles);
 
   console.log(
     `  Found ${protoResult.services.length} services, ${protoResult.messages.size} message types`,
@@ -69,11 +185,7 @@ async function generateService(
 
   // Step 2: Filter services to only those from the target proto package.
   // Imported dependencies (e.g. google.iam.v1.IAMPolicy) should be excluded.
-  const targetPackages = config.protoFiles.map((f) => {
-    // "local/googleapis/google/storage/v2/storage.proto" -> ".google.storage.v2"
-    const parts = f.replace(/^local\/googleapis\//, "").replace(/\/[^/]+\.proto$/, "").split("/");
-    return "." + parts.join(".");
-  });
+  const targetPackages = deriveTargetPackages(config);
   const filteredServices = protoResult.services.filter((svc) =>
     targetPackages.some((pkg) => svc.fullName.startsWith(pkg + ".")),
   );
@@ -114,6 +226,26 @@ async function generateService(
         rpcMethodName,
         rpc,
       });
+    }
+  }
+
+  // Step 3b: Disambiguate blocks with duplicate categoryDir/blockName.
+  // This happens when multiple services share RPC names in the same category
+  // (e.g. GetIamPolicy from Projects, Folders, Organizations all in "IAM").
+  const pathCounts = new Map<string, number>();
+  for (const b of blocks) {
+    const key = `${b.categoryDir}/${b.blockName}`;
+    pathCounts.set(key, (pathCounts.get(key) ?? 0) + 1);
+  }
+  for (const b of blocks) {
+    const key = `${b.categoryDir}/${b.blockName}`;
+    if ((pathCounts.get(key) ?? 0) > 1) {
+      // Prefix with lowercased service name: "Projects" + "getIamPolicy" -> "projectsGetIamPolicy"
+      const prefix = b.serviceName.charAt(0).toLowerCase() + b.serviceName.slice(1);
+      const oldBlock = b.blockName;
+      b.blockName = prefix + oldBlock.charAt(0).toUpperCase() + oldBlock.slice(1);
+      b.fileName = `${b.blockName}.ts`;
+      b.humanName = `${b.serviceName} - ${b.humanName}`;
     }
   }
 

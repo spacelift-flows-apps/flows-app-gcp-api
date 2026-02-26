@@ -197,6 +197,8 @@ export function fieldToSchema(
 
   if (field.isMap) {
     // Map field -> object with additionalProperties
+    // Note: Flows SDK restricts additionalProperties to { type } only, so we
+    // strip extra fields (description, etc.) from the value schema.
     let valueSchema: any;
     if (field.mapValueIsMessage && field.resolvedType) {
       // Check well-known types first
@@ -209,7 +211,9 @@ export function fieldToSchema(
     } else {
       valueSchema = scalarTypeToSchema(field.mapValueType || "string");
     }
-    schema = { type: "object", additionalProperties: valueSchema };
+    // Keep only { type } for additionalProperties to satisfy the SDK type
+    const apSchema = valueSchema.type ? { type: valueSchema.type } : valueSchema;
+    schema = { type: "object", additionalProperties: apSchema };
   } else if (field.isEnum && field.resolvedEnum) {
     schema = enumToSchema(field.resolvedEnum);
   } else if (field.isMessage && field.resolvedType) {
