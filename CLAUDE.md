@@ -318,46 +318,46 @@ More details can be found here:
 - https://docs.useflows.com/developers/deploying-apps/custom-apps/
 - https://docs.useflows.com/developers/deploying-apps/app-registries/
 
-## Proto-Based GCP App Generator (`scriptsv2/`)
+## Proto-Based GCP App Generator (`scriptsv2/grpc/`)
 
-The `scriptsv2/` directory contains a code generator that produces complete Flows apps from GCP protobuf definitions. Generated apps live in `generatedv2/`.
+The `scriptsv2/grpc/` directory contains a code generator that produces complete Flows apps from GCP protobuf definitions. Generated apps live in `generatedv2/`.
 
 ### Quick Reference
 
 ```bash
 # Generate a single service
-npx tsx scriptsv2/protoGenerator.ts storage
+npx tsx scriptsv2/grpc/protoGenerator.ts storage
 
 # Generate all configured services
-npx tsx scriptsv2/protoGenerator.ts
+npx tsx scriptsv2/grpc/protoGenerator.ts
 
 # Typecheck a generated app
 cd generatedv2/storage && npm run typecheck
 ```
 
-Available services: `pubsub`, `storage`, `iam` (configured in `scriptsv2/protoGenerator.ts` `SERVICES` object).
+Available services: `pubsub`, `storage`, `iam`, `cloudbuild`, `cloudfunctions`, `cloudkms`, `cloudresourcemanager`, `container`, `monitoring`, `run`, `secretmanager`, `sqladmin` (configured in `scriptsv2/grpc/protoGenerator.ts` `SERVICES` object).
 
 ### Pipeline Overview
 
 The generator runs in 5 steps:
 
-1. **Parse** (`protoParser.ts`): Load `.proto` files via `protobufjs`, extract services, RPCs, messages, enums, field behaviors, comments, and routing annotations using regex on raw proto source
+1. **Parse** (`grpc/protoParser.ts`): Load `.proto` files via `protobufjs`, extract services, RPCs, messages, enums, field behaviors, comments, and routing annotations using regex on raw proto source
 2. **Filter**: Keep only services from the target proto package (exclude imported dependencies like `google.iam.v1.IAMPolicy` when generating Cloud Storage)
-3. **Generate block metadata** (`naming.ts`): Derive block names, categories, file names from RPC definitions
-4. **Generate block source** (`blockGenerator.ts` + `schemaMapper.ts`): Create TypeScript block files with input configs, output schemas, and gRPC call logic
-5. **Write app** (`appGenerator.ts`): Write `main.ts`, `lib/grpcClient.ts`, `blocks/index.ts`, `protos.json`, `package.json`, `tsconfig.json`, `VERSION`, then run `npm install` and `npm run format`
+3. **Generate block metadata** (`grpc/naming.ts`): Derive block names, categories, file names from RPC definitions
+4. **Generate block source** (`grpc/blockGenerator.ts` + `grpc/schemaMapper.ts`): Create TypeScript block files with input configs, output schemas, and gRPC call logic
+5. **Write app** (`grpc/appGenerator.ts`): Write `main.ts`, `lib/grpcClient.ts`, `blocks/index.ts`, `protos.json`, `package.json`, `tsconfig.json`, `VERSION`, then run `npm install` and `npm run format`
 
 ### Generator Files
 
 | File | Purpose |
 |------|---------|
-| `protoGenerator.ts` | CLI entry point, service configs (`SERVICES` object) |
-| `protoParser.ts` | Proto loading, extraction of services/messages/enums/behaviors/routing |
-| `schemaMapper.ts` | Proto message/field -> JSON Schema conversion |
-| `blockGenerator.ts` | Individual block `.ts` file generation |
-| `appGenerator.ts` | App scaffolding (main.ts, grpcClient.ts, package.json, etc.) |
-| `naming.ts` | Block/category naming, humanization, reserved word handling |
-| `types.ts` | All internal type definitions |
+| `grpc/protoGenerator.ts` | CLI entry point, service configs (`SERVICES` object) |
+| `grpc/protoParser.ts` | Proto loading, extraction of services/messages/enums/behaviors/routing |
+| `grpc/schemaMapper.ts` | Proto message/field -> JSON Schema conversion |
+| `grpc/blockGenerator.ts` | Individual block `.ts` file generation |
+| `grpc/appGenerator.ts` | App scaffolding (main.ts, grpcClient.ts, package.json, etc.) |
+| `grpc/naming.ts` | Block/category naming, humanization, reserved word handling |
+| `grpc/types.ts` | All internal type definitions |
 
 ### Generated App Structure
 
@@ -377,7 +377,7 @@ generatedv2/{service}/
 
 ### Adding a New GCP Service
 
-1. Add an entry to the `SERVICES` object in `scriptsv2/protoGenerator.ts`:
+1. Add an entry to the `SERVICES` object in `scriptsv2/grpc/protoGenerator.ts`:
    ```typescript
    newservice: {
      protoFiles: ["local/googleapis/google/newservice/v1/service.proto"],
@@ -387,8 +387,8 @@ generatedv2/{service}/
    },
    ```
 2. Make sure the proto files exist under `local/googleapis/` (clone or copy from [googleapis/googleapis](https://github.com/googleapis/googleapis))
-3. If the service has resource types that need category grouping, add patterns to `RESOURCE_PATTERNS` and/or `SERVICE_DEFAULTS` in `naming.ts`
-4. Run `npx tsx scriptsv2/protoGenerator.ts newservice`
+3. If the service has resource types that need category grouping, add patterns to `RESOURCE_PATTERNS` and/or `SERVICE_DEFAULTS` in `scriptsv2/grpc/naming.ts`
+4. Run `npx tsx scriptsv2/grpc/protoGenerator.ts newservice`
 5. Typecheck: `cd generatedv2/newservice && npm run typecheck`
 
 ### Key Design Decisions
@@ -421,15 +421,13 @@ Field behaviors and routing annotations are regex-parsed from the raw `.proto` s
 When changing the generator, re-run it for all services and typecheck:
 
 ```bash
-npx tsx scriptsv2/protoGenerator.ts
-cd generatedv2/storage && npm run typecheck
-cd ../pubsub && npm run typecheck
-cd ../iam && npm run typecheck
+npx tsx scriptsv2/grpc/protoGenerator.ts
+for dir in generatedv2/*/; do (cd "$dir" && npm run typecheck); done
 ```
 
 Common modification points:
-- **Schema mapping**: `schemaMapper.ts` — change how proto types map to JSON Schema
-- **Block template**: `blockGenerator.ts` — change the generated block structure, imports, or gRPC call pattern
-- **App scaffolding**: `appGenerator.ts` — change `main.ts` template, `grpcClient.ts` template, dependencies
-- **Categorization**: `naming.ts` — add `RESOURCE_PATTERNS` entries for new resource types
-- **Service configs**: `protoGenerator.ts` — add/modify services in `SERVICES`
+- **Schema mapping**: `grpc/schemaMapper.ts` — change how proto types map to JSON Schema
+- **Block template**: `grpc/blockGenerator.ts` — change the generated block structure, imports, or gRPC call pattern
+- **App scaffolding**: `grpc/appGenerator.ts` — change `main.ts` template, `grpcClient.ts` template, dependencies
+- **Categorization**: `grpc/naming.ts` — add `RESOURCE_PATTERNS` entries for new resource types
+- **Service configs**: `grpc/protoGenerator.ts` — add/modify services in `SERVICES`
