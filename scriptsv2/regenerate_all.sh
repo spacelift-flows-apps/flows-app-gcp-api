@@ -11,6 +11,10 @@ echo "=== Generating Compute apps ==="
 npx tsx scriptsv2/compute/computeGenerator.ts
 
 echo ""
+echo "=== Generating DNS app ==="
+npx tsx scriptsv2/dns/dnsGenerator.ts
+
+echo ""
 echo "=== Formatting ==="
 for dir in generatedv2/*/; do
   echo "  Formatting $dir..."
