@@ -197,6 +197,12 @@ async function generateApp(
         continue;
       }
 
+      // Skip IAM policy RPCs — these are injected into most services
+      // and are not useful as standalone blocks.
+      if (["GetIamPolicy", "SetIamPolicy", "TestIamPermissions"].includes(rpc.name)) {
+        continue;
+      }
+
       // Look up HTTP annotation by ServiceName.RPCName
       const annotation = httpAnnotations.get(`${service.name}.${rpc.name}`);
       if (!annotation) {

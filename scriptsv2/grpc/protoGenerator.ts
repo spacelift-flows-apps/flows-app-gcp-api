@@ -206,6 +206,12 @@ async function generateService(
         continue;
       }
 
+      // Skip IAM policy RPCs — these are injected into most services
+      // and are not useful as standalone blocks.
+      if (["GetIamPolicy", "SetIamPolicy", "TestIamPermissions"].includes(rpc.name)) {
+        continue;
+      }
+
       const blockName = rpcToBlockName(rpc.name);
       const category = rpcToCategory(
         service.name,

@@ -10,9 +10,6 @@ import secret_versions_accessSecretVersion from "./secret_versions/accessSecretV
 import secret_versions_disableSecretVersion from "./secret_versions/disableSecretVersion.ts";
 import secret_versions_enableSecretVersion from "./secret_versions/enableSecretVersion.ts";
 import secret_versions_destroySecretVersion from "./secret_versions/destroySecretVersion.ts";
-import iam_setIamPolicy from "./iam/setIamPolicy.ts";
-import iam_getIamPolicy from "./iam/getIamPolicy.ts";
-import iam_testIamPermissions from "./iam/testIamPermissions.ts";
 
 export const blocks = {
   secrets_listSecrets: secrets_listSecrets,
@@ -27,7 +24,4 @@ export const blocks = {
   secret_versions_disableSecretVersion: secret_versions_disableSecretVersion,
   secret_versions_enableSecretVersion: secret_versions_enableSecretVersion,
   secret_versions_destroySecretVersion: secret_versions_destroySecretVersion,
-  iam_setIamPolicy: iam_setIamPolicy,
-  iam_getIamPolicy: iam_getIamPolicy,
-  iam_testIamPermissions: iam_testIamPermissions,
 };

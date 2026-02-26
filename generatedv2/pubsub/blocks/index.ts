@@ -1,13 +1,3 @@
-import schemas_createSchema from "./schemas/createSchema.ts";
-import schemas_getSchema from "./schemas/getSchema.ts";
-import schemas_listSchemas from "./schemas/listSchemas.ts";
-import schemas_listSchemaRevisions from "./schemas/listSchemaRevisions.ts";
-import schemas_commitSchema from "./schemas/commitSchema.ts";
-import schemas_rollbackSchema from "./schemas/rollbackSchema.ts";
-import schemas_deleteSchemaRevision from "./schemas/deleteSchemaRevision.ts";
-import schemas_deleteSchema from "./schemas/deleteSchema.ts";
-import schemas_validateSchema from "./schemas/validateSchema.ts";
-import schemas_validateMessage from "./schemas/validateMessage.ts";
 import topics_createTopic from "./topics/createTopic.ts";
 import topics_updateTopic from "./topics/updateTopic.ts";
 import topics_publish from "./topics/publish.ts";
@@ -32,18 +22,18 @@ import snapshots_createSnapshot from "./snapshots/createSnapshot.ts";
 import snapshots_updateSnapshot from "./snapshots/updateSnapshot.ts";
 import snapshots_deleteSnapshot from "./snapshots/deleteSnapshot.ts";
 import subscriptions_seek from "./subscriptions/seek.ts";
+import schemas_createSchema from "./schemas/createSchema.ts";
+import schemas_getSchema from "./schemas/getSchema.ts";
+import schemas_listSchemas from "./schemas/listSchemas.ts";
+import schemas_listSchemaRevisions from "./schemas/listSchemaRevisions.ts";
+import schemas_commitSchema from "./schemas/commitSchema.ts";
+import schemas_rollbackSchema from "./schemas/rollbackSchema.ts";
+import schemas_deleteSchemaRevision from "./schemas/deleteSchemaRevision.ts";
+import schemas_deleteSchema from "./schemas/deleteSchema.ts";
+import schemas_validateSchema from "./schemas/validateSchema.ts";
+import schemas_validateMessage from "./schemas/validateMessage.ts";
 
 export const blocks = {
-  schemas_createSchema: schemas_createSchema,
-  schemas_getSchema: schemas_getSchema,
-  schemas_listSchemas: schemas_listSchemas,
-  schemas_listSchemaRevisions: schemas_listSchemaRevisions,
-  schemas_commitSchema: schemas_commitSchema,
-  schemas_rollbackSchema: schemas_rollbackSchema,
-  schemas_deleteSchemaRevision: schemas_deleteSchemaRevision,
-  schemas_deleteSchema: schemas_deleteSchema,
-  schemas_validateSchema: schemas_validateSchema,
-  schemas_validateMessage: schemas_validateMessage,
   topics_createTopic: topics_createTopic,
   topics_updateTopic: topics_updateTopic,
   topics_publish: topics_publish,
@@ -68,4 +58,14 @@ export const blocks = {
   snapshots_updateSnapshot: snapshots_updateSnapshot,
   snapshots_deleteSnapshot: snapshots_deleteSnapshot,
   subscriptions_seek: subscriptions_seek,
+  schemas_createSchema: schemas_createSchema,
+  schemas_getSchema: schemas_getSchema,
+  schemas_listSchemas: schemas_listSchemas,
+  schemas_listSchemaRevisions: schemas_listSchemaRevisions,
+  schemas_commitSchema: schemas_commitSchema,
+  schemas_rollbackSchema: schemas_rollbackSchema,
+  schemas_deleteSchemaRevision: schemas_deleteSchemaRevision,
+  schemas_deleteSchema: schemas_deleteSchema,
+  schemas_validateSchema: schemas_validateSchema,
+  schemas_validateMessage: schemas_validateMessage,
 };

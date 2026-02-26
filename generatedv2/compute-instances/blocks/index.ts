@@ -7,7 +7,6 @@ import autoscalers_get from "./autoscalers/get.ts";
 import autoscalers_insert from "./autoscalers/insert.ts";
 import autoscalers_list from "./autoscalers/list.ts";
 import autoscalers_patch from "./autoscalers/patch.ts";
-import autoscalers_testIamPermissions from "./autoscalers/testIamPermissions.ts";
 import autoscalers_update from "./autoscalers/update.ts";
 import instance_group_manager_resize_requests_cancel from "./instance_group_manager_resize_requests/cancel.ts";
 import instance_group_manager_resize_requests_deleteOperation from "./instance_group_manager_resize_requests/deleteOperation.ts";
@@ -47,17 +46,13 @@ import instance_groups_list from "./instance_groups/list.ts";
 import instance_groups_listInstances from "./instance_groups/listInstances.ts";
 import instance_groups_removeInstances from "./instance_groups/removeInstances.ts";
 import instance_groups_setNamedPorts from "./instance_groups/setNamedPorts.ts";
-import instance_groups_testIamPermissions from "./instance_groups/testIamPermissions.ts";
 import instance_settings_service_get from "./instance_settings_service/get.ts";
 import instance_settings_service_patch from "./instance_settings_service/patch.ts";
 import instance_templates_aggregatedList from "./instance_templates/aggregatedList.ts";
 import instance_templates_deleteOperation from "./instance_templates/deleteOperation.ts";
 import instance_templates_get from "./instance_templates/get.ts";
-import instance_templates_getIamPolicy from "./instance_templates/getIamPolicy.ts";
 import instance_templates_insert from "./instance_templates/insert.ts";
 import instance_templates_list from "./instance_templates/list.ts";
-import instance_templates_setIamPolicy from "./instance_templates/setIamPolicy.ts";
-import instance_templates_testIamPermissions from "./instance_templates/testIamPermissions.ts";
 import instances_addAccessConfig from "./instances/addAccessConfig.ts";
 import instances_addNetworkInterface from "./instances/addNetworkInterface.ts";
 import instances_addResourcePolicies from "./instances/addResourcePolicies.ts";
@@ -71,7 +66,6 @@ import instances_detachDisk from "./instances/detachDisk.ts";
 import instances_get from "./instances/get.ts";
 import instances_getEffectiveFirewalls from "./instances/getEffectiveFirewalls.ts";
 import instances_getGuestAttributes from "./instances/getGuestAttributes.ts";
-import instances_getIamPolicy from "./instances/getIamPolicy.ts";
 import instances_getScreenshot from "./instances/getScreenshot.ts";
 import instances_getSerialPortOutput from "./instances/getSerialPortOutput.ts";
 import instances_getShieldedInstanceIdentity from "./instances/getShieldedInstanceIdentity.ts";
@@ -86,7 +80,6 @@ import instances_resume from "./instances/resume.ts";
 import instances_sendDiagnosticInterrupt from "./instances/sendDiagnosticInterrupt.ts";
 import instances_setDeletionProtection from "./instances/setDeletionProtection.ts";
 import instances_setDiskAutoDelete from "./instances/setDiskAutoDelete.ts";
-import instances_setIamPolicy from "./instances/setIamPolicy.ts";
 import instances_setLabels from "./instances/setLabels.ts";
 import instances_setMachineResources from "./instances/setMachineResources.ts";
 import instances_setMachineType from "./instances/setMachineType.ts";
@@ -103,7 +96,6 @@ import instances_start from "./instances/start.ts";
 import instances_startWithEncryptionKey from "./instances/startWithEncryptionKey.ts";
 import instances_stop from "./instances/stop.ts";
 import instances_suspend from "./instances/suspend.ts";
-import instances_testIamPermissions from "./instances/testIamPermissions.ts";
 import instances_update from "./instances/update.ts";
 import instances_updateAccessConfig from "./instances/updateAccessConfig.ts";
 import instances_updateDisplayDevice from "./instances/updateDisplayDevice.ts";
@@ -111,12 +103,9 @@ import instances_updateNetworkInterface from "./instances/updateNetworkInterface
 import instances_updateShieldedInstanceConfig from "./instances/updateShieldedInstanceConfig.ts";
 import machine_images_deleteOperation from "./machine_images/deleteOperation.ts";
 import machine_images_get from "./machine_images/get.ts";
-import machine_images_getIamPolicy from "./machine_images/getIamPolicy.ts";
 import machine_images_insert from "./machine_images/insert.ts";
 import machine_images_list from "./machine_images/list.ts";
-import machine_images_setIamPolicy from "./machine_images/setIamPolicy.ts";
 import machine_images_setLabels from "./machine_images/setLabels.ts";
-import machine_images_testIamPermissions from "./machine_images/testIamPermissions.ts";
 import machine_types_aggregatedList from "./machine_types/aggregatedList.ts";
 import machine_types_get from "./machine_types/get.ts";
 import machine_types_list from "./machine_types/list.ts";
@@ -125,7 +114,6 @@ import region_autoscalers_get from "./region_autoscalers/get.ts";
 import region_autoscalers_insert from "./region_autoscalers/insert.ts";
 import region_autoscalers_list from "./region_autoscalers/list.ts";
 import region_autoscalers_patch from "./region_autoscalers/patch.ts";
-import region_autoscalers_testIamPermissions from "./region_autoscalers/testIamPermissions.ts";
 import region_autoscalers_update from "./region_autoscalers/update.ts";
 import region_instance_group_managers_abandonInstances from "./region_instance_group_managers/abandonInstances.ts";
 import region_instance_group_managers_applyUpdatesToInstances from "./region_instance_group_managers/applyUpdatesToInstances.ts";
@@ -154,7 +142,6 @@ import region_instance_groups_get from "./region_instance_groups/get.ts";
 import region_instance_groups_list from "./region_instance_groups/list.ts";
 import region_instance_groups_listInstances from "./region_instance_groups/listInstances.ts";
 import region_instance_groups_setNamedPorts from "./region_instance_groups/setNamedPorts.ts";
-import region_instance_groups_testIamPermissions from "./region_instance_groups/testIamPermissions.ts";
 import region_instance_templates_deleteOperation from "./region_instance_templates/deleteOperation.ts";
 import region_instance_templates_get from "./region_instance_templates/get.ts";
 import region_instance_templates_insert from "./region_instance_templates/insert.ts";
@@ -175,7 +162,6 @@ export const blocks = {
   autoscalers_insert: autoscalers_insert,
   autoscalers_list: autoscalers_list,
   autoscalers_patch: autoscalers_patch,
-  autoscalers_testIamPermissions: autoscalers_testIamPermissions,
   autoscalers_update: autoscalers_update,
   instance_group_manager_resize_requests_cancel:
     instance_group_manager_resize_requests_cancel,
@@ -237,17 +223,13 @@ export const blocks = {
   instance_groups_listInstances: instance_groups_listInstances,
   instance_groups_removeInstances: instance_groups_removeInstances,
   instance_groups_setNamedPorts: instance_groups_setNamedPorts,
-  instance_groups_testIamPermissions: instance_groups_testIamPermissions,
   instance_settings_service_get: instance_settings_service_get,
   instance_settings_service_patch: instance_settings_service_patch,
   instance_templates_aggregatedList: instance_templates_aggregatedList,
   instance_templates_deleteOperation: instance_templates_deleteOperation,
   instance_templates_get: instance_templates_get,
-  instance_templates_getIamPolicy: instance_templates_getIamPolicy,
   instance_templates_insert: instance_templates_insert,
   instance_templates_list: instance_templates_list,
-  instance_templates_setIamPolicy: instance_templates_setIamPolicy,
-  instance_templates_testIamPermissions: instance_templates_testIamPermissions,
   instances_addAccessConfig: instances_addAccessConfig,
   instances_addNetworkInterface: instances_addNetworkInterface,
   instances_addResourcePolicies: instances_addResourcePolicies,
@@ -261,7 +243,6 @@ export const blocks = {
   instances_get: instances_get,
   instances_getEffectiveFirewalls: instances_getEffectiveFirewalls,
   instances_getGuestAttributes: instances_getGuestAttributes,
-  instances_getIamPolicy: instances_getIamPolicy,
   instances_getScreenshot: instances_getScreenshot,
   instances_getSerialPortOutput: instances_getSerialPortOutput,
   instances_getShieldedInstanceIdentity: instances_getShieldedInstanceIdentity,
@@ -276,7 +257,6 @@ export const blocks = {
   instances_sendDiagnosticInterrupt: instances_sendDiagnosticInterrupt,
   instances_setDeletionProtection: instances_setDeletionProtection,
   instances_setDiskAutoDelete: instances_setDiskAutoDelete,
-  instances_setIamPolicy: instances_setIamPolicy,
   instances_setLabels: instances_setLabels,
   instances_setMachineResources: instances_setMachineResources,
   instances_setMachineType: instances_setMachineType,
@@ -294,7 +274,6 @@ export const blocks = {
   instances_startWithEncryptionKey: instances_startWithEncryptionKey,
   instances_stop: instances_stop,
   instances_suspend: instances_suspend,
-  instances_testIamPermissions: instances_testIamPermissions,
   instances_update: instances_update,
   instances_updateAccessConfig: instances_updateAccessConfig,
   instances_updateDisplayDevice: instances_updateDisplayDevice,
@@ -303,12 +282,9 @@ export const blocks = {
     instances_updateShieldedInstanceConfig,
   machine_images_deleteOperation: machine_images_deleteOperation,
   machine_images_get: machine_images_get,
-  machine_images_getIamPolicy: machine_images_getIamPolicy,
   machine_images_insert: machine_images_insert,
   machine_images_list: machine_images_list,
-  machine_images_setIamPolicy: machine_images_setIamPolicy,
   machine_images_setLabels: machine_images_setLabels,
-  machine_images_testIamPermissions: machine_images_testIamPermissions,
   machine_types_aggregatedList: machine_types_aggregatedList,
   machine_types_get: machine_types_get,
   machine_types_list: machine_types_list,
@@ -317,7 +293,6 @@ export const blocks = {
   region_autoscalers_insert: region_autoscalers_insert,
   region_autoscalers_list: region_autoscalers_list,
   region_autoscalers_patch: region_autoscalers_patch,
-  region_autoscalers_testIamPermissions: region_autoscalers_testIamPermissions,
   region_autoscalers_update: region_autoscalers_update,
   region_instance_group_managers_abandonInstances:
     region_instance_group_managers_abandonInstances,
@@ -364,8 +339,6 @@ export const blocks = {
   region_instance_groups_list: region_instance_groups_list,
   region_instance_groups_listInstances: region_instance_groups_listInstances,
   region_instance_groups_setNamedPorts: region_instance_groups_setNamedPorts,
-  region_instance_groups_testIamPermissions:
-    region_instance_groups_testIamPermissions,
   region_instance_templates_deleteOperation:
     region_instance_templates_deleteOperation,
   region_instance_templates_get: region_instance_templates_get,

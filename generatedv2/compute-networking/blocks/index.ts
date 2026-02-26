@@ -5,20 +5,17 @@ import addresses_insert from "./addresses/insert.ts";
 import addresses_list from "./addresses/list.ts";
 import addresses_move from "./addresses/move.ts";
 import addresses_setLabels from "./addresses/setLabels.ts";
-import addresses_testIamPermissions from "./addresses/testIamPermissions.ts";
 import external_vpn_gateways_deleteOperation from "./external_vpn_gateways/deleteOperation.ts";
 import external_vpn_gateways_get from "./external_vpn_gateways/get.ts";
 import external_vpn_gateways_insert from "./external_vpn_gateways/insert.ts";
 import external_vpn_gateways_list from "./external_vpn_gateways/list.ts";
 import external_vpn_gateways_setLabels from "./external_vpn_gateways/setLabels.ts";
-import external_vpn_gateways_testIamPermissions from "./external_vpn_gateways/testIamPermissions.ts";
 import global_addresses_deleteOperation from "./global_addresses/deleteOperation.ts";
 import global_addresses_get from "./global_addresses/get.ts";
 import global_addresses_insert from "./global_addresses/insert.ts";
 import global_addresses_list from "./global_addresses/list.ts";
 import global_addresses_move from "./global_addresses/move.ts";
 import global_addresses_setLabels from "./global_addresses/setLabels.ts";
-import global_addresses_testIamPermissions from "./global_addresses/testIamPermissions.ts";
 import global_network_endpoint_groups_attachNetworkEndpoints from "./global_network_endpoint_groups/attachNetworkEndpoints.ts";
 import global_network_endpoint_groups_deleteOperation from "./global_network_endpoint_groups/deleteOperation.ts";
 import global_network_endpoint_groups_detachNetworkEndpoints from "./global_network_endpoint_groups/detachNetworkEndpoints.ts";
@@ -53,12 +50,9 @@ import interconnects_setLabels from "./interconnects/setLabels.ts";
 import network_attachments_aggregatedList from "./network_attachments/aggregatedList.ts";
 import network_attachments_deleteOperation from "./network_attachments/deleteOperation.ts";
 import network_attachments_get from "./network_attachments/get.ts";
-import network_attachments_getIamPolicy from "./network_attachments/getIamPolicy.ts";
 import network_attachments_insert from "./network_attachments/insert.ts";
 import network_attachments_list from "./network_attachments/list.ts";
 import network_attachments_patch from "./network_attachments/patch.ts";
-import network_attachments_setIamPolicy from "./network_attachments/setIamPolicy.ts";
-import network_attachments_testIamPermissions from "./network_attachments/testIamPermissions.ts";
 import network_endpoint_groups_aggregatedList from "./network_endpoint_groups/aggregatedList.ts";
 import network_endpoint_groups_attachNetworkEndpoints from "./network_endpoint_groups/attachNetworkEndpoints.ts";
 import network_endpoint_groups_deleteOperation from "./network_endpoint_groups/deleteOperation.ts";
@@ -67,7 +61,6 @@ import network_endpoint_groups_get from "./network_endpoint_groups/get.ts";
 import network_endpoint_groups_insert from "./network_endpoint_groups/insert.ts";
 import network_endpoint_groups_list from "./network_endpoint_groups/list.ts";
 import network_endpoint_groups_listNetworkEndpoints from "./network_endpoint_groups/listNetworkEndpoints.ts";
-import network_endpoint_groups_testIamPermissions from "./network_endpoint_groups/testIamPermissions.ts";
 import networks_addPeering from "./networks/addPeering.ts";
 import networks_deleteOperation from "./networks/deleteOperation.ts";
 import networks_get from "./networks/get.ts";
@@ -86,7 +79,6 @@ import packet_mirrorings_get from "./packet_mirrorings/get.ts";
 import packet_mirrorings_insert from "./packet_mirrorings/insert.ts";
 import packet_mirrorings_list from "./packet_mirrorings/list.ts";
 import packet_mirrorings_patch from "./packet_mirrorings/patch.ts";
-import packet_mirrorings_testIamPermissions from "./packet_mirrorings/testIamPermissions.ts";
 import public_advertised_prefixes_announce from "./public_advertised_prefixes/announce.ts";
 import public_advertised_prefixes_deleteOperation from "./public_advertised_prefixes/deleteOperation.ts";
 import public_advertised_prefixes_get from "./public_advertised_prefixes/get.ts";
@@ -130,28 +122,21 @@ import routes_deleteOperation from "./routes/deleteOperation.ts";
 import routes_get from "./routes/get.ts";
 import routes_insert from "./routes/insert.ts";
 import routes_list from "./routes/list.ts";
-import routes_testIamPermissions from "./routes/testIamPermissions.ts";
 import service_attachments_aggregatedList from "./service_attachments/aggregatedList.ts";
 import service_attachments_deleteOperation from "./service_attachments/deleteOperation.ts";
 import service_attachments_get from "./service_attachments/get.ts";
-import service_attachments_getIamPolicy from "./service_attachments/getIamPolicy.ts";
 import service_attachments_insert from "./service_attachments/insert.ts";
 import service_attachments_list from "./service_attachments/list.ts";
 import service_attachments_patch from "./service_attachments/patch.ts";
-import service_attachments_setIamPolicy from "./service_attachments/setIamPolicy.ts";
-import service_attachments_testIamPermissions from "./service_attachments/testIamPermissions.ts";
 import subnetworks_aggregatedList from "./subnetworks/aggregatedList.ts";
 import subnetworks_deleteOperation from "./subnetworks/deleteOperation.ts";
 import subnetworks_expandIpCidrRange from "./subnetworks/expandIpCidrRange.ts";
 import subnetworks_get from "./subnetworks/get.ts";
-import subnetworks_getIamPolicy from "./subnetworks/getIamPolicy.ts";
 import subnetworks_insert from "./subnetworks/insert.ts";
 import subnetworks_list from "./subnetworks/list.ts";
 import subnetworks_listUsable from "./subnetworks/listUsable.ts";
 import subnetworks_patch from "./subnetworks/patch.ts";
-import subnetworks_setIamPolicy from "./subnetworks/setIamPolicy.ts";
 import subnetworks_setPrivateIpGoogleAccess from "./subnetworks/setPrivateIpGoogleAccess.ts";
-import subnetworks_testIamPermissions from "./subnetworks/testIamPermissions.ts";
 import vpn_gateways_aggregatedList from "./vpn_gateways/aggregatedList.ts";
 import vpn_gateways_deleteOperation from "./vpn_gateways/deleteOperation.ts";
 import vpn_gateways_get from "./vpn_gateways/get.ts";
@@ -159,7 +144,6 @@ import vpn_gateways_getStatus from "./vpn_gateways/getStatus.ts";
 import vpn_gateways_insert from "./vpn_gateways/insert.ts";
 import vpn_gateways_list from "./vpn_gateways/list.ts";
 import vpn_gateways_setLabels from "./vpn_gateways/setLabels.ts";
-import vpn_gateways_testIamPermissions from "./vpn_gateways/testIamPermissions.ts";
 import vpn_tunnels_aggregatedList from "./vpn_tunnels/aggregatedList.ts";
 import vpn_tunnels_deleteOperation from "./vpn_tunnels/deleteOperation.ts";
 import vpn_tunnels_get from "./vpn_tunnels/get.ts";
@@ -175,21 +159,17 @@ export const blocks = {
   addresses_list: addresses_list,
   addresses_move: addresses_move,
   addresses_setLabels: addresses_setLabels,
-  addresses_testIamPermissions: addresses_testIamPermissions,
   external_vpn_gateways_deleteOperation: external_vpn_gateways_deleteOperation,
   external_vpn_gateways_get: external_vpn_gateways_get,
   external_vpn_gateways_insert: external_vpn_gateways_insert,
   external_vpn_gateways_list: external_vpn_gateways_list,
   external_vpn_gateways_setLabels: external_vpn_gateways_setLabels,
-  external_vpn_gateways_testIamPermissions:
-    external_vpn_gateways_testIamPermissions,
   global_addresses_deleteOperation: global_addresses_deleteOperation,
   global_addresses_get: global_addresses_get,
   global_addresses_insert: global_addresses_insert,
   global_addresses_list: global_addresses_list,
   global_addresses_move: global_addresses_move,
   global_addresses_setLabels: global_addresses_setLabels,
-  global_addresses_testIamPermissions: global_addresses_testIamPermissions,
   global_network_endpoint_groups_attachNetworkEndpoints:
     global_network_endpoint_groups_attachNetworkEndpoints,
   global_network_endpoint_groups_deleteOperation:
@@ -233,13 +213,9 @@ export const blocks = {
   network_attachments_aggregatedList: network_attachments_aggregatedList,
   network_attachments_deleteOperation: network_attachments_deleteOperation,
   network_attachments_get: network_attachments_get,
-  network_attachments_getIamPolicy: network_attachments_getIamPolicy,
   network_attachments_insert: network_attachments_insert,
   network_attachments_list: network_attachments_list,
   network_attachments_patch: network_attachments_patch,
-  network_attachments_setIamPolicy: network_attachments_setIamPolicy,
-  network_attachments_testIamPermissions:
-    network_attachments_testIamPermissions,
   network_endpoint_groups_aggregatedList:
     network_endpoint_groups_aggregatedList,
   network_endpoint_groups_attachNetworkEndpoints:
@@ -253,8 +229,6 @@ export const blocks = {
   network_endpoint_groups_list: network_endpoint_groups_list,
   network_endpoint_groups_listNetworkEndpoints:
     network_endpoint_groups_listNetworkEndpoints,
-  network_endpoint_groups_testIamPermissions:
-    network_endpoint_groups_testIamPermissions,
   networks_addPeering: networks_addPeering,
   networks_deleteOperation: networks_deleteOperation,
   networks_get: networks_get,
@@ -273,7 +247,6 @@ export const blocks = {
   packet_mirrorings_insert: packet_mirrorings_insert,
   packet_mirrorings_list: packet_mirrorings_list,
   packet_mirrorings_patch: packet_mirrorings_patch,
-  packet_mirrorings_testIamPermissions: packet_mirrorings_testIamPermissions,
   public_advertised_prefixes_announce: public_advertised_prefixes_announce,
   public_advertised_prefixes_deleteOperation:
     public_advertised_prefixes_deleteOperation,
@@ -324,29 +297,21 @@ export const blocks = {
   routes_get: routes_get,
   routes_insert: routes_insert,
   routes_list: routes_list,
-  routes_testIamPermissions: routes_testIamPermissions,
   service_attachments_aggregatedList: service_attachments_aggregatedList,
   service_attachments_deleteOperation: service_attachments_deleteOperation,
   service_attachments_get: service_attachments_get,
-  service_attachments_getIamPolicy: service_attachments_getIamPolicy,
   service_attachments_insert: service_attachments_insert,
   service_attachments_list: service_attachments_list,
   service_attachments_patch: service_attachments_patch,
-  service_attachments_setIamPolicy: service_attachments_setIamPolicy,
-  service_attachments_testIamPermissions:
-    service_attachments_testIamPermissions,
   subnetworks_aggregatedList: subnetworks_aggregatedList,
   subnetworks_deleteOperation: subnetworks_deleteOperation,
   subnetworks_expandIpCidrRange: subnetworks_expandIpCidrRange,
   subnetworks_get: subnetworks_get,
-  subnetworks_getIamPolicy: subnetworks_getIamPolicy,
   subnetworks_insert: subnetworks_insert,
   subnetworks_list: subnetworks_list,
   subnetworks_listUsable: subnetworks_listUsable,
   subnetworks_patch: subnetworks_patch,
-  subnetworks_setIamPolicy: subnetworks_setIamPolicy,
   subnetworks_setPrivateIpGoogleAccess: subnetworks_setPrivateIpGoogleAccess,
-  subnetworks_testIamPermissions: subnetworks_testIamPermissions,
   vpn_gateways_aggregatedList: vpn_gateways_aggregatedList,
   vpn_gateways_deleteOperation: vpn_gateways_deleteOperation,
   vpn_gateways_get: vpn_gateways_get,
@@ -354,7 +319,6 @@ export const blocks = {
   vpn_gateways_insert: vpn_gateways_insert,
   vpn_gateways_list: vpn_gateways_list,
   vpn_gateways_setLabels: vpn_gateways_setLabels,
-  vpn_gateways_testIamPermissions: vpn_gateways_testIamPermissions,
   vpn_tunnels_aggregatedList: vpn_tunnels_aggregatedList,
   vpn_tunnels_deleteOperation: vpn_tunnels_deleteOperation,
   vpn_tunnels_get: vpn_tunnels_get,

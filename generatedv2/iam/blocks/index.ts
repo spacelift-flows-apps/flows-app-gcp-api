@@ -16,9 +16,6 @@ import service_account_keys_disableServiceAccountKey from "./service_account_key
 import service_account_keys_enableServiceAccountKey from "./service_account_keys/enableServiceAccountKey.ts";
 import iam_signBlob from "./iam/signBlob.ts";
 import iam_signJwt from "./iam/signJwt.ts";
-import iam_getIamPolicy from "./iam/getIamPolicy.ts";
-import iam_setIamPolicy from "./iam/setIamPolicy.ts";
-import iam_testIamPermissions from "./iam/testIamPermissions.ts";
 import roles_queryGrantableRoles from "./roles/queryGrantableRoles.ts";
 import roles_listRoles from "./roles/listRoles.ts";
 import roles_getRole from "./roles/getRole.ts";
@@ -58,9 +55,6 @@ export const blocks = {
     service_account_keys_enableServiceAccountKey,
   iam_signBlob: iam_signBlob,
   iam_signJwt: iam_signJwt,
-  iam_getIamPolicy: iam_getIamPolicy,
-  iam_setIamPolicy: iam_setIamPolicy,
-  iam_testIamPermissions: iam_testIamPermissions,
   roles_queryGrantableRoles: roles_queryGrantableRoles,
   roles_listRoles: roles_listRoles,
   roles_getRole: roles_getRole,

@@ -3,9 +3,6 @@ import buckets_getBucket from "./buckets/getBucket.ts";
 import buckets_createBucket from "./buckets/createBucket.ts";
 import buckets_listBuckets from "./buckets/listBuckets.ts";
 import buckets_lockBucketRetentionPolicy from "./buckets/lockBucketRetentionPolicy.ts";
-import iam_getIamPolicy from "./iam/getIamPolicy.ts";
-import iam_setIamPolicy from "./iam/setIamPolicy.ts";
-import iam_testIamPermissions from "./iam/testIamPermissions.ts";
 import buckets_updateBucket from "./buckets/updateBucket.ts";
 import objects_composeObject from "./objects/composeObject.ts";
 import objects_deleteObject from "./objects/deleteObject.ts";
@@ -25,9 +22,6 @@ export const blocks = {
   buckets_createBucket: buckets_createBucket,
   buckets_listBuckets: buckets_listBuckets,
   buckets_lockBucketRetentionPolicy: buckets_lockBucketRetentionPolicy,
-  iam_getIamPolicy: iam_getIamPolicy,
-  iam_setIamPolicy: iam_setIamPolicy,
-  iam_testIamPermissions: iam_testIamPermissions,
   buckets_updateBucket: buckets_updateBucket,
   objects_composeObject: objects_composeObject,
   objects_deleteObject: objects_deleteObject,

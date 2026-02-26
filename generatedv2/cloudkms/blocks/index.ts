@@ -1,9 +1,9 @@
-import autokey_createKeyHandle from "./autokey/createKeyHandle.ts";
-import autokey_getKeyHandle from "./autokey/getKeyHandle.ts";
-import autokey_listKeyHandles from "./autokey/listKeyHandles.ts";
 import autokey_updateAutokeyConfig from "./autokey/updateAutokeyConfig.ts";
 import autokey_getAutokeyConfig from "./autokey/getAutokeyConfig.ts";
 import autokey_showEffectiveAutokeyConfig from "./autokey/showEffectiveAutokeyConfig.ts";
+import autokey_createKeyHandle from "./autokey/createKeyHandle.ts";
+import autokey_getKeyHandle from "./autokey/getKeyHandle.ts";
+import autokey_listKeyHandles from "./autokey/listKeyHandles.ts";
 import connections_listEkmConnections from "./connections/listEkmConnections.ts";
 import connections_getEkmConnection from "./connections/getEkmConnection.ts";
 import connections_createEkmConnection from "./connections/createEkmConnection.ts";
@@ -55,12 +55,12 @@ import crypto_keys_decapsulate from "./crypto_keys/decapsulate.ts";
 import crypto_keys_generateRandomBytes from "./crypto_keys/generateRandomBytes.ts";
 
 export const blocks = {
-  autokey_createKeyHandle: autokey_createKeyHandle,
-  autokey_getKeyHandle: autokey_getKeyHandle,
-  autokey_listKeyHandles: autokey_listKeyHandles,
   autokey_updateAutokeyConfig: autokey_updateAutokeyConfig,
   autokey_getAutokeyConfig: autokey_getAutokeyConfig,
   autokey_showEffectiveAutokeyConfig: autokey_showEffectiveAutokeyConfig,
+  autokey_createKeyHandle: autokey_createKeyHandle,
+  autokey_getKeyHandle: autokey_getKeyHandle,
+  autokey_listKeyHandles: autokey_listKeyHandles,
   connections_listEkmConnections: connections_listEkmConnections,
   connections_getEkmConnection: connections_getEkmConnection,
   connections_createEkmConnection: connections_createEkmConnection,

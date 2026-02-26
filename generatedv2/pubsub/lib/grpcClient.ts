@@ -100,14 +100,6 @@ export function convertKeys(obj: any, mapping: FieldNameMapping): any {
   return result;
 }
 
-export async function getSchemaServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.pubsub.v1", "SchemaService");
-  return new Service("pubsub.googleapis.com:443", credentials);
-}
-
 export async function getPublisherClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -121,5 +113,13 @@ export async function getSubscriberClient(
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.pubsub.v1", "Subscriber");
+  return new Service("pubsub.googleapis.com:443", credentials);
+}
+
+export async function getSchemaServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.pubsub.v1", "SchemaService");
   return new Service("pubsub.googleapis.com:443", credentials);
 }

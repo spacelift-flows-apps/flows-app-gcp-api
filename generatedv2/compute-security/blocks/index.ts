@@ -4,7 +4,6 @@ import firewall_policies_cloneRules from "./firewall_policies/cloneRules.ts";
 import firewall_policies_deleteOperation from "./firewall_policies/deleteOperation.ts";
 import firewall_policies_get from "./firewall_policies/get.ts";
 import firewall_policies_getAssociation from "./firewall_policies/getAssociation.ts";
-import firewall_policies_getIamPolicy from "./firewall_policies/getIamPolicy.ts";
 import firewall_policies_getRule from "./firewall_policies/getRule.ts";
 import firewall_policies_insert from "./firewall_policies/insert.ts";
 import firewall_policies_list from "./firewall_policies/list.ts";
@@ -14,14 +13,11 @@ import firewall_policies_patch from "./firewall_policies/patch.ts";
 import firewall_policies_patchRule from "./firewall_policies/patchRule.ts";
 import firewall_policies_removeAssociation from "./firewall_policies/removeAssociation.ts";
 import firewall_policies_removeRule from "./firewall_policies/removeRule.ts";
-import firewall_policies_setIamPolicy from "./firewall_policies/setIamPolicy.ts";
-import firewall_policies_testIamPermissions from "./firewall_policies/testIamPermissions.ts";
 import firewalls_deleteOperation from "./firewalls/deleteOperation.ts";
 import firewalls_get from "./firewalls/get.ts";
 import firewalls_insert from "./firewalls/insert.ts";
 import firewalls_list from "./firewalls/list.ts";
 import firewalls_patch from "./firewalls/patch.ts";
-import firewalls_testIamPermissions from "./firewalls/testIamPermissions.ts";
 import firewalls_update from "./firewalls/update.ts";
 import network_firewall_policies_addAssociation from "./network_firewall_policies/addAssociation.ts";
 import network_firewall_policies_addPacketMirroringRule from "./network_firewall_policies/addPacketMirroringRule.ts";
@@ -31,7 +27,6 @@ import network_firewall_policies_cloneRules from "./network_firewall_policies/cl
 import network_firewall_policies_deleteOperation from "./network_firewall_policies/deleteOperation.ts";
 import network_firewall_policies_get from "./network_firewall_policies/get.ts";
 import network_firewall_policies_getAssociation from "./network_firewall_policies/getAssociation.ts";
-import network_firewall_policies_getIamPolicy from "./network_firewall_policies/getIamPolicy.ts";
 import network_firewall_policies_getPacketMirroringRule from "./network_firewall_policies/getPacketMirroringRule.ts";
 import network_firewall_policies_getRule from "./network_firewall_policies/getRule.ts";
 import network_firewall_policies_insert from "./network_firewall_policies/insert.ts";
@@ -42,8 +37,6 @@ import network_firewall_policies_patchRule from "./network_firewall_policies/pat
 import network_firewall_policies_removeAssociation from "./network_firewall_policies/removeAssociation.ts";
 import network_firewall_policies_removePacketMirroringRule from "./network_firewall_policies/removePacketMirroringRule.ts";
 import network_firewall_policies_removeRule from "./network_firewall_policies/removeRule.ts";
-import network_firewall_policies_setIamPolicy from "./network_firewall_policies/setIamPolicy.ts";
-import network_firewall_policies_testIamPermissions from "./network_firewall_policies/testIamPermissions.ts";
 import organization_security_policies_addAssociation from "./organization_security_policies/addAssociation.ts";
 import organization_security_policies_addRule from "./organization_security_policies/addRule.ts";
 import organization_security_policies_copyRules from "./organization_security_policies/copyRules.ts";
@@ -67,7 +60,6 @@ import region_network_firewall_policies_deleteOperation from "./region_network_f
 import region_network_firewall_policies_get from "./region_network_firewall_policies/get.ts";
 import region_network_firewall_policies_getAssociation from "./region_network_firewall_policies/getAssociation.ts";
 import region_network_firewall_policies_getEffectiveFirewalls from "./region_network_firewall_policies/getEffectiveFirewalls.ts";
-import region_network_firewall_policies_getIamPolicy from "./region_network_firewall_policies/getIamPolicy.ts";
 import region_network_firewall_policies_getRule from "./region_network_firewall_policies/getRule.ts";
 import region_network_firewall_policies_insert from "./region_network_firewall_policies/insert.ts";
 import region_network_firewall_policies_list from "./region_network_firewall_policies/list.ts";
@@ -75,8 +67,6 @@ import region_network_firewall_policies_patch from "./region_network_firewall_po
 import region_network_firewall_policies_patchRule from "./region_network_firewall_policies/patchRule.ts";
 import region_network_firewall_policies_removeAssociation from "./region_network_firewall_policies/removeAssociation.ts";
 import region_network_firewall_policies_removeRule from "./region_network_firewall_policies/removeRule.ts";
-import region_network_firewall_policies_setIamPolicy from "./region_network_firewall_policies/setIamPolicy.ts";
-import region_network_firewall_policies_testIamPermissions from "./region_network_firewall_policies/testIamPermissions.ts";
 import region_security_policies_addRule from "./region_security_policies/addRule.ts";
 import region_security_policies_deleteOperation from "./region_security_policies/deleteOperation.ts";
 import region_security_policies_get from "./region_security_policies/get.ts";
@@ -129,7 +119,6 @@ export const blocks = {
   firewall_policies_deleteOperation: firewall_policies_deleteOperation,
   firewall_policies_get: firewall_policies_get,
   firewall_policies_getAssociation: firewall_policies_getAssociation,
-  firewall_policies_getIamPolicy: firewall_policies_getIamPolicy,
   firewall_policies_getRule: firewall_policies_getRule,
   firewall_policies_insert: firewall_policies_insert,
   firewall_policies_list: firewall_policies_list,
@@ -139,14 +128,11 @@ export const blocks = {
   firewall_policies_patchRule: firewall_policies_patchRule,
   firewall_policies_removeAssociation: firewall_policies_removeAssociation,
   firewall_policies_removeRule: firewall_policies_removeRule,
-  firewall_policies_setIamPolicy: firewall_policies_setIamPolicy,
-  firewall_policies_testIamPermissions: firewall_policies_testIamPermissions,
   firewalls_deleteOperation: firewalls_deleteOperation,
   firewalls_get: firewalls_get,
   firewalls_insert: firewalls_insert,
   firewalls_list: firewalls_list,
   firewalls_patch: firewalls_patch,
-  firewalls_testIamPermissions: firewalls_testIamPermissions,
   firewalls_update: firewalls_update,
   network_firewall_policies_addAssociation:
     network_firewall_policies_addAssociation,
@@ -161,8 +147,6 @@ export const blocks = {
   network_firewall_policies_get: network_firewall_policies_get,
   network_firewall_policies_getAssociation:
     network_firewall_policies_getAssociation,
-  network_firewall_policies_getIamPolicy:
-    network_firewall_policies_getIamPolicy,
   network_firewall_policies_getPacketMirroringRule:
     network_firewall_policies_getPacketMirroringRule,
   network_firewall_policies_getRule: network_firewall_policies_getRule,
@@ -177,10 +161,6 @@ export const blocks = {
   network_firewall_policies_removePacketMirroringRule:
     network_firewall_policies_removePacketMirroringRule,
   network_firewall_policies_removeRule: network_firewall_policies_removeRule,
-  network_firewall_policies_setIamPolicy:
-    network_firewall_policies_setIamPolicy,
-  network_firewall_policies_testIamPermissions:
-    network_firewall_policies_testIamPermissions,
   organization_security_policies_addAssociation:
     organization_security_policies_addAssociation,
   organization_security_policies_addRule:
@@ -221,8 +201,6 @@ export const blocks = {
     region_network_firewall_policies_getAssociation,
   region_network_firewall_policies_getEffectiveFirewalls:
     region_network_firewall_policies_getEffectiveFirewalls,
-  region_network_firewall_policies_getIamPolicy:
-    region_network_firewall_policies_getIamPolicy,
   region_network_firewall_policies_getRule:
     region_network_firewall_policies_getRule,
   region_network_firewall_policies_insert:
@@ -236,10 +214,6 @@ export const blocks = {
     region_network_firewall_policies_removeAssociation,
   region_network_firewall_policies_removeRule:
     region_network_firewall_policies_removeRule,
-  region_network_firewall_policies_setIamPolicy:
-    region_network_firewall_policies_setIamPolicy,
-  region_network_firewall_policies_testIamPermissions:
-    region_network_firewall_policies_testIamPermissions,
   region_security_policies_addRule: region_security_policies_addRule,
   region_security_policies_deleteOperation:
     region_security_policies_deleteOperation,

@@ -1487,21 +1487,21 @@
               }
             },
             {
-              "name": ".google.api.resource_reference",
-              "number": 1055,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "api.ResourceReference",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.field_behavior",
               "number": 1052,
               "label": "LABEL_REPEATED",
               "type": "TYPE_ENUM",
               "typeName": "api.FieldBehavior",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.resource_reference",
+              "number": 1055,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.ResourceReference",
               "options": {
                 "packed": false
               }
@@ -1972,20 +1972,20 @@
               }
             },
             {
-              "name": ".google.api.method_signature",
-              "number": 1051,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.http",
               "number": 72295728,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.HttpRule",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.method_signature",
+              "number": 1051,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
               "options": {
                 "packed": false
               }
@@ -5138,6 +5138,25 @@
       ],
       "extension": [
         {
+          "name": "http",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 72295728,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "HttpRule"
+        },
+        {
+          "name": "field_behavior",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1052,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior",
+          "options": {
+            "packed": false
+          }
+        },
+        {
           "name": "resource_reference",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1055,
@@ -5160,17 +5179,6 @@
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
           "typeName": "ResourceDescriptor"
-        },
-        {
-          "name": "field_behavior",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1052,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_ENUM",
-          "typeName": "FieldBehavior",
-          "options": {
-            "packed": false
-          }
         },
         {
           "name": "method_signature",
@@ -5199,21 +5207,13 @@
           "number": 525000001,
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_STRING"
-        },
-        {
-          "name": "http",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 72295728,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "HttpRule"
         }
       ],
       "options": {
         "javaPackage": "com.google.api",
-        "javaOuterClassname": "HttpProto",
+        "javaOuterClassname": "LaunchStageProto",
         "javaMultipleFiles": true,
-        "goPackage": "google.golang.org/genproto/googleapis/api/annotations;annotations",
+        "goPackage": "google.golang.org/genproto/googleapis/api;api",
         "objcClassPrefix": "GAPI"
       },
       "syntax": "proto3"

@@ -100,19 +100,19 @@ export function convertKeys(obj: any, mapping: FieldNameMapping): any {
   return result;
 }
 
-export async function getAutokeyClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.kms.v1", "Autokey");
-  return new Service("cloudkms.googleapis.com:443", credentials);
-}
-
 export async function getAutokeyAdminClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.kms.v1", "AutokeyAdmin");
+  return new Service("cloudkms.googleapis.com:443", credentials);
+}
+
+export async function getAutokeyClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.cloud.kms.v1", "Autokey");
   return new Service("cloudkms.googleapis.com:443", credentials);
 }
 

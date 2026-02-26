@@ -1,38 +1,34 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getServicesClient,
-  createRoutingMetadata,
-  convertKeys,
-} from "../../lib/grpcClient.ts";
+import { getServicesClient, createRoutingMetadata, convertKeys } from "../../lib/grpcClient.ts";
 
 const inputMapping = {
-  validateOnly: "validate_only",
+  "validateOnly": "validate_only"
 };
 
 const outputMapping = {
-  metadata: {
-    name: "metadata",
-    fields: {
-      type_url: "typeUrl",
-    },
+  "metadata": {
+    "name": "metadata",
+    "fields": {
+      "type_url": "typeUrl"
+    }
   },
-  error: {
-    name: "error",
-    fields: {
-      details: {
-        name: "details",
-        fields: {
-          type_url: "typeUrl",
-        },
-      },
-    },
+  "error": {
+    "name": "error",
+    "fields": {
+      "details": {
+        "name": "details",
+        "fields": {
+          "type_url": "typeUrl"
+        }
+      }
+    }
   },
-  response: {
-    name: "response",
-    fields: {
-      type_url: "typeUrl",
-    },
-  },
+  "response": {
+    "name": "response",
+    "fields": {
+      "type_url": "typeUrl"
+    }
+  }
 };
 
 const deleteService: AppBlock = {
@@ -44,34 +40,28 @@ const deleteService: AppBlock = {
       config: {
         name: {
           name: "Name",
-          description:
-            "Required. The full name of the Service. Format: projects/{project}/locations/{location}/services/{service}, where {project} can be project id or number.",
+          description: "Required. The full name of the Service. Format: projects/{project}/locations/{location}/services/{service}, where {project} can be project id or number.",
           type: {
-            type: "string",
-            description:
-              "Required. The full name of the Service. Format: projects/{project}/locations/{location}/services/{service}, where {project} can be project id or number.",
+                    "type": "string",
+                    "description": "Required. The full name of the Service. Format: projects/{project}/locations/{location}/services/{service}, where {project} can be project id or number."
           },
           required: true,
         },
         validateOnly: {
           name: "Validate Only",
-          description:
-            "Indicates that the request should be validated without actually deleting any resources.",
+          description: "Indicates that the request should be validated without actually deleting any resources.",
           type: {
-            type: "boolean",
-            description:
-              "Indicates that the request should be validated without actually deleting any resources.",
+                    "type": "boolean",
+                    "description": "Indicates that the request should be validated without actually deleting any resources."
           },
           required: false,
         },
         etag: {
           name: "Etag",
-          description:
-            "A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.",
+          description: "A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.",
           type: {
-            type: "string",
-            description:
-              "A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.",
+                    "type": "string",
+                    "description": "A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates."
           },
           required: false,
         },
@@ -89,12 +79,7 @@ const deleteService: AppBlock = {
         const metadata = createRoutingMetadata(routingParams);
         const result = await new Promise<any>((resolve, reject) => {
           client.deleteService(request, metadata, (err: any, response: any) => {
-            if (err)
-              reject(
-                new Error(
-                  `gRPC error [${err.code}]: ${err.details || err.message}`,
-                ),
-              );
+            if (err) reject(new Error(`gRPC error [${err.code}]: ${err.details || err.message}`));
             else resolve(response);
           });
         });
@@ -108,74 +93,72 @@ const deleteService: AppBlock = {
     default: {
       possiblePrimaryParents: ["default"],
       type: {
-        type: "object",
-        properties: {
-          name: {
-            type: "string",
-          },
-          metadata: {
-            type: "object",
-            properties: {
-              typeUrl: {
-                type: "string",
-              },
-              value: {
-                type: "string",
-                description: "Base64-encoded bytes",
-              },
-            },
-            additionalProperties: true,
-          },
-          done: {
-            type: "boolean",
-          },
-          error: {
-            type: "object",
-            properties: {
-              code: {
-                type: "integer",
-              },
-              message: {
-                type: "string",
-              },
-              details: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    typeUrl: {
-                      type: "string",
-                    },
-                    value: {
-                      type: "string",
-                      description: "Base64-encoded bytes",
-                    },
+            "type": "object",
+            "properties": {
+                  "name": {
+                        "type": "string"
                   },
-                  additionalProperties: true,
-                },
-              },
+                  "metadata": {
+                        "type": "object",
+                        "properties": {
+                              "typeUrl": {
+                                    "type": "string"
+                              },
+                              "value": {
+                                    "type": "string",
+                                    "description": "Base64-encoded bytes"
+                              }
+                        },
+                        "additionalProperties": true
+                  },
+                  "done": {
+                        "type": "boolean"
+                  },
+                  "error": {
+                        "type": "object",
+                        "properties": {
+                              "code": {
+                                    "type": "integer"
+                              },
+                              "message": {
+                                    "type": "string"
+                              },
+                              "details": {
+                                    "type": "array",
+                                    "items": {
+                                          "type": "object",
+                                          "properties": {
+                                                "typeUrl": {
+                                                      "type": "string"
+                                                },
+                                                "value": {
+                                                      "type": "string",
+                                                      "description": "Base64-encoded bytes"
+                                                }
+                                          },
+                                          "additionalProperties": true
+                                    }
+                              }
+                        },
+                        "additionalProperties": true,
+                        "description": "(Part of 'result' - only one field in this group can be set)"
+                  },
+                  "response": {
+                        "type": "object",
+                        "properties": {
+                              "typeUrl": {
+                                    "type": "string"
+                              },
+                              "value": {
+                                    "type": "string",
+                                    "description": "Base64-encoded bytes"
+                              }
+                        },
+                        "additionalProperties": true,
+                        "description": "(Part of 'result' - only one field in this group can be set)"
+                  }
             },
-            additionalProperties: true,
-            description:
-              "(Part of 'result' - only one field in this group can be set)",
-          },
-          response: {
-            type: "object",
-            properties: {
-              typeUrl: {
-                type: "string",
-              },
-              value: {
-                type: "string",
-                description: "Base64-encoded bytes",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "(Part of 'result' - only one field in this group can be set)",
-          },
-        },
-        additionalProperties: true,
+            "additionalProperties": true
       },
     },
   },

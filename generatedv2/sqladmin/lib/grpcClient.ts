@@ -100,19 +100,19 @@ export function convertKeys(obj: any, mapping: FieldNameMapping): any {
   return result;
 }
 
-export async function getSqlBackupsServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.sql.v1", "SqlBackupsService");
-  return new Service("sqladmin.googleapis.com:443", credentials);
-}
-
 export async function getSqlBackupRunsServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.sql.v1", "SqlBackupRunsService");
+  return new Service("sqladmin.googleapis.com:443", credentials);
+}
+
+export async function getSqlBackupsServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.cloud.sql.v1", "SqlBackupsService");
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 
@@ -164,18 +164,18 @@ export async function getSqlSslCertsServiceClient(
   return new Service("sqladmin.googleapis.com:443", credentials);
 }
 
-export async function getSqlTiersServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.cloud.sql.v1", "SqlTiersService");
-  return new Service("sqladmin.googleapis.com:443", credentials);
-}
-
 export async function getSqlUsersServiceClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.cloud.sql.v1", "SqlUsersService");
+  return new Service("sqladmin.googleapis.com:443", credentials);
+}
+
+export async function getSqlTiersServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.cloud.sql.v1", "SqlTiersService");
   return new Service("sqladmin.googleapis.com:443", credentials);
 }

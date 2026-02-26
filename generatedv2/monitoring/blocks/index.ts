@@ -18,6 +18,7 @@ import metric_descriptors_deleteMetricDescriptor from "./metric_descriptors/dele
 import time_series_listTimeSeries from "./time_series/listTimeSeries.ts";
 import time_series_createTimeSeries from "./time_series/createTimeSeries.ts";
 import time_series_createServiceTimeSeries from "./time_series/createServiceTimeSeries.ts";
+import time_series_queryTimeSeries from "./time_series/queryTimeSeries.ts";
 import services_createService from "./services/createService.ts";
 import services_getService from "./services/getService.ts";
 import services_listServices from "./services/listServices.ts";
@@ -28,11 +29,6 @@ import objects_getServiceLevelObjective from "./objects/getServiceLevelObjective
 import objects_listServiceLevelObjectives from "./objects/listServiceLevelObjectives.ts";
 import objects_updateServiceLevelObjective from "./objects/updateServiceLevelObjective.ts";
 import objects_deleteServiceLevelObjective from "./objects/deleteServiceLevelObjective.ts";
-import time_series_queryTimeSeries from "./time_series/queryTimeSeries.ts";
-import snoozes_createSnooze from "./snoozes/createSnooze.ts";
-import snoozes_listSnoozes from "./snoozes/listSnoozes.ts";
-import snoozes_getSnooze from "./snoozes/getSnooze.ts";
-import snoozes_updateSnooze from "./snoozes/updateSnooze.ts";
 import notification_channels_listNotificationChannelDescriptors from "./notification_channels/listNotificationChannelDescriptors.ts";
 import notification_channels_getNotificationChannelDescriptor from "./notification_channels/getNotificationChannelDescriptor.ts";
 import notification_channels_listNotificationChannels from "./notification_channels/listNotificationChannels.ts";
@@ -43,6 +39,10 @@ import notification_channels_deleteNotificationChannel from "./notification_chan
 import notification_channels_sendNotificationChannelVerificationCode from "./notification_channels/sendNotificationChannelVerificationCode.ts";
 import notification_channels_getNotificationChannelVerificationCode from "./notification_channels/getNotificationChannelVerificationCode.ts";
 import notification_channels_verifyNotificationChannel from "./notification_channels/verifyNotificationChannel.ts";
+import snoozes_createSnooze from "./snoozes/createSnooze.ts";
+import snoozes_listSnoozes from "./snoozes/listSnoozes.ts";
+import snoozes_getSnooze from "./snoozes/getSnooze.ts";
+import snoozes_updateSnooze from "./snoozes/updateSnooze.ts";
 import uptime_checks_listUptimeCheckConfigs from "./uptime_checks/listUptimeCheckConfigs.ts";
 import uptime_checks_getUptimeCheckConfig from "./uptime_checks/getUptimeCheckConfig.ts";
 import uptime_checks_createUptimeCheckConfig from "./uptime_checks/createUptimeCheckConfig.ts";
@@ -77,6 +77,7 @@ export const blocks = {
   time_series_listTimeSeries: time_series_listTimeSeries,
   time_series_createTimeSeries: time_series_createTimeSeries,
   time_series_createServiceTimeSeries: time_series_createServiceTimeSeries,
+  time_series_queryTimeSeries: time_series_queryTimeSeries,
   services_createService: services_createService,
   services_getService: services_getService,
   services_listServices: services_listServices,
@@ -87,11 +88,6 @@ export const blocks = {
   objects_listServiceLevelObjectives: objects_listServiceLevelObjectives,
   objects_updateServiceLevelObjective: objects_updateServiceLevelObjective,
   objects_deleteServiceLevelObjective: objects_deleteServiceLevelObjective,
-  time_series_queryTimeSeries: time_series_queryTimeSeries,
-  snoozes_createSnooze: snoozes_createSnooze,
-  snoozes_listSnoozes: snoozes_listSnoozes,
-  snoozes_getSnooze: snoozes_getSnooze,
-  snoozes_updateSnooze: snoozes_updateSnooze,
   notification_channels_listNotificationChannelDescriptors:
     notification_channels_listNotificationChannelDescriptors,
   notification_channels_getNotificationChannelDescriptor:
@@ -112,6 +108,10 @@ export const blocks = {
     notification_channels_getNotificationChannelVerificationCode,
   notification_channels_verifyNotificationChannel:
     notification_channels_verifyNotificationChannel,
+  snoozes_createSnooze: snoozes_createSnooze,
+  snoozes_listSnoozes: snoozes_listSnoozes,
+  snoozes_getSnooze: snoozes_getSnooze,
+  snoozes_updateSnooze: snoozes_updateSnooze,
   uptime_checks_listUptimeCheckConfigs: uptime_checks_listUptimeCheckConfigs,
   uptime_checks_getUptimeCheckConfig: uptime_checks_getUptimeCheckConfig,
   uptime_checks_createUptimeCheckConfig: uptime_checks_createUptimeCheckConfig,

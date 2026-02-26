@@ -1470,21 +1470,21 @@
               }
             },
             {
-              "name": ".google.api.field_behavior",
-              "number": 1052,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_ENUM",
-              "typeName": "api.FieldBehavior",
-              "options": {
-                "packed": false
-              }
-            },
-            {
               "name": ".google.api.resource_reference",
               "number": 1055,
               "label": "LABEL_OPTIONAL",
               "type": "TYPE_MESSAGE",
               "typeName": "api.ResourceReference",
+              "options": {
+                "packed": false
+              }
+            },
+            {
+              "name": ".google.api.field_behavior",
+              "number": 1052,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_ENUM",
+              "typeName": "api.FieldBehavior",
               "options": {
                 "packed": false
               }
@@ -4546,17 +4546,6 @@
       ],
       "extension": [
         {
-          "name": "field_behavior",
-          "extendee": ".google.protobuf.FieldOptions",
-          "number": 1052,
-          "label": "LABEL_REPEATED",
-          "type": "TYPE_ENUM",
-          "typeName": "FieldBehavior",
-          "options": {
-            "packed": false
-          }
-        },
-        {
           "name": "resource_reference",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1055,
@@ -4579,6 +4568,17 @@
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
           "typeName": "ResourceDescriptor"
+        },
+        {
+          "name": "field_behavior",
+          "extendee": ".google.protobuf.FieldOptions",
+          "number": 1052,
+          "label": "LABEL_REPEATED",
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior",
+          "options": {
+            "packed": false
+          }
         },
         {
           "name": "http",
@@ -4619,9 +4619,9 @@
       ],
       "options": {
         "javaPackage": "com.google.api",
-        "javaOuterClassname": "HttpProto",
+        "javaOuterClassname": "LaunchStageProto",
         "javaMultipleFiles": true,
-        "goPackage": "google.golang.org/genproto/googleapis/api/annotations;annotations",
+        "goPackage": "google.golang.org/genproto/googleapis/api;api",
         "objcClassPrefix": "GAPI"
       },
       "syntax": "proto3"
@@ -4630,82 +4630,6 @@
       "name": "google_iam_v1.proto",
       "package": "google.iam.v1",
       "messageType": [
-        {
-          "name": "SetIamPolicyRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "policy",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Policy",
-              "options": {}
-            },
-            {
-              "name": "update_mask",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.FieldMask"
-            }
-          ]
-        },
-        {
-          "name": "GetIamPolicyRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "options",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "GetPolicyOptions"
-            }
-          ]
-        },
-        {
-          "name": "TestIamPermissionsRequest",
-          "field": [
-            {
-              "name": "resource",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "permissions",
-              "number": 2,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "TestIamPermissionsResponse",
-          "field": [
-            {
-              "name": "permissions",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
         {
           "name": "Policy",
           "field": [
@@ -4935,6 +4859,82 @@
                   "number": 2
                 }
               ]
+            }
+          ]
+        },
+        {
+          "name": "SetIamPolicyRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "policy",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Policy",
+              "options": {}
+            },
+            {
+              "name": "update_mask",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask"
+            }
+          ]
+        },
+        {
+          "name": "GetIamPolicyRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "options",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "GetPolicyOptions"
+            }
+          ]
+        },
+        {
+          "name": "TestIamPermissionsRequest",
+          "field": [
+            {
+              "name": "resource",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "permissions",
+              "number": 2,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "TestIamPermissionsResponse",
+          "field": [
+            {
+              "name": "permissions",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_STRING"
             }
           ]
         },
