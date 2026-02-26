@@ -5,26 +5,6 @@
       "package": "google.protobuf",
       "messageType": [
         {
-          "name": "Empty"
-        },
-        {
-          "name": "Timestamp",
-          "field": [
-            {
-              "name": "seconds",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT64"
-            },
-            {
-              "name": "nanos",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            }
-          ]
-        },
-        {
           "name": "Duration",
           "field": [
             {
@@ -40,6 +20,9 @@
               "type": "TYPE_INT32"
             }
           ]
+        },
+        {
+          "name": "Empty"
         },
         {
           "name": "FieldMask",
@@ -151,6 +134,23 @@
               "label": "LABEL_REPEATED",
               "type": "TYPE_MESSAGE",
               "typeName": "Value"
+            }
+          ]
+        },
+        {
+          "name": "Timestamp",
+          "field": [
+            {
+              "name": "seconds",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT64"
+            },
+            {
+              "name": "nanos",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
             }
           ]
         },
@@ -2824,353 +2824,6 @@
       "name": "google_pubsub_v1.proto",
       "package": "google.pubsub.v1",
       "messageType": [
-        {
-          "name": "Schema",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "type",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "Type"
-            },
-            {
-              "name": "definition",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            },
-            {
-              "name": "revision_id",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "revision_create_time",
-              "number": 6,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "protobuf.Timestamp",
-              "options": {}
-            }
-          ],
-          "enumType": [
-            {
-              "name": "Type",
-              "value": [
-                {
-                  "name": "TYPE_UNSPECIFIED",
-                  "number": 0
-                },
-                {
-                  "name": "PROTOCOL_BUFFER",
-                  "number": 1
-                },
-                {
-                  "name": "AVRO",
-                  "number": 2
-                }
-              ]
-            }
-          ],
-          "options": {}
-        },
-        {
-          "name": "CreateSchemaRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "schema",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Schema",
-              "options": {}
-            },
-            {
-              "name": "schema_id",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "GetSchemaRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "view",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SchemaView"
-            }
-          ]
-        },
-        {
-          "name": "ListSchemasRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "view",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SchemaView"
-            },
-            {
-              "name": "page_size",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "page_token",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "ListSchemasResponse",
-          "field": [
-            {
-              "name": "schemas",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Schema"
-            },
-            {
-              "name": "next_page_token",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "ListSchemaRevisionsRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "view",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "SchemaView"
-            },
-            {
-              "name": "page_size",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_INT32"
-            },
-            {
-              "name": "page_token",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "ListSchemaRevisionsResponse",
-          "field": [
-            {
-              "name": "schemas",
-              "number": 1,
-              "label": "LABEL_REPEATED",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Schema"
-            },
-            {
-              "name": "next_page_token",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING"
-            }
-          ]
-        },
-        {
-          "name": "CommitSchemaRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "schema",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Schema",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "RollbackSchemaRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "revision_id",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "DeleteSchemaRevisionRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "revision_id",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {
-                "deprecated": true
-              }
-            }
-          ]
-        },
-        {
-          "name": "DeleteSchemaRequest",
-          "field": [
-            {
-              "name": "name",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ValidateSchemaRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "schema",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Schema",
-              "options": {}
-            }
-          ]
-        },
-        {
-          "name": "ValidateSchemaResponse"
-        },
-        {
-          "name": "ValidateMessageRequest",
-          "field": [
-            {
-              "name": "parent",
-              "number": 1,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {}
-            },
-            {
-              "name": "name",
-              "number": 2,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_STRING",
-              "options": {},
-              "oneofIndex": 0
-            },
-            {
-              "name": "schema",
-              "number": 3,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_MESSAGE",
-              "typeName": "Schema",
-              "oneofIndex": 0
-            },
-            {
-              "name": "message",
-              "number": 4,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_BYTES"
-            },
-            {
-              "name": "encoding",
-              "number": 5,
-              "label": "LABEL_OPTIONAL",
-              "type": "TYPE_ENUM",
-              "typeName": "Encoding"
-            }
-          ],
-          "oneofDecl": [
-            {
-              "name": "schema_spec"
-            }
-          ]
-        },
-        {
-          "name": "ValidateMessageResponse"
-        },
         {
           "name": "MessageStoragePolicy",
           "field": [
@@ -6064,6 +5717,353 @@
         },
         {
           "name": "SeekResponse"
+        },
+        {
+          "name": "Schema",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "type",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "Type"
+            },
+            {
+              "name": "definition",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            },
+            {
+              "name": "revision_id",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "revision_create_time",
+              "number": 6,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp",
+              "options": {}
+            }
+          ],
+          "enumType": [
+            {
+              "name": "Type",
+              "value": [
+                {
+                  "name": "TYPE_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "PROTOCOL_BUFFER",
+                  "number": 1
+                },
+                {
+                  "name": "AVRO",
+                  "number": 2
+                }
+              ]
+            }
+          ],
+          "options": {}
+        },
+        {
+          "name": "CreateSchemaRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "schema",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Schema",
+              "options": {}
+            },
+            {
+              "name": "schema_id",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "GetSchemaRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "view",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SchemaView"
+            }
+          ]
+        },
+        {
+          "name": "ListSchemasRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "view",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SchemaView"
+            },
+            {
+              "name": "page_size",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            },
+            {
+              "name": "page_token",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "ListSchemasResponse",
+          "field": [
+            {
+              "name": "schemas",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Schema"
+            },
+            {
+              "name": "next_page_token",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "ListSchemaRevisionsRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "view",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "SchemaView"
+            },
+            {
+              "name": "page_size",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_INT32"
+            },
+            {
+              "name": "page_token",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "ListSchemaRevisionsResponse",
+          "field": [
+            {
+              "name": "schemas",
+              "number": 1,
+              "label": "LABEL_REPEATED",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Schema"
+            },
+            {
+              "name": "next_page_token",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING"
+            }
+          ]
+        },
+        {
+          "name": "CommitSchemaRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "schema",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Schema",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "RollbackSchemaRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "revision_id",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "DeleteSchemaRevisionRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "revision_id",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {
+                "deprecated": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "DeleteSchemaRequest",
+          "field": [
+            {
+              "name": "name",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ValidateSchemaRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "schema",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Schema",
+              "options": {}
+            }
+          ]
+        },
+        {
+          "name": "ValidateSchemaResponse"
+        },
+        {
+          "name": "ValidateMessageRequest",
+          "field": [
+            {
+              "name": "parent",
+              "number": 1,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {}
+            },
+            {
+              "name": "name",
+              "number": 2,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_STRING",
+              "options": {},
+              "oneofIndex": 0
+            },
+            {
+              "name": "schema",
+              "number": 3,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_MESSAGE",
+              "typeName": "Schema",
+              "oneofIndex": 0
+            },
+            {
+              "name": "message",
+              "number": 4,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_BYTES"
+            },
+            {
+              "name": "encoding",
+              "number": 5,
+              "label": "LABEL_OPTIONAL",
+              "type": "TYPE_ENUM",
+              "typeName": "Encoding"
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "schema_spec"
+            }
+          ]
+        },
+        {
+          "name": "ValidateMessageResponse"
         }
       ],
       "enumType": [
@@ -6103,72 +6103,6 @@
         }
       ],
       "service": [
-        {
-          "name": "SchemaService",
-          "method": [
-            {
-              "name": "CreateSchema",
-              "inputType": ".google.pubsub.v1.CreateSchemaRequest",
-              "outputType": ".google.pubsub.v1.Schema",
-              "options": {}
-            },
-            {
-              "name": "GetSchema",
-              "inputType": ".google.pubsub.v1.GetSchemaRequest",
-              "outputType": ".google.pubsub.v1.Schema",
-              "options": {}
-            },
-            {
-              "name": "ListSchemas",
-              "inputType": ".google.pubsub.v1.ListSchemasRequest",
-              "outputType": ".google.pubsub.v1.ListSchemasResponse",
-              "options": {}
-            },
-            {
-              "name": "ListSchemaRevisions",
-              "inputType": ".google.pubsub.v1.ListSchemaRevisionsRequest",
-              "outputType": ".google.pubsub.v1.ListSchemaRevisionsResponse",
-              "options": {}
-            },
-            {
-              "name": "CommitSchema",
-              "inputType": ".google.pubsub.v1.CommitSchemaRequest",
-              "outputType": ".google.pubsub.v1.Schema",
-              "options": {}
-            },
-            {
-              "name": "RollbackSchema",
-              "inputType": ".google.pubsub.v1.RollbackSchemaRequest",
-              "outputType": ".google.pubsub.v1.Schema",
-              "options": {}
-            },
-            {
-              "name": "DeleteSchemaRevision",
-              "inputType": ".google.pubsub.v1.DeleteSchemaRevisionRequest",
-              "outputType": ".google.pubsub.v1.Schema",
-              "options": {}
-            },
-            {
-              "name": "DeleteSchema",
-              "inputType": ".google.pubsub.v1.DeleteSchemaRequest",
-              "outputType": ".google.protobuf.Empty",
-              "options": {}
-            },
-            {
-              "name": "ValidateSchema",
-              "inputType": ".google.pubsub.v1.ValidateSchemaRequest",
-              "outputType": ".google.pubsub.v1.ValidateSchemaResponse",
-              "options": {}
-            },
-            {
-              "name": "ValidateMessage",
-              "inputType": ".google.pubsub.v1.ValidateMessageRequest",
-              "outputType": ".google.pubsub.v1.ValidateMessageResponse",
-              "options": {}
-            }
-          ],
-          "options": {}
-        },
         {
           "name": "Publisher",
           "method": [
@@ -6331,11 +6265,77 @@
             }
           ],
           "options": {}
+        },
+        {
+          "name": "SchemaService",
+          "method": [
+            {
+              "name": "CreateSchema",
+              "inputType": ".google.pubsub.v1.CreateSchemaRequest",
+              "outputType": ".google.pubsub.v1.Schema",
+              "options": {}
+            },
+            {
+              "name": "GetSchema",
+              "inputType": ".google.pubsub.v1.GetSchemaRequest",
+              "outputType": ".google.pubsub.v1.Schema",
+              "options": {}
+            },
+            {
+              "name": "ListSchemas",
+              "inputType": ".google.pubsub.v1.ListSchemasRequest",
+              "outputType": ".google.pubsub.v1.ListSchemasResponse",
+              "options": {}
+            },
+            {
+              "name": "ListSchemaRevisions",
+              "inputType": ".google.pubsub.v1.ListSchemaRevisionsRequest",
+              "outputType": ".google.pubsub.v1.ListSchemaRevisionsResponse",
+              "options": {}
+            },
+            {
+              "name": "CommitSchema",
+              "inputType": ".google.pubsub.v1.CommitSchemaRequest",
+              "outputType": ".google.pubsub.v1.Schema",
+              "options": {}
+            },
+            {
+              "name": "RollbackSchema",
+              "inputType": ".google.pubsub.v1.RollbackSchemaRequest",
+              "outputType": ".google.pubsub.v1.Schema",
+              "options": {}
+            },
+            {
+              "name": "DeleteSchemaRevision",
+              "inputType": ".google.pubsub.v1.DeleteSchemaRevisionRequest",
+              "outputType": ".google.pubsub.v1.Schema",
+              "options": {}
+            },
+            {
+              "name": "DeleteSchema",
+              "inputType": ".google.pubsub.v1.DeleteSchemaRequest",
+              "outputType": ".google.protobuf.Empty",
+              "options": {}
+            },
+            {
+              "name": "ValidateSchema",
+              "inputType": ".google.pubsub.v1.ValidateSchemaRequest",
+              "outputType": ".google.pubsub.v1.ValidateSchemaResponse",
+              "options": {}
+            },
+            {
+              "name": "ValidateMessage",
+              "inputType": ".google.pubsub.v1.ValidateMessageRequest",
+              "outputType": ".google.pubsub.v1.ValidateMessageResponse",
+              "options": {}
+            }
+          ],
+          "options": {}
         }
       ],
       "options": {
         "javaPackage": "com.google.pubsub.v1",
-        "javaOuterClassname": "PubsubProto",
+        "javaOuterClassname": "SchemaProto",
         "javaMultipleFiles": true,
         "goPackage": "cloud.google.com/go/pubsub/v2/apiv1/pubsubpb;pubsubpb",
         "csharpNamespace": "Google.Cloud.PubSub.V1",
@@ -7219,6 +7219,14 @@
       ],
       "extension": [
         {
+          "name": "http",
+          "extendee": ".google.protobuf.MethodOptions",
+          "number": 72295728,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_MESSAGE",
+          "typeName": "HttpRule"
+        },
+        {
           "name": "field_behavior",
           "extendee": ".google.protobuf.FieldOptions",
           "number": 1052,
@@ -7252,14 +7260,6 @@
           "label": "LABEL_OPTIONAL",
           "type": "TYPE_MESSAGE",
           "typeName": "ResourceDescriptor"
-        },
-        {
-          "name": "http",
-          "extendee": ".google.protobuf.MethodOptions",
-          "number": 72295728,
-          "label": "LABEL_OPTIONAL",
-          "type": "TYPE_MESSAGE",
-          "typeName": "HttpRule"
         },
         {
           "name": "method_signature",

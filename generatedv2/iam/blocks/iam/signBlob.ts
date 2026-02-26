@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const signBlob: AppBlock = {
   name: "Sign Blob",
@@ -23,7 +19,7 @@ const signBlob: AppBlock = {
           },
           required: true,
         },
-        bytesToSign: {
+        bytes_to_sign: {
           name: "Bytes To Sign",
           description:
             "Required. Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The bytes to sign.",
@@ -40,12 +36,11 @@ const signBlob: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.bytesToSign !== undefined)
-          request.bytesToSign = input.event.inputConfig.bytesToSign;
+        if (input.event.inputConfig.bytes_to_sign !== undefined)
+          request.bytes_to_sign = input.event.inputConfig.bytes_to_sign;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.signBlob(protoRequest, (err: any, response: any) => {
+          client.signBlob(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -56,7 +51,7 @@ const signBlob: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -66,7 +61,7 @@ const signBlob: AppBlock = {
       type: {
         type: "object",
         properties: {
-          keyId: {
+          key_id: {
             type: "string",
             description:
               "Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The id of the key used to sign the blob.",

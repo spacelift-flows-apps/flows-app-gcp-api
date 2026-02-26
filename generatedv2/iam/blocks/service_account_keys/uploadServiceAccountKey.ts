@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const uploadServiceAccountKey: AppBlock = {
   name: "Upload Service Account Key",
@@ -23,7 +19,7 @@ const uploadServiceAccountKey: AppBlock = {
           },
           required: false,
         },
-        publicKeyData: {
+        public_key_data: {
           name: "Public Key Data",
           description:
             "The public key to associate with the service account. Must be an RSA public key that is wrapped in an X.509 v3 certificate. Include the first line, `-----BEGIN CERTIFICATE-----`, and the last line, `-----END CERTIFICATE-----`.",
@@ -40,26 +36,22 @@ const uploadServiceAccountKey: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.publicKeyData !== undefined)
-          request.publicKeyData = input.event.inputConfig.publicKeyData;
+        if (input.event.inputConfig.public_key_data !== undefined)
+          request.public_key_data = input.event.inputConfig.public_key_data;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.uploadServiceAccountKey(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.uploadServiceAccountKey(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -74,7 +66,7 @@ const uploadServiceAccountKey: AppBlock = {
             description:
               "The resource name of the service account key in the following format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.",
           },
-          privateKeyType: {
+          private_key_type: {
             type: "string",
             enum: [
               "TYPE_UNSPECIFIED",
@@ -83,7 +75,7 @@ const uploadServiceAccountKey: AppBlock = {
             ],
             description: "Supported private key output formats.",
           },
-          keyAlgorithm: {
+          key_algorithm: {
             type: "string",
             enum: [
               "KEY_ALG_UNSPECIFIED",
@@ -92,28 +84,28 @@ const uploadServiceAccountKey: AppBlock = {
             ],
             description: "Supported key algorithms.",
           },
-          privateKeyData: {
+          private_key_data: {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          publicKeyData: {
+          public_key_data: {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          validAfterTime: {
+          valid_after_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          validBeforeTime: {
+          valid_before_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          keyOrigin: {
+          key_origin: {
             type: "string",
             enum: ["ORIGIN_UNSPECIFIED", "USER_PROVIDED", "GOOGLE_PROVIDED"],
             description: "Service Account Key Origin.",
           },
-          keyType: {
+          key_type: {
             type: "string",
             enum: ["KEY_TYPE_UNSPECIFIED", "USER_MANAGED", "SYSTEM_MANAGED"],
             description: "The key type.",

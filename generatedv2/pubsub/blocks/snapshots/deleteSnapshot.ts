@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const deleteSnapshot: AppBlock = {
   name: "Delete Snapshot",
@@ -31,9 +27,8 @@ const deleteSnapshot: AppBlock = {
         if (input.event.inputConfig.snapshot !== undefined)
           request.snapshot = input.event.inputConfig.snapshot;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteSnapshot(protoRequest, (err: any, response: any) => {
+          client.deleteSnapshot(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -44,7 +39,7 @@ const deleteSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

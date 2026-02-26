@@ -1,8 +1,6 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
-  toSnakeCase,
-  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -39,21 +37,21 @@ const updateObject: AppBlock = {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              storageClass: {
+              storage_class: {
                 type: "string",
                 description: "Optional. Storage class of the object.",
               },
-              contentEncoding: {
+              content_encoding: {
                 type: "string",
                 description:
                   "Optional. Content-Encoding of the object data, matching [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)",
               },
-              contentDisposition: {
+              content_disposition: {
                 type: "string",
                 description:
                   "Optional. Content-Disposition of the object data, matching [RFC 6266](https://tools.ietf.org/html/rfc6266).",
               },
-              cacheControl: {
+              cache_control: {
                 type: "string",
                 description:
                   "Optional. Cache-Control directive for the object data, matching [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2). If omitted, and the object is accessible to all anonymous users, the default is `public, max-age=3600`.",
@@ -78,7 +76,7 @@ const updateObject: AppBlock = {
                       description:
                         "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                     },
-                    entityId: {
+                    entity_id: {
                       type: "string",
                       description: "Optional. The ID for the entity, if any.",
                     },
@@ -97,10 +95,10 @@ const updateObject: AppBlock = {
                       description:
                         "Optional. The domain associated with the entity, if any.",
                     },
-                    projectTeam: {
+                    project_team: {
                       type: "object",
                       properties: {
-                        projectNumber: {
+                        project_number: {
                           type: "string",
                           description: "Optional. The project number.",
                         },
@@ -120,27 +118,27 @@ const updateObject: AppBlock = {
                 description:
                   "Optional. Access controls on the object. If `iam_config.uniform_bucket_level_access` is enabled on the parent bucket, requests to set, read, or modify acl is an error.",
               },
-              contentLanguage: {
+              content_language: {
                 type: "string",
                 description:
                   "Optional. Content-Language of the object data, matching [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).",
               },
-              contentType: {
+              content_type: {
                 type: "string",
                 description:
                   "Optional. Content-Type of the object data, matching [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5). If an object is stored without a Content-Type, it is served as `application/octet-stream`.",
               },
-              kmsKey: {
+              kms_key: {
                 type: "string",
                 description:
                   "Optional. Cloud KMS Key used to encrypt this object, if the object is encrypted by such a key.",
               },
-              temporaryHold: {
+              temporary_hold: {
                 type: "boolean",
                 description:
                   "Optional. Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.  A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
               },
-              retentionExpireTime: {
+              retention_expire_time: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -167,19 +165,19 @@ const updateObject: AppBlock = {
                 description: "All contexts of an object grouped by type.",
                 additionalProperties: true,
               },
-              eventBasedHold: {
+              event_based_hold: {
                 type: "boolean",
                 description:
                   "Whether an object is under event-based hold. An event-based hold is a way to force the retention of an object until after some event occurs. Once the hold is released by explicitly setting this field to `false`, the object becomes subject to any bucket-level retention policy, except that the retention duration is calculated from the time the event based hold was lifted, rather than the time the object was created.  In a `WriteObject` request, not setting this field implies that the value should be taken from the parent bucket's `default_event_based_hold` field. In a response, this field is always set to `true` or `false`.",
               },
-              customerEncryption: {
+              customer_encryption: {
                 type: "object",
                 properties: {
-                  encryptionAlgorithm: {
+                  encryption_algorithm: {
                     type: "string",
                     description: "Optional. The encryption algorithm.",
                   },
-                  keySha256Bytes: {
+                  key_sha256_bytes: {
                     type: "string",
                     description: "Base64-encoded bytes",
                   },
@@ -188,7 +186,7 @@ const updateObject: AppBlock = {
                   "Describes the customer-supplied encryption key mechanism used to store an object's data at rest.",
                 additionalProperties: true,
               },
-              customTime: {
+              custom_time: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -200,7 +198,7 @@ const updateObject: AppBlock = {
                     enum: ["MODE_UNSPECIFIED", "UNLOCKED", "LOCKED"],
                     description: "Optional. The mode of the Retention.",
                   },
-                  retainUntilTime: {
+                  retain_until_time: {
                     type: "string",
                     description:
                       "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -216,7 +214,7 @@ const updateObject: AppBlock = {
           },
           required: true,
         },
-        ifGenerationMatch: {
+        if_generation_match: {
           name: "If Generation Match",
           description:
             "Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.",
@@ -226,7 +224,7 @@ const updateObject: AppBlock = {
           },
           required: false,
         },
-        ifGenerationNotMatch: {
+        if_generation_not_match: {
           name: "If Generation Not Match",
           description:
             "Makes the operation conditional on whether the object's live generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.",
@@ -236,7 +234,7 @@ const updateObject: AppBlock = {
           },
           required: false,
         },
-        ifMetagenerationMatch: {
+        if_metageneration_match: {
           name: "If Metageneration Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration matches the given value.",
@@ -246,7 +244,7 @@ const updateObject: AppBlock = {
           },
           required: false,
         },
-        ifMetagenerationNotMatch: {
+        if_metageneration_not_match: {
           name: "If Metageneration Not Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration does not match the given value.",
@@ -256,7 +254,7 @@ const updateObject: AppBlock = {
           },
           required: false,
         },
-        predefinedAcl: {
+        predefined_acl: {
           name: "Predefined Acl",
           description:
             'Optional. Apply a predefined set of access controls to this object. Valid values are "authenticatedRead", "bucketOwnerFullControl", "bucketOwnerRead", "private", "projectPrivate", or "publicRead".',
@@ -267,7 +265,7 @@ const updateObject: AppBlock = {
           },
           required: false,
         },
-        updateMask: {
+        update_mask: {
           name: "Update Mask",
           description:
             "Required. List of fields to be updated.  To specify ALL fields, equivalent to the JSON API's \"update\" function, specify a single field with the value `*`. Note: not recommended. If a new field is introduced at a later time, an older client updating with the `*` might accidentally reset the new field's value.  Not specifying any fields is an error.",
@@ -278,23 +276,23 @@ const updateObject: AppBlock = {
           },
           required: true,
         },
-        commonObjectRequestParams: {
+        common_object_request_params: {
           name: "Common Object Request Params",
           description:
             "Optional. A set of parameters common to Storage API requests concerning an object.",
           type: {
             type: "object",
             properties: {
-              encryptionAlgorithm: {
+              encryption_algorithm: {
                 type: "string",
                 description:
                   "Optional. Encryption algorithm used with the Customer-Supplied Encryption Keys feature.",
               },
-              encryptionKeyBytes: {
+              encryption_key_bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              encryptionKeySha256Bytes: {
+              encryption_key_sha256_bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -304,7 +302,7 @@ const updateObject: AppBlock = {
           },
           required: false,
         },
-        overrideUnlockedRetention: {
+        override_unlocked_retention: {
           name: "Override Unlocked Retention",
           description:
             "Optional. Overrides the unlocked retention config on the object.",
@@ -322,50 +320,46 @@ const updateObject: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.object !== undefined)
           request.object = input.event.inputConfig.object;
-        if (input.event.inputConfig.ifGenerationMatch !== undefined)
-          request.ifGenerationMatch = input.event.inputConfig.ifGenerationMatch;
-        if (input.event.inputConfig.ifGenerationNotMatch !== undefined)
-          request.ifGenerationNotMatch =
-            input.event.inputConfig.ifGenerationNotMatch;
-        if (input.event.inputConfig.ifMetagenerationMatch !== undefined)
-          request.ifMetagenerationMatch =
-            input.event.inputConfig.ifMetagenerationMatch;
-        if (input.event.inputConfig.ifMetagenerationNotMatch !== undefined)
-          request.ifMetagenerationNotMatch =
-            input.event.inputConfig.ifMetagenerationNotMatch;
-        if (input.event.inputConfig.predefinedAcl !== undefined)
-          request.predefinedAcl = input.event.inputConfig.predefinedAcl;
-        if (input.event.inputConfig.updateMask !== undefined)
-          request.updateMask = input.event.inputConfig.updateMask;
-        if (input.event.inputConfig.commonObjectRequestParams !== undefined)
-          request.commonObjectRequestParams =
-            input.event.inputConfig.commonObjectRequestParams;
-        if (input.event.inputConfig.overrideUnlockedRetention !== undefined)
-          request.overrideUnlockedRetention =
-            input.event.inputConfig.overrideUnlockedRetention;
+        if (input.event.inputConfig.if_generation_match !== undefined)
+          request.if_generation_match =
+            input.event.inputConfig.if_generation_match;
+        if (input.event.inputConfig.if_generation_not_match !== undefined)
+          request.if_generation_not_match =
+            input.event.inputConfig.if_generation_not_match;
+        if (input.event.inputConfig.if_metageneration_match !== undefined)
+          request.if_metageneration_match =
+            input.event.inputConfig.if_metageneration_match;
+        if (input.event.inputConfig.if_metageneration_not_match !== undefined)
+          request.if_metageneration_not_match =
+            input.event.inputConfig.if_metageneration_not_match;
+        if (input.event.inputConfig.predefined_acl !== undefined)
+          request.predefined_acl = input.event.inputConfig.predefined_acl;
+        if (input.event.inputConfig.update_mask !== undefined)
+          request.update_mask = input.event.inputConfig.update_mask;
+        if (input.event.inputConfig.common_object_request_params !== undefined)
+          request.common_object_request_params =
+            input.event.inputConfig.common_object_request_params;
+        if (input.event.inputConfig.override_unlocked_retention !== undefined)
+          request.override_unlocked_retention =
+            input.event.inputConfig.override_unlocked_retention;
 
         const routingParams: Record<string, string> = {};
         if (request.object?.bucket !== undefined)
           routingParams["bucket"] = String(request.object?.bucket);
         const metadata = createRoutingMetadata(routingParams);
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.updateObject(
-            protoRequest,
-            metadata,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.updateObject(request, metadata, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -394,7 +388,7 @@ const updateObject: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          restoreToken: {
+          restore_token: {
             type: "string",
             description:
               "Output only. Restore token used to differentiate deleted objects with the same name and generation. This field is output only, and only set for deleted objects in HNS buckets.",
@@ -403,7 +397,7 @@ const updateObject: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          storageClass: {
+          storage_class: {
             type: "string",
             description: "Optional. Storage class of the object.",
           },
@@ -411,17 +405,17 @@ const updateObject: AppBlock = {
             type: "string",
             description: "64-bit integer as string",
           },
-          contentEncoding: {
+          content_encoding: {
             type: "string",
             description:
               "Optional. Content-Encoding of the object data, matching [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)",
           },
-          contentDisposition: {
+          content_disposition: {
             type: "string",
             description:
               "Optional. Content-Disposition of the object data, matching [RFC 6266](https://tools.ietf.org/html/rfc6266).",
           },
-          cacheControl: {
+          cache_control: {
             type: "string",
             description:
               "Optional. Cache-Control directive for the object data, matching [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2). If omitted, and the object is accessible to all anonymous users, the default is `public, max-age=3600`.",
@@ -445,12 +439,12 @@ const updateObject: AppBlock = {
                   description:
                     "Optional. The entity holding the permission, in one of the following forms: * `user-{userid}` * `user-{email}` * `group-{groupid}` * `group-{email}` * `domain-{domain}` * `project-{team}-{projectnumber}` * `project-{team}-{projectid}` * `allUsers` * `allAuthenticatedUsers` Examples: * The user `liz@example.com` would be `user-liz@example.com`. * The group `example@googlegroups.com` would be `group-example@googlegroups.com`. * All members of the Google Apps for Business domain `example.com` would be `domain-example.com`. For project entities, `project-{team}-{projectnumber}` format is returned in the response.",
                 },
-                entityAlt: {
+                entity_alt: {
                   type: "string",
                   description:
                     "Output only. The alternative entity format, if exists. For project entities, `project-{team}-{projectid}` format is returned in the response.",
                 },
-                entityId: {
+                entity_id: {
                   type: "string",
                   description: "Optional. The ID for the entity, if any.",
                 },
@@ -469,10 +463,10 @@ const updateObject: AppBlock = {
                   description:
                     "Optional. The domain associated with the entity, if any.",
                 },
-                projectTeam: {
+                project_team: {
                   type: "object",
                   properties: {
-                    projectNumber: {
+                    project_number: {
                       type: "string",
                       description: "Optional. The project number.",
                     },
@@ -492,29 +486,29 @@ const updateObject: AppBlock = {
             description:
               "Optional. Access controls on the object. If `iam_config.uniform_bucket_level_access` is enabled on the parent bucket, requests to set, read, or modify acl is an error.",
           },
-          contentLanguage: {
+          content_language: {
             type: "string",
             description:
               "Optional. Content-Language of the object data, matching [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).",
           },
-          deleteTime: {
+          delete_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          finalizeTime: {
+          finalize_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          contentType: {
+          content_type: {
             type: "string",
             description:
               "Optional. Content-Type of the object data, matching [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5). If an object is stored without a Content-Type, it is served as `application/octet-stream`.",
           },
-          createTime: {
+          create_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          componentCount: {
+          component_count: {
             type: "integer",
             description:
               "Output only. Number of underlying components that make up this object. Components are accumulated by compose operations.",
@@ -527,7 +521,7 @@ const updateObject: AppBlock = {
                 description:
                   "CRC32C digest of the object data. Computed by the Cloud Storage service for all written objects. If set in a WriteObjectRequest, service validates that the stored object matches this checksum.",
               },
-              md5Hash: {
+              md5_hash: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -536,25 +530,25 @@ const updateObject: AppBlock = {
               "Message used for storing full (not subrange) object checksums.",
             additionalProperties: true,
           },
-          updateTime: {
+          update_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          kmsKey: {
+          kms_key: {
             type: "string",
             description:
               "Optional. Cloud KMS Key used to encrypt this object, if the object is encrypted by such a key.",
           },
-          updateStorageClassTime: {
+          update_storage_class_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          temporaryHold: {
+          temporary_hold: {
             type: "boolean",
             description:
               "Optional. Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites.  A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object.",
           },
-          retentionExpireTime: {
+          retention_expire_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -581,7 +575,7 @@ const updateObject: AppBlock = {
             description: "All contexts of an object grouped by type.",
             additionalProperties: true,
           },
-          eventBasedHold: {
+          event_based_hold: {
             type: "boolean",
             description:
               "Whether an object is under event-based hold. An event-based hold is a way to force the retention of an object until after some event occurs. Once the hold is released by explicitly setting this field to `false`, the object becomes subject to any bucket-level retention policy, except that the retention duration is calculated from the time the event based hold was lifted, rather than the time the object was created.  In a `WriteObject` request, not setting this field implies that the value should be taken from the parent bucket's `default_event_based_hold` field. In a response, this field is always set to `true` or `false`.",
@@ -594,7 +588,7 @@ const updateObject: AppBlock = {
                 description:
                   "Optional. The entity, in the form `user-`*userId*.",
               },
-              entityId: {
+              entity_id: {
                 type: "string",
                 description: "Optional. The ID for the entity.",
               },
@@ -602,14 +596,14 @@ const updateObject: AppBlock = {
             description: "The owner of a specific resource.",
             additionalProperties: true,
           },
-          customerEncryption: {
+          customer_encryption: {
             type: "object",
             properties: {
-              encryptionAlgorithm: {
+              encryption_algorithm: {
                 type: "string",
                 description: "Optional. The encryption algorithm.",
               },
-              keySha256Bytes: {
+              key_sha256_bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -618,15 +612,15 @@ const updateObject: AppBlock = {
               "Describes the customer-supplied encryption key mechanism used to store an object's data at rest.",
             additionalProperties: true,
           },
-          customTime: {
+          custom_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          softDeleteTime: {
+          soft_delete_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          hardDeleteTime: {
+          hard_delete_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
@@ -638,7 +632,7 @@ const updateObject: AppBlock = {
                 enum: ["MODE_UNSPECIFIED", "UNLOCKED", "LOCKED"],
                 description: "Optional. The mode of the Retention.",
               },
-              retainUntilTime: {
+              retain_until_time: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },

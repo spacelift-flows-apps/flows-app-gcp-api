@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const enableServiceAccountKey: AppBlock = {
   name: "Enable Service Account Key",
@@ -31,23 +27,19 @@ const enableServiceAccountKey: AppBlock = {
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.enableServiceAccountKey(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.enableServiceAccountKey(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

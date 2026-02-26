@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getPublisherClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const detachSubscription: AppBlock = {
   name: "Detach Subscription",
@@ -31,9 +27,8 @@ const detachSubscription: AppBlock = {
         if (input.event.inputConfig.subscription !== undefined)
           request.subscription = input.event.inputConfig.subscription;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.detachSubscription(protoRequest, (err: any, response: any) => {
+          client.detachSubscription(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -44,7 +39,7 @@ const detachSubscription: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

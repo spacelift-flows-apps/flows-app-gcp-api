@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const acknowledge: AppBlock = {
   name: "Acknowledge",
@@ -23,7 +19,7 @@ const acknowledge: AppBlock = {
           },
           required: true,
         },
-        ackIds: {
+        ack_ids: {
           name: "Ack Ids",
           description:
             "Required. The acknowledgment ID for the messages being acknowledged that was returned by the Pub/Sub system in the `Pull` response. Must not be empty.",
@@ -44,12 +40,11 @@ const acknowledge: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.subscription !== undefined)
           request.subscription = input.event.inputConfig.subscription;
-        if (input.event.inputConfig.ackIds !== undefined)
-          request.ackIds = input.event.inputConfig.ackIds;
+        if (input.event.inputConfig.ack_ids !== undefined)
+          request.ack_ids = input.event.inputConfig.ack_ids;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.acknowledge(protoRequest, (err: any, response: any) => {
+          client.acknowledge(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -60,7 +55,7 @@ const acknowledge: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

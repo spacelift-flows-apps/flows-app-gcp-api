@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const updateSnapshot: AppBlock = {
   name: "Update Snapshot",
@@ -27,7 +23,7 @@ const updateSnapshot: AppBlock = {
                 description:
                   "Optional. The name of the topic from which this snapshot is retaining messages.",
               },
-              expireTime: {
+              expire_time: {
                 type: "string",
                 description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
               },
@@ -46,7 +42,7 @@ const updateSnapshot: AppBlock = {
           },
           required: true,
         },
-        updateMask: {
+        update_mask: {
           name: "Update Mask",
           description:
             "Required. Indicates which fields in the provided snapshot to update. Must be specified and non-empty.",
@@ -64,12 +60,11 @@ const updateSnapshot: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.snapshot !== undefined)
           request.snapshot = input.event.inputConfig.snapshot;
-        if (input.event.inputConfig.updateMask !== undefined)
-          request.updateMask = input.event.inputConfig.updateMask;
+        if (input.event.inputConfig.update_mask !== undefined)
+          request.update_mask = input.event.inputConfig.update_mask;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.updateSnapshot(protoRequest, (err: any, response: any) => {
+          client.updateSnapshot(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -80,7 +75,7 @@ const updateSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -99,7 +94,7 @@ const updateSnapshot: AppBlock = {
             description:
               "Optional. The name of the topic from which this snapshot is retaining messages.",
           },
-          expireTime: {
+          expire_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

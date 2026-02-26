@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const createRole: AppBlock = {
   name: "Create Role",
@@ -23,7 +19,7 @@ const createRole: AppBlock = {
           },
           required: false,
         },
-        roleId: {
+        role_id: {
           name: "Role Id",
           description:
             "The role ID to use for this role.  A role ID may contain alphanumeric characters, underscores (`_`), and periods (`.`). It must contain a minimum of 3 characters and a maximum of 64 characters.",
@@ -55,7 +51,7 @@ const createRole: AppBlock = {
                 description:
                   "Optional. A human-readable description for the role.",
               },
-              includedPermissions: {
+              included_permissions: {
                 type: "array",
                 items: {
                   type: "string",
@@ -91,14 +87,13 @@ const createRole: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.parent !== undefined)
           request.parent = input.event.inputConfig.parent;
-        if (input.event.inputConfig.roleId !== undefined)
-          request.roleId = input.event.inputConfig.roleId;
+        if (input.event.inputConfig.role_id !== undefined)
+          request.role_id = input.event.inputConfig.role_id;
         if (input.event.inputConfig.role !== undefined)
           request.role = input.event.inputConfig.role;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.createRole(protoRequest, (err: any, response: any) => {
+          client.createRole(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -109,7 +104,7 @@ const createRole: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -133,7 +128,7 @@ const createRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          includedPermissions: {
+          included_permissions: {
             type: "array",
             items: {
               type: "string",

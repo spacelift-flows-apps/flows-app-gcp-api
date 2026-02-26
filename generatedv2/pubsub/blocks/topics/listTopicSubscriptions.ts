@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getPublisherClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getPublisherClient } from "../../lib/grpcClient.ts";
 
 const listTopicSubscriptions: AppBlock = {
   name: "List Topic Subscriptions",
@@ -23,7 +19,7 @@ const listTopicSubscriptions: AppBlock = {
           },
           required: true,
         },
-        pageSize: {
+        page_size: {
           name: "Page Size",
           description:
             "Optional. Maximum number of subscription names to return.",
@@ -34,7 +30,7 @@ const listTopicSubscriptions: AppBlock = {
           },
           required: false,
         },
-        pageToken: {
+        page_token: {
           name: "Page Token",
           description:
             "Optional. The value returned by the last `ListTopicSubscriptionsResponse`; indicates that this is a continuation of a prior `ListTopicSubscriptions` call, and that the system should return the next page of data.",
@@ -52,28 +48,24 @@ const listTopicSubscriptions: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.topic !== undefined)
           request.topic = input.event.inputConfig.topic;
-        if (input.event.inputConfig.pageSize !== undefined)
-          request.pageSize = input.event.inputConfig.pageSize;
-        if (input.event.inputConfig.pageToken !== undefined)
-          request.pageToken = input.event.inputConfig.pageToken;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listTopicSubscriptions(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.listTopicSubscriptions(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -91,7 +83,7 @@ const listTopicSubscriptions: AppBlock = {
             description:
               "Optional. The names of subscriptions attached to the topic specified in the request.",
           },
-          nextPageToken: {
+          next_page_token: {
             type: "string",
             description:
               "Optional. If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListTopicSubscriptionsRequest` to get more subscriptions.",

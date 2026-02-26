@@ -1,8 +1,6 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
-  toSnakeCase,
-  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -22,7 +20,7 @@ const deleteBucket: AppBlock = {
           },
           required: true,
         },
-        ifMetagenerationMatch: {
+        if_metageneration_match: {
           name: "If Metageneration Match",
           description:
             "If set, only deletes the bucket if its metageneration matches this value.",
@@ -32,7 +30,7 @@ const deleteBucket: AppBlock = {
           },
           required: false,
         },
-        ifMetagenerationNotMatch: {
+        if_metageneration_not_match: {
           name: "If Metageneration Not Match",
           description:
             "If set, only deletes the bucket if its metageneration does not match this value.",
@@ -49,35 +47,30 @@ const deleteBucket: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.ifMetagenerationMatch !== undefined)
-          request.ifMetagenerationMatch =
-            input.event.inputConfig.ifMetagenerationMatch;
-        if (input.event.inputConfig.ifMetagenerationNotMatch !== undefined)
-          request.ifMetagenerationNotMatch =
-            input.event.inputConfig.ifMetagenerationNotMatch;
+        if (input.event.inputConfig.if_metageneration_match !== undefined)
+          request.if_metageneration_match =
+            input.event.inputConfig.if_metageneration_match;
+        if (input.event.inputConfig.if_metageneration_not_match !== undefined)
+          request.if_metageneration_not_match =
+            input.event.inputConfig.if_metageneration_not_match;
 
         const routingParams: Record<string, string> = {};
         if (request.name !== undefined)
           routingParams["bucket"] = String(request.name);
         const metadata = createRoutingMetadata(routingParams);
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteBucket(
-            protoRequest,
-            metadata,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.deleteBucket(request, metadata, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

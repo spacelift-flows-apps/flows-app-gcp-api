@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSchemaServiceClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const listSchemas: AppBlock = {
   name: "List Schemas",
@@ -35,7 +31,7 @@ const listSchemas: AppBlock = {
           },
           required: false,
         },
-        pageSize: {
+        page_size: {
           name: "Page Size",
           description: "Maximum number of schemas to return.",
           type: {
@@ -44,7 +40,7 @@ const listSchemas: AppBlock = {
           },
           required: false,
         },
-        pageToken: {
+        page_token: {
           name: "Page Token",
           description:
             "The value returned by the last `ListSchemasResponse`; indicates that this is a continuation of a prior `ListSchemas` call, and that the system should return the next page of data.",
@@ -64,14 +60,13 @@ const listSchemas: AppBlock = {
           request.parent = input.event.inputConfig.parent;
         if (input.event.inputConfig.view !== undefined)
           request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.pageSize !== undefined)
-          request.pageSize = input.event.inputConfig.pageSize;
-        if (input.event.inputConfig.pageToken !== undefined)
-          request.pageToken = input.event.inputConfig.pageToken;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listSchemas(protoRequest, (err: any, response: any) => {
+          client.listSchemas(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -82,7 +77,7 @@ const listSchemas: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -112,12 +107,12 @@ const listSchemas: AppBlock = {
                   description:
                     "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
                 },
-                revisionId: {
+                revision_id: {
                   type: "string",
                   description:
                     "Output only. Immutable. The revision ID of the schema.",
                 },
-                revisionCreateTime: {
+                revision_create_time: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -129,7 +124,7 @@ const listSchemas: AppBlock = {
             },
             description: "The resulting schemas.",
           },
-          nextPageToken: {
+          next_page_token: {
             type: "string",
             description:
               "If not empty, indicates that there may be more schemas that match the request; this value should be passed in a new `ListSchemasRequest`.",

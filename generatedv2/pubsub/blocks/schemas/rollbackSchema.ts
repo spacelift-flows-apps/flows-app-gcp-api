@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSchemaServiceClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const rollbackSchema: AppBlock = {
   name: "Rollback Schema",
@@ -23,7 +19,7 @@ const rollbackSchema: AppBlock = {
           },
           required: true,
         },
-        revisionId: {
+        revision_id: {
           name: "Revision Id",
           description:
             "Required. The revision ID to roll back to. It must be a revision of the same schema.    Example: c7cfa2a8",
@@ -41,12 +37,11 @@ const rollbackSchema: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.revisionId !== undefined)
-          request.revisionId = input.event.inputConfig.revisionId;
+        if (input.event.inputConfig.revision_id !== undefined)
+          request.revision_id = input.event.inputConfig.revision_id;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.rollbackSchema(protoRequest, (err: any, response: any) => {
+          client.rollbackSchema(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -57,7 +52,7 @@ const rollbackSchema: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -82,12 +77,12 @@ const rollbackSchema: AppBlock = {
             description:
               "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
-          revisionId: {
+          revision_id: {
             type: "string",
             description:
               "Output only. Immutable. The revision ID of the schema.",
           },
-          revisionCreateTime: {
+          revision_create_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

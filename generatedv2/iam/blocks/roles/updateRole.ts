@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const updateRole: AppBlock = {
   name: "Update Role",
@@ -44,7 +40,7 @@ const updateRole: AppBlock = {
                 description:
                   "Optional. A human-readable description for the role.",
               },
-              includedPermissions: {
+              included_permissions: {
                 type: "array",
                 items: {
                   type: "string",
@@ -73,7 +69,7 @@ const updateRole: AppBlock = {
           },
           required: false,
         },
-        updateMask: {
+        update_mask: {
           name: "Update Mask",
           description:
             "A mask describing which fields in the Role have changed.",
@@ -93,12 +89,11 @@ const updateRole: AppBlock = {
           request.name = input.event.inputConfig.name;
         if (input.event.inputConfig.role !== undefined)
           request.role = input.event.inputConfig.role;
-        if (input.event.inputConfig.updateMask !== undefined)
-          request.updateMask = input.event.inputConfig.updateMask;
+        if (input.event.inputConfig.update_mask !== undefined)
+          request.update_mask = input.event.inputConfig.update_mask;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.updateRole(protoRequest, (err: any, response: any) => {
+          client.updateRole(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -109,7 +104,7 @@ const updateRole: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -133,7 +128,7 @@ const updateRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          includedPermissions: {
+          included_permissions: {
             type: "array",
             items: {
               type: "string",

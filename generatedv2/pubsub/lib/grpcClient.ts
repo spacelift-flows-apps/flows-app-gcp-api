@@ -73,38 +73,6 @@ export function createRoutingMetadata(
   return metadata;
 }
 
-// proto-loader with loadFileDescriptorSetFromObject uses snake_case field names
-// for serialization, but our input config uses camelCase. Convert at the boundary.
-export function toSnakeCase(obj: any): any {
-  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj.map(toSnakeCase);
-  const result: Record<string, any> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const snakeKey = key.replace(/[A-Z]/g, (ch) => `_${ch.toLowerCase()}`);
-    result[snakeKey] = toSnakeCase(value);
-  }
-  return result;
-}
-
-export function toCamelCase(obj: any): any {
-  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj.map(toCamelCase);
-  const result: Record<string, any> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const camelKey = key.replace(/_([a-z])/g, (_, ch) => ch.toUpperCase());
-    result[camelKey] = toCamelCase(value);
-  }
-  return result;
-}
-
-export async function getSchemaServiceClient(
-  config: Record<string, any>,
-): Promise<any> {
-  const credentials = await createCredentials(config);
-  const Service = getService("google.pubsub.v1", "SchemaService");
-  return new Service("pubsub.googleapis.com:443", credentials);
-}
-
 export async function getPublisherClient(
   config: Record<string, any>,
 ): Promise<any> {
@@ -118,5 +86,13 @@ export async function getSubscriberClient(
 ): Promise<any> {
   const credentials = await createCredentials(config);
   const Service = getService("google.pubsub.v1", "Subscriber");
+  return new Service("pubsub.googleapis.com:443", credentials);
+}
+
+export async function getSchemaServiceClient(
+  config: Record<string, any>,
+): Promise<any> {
+  const credentials = await createCredentials(config);
+  const Service = getService("google.pubsub.v1", "SchemaService");
   return new Service("pubsub.googleapis.com:443", credentials);
 }

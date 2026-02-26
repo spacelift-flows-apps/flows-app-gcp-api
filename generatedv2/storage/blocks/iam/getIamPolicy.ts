@@ -1,8 +1,6 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
-  toSnakeCase,
-  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -27,7 +25,7 @@ const getIamPolicy: AppBlock = {
           type: {
             type: "object",
             properties: {
-              requestedPolicyVersion: {
+              requested_policy_version: {
                 type: "integer",
               },
             },
@@ -55,24 +53,19 @@ const getIamPolicy: AppBlock = {
           if (m) routingParams["bucket"] = m[1];
         }
         const metadata = createRoutingMetadata(routingParams);
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getIamPolicy(
-            protoRequest,
-            metadata,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.getIamPolicy(request, metadata, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -121,7 +114,7 @@ const getIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          auditConfigs: {
+          audit_configs: {
             type: "array",
             items: {
               type: "object",
@@ -129,12 +122,12 @@ const getIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                auditLogConfigs: {
+                audit_log_configs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      logType: {
+                      log_type: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -143,7 +136,7 @@ const getIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exemptedMembers: {
+                      exempted_members: {
                         type: "array",
                         items: {
                           type: "string",

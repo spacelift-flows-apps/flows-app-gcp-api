@@ -158,10 +158,10 @@ export function messageToSchema(
 
     const fieldSchema = fieldToSchema(field, options, new Set(visited));
     if (fieldSchema) {
-      properties[field.jsonName] = fieldSchema;
+      properties[field.name] = fieldSchema;
 
       if (field.behaviors.includes(FieldBehavior.REQUIRED)) {
-        required.push(field.jsonName);
+        required.push(field.name);
       }
     }
   }
@@ -251,7 +251,7 @@ export function fieldToSchema(
  * Generate a JSON Schema for a message's fields suitable for Flows block input config.
  * Excludes OUTPUT_ONLY fields, marks REQUIRED fields.
  *
- * Returns an object where keys are field jsonNames and values are Flows config field definitions.
+ * Returns an object where keys are proto field names (snake_case) and values are Flows config field definitions.
  */
 export function messageToInputConfig(
   message: ParsedMessage,
@@ -265,13 +265,13 @@ export function messageToInputConfig(
     const fieldSchema = fieldToSchema(field, options);
     if (!fieldSchema) continue;
 
-    // Humanize field name: "messageRetentionDuration" -> "Message Retention Duration"
-    const humanName = field.jsonName
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (s) => s.toUpperCase())
-      .trim();
+    // Humanize field name: "bucket_id" -> "Bucket Id"
+    const humanName = field.name
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
-    config[field.jsonName] = {
+    config[field.name] = {
       name: humanName,
       description: field.comment || `${humanName} field`,
       type: fieldSchema,

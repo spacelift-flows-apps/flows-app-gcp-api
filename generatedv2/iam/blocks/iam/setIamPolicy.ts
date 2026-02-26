@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const setIamPolicy: AppBlock = {
   name: "Set IAM Policy",
@@ -65,7 +61,7 @@ const setIamPolicy: AppBlock = {
                   additionalProperties: true,
                 },
               },
-              auditConfigs: {
+              audit_configs: {
                 type: "array",
                 items: {
                   type: "object",
@@ -73,12 +69,12 @@ const setIamPolicy: AppBlock = {
                     service: {
                       type: "string",
                     },
-                    auditLogConfigs: {
+                    audit_log_configs: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          logType: {
+                          log_type: {
                             type: "string",
                             enum: [
                               "LOG_TYPE_UNSPECIFIED",
@@ -87,7 +83,7 @@ const setIamPolicy: AppBlock = {
                               "DATA_READ",
                             ],
                           },
-                          exemptedMembers: {
+                          exempted_members: {
                             type: "array",
                             items: {
                               type: "string",
@@ -110,7 +106,7 @@ const setIamPolicy: AppBlock = {
           },
           required: false,
         },
-        updateMask: {
+        update_mask: {
           name: "Update Mask",
           description: "Update Mask field",
           type: {
@@ -129,12 +125,11 @@ const setIamPolicy: AppBlock = {
           request.resource = input.event.inputConfig.resource;
         if (input.event.inputConfig.policy !== undefined)
           request.policy = input.event.inputConfig.policy;
-        if (input.event.inputConfig.updateMask !== undefined)
-          request.updateMask = input.event.inputConfig.updateMask;
+        if (input.event.inputConfig.update_mask !== undefined)
+          request.update_mask = input.event.inputConfig.update_mask;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.setIamPolicy(protoRequest, (err: any, response: any) => {
+          client.setIamPolicy(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -145,7 +140,7 @@ const setIamPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -194,7 +189,7 @@ const setIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          auditConfigs: {
+          audit_configs: {
             type: "array",
             items: {
               type: "object",
@@ -202,12 +197,12 @@ const setIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                auditLogConfigs: {
+                audit_log_configs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      logType: {
+                      log_type: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -216,7 +211,7 @@ const setIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exemptedMembers: {
+                      exempted_members: {
                         type: "array",
                         items: {
                           type: "string",

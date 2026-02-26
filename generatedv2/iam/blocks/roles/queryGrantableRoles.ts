@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const queryGrantableRoles: AppBlock = {
   name: "Query Grantable Roles",
@@ -12,7 +8,7 @@ const queryGrantableRoles: AppBlock = {
   inputs: {
     default: {
       config: {
-        fullResourceName: {
+        full_resource_name: {
           name: "Full Resource Name",
           description:
             "Required. The full resource name to query from the list of grantable roles.  The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
@@ -33,7 +29,7 @@ const queryGrantableRoles: AppBlock = {
           },
           required: false,
         },
-        pageSize: {
+        page_size: {
           name: "Page Size",
           description:
             "Optional limit on the number of roles to include in the response.  The default is 300, and the maximum is 1,000.",
@@ -44,7 +40,7 @@ const queryGrantableRoles: AppBlock = {
           },
           required: false,
         },
-        pageToken: {
+        page_token: {
           name: "Page Token",
           description:
             "Optional pagination token returned in an earlier QueryGrantableRolesResponse.",
@@ -60,32 +56,29 @@ const queryGrantableRoles: AppBlock = {
         const client = await getIAMClient(input.app.config);
 
         const request: Record<string, any> = {};
-        if (input.event.inputConfig.fullResourceName !== undefined)
-          request.fullResourceName = input.event.inputConfig.fullResourceName;
+        if (input.event.inputConfig.full_resource_name !== undefined)
+          request.full_resource_name =
+            input.event.inputConfig.full_resource_name;
         if (input.event.inputConfig.view !== undefined)
           request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.pageSize !== undefined)
-          request.pageSize = input.event.inputConfig.pageSize;
-        if (input.event.inputConfig.pageToken !== undefined)
-          request.pageToken = input.event.inputConfig.pageToken;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.queryGrantableRoles(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.queryGrantableRoles(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -115,7 +108,7 @@ const queryGrantableRoles: AppBlock = {
                   description:
                     "Optional. A human-readable description for the role.",
                 },
-                includedPermissions: {
+                included_permissions: {
                   type: "array",
                   items: {
                     type: "string",
@@ -151,7 +144,7 @@ const queryGrantableRoles: AppBlock = {
             },
             description: "The list of matching roles.",
           },
-          nextPageToken: {
+          next_page_token: {
             type: "string",
             description:
               "To retrieve the next page of results, set `QueryGrantableRolesRequest.page_token` to this value.",

@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const getIamPolicy: AppBlock = {
   name: "Get IAM Policy",
@@ -26,7 +22,7 @@ const getIamPolicy: AppBlock = {
           type: {
             type: "object",
             properties: {
-              requestedPolicyVersion: {
+              requested_policy_version: {
                 type: "integer",
               },
             },
@@ -44,9 +40,8 @@ const getIamPolicy: AppBlock = {
         if (input.event.inputConfig.options !== undefined)
           request.options = input.event.inputConfig.options;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getIamPolicy(protoRequest, (err: any, response: any) => {
+          client.getIamPolicy(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -57,7 +52,7 @@ const getIamPolicy: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -106,7 +101,7 @@ const getIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          auditConfigs: {
+          audit_configs: {
             type: "array",
             items: {
               type: "object",
@@ -114,12 +109,12 @@ const getIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                auditLogConfigs: {
+                audit_log_configs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      logType: {
+                      log_type: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -128,7 +123,7 @@ const getIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exemptedMembers: {
+                      exempted_members: {
                         type: "array",
                         items: {
                           type: "string",

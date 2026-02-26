@@ -1,13 +1,3 @@
-import createSchema from "./schemas/createSchema.ts";
-import getSchema from "./schemas/getSchema.ts";
-import listSchemas from "./schemas/listSchemas.ts";
-import listSchemaRevisions from "./schemas/listSchemaRevisions.ts";
-import commitSchema from "./schemas/commitSchema.ts";
-import rollbackSchema from "./schemas/rollbackSchema.ts";
-import deleteSchemaRevision from "./schemas/deleteSchemaRevision.ts";
-import deleteSchema from "./schemas/deleteSchema.ts";
-import validateSchema from "./schemas/validateSchema.ts";
-import validateMessage from "./schemas/validateMessage.ts";
 import createTopic from "./topics/createTopic.ts";
 import updateTopic from "./topics/updateTopic.ts";
 import publish from "./topics/publish.ts";
@@ -32,18 +22,18 @@ import createSnapshot from "./snapshots/createSnapshot.ts";
 import updateSnapshot from "./snapshots/updateSnapshot.ts";
 import deleteSnapshot from "./snapshots/deleteSnapshot.ts";
 import seek from "./subscriptions/seek.ts";
+import createSchema from "./schemas/createSchema.ts";
+import getSchema from "./schemas/getSchema.ts";
+import listSchemas from "./schemas/listSchemas.ts";
+import listSchemaRevisions from "./schemas/listSchemaRevisions.ts";
+import commitSchema from "./schemas/commitSchema.ts";
+import rollbackSchema from "./schemas/rollbackSchema.ts";
+import deleteSchemaRevision from "./schemas/deleteSchemaRevision.ts";
+import deleteSchema from "./schemas/deleteSchema.ts";
+import validateSchema from "./schemas/validateSchema.ts";
+import validateMessage from "./schemas/validateMessage.ts";
 
 export const blocks = {
-  schemas_createSchema: createSchema,
-  schemas_getSchema: getSchema,
-  schemas_listSchemas: listSchemas,
-  schemas_listSchemaRevisions: listSchemaRevisions,
-  schemas_commitSchema: commitSchema,
-  schemas_rollbackSchema: rollbackSchema,
-  schemas_deleteSchemaRevision: deleteSchemaRevision,
-  schemas_deleteSchema: deleteSchema,
-  schemas_validateSchema: validateSchema,
-  schemas_validateMessage: validateMessage,
   topics_createTopic: createTopic,
   topics_updateTopic: updateTopic,
   topics_publish: publish,
@@ -68,4 +58,14 @@ export const blocks = {
   snapshots_updateSnapshot: updateSnapshot,
   snapshots_deleteSnapshot: deleteSnapshot,
   subscriptions_seek: seek,
+  schemas_createSchema: createSchema,
+  schemas_getSchema: getSchema,
+  schemas_listSchemas: listSchemas,
+  schemas_listSchemaRevisions: listSchemaRevisions,
+  schemas_commitSchema: commitSchema,
+  schemas_rollbackSchema: rollbackSchema,
+  schemas_deleteSchemaRevision: deleteSchemaRevision,
+  schemas_deleteSchema: deleteSchema,
+  schemas_validateSchema: validateSchema,
+  schemas_validateMessage: validateMessage,
 };

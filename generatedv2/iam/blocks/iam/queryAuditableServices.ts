@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const queryAuditableServices: AppBlock = {
   name: "Query Auditable Services",
@@ -12,7 +8,7 @@ const queryAuditableServices: AppBlock = {
   inputs: {
     default: {
       config: {
-        fullResourceName: {
+        full_resource_name: {
           name: "Full Resource Name",
           description:
             "Required. The full resource name to query from the list of auditable services.  The name follows the Google Cloud Platform resource format. For example, a Cloud Platform project with id `my-project` will be named `//cloudresourcemanager.googleapis.com/projects/my-project`.",
@@ -28,26 +24,23 @@ const queryAuditableServices: AppBlock = {
         const client = await getIAMClient(input.app.config);
 
         const request: Record<string, any> = {};
-        if (input.event.inputConfig.fullResourceName !== undefined)
-          request.fullResourceName = input.event.inputConfig.fullResourceName;
+        if (input.event.inputConfig.full_resource_name !== undefined)
+          request.full_resource_name =
+            input.event.inputConfig.full_resource_name;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.queryAuditableServices(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.queryAuditableServices(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

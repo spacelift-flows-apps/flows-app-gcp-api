@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const deleteRole: AppBlock = {
   name: "Delete Role",
@@ -42,9 +38,8 @@ const deleteRole: AppBlock = {
         if (input.event.inputConfig.etag !== undefined)
           request.etag = input.event.inputConfig.etag;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteRole(protoRequest, (err: any, response: any) => {
+          client.deleteRole(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -55,7 +50,7 @@ const deleteRole: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -79,7 +74,7 @@ const deleteRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          includedPermissions: {
+          included_permissions: {
             type: "array",
             items: {
               type: "string",

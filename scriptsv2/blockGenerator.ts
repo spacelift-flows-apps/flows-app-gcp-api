@@ -8,14 +8,9 @@ import { GeneratedBlock, ParsedRPC, RoutingParameter } from "./types.ts";
 import { messageToInputConfig, messageToOutputSchema } from "./schemaMapper.ts";
 import { cleanComment } from "./naming.ts";
 
-/** Convert a proto snake_case field name to camelCase */
-function snakeToCamel(s: string): string {
-  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-}
-
 /** Convert a proto field path (e.g. "bucket.project") to a JS accessor (e.g. "request.bucket?.project") */
 function fieldPathToAccessor(fieldPath: string): string {
-  const parts = fieldPath.split(".").map(snakeToCamel);
+  const parts = fieldPath.split(".");
   return "request." + parts[0] + parts.slice(1).map((p) => `?.${p}`).join("");
 }
 
@@ -83,7 +78,7 @@ export function generateBlockSource(block: GeneratedBlock): string {
   const clientFactory = `get${block.serviceName}Client`;
 
   // Build import list
-  const grpcImports = [clientFactory, "toSnakeCase", "toCamelCase"];
+  const grpcImports = [clientFactory];
   if (hasRouting) grpcImports.push("createRoutingMetadata");
 
   // Clean description
@@ -97,8 +92,8 @@ export function generateBlockSource(block: GeneratedBlock): string {
 
   // gRPC call args: with or without metadata
   const callArgs = hasRouting
-    ? `protoRequest, metadata, (err: any, response: any)`
-    : `protoRequest, (err: any, response: any)`;
+    ? `request, metadata, (err: any, response: any)`
+    : `request, (err: any, response: any)`;
 
   const source = `import { AppBlock, events } from "@slflows/sdk/v1";
 import { ${grpcImports.join(", ")} } from "../../lib/grpcClient.ts";
@@ -117,7 +112,6 @@ const ${block.blockName}: AppBlock = {
 ${requestAssembly}
 
 ${routingCode}
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
           client.${block.rpcMethodName}(${callArgs} => {
             if (err) reject(new Error(\`gRPC error [\${err.code}]: \${err.details || err.message}\`));
@@ -125,7 +119,7 @@ ${routingCode}
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

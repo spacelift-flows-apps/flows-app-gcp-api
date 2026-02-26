@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSchemaServiceClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const getSchema: AppBlock = {
   name: "Get Schema",
@@ -45,9 +41,8 @@ const getSchema: AppBlock = {
         if (input.event.inputConfig.view !== undefined)
           request.view = input.event.inputConfig.view;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getSchema(protoRequest, (err: any, response: any) => {
+          client.getSchema(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -58,7 +53,7 @@ const getSchema: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -83,12 +78,12 @@ const getSchema: AppBlock = {
             description:
               "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
-          revisionId: {
+          revision_id: {
             type: "string",
             description:
               "Output only. Immutable. The revision ID of the schema.",
           },
-          revisionCreateTime: {
+          revision_create_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

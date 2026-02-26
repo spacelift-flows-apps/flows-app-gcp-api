@@ -1,8 +1,6 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
-  toSnakeCase,
-  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -13,7 +11,7 @@ const cancelResumableWrite: AppBlock = {
   inputs: {
     default: {
       config: {
-        uploadId: {
+        upload_id: {
           name: "Upload Id",
           description:
             "Required. The upload_id of the resumable upload to cancel. This should be copied from the `upload_id` field of `StartResumableWriteResponse`.",
@@ -29,21 +27,20 @@ const cancelResumableWrite: AppBlock = {
         const client = await getStorageClient(input.app.config);
 
         const request: Record<string, any> = {};
-        if (input.event.inputConfig.uploadId !== undefined)
-          request.uploadId = input.event.inputConfig.uploadId;
+        if (input.event.inputConfig.upload_id !== undefined)
+          request.upload_id = input.event.inputConfig.upload_id;
 
         const routingParams: Record<string, string> = {};
-        if (request.uploadId !== undefined) {
-          const m = String(request.uploadId).match(
+        if (request.upload_id !== undefined) {
+          const m = String(request.upload_id).match(
             /^(projects\/[^/]+\/buckets\/[^/]+)/,
           );
           if (m) routingParams["bucket"] = m[1];
         }
         const metadata = createRoutingMetadata(routingParams);
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
           client.cancelResumableWrite(
-            protoRequest,
+            request,
             metadata,
             (err: any, response: any) => {
               if (err)
@@ -57,7 +54,7 @@ const cancelResumableWrite: AppBlock = {
           );
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

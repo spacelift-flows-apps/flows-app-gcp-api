@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const createSnapshot: AppBlock = {
   name: "Create Snapshot",
@@ -76,9 +72,8 @@ const createSnapshot: AppBlock = {
         if (input.event.inputConfig.tags !== undefined)
           request.tags = input.event.inputConfig.tags;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.createSnapshot(protoRequest, (err: any, response: any) => {
+          client.createSnapshot(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -89,7 +84,7 @@ const createSnapshot: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -108,7 +103,7 @@ const createSnapshot: AppBlock = {
             description:
               "Optional. The name of the topic from which this snapshot is retaining messages.",
           },
-          expireTime: {
+          expire_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

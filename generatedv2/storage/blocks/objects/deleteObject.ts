@@ -1,8 +1,6 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
-  toSnakeCase,
-  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -45,7 +43,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        ifGenerationMatch: {
+        if_generation_match: {
           name: "If Generation Match",
           description:
             "Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.",
@@ -55,7 +53,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        ifGenerationNotMatch: {
+        if_generation_not_match: {
           name: "If Generation Not Match",
           description:
             "Makes the operation conditional on whether the object's live generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.",
@@ -65,7 +63,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        ifMetagenerationMatch: {
+        if_metageneration_match: {
           name: "If Metageneration Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration matches the given value.",
@@ -75,7 +73,7 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        ifMetagenerationNotMatch: {
+        if_metageneration_not_match: {
           name: "If Metageneration Not Match",
           description:
             "Makes the operation conditional on whether the object's current metageneration does not match the given value.",
@@ -85,23 +83,23 @@ const deleteObject: AppBlock = {
           },
           required: false,
         },
-        commonObjectRequestParams: {
+        common_object_request_params: {
           name: "Common Object Request Params",
           description:
             "Optional. A set of parameters common to Storage API requests concerning an object.",
           type: {
             type: "object",
             properties: {
-              encryptionAlgorithm: {
+              encryption_algorithm: {
                 type: "string",
                 description:
                   "Optional. Encryption algorithm used with the Customer-Supplied Encryption Keys feature.",
               },
-              encryptionKeyBytes: {
+              encryption_key_bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
-              encryptionKeySha256Bytes: {
+              encryption_key_sha256_bytes: {
                 type: "string",
                 description: "Base64-encoded bytes",
               },
@@ -122,43 +120,39 @@ const deleteObject: AppBlock = {
           request.object = input.event.inputConfig.object;
         if (input.event.inputConfig.generation !== undefined)
           request.generation = input.event.inputConfig.generation;
-        if (input.event.inputConfig.ifGenerationMatch !== undefined)
-          request.ifGenerationMatch = input.event.inputConfig.ifGenerationMatch;
-        if (input.event.inputConfig.ifGenerationNotMatch !== undefined)
-          request.ifGenerationNotMatch =
-            input.event.inputConfig.ifGenerationNotMatch;
-        if (input.event.inputConfig.ifMetagenerationMatch !== undefined)
-          request.ifMetagenerationMatch =
-            input.event.inputConfig.ifMetagenerationMatch;
-        if (input.event.inputConfig.ifMetagenerationNotMatch !== undefined)
-          request.ifMetagenerationNotMatch =
-            input.event.inputConfig.ifMetagenerationNotMatch;
-        if (input.event.inputConfig.commonObjectRequestParams !== undefined)
-          request.commonObjectRequestParams =
-            input.event.inputConfig.commonObjectRequestParams;
+        if (input.event.inputConfig.if_generation_match !== undefined)
+          request.if_generation_match =
+            input.event.inputConfig.if_generation_match;
+        if (input.event.inputConfig.if_generation_not_match !== undefined)
+          request.if_generation_not_match =
+            input.event.inputConfig.if_generation_not_match;
+        if (input.event.inputConfig.if_metageneration_match !== undefined)
+          request.if_metageneration_match =
+            input.event.inputConfig.if_metageneration_match;
+        if (input.event.inputConfig.if_metageneration_not_match !== undefined)
+          request.if_metageneration_not_match =
+            input.event.inputConfig.if_metageneration_not_match;
+        if (input.event.inputConfig.common_object_request_params !== undefined)
+          request.common_object_request_params =
+            input.event.inputConfig.common_object_request_params;
 
         const routingParams: Record<string, string> = {};
         if (request.bucket !== undefined)
           routingParams["bucket"] = String(request.bucket);
         const metadata = createRoutingMetadata(routingParams);
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteObject(
-            protoRequest,
-            metadata,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.deleteObject(request, metadata, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

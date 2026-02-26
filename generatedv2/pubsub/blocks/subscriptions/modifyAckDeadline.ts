@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const modifyAckDeadline: AppBlock = {
   name: "Modify Ack Deadline",
@@ -23,7 +19,7 @@ const modifyAckDeadline: AppBlock = {
           },
           required: true,
         },
-        ackIds: {
+        ack_ids: {
           name: "Ack Ids",
           description: "Required. List of acknowledgment IDs.",
           type: {
@@ -35,7 +31,7 @@ const modifyAckDeadline: AppBlock = {
           },
           required: true,
         },
-        ackDeadlineSeconds: {
+        ack_deadline_seconds: {
           name: "Ack Deadline Seconds",
           description:
             "Required. The new ack deadline with respect to the time this request was sent to the Pub/Sub system. For example, if the value is 10, the new ack deadline will expire 10 seconds after the `ModifyAckDeadline` call was made. Specifying zero might immediately make the message available for delivery to another subscriber client. This typically results in an increase in the rate of message redeliveries (that is, duplicates). The minimum deadline you can specify is 0 seconds. The maximum deadline you can specify in a single request is 600 seconds (10 minutes).",
@@ -53,15 +49,14 @@ const modifyAckDeadline: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.subscription !== undefined)
           request.subscription = input.event.inputConfig.subscription;
-        if (input.event.inputConfig.ackIds !== undefined)
-          request.ackIds = input.event.inputConfig.ackIds;
-        if (input.event.inputConfig.ackDeadlineSeconds !== undefined)
-          request.ackDeadlineSeconds =
-            input.event.inputConfig.ackDeadlineSeconds;
+        if (input.event.inputConfig.ack_ids !== undefined)
+          request.ack_ids = input.event.inputConfig.ack_ids;
+        if (input.event.inputConfig.ack_deadline_seconds !== undefined)
+          request.ack_deadline_seconds =
+            input.event.inputConfig.ack_deadline_seconds;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.modifyAckDeadline(protoRequest, (err: any, response: any) => {
+          client.modifyAckDeadline(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -72,7 +67,7 @@ const modifyAckDeadline: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },

@@ -1,8 +1,6 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
 import {
   getStorageClient,
-  toSnakeCase,
-  toCamelCase,
   createRoutingMetadata,
 } from "../../lib/grpcClient.ts";
 
@@ -66,7 +64,7 @@ const setIamPolicy: AppBlock = {
                   additionalProperties: true,
                 },
               },
-              auditConfigs: {
+              audit_configs: {
                 type: "array",
                 items: {
                   type: "object",
@@ -74,12 +72,12 @@ const setIamPolicy: AppBlock = {
                     service: {
                       type: "string",
                     },
-                    auditLogConfigs: {
+                    audit_log_configs: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          logType: {
+                          log_type: {
                             type: "string",
                             enum: [
                               "LOG_TYPE_UNSPECIFIED",
@@ -88,7 +86,7 @@ const setIamPolicy: AppBlock = {
                               "DATA_READ",
                             ],
                           },
-                          exemptedMembers: {
+                          exempted_members: {
                             type: "array",
                             items: {
                               type: "string",
@@ -111,7 +109,7 @@ const setIamPolicy: AppBlock = {
           },
           required: false,
         },
-        updateMask: {
+        update_mask: {
           name: "Update Mask",
           description: "Update Mask field",
           type: {
@@ -130,8 +128,8 @@ const setIamPolicy: AppBlock = {
           request.resource = input.event.inputConfig.resource;
         if (input.event.inputConfig.policy !== undefined)
           request.policy = input.event.inputConfig.policy;
-        if (input.event.inputConfig.updateMask !== undefined)
-          request.updateMask = input.event.inputConfig.updateMask;
+        if (input.event.inputConfig.update_mask !== undefined)
+          request.update_mask = input.event.inputConfig.update_mask;
 
         const routingParams: Record<string, string> = {};
         if (request.resource !== undefined)
@@ -143,24 +141,19 @@ const setIamPolicy: AppBlock = {
           if (m) routingParams["bucket"] = m[1];
         }
         const metadata = createRoutingMetadata(routingParams);
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.setIamPolicy(
-            protoRequest,
-            metadata,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.setIamPolicy(request, metadata, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -209,7 +202,7 @@ const setIamPolicy: AppBlock = {
               additionalProperties: true,
             },
           },
-          auditConfigs: {
+          audit_configs: {
             type: "array",
             items: {
               type: "object",
@@ -217,12 +210,12 @@ const setIamPolicy: AppBlock = {
                 service: {
                   type: "string",
                 },
-                auditLogConfigs: {
+                audit_log_configs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      logType: {
+                      log_type: {
                         type: "string",
                         enum: [
                           "LOG_TYPE_UNSPECIFIED",
@@ -231,7 +224,7 @@ const setIamPolicy: AppBlock = {
                           "DATA_READ",
                         ],
                       },
-                      exemptedMembers: {
+                      exempted_members: {
                         type: "array",
                         items: {
                           type: "string",

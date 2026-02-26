@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const signJwt: AppBlock = {
   name: "Sign JWT",
@@ -44,9 +40,8 @@ const signJwt: AppBlock = {
         if (input.event.inputConfig.payload !== undefined)
           request.payload = input.event.inputConfig.payload;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.signJwt(protoRequest, (err: any, response: any) => {
+          client.signJwt(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -57,7 +52,7 @@ const signJwt: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -67,12 +62,12 @@ const signJwt: AppBlock = {
       type: {
         type: "object",
         properties: {
-          keyId: {
+          key_id: {
             type: "string",
             description:
               "Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The id of the key used to sign the JWT.",
           },
-          signedJwt: {
+          signed_jwt: {
             type: "string",
             description:
               "Deprecated. [Migrate to Service Account Credentials API](https://cloud.google.com/iam/help/credentials/migrate-api).  The signed JWT.",

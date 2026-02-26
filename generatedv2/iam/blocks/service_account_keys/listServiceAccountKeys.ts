@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const listServiceAccountKeys: AppBlock = {
   name: "List Service Account Keys",
@@ -23,7 +19,7 @@ const listServiceAccountKeys: AppBlock = {
           },
           required: true,
         },
-        keyTypes: {
+        key_types: {
           name: "Key Types",
           description:
             "Filters the types of keys the user wants to include in the list response. Duplicate key types are not allowed. If no key type is provided, all keys are returned.",
@@ -45,26 +41,22 @@ const listServiceAccountKeys: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.keyTypes !== undefined)
-          request.keyTypes = input.event.inputConfig.keyTypes;
+        if (input.event.inputConfig.key_types !== undefined)
+          request.key_types = input.event.inputConfig.key_types;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listServiceAccountKeys(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.listServiceAccountKeys(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -84,7 +76,7 @@ const listServiceAccountKeys: AppBlock = {
                   description:
                     "The resource name of the service account key in the following format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.",
                 },
-                privateKeyType: {
+                private_key_type: {
                   type: "string",
                   enum: [
                     "TYPE_UNSPECIFIED",
@@ -93,7 +85,7 @@ const listServiceAccountKeys: AppBlock = {
                   ],
                   description: "Supported private key output formats.",
                 },
-                keyAlgorithm: {
+                key_algorithm: {
                   type: "string",
                   enum: [
                     "KEY_ALG_UNSPECIFIED",
@@ -102,25 +94,25 @@ const listServiceAccountKeys: AppBlock = {
                   ],
                   description: "Supported key algorithms.",
                 },
-                privateKeyData: {
+                private_key_data: {
                   type: "string",
                   description: "Base64-encoded bytes",
                 },
-                publicKeyData: {
+                public_key_data: {
                   type: "string",
                   description: "Base64-encoded bytes",
                 },
-                validAfterTime: {
+                valid_after_time: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                validBeforeTime: {
+                valid_before_time: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
                 },
-                keyOrigin: {
+                key_origin: {
                   type: "string",
                   enum: [
                     "ORIGIN_UNSPECIFIED",
@@ -129,7 +121,7 @@ const listServiceAccountKeys: AppBlock = {
                   ],
                   description: "Service Account Key Origin.",
                 },
-                keyType: {
+                key_type: {
                   type: "string",
                   enum: [
                     "KEY_TYPE_UNSPECIFIED",

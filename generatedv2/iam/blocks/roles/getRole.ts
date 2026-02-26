@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const getRole: AppBlock = {
   name: "Get Role",
@@ -31,9 +27,8 @@ const getRole: AppBlock = {
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getRole(protoRequest, (err: any, response: any) => {
+          client.getRole(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -44,7 +39,7 @@ const getRole: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -68,7 +63,7 @@ const getRole: AppBlock = {
             type: "string",
             description: "Optional. A human-readable description for the role.",
           },
-          includedPermissions: {
+          included_permissions: {
             type: "array",
             items: {
               type: "string",

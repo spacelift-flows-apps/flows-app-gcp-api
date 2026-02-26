@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const listSubscriptions: AppBlock = {
   name: "List Subscriptions",
@@ -23,7 +19,7 @@ const listSubscriptions: AppBlock = {
           },
           required: true,
         },
-        pageSize: {
+        page_size: {
           name: "Page Size",
           description: "Optional. Maximum number of subscriptions to return.",
           type: {
@@ -32,7 +28,7 @@ const listSubscriptions: AppBlock = {
           },
           required: false,
         },
-        pageToken: {
+        page_token: {
           name: "Page Token",
           description:
             "Optional. The value returned by the last `ListSubscriptionsResponse`; indicates that this is a continuation of a prior `ListSubscriptions` call, and that the system should return the next page of data.",
@@ -50,14 +46,13 @@ const listSubscriptions: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.project !== undefined)
           request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.pageSize !== undefined)
-          request.pageSize = input.event.inputConfig.pageSize;
-        if (input.event.inputConfig.pageToken !== undefined)
-          request.pageToken = input.event.inputConfig.pageToken;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listSubscriptions(protoRequest, (err: any, response: any) => {
+          client.listSubscriptions(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -68,7 +63,7 @@ const listSubscriptions: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -93,10 +88,10 @@ const listSubscriptions: AppBlock = {
                   description:
                     "Required. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`. The value of this field will be `_deleted-topic_` if the topic has been deleted.",
                 },
-                pushConfig: {
+                push_config: {
                   type: "object",
                   properties: {
-                    pushEndpoint: {
+                    push_endpoint: {
                       type: "string",
                       description:
                         "Optional. A URL locating the endpoint to which messages should be pushed. For example, a Webhook endpoint might use `https://example.com/push`.",
@@ -109,10 +104,10 @@ const listSubscriptions: AppBlock = {
                       description:
                         'Optional. Endpoint configuration attributes that can be used to control different aspects of the message delivery.  The only currently supported attribute is `x-goog-version`, which you can use to change the format of the pushed message. This attribute indicates the version of the data expected by the endpoint. This controls the shape of the pushed message (i.e., its fields and metadata).  If not present during the `CreateSubscription` call, it will default to the version of the Pub/Sub API used to make such call. If not present in a `ModifyPushConfig` call, its value will not be changed. `GetSubscription` calls will always return a valid version, even if the subscription was created without this attribute.  The only supported values for the `x-goog-version` attribute are:  * `v1beta1`: uses the push format defined in the v1beta1 Pub/Sub API. * `v1` or `v1beta2`: uses the push format defined in the v1 Pub/Sub API.  For example: `attributes { "x-goog-version": "v1" }`',
                     },
-                    oidcToken: {
+                    oidc_token: {
                       type: "object",
                       properties: {
-                        serviceAccountEmail: {
+                        service_account_email: {
                           type: "string",
                           description:
                             "Optional. [Service account email](https://cloud.google.com/iam/docs/service-accounts) used for generating the OIDC token. For more information on setting up authentication, see [Push subscriptions](https://cloud.google.com/pubsub/docs/push).",
@@ -127,17 +122,17 @@ const listSubscriptions: AppBlock = {
                         "Contains information needed for generating an [OpenID Connect token](https://developers.google.com/identity/protocols/OpenIDConnect).",
                       additionalProperties: true,
                     },
-                    pubsubWrapper: {
+                    pubsub_wrapper: {
                       type: "object",
                       properties: {},
                       description:
                         "The payload to the push endpoint is in the form of the JSON representation of a PubsubMessage (https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#pubsubmessage). (Part of 'wrapper' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    noWrapper: {
+                    no_wrapper: {
                       type: "object",
                       properties: {
-                        writeMetadata: {
+                        write_metadata: {
                           type: "boolean",
                           description:
                             "Optional. When true, writes the Pub/Sub message metadata to `x-goog-pubsub-<KEY>:<VAL>` headers of the HTTP request. Writes the Pub/Sub message attributes to `<KEY>:<VAL>` headers of the HTTP request.",
@@ -151,7 +146,7 @@ const listSubscriptions: AppBlock = {
                   description: "Configuration for a push delivery endpoint.",
                   additionalProperties: true,
                 },
-                bigqueryConfig: {
+                bigquery_config: {
                   type: "object",
                   properties: {
                     table: {
@@ -159,17 +154,17 @@ const listSubscriptions: AppBlock = {
                       description:
                         "Optional. The name of the table to which to write data, of the form {projectId}.{datasetId}.{tableId}",
                     },
-                    useTopicSchema: {
+                    use_topic_schema: {
                       type: "boolean",
                       description:
                         "Optional. When true, use the topic's schema as the columns to write to in BigQuery, if it exists. `use_topic_schema` and `use_table_schema` cannot be enabled at the same time.",
                     },
-                    writeMetadata: {
+                    write_metadata: {
                       type: "boolean",
                       description:
                         "Optional. When true, write the subscription name, message_id, publish_time, attributes, and ordering_key to additional columns in the table. The subscription name, message_id, and publish_time fields are put in their own columns while all other message properties (other than data) are written to a JSON object in the attributes column.",
                     },
-                    dropUnknownFields: {
+                    drop_unknown_fields: {
                       type: "boolean",
                       description:
                         "Optional. When true and use_topic_schema is true, any fields that are a part of the topic schema that are not part of the BigQuery table schema are dropped when writing to BigQuery. Otherwise, the schemas must be kept in sync and any messages with extra fields are not written and remain in the subscription's backlog.",
@@ -188,12 +183,12 @@ const listSubscriptions: AppBlock = {
                       description:
                         "Output only. An output-only field that indicates whether or not the subscription can receive messages.",
                     },
-                    useTableSchema: {
+                    use_table_schema: {
                       type: "boolean",
                       description:
                         "Optional. When true, use the BigQuery table's schema as the columns to write to in BigQuery. `use_table_schema` and `use_topic_schema` cannot be enabled at the same time.",
                     },
-                    serviceAccountEmail: {
+                    service_account_email: {
                       type: "string",
                       description:
                         "Optional. The service account to use to write to BigQuery. The subscription creator or updater that specifies this field must have `iam.serviceAccounts.actAs` permission on the service account. If not specified, the Pub/Sub [service agent](https://cloud.google.com/iam/docs/service-agents), service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.",
@@ -202,7 +197,7 @@ const listSubscriptions: AppBlock = {
                   description: "Configuration for a BigQuery subscription.",
                   additionalProperties: true,
                 },
-                cloudStorageConfig: {
+                cloud_storage_config: {
                   type: "object",
                   properties: {
                     bucket: {
@@ -210,37 +205,37 @@ const listSubscriptions: AppBlock = {
                       description:
                         'Required. User-provided name for the Cloud Storage bucket. The bucket must be created by the user. The bucket name must be without any prefix like "gs://". See the [bucket naming requirements] (https://cloud.google.com/storage/docs/buckets#naming).',
                     },
-                    filenamePrefix: {
+                    filename_prefix: {
                       type: "string",
                       description:
                         "Optional. User-provided prefix for Cloud Storage filename. See the [object naming requirements](https://cloud.google.com/storage/docs/objects#naming).",
                     },
-                    filenameSuffix: {
+                    filename_suffix: {
                       type: "string",
                       description:
                         'Optional. User-provided suffix for Cloud Storage filename. See the [object naming requirements](https://cloud.google.com/storage/docs/objects#naming). Must not end in "/".',
                     },
-                    filenameDatetimeFormat: {
+                    filename_datetime_format: {
                       type: "string",
                       description:
                         "Optional. User-provided format string specifying how to represent datetimes in Cloud Storage filenames. See the [datetime format guidance](https://cloud.google.com/pubsub/docs/create-cloudstorage-subscription#file_names).",
                     },
-                    textConfig: {
+                    text_config: {
                       type: "object",
                       properties: {},
                       description:
                         "Configuration for writing message data in text format. Message payloads will be written to files as raw text, separated by a newline. (Part of 'output_format' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    avroConfig: {
+                    avro_config: {
                       type: "object",
                       properties: {
-                        writeMetadata: {
+                        write_metadata: {
                           type: "boolean",
                           description:
                             "Optional. When true, write the subscription name, message_id, publish_time, attributes, and ordering_key as additional fields in the output. The subscription name, message_id, and publish_time fields are put in their own fields while all other message properties other than data (for example, an ordering_key, if present) are added as entries in the attributes map.",
                         },
-                        useTopicSchema: {
+                        use_topic_schema: {
                           type: "boolean",
                           description:
                             "Optional. When true, the output Cloud Storage file will be serialized using the topic schema, if it exists.",
@@ -250,15 +245,15 @@ const listSubscriptions: AppBlock = {
                         "Configuration for writing message data in Avro format. Message payloads and metadata will be written to files as an Avro binary. (Part of 'output_format' - only one field in this group can be set)",
                       additionalProperties: true,
                     },
-                    maxDuration: {
+                    max_duration: {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
-                    maxBytes: {
+                    max_bytes: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
-                    maxMessages: {
+                    max_messages: {
                       type: "string",
                       description: "64-bit integer as string",
                     },
@@ -276,7 +271,7 @@ const listSubscriptions: AppBlock = {
                       description:
                         "Output only. An output-only field that indicates whether or not the subscription can receive messages.",
                     },
-                    serviceAccountEmail: {
+                    service_account_email: {
                       type: "string",
                       description:
                         "Optional. The service account to use to write to Cloud Storage. The subscription creator or updater that specifies this field must have `iam.serviceAccounts.actAs` permission on the service account. If not specified, the Pub/Sub [service agent](https://cloud.google.com/iam/docs/service-agents), service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.",
@@ -287,17 +282,17 @@ const listSubscriptions: AppBlock = {
                     "Configuration for a Cloud Storage subscription.",
                   additionalProperties: true,
                 },
-                ackDeadlineSeconds: {
+                ack_deadline_seconds: {
                   type: "integer",
                   description:
                     "Optional. The approximate amount of time (on a best-effort basis) Pub/Sub waits for the subscriber to acknowledge receipt before resending the message. In the interval after the message is delivered and before it is acknowledged, it is considered to be _outstanding_. During that time period, the message will not be redelivered (on a best-effort basis).  For pull subscriptions, this value is used as the initial value for the ack deadline. To override this value for a given message, call `ModifyAckDeadline` with the corresponding `ack_id` if using non-streaming pull or send the `ack_id` in a `StreamingModifyAckDeadlineRequest` if using streaming pull. The minimum custom deadline you can specify is 10 seconds. The maximum custom deadline you can specify is 600 seconds (10 minutes). If this parameter is 0, a default value of 10 seconds is used.  For push delivery, this value is also used to set the request timeout for the call to the push endpoint.  If the subscriber never acknowledges the message, the Pub/Sub system will eventually redeliver the message.",
                 },
-                retainAckedMessages: {
+                retain_acked_messages: {
                   type: "boolean",
                   description:
                     "Optional. Indicates whether to retain acknowledged messages. If true, then messages are not expunged from the subscription's backlog, even if they are acknowledged, until they fall out of the `message_retention_duration` window. This must be true if you would like to [`Seek` to a timestamp] (https://cloud.google.com/pubsub/docs/replay-overview#seek_to_a_time) in the past to replay previously-acknowledged messages.",
                 },
-                messageRetentionDuration: {
+                message_retention_duration: {
                   type: "string",
                   description: "Duration string (e.g., '1.5s', '300s')",
                 },
@@ -309,12 +304,12 @@ const listSubscriptions: AppBlock = {
                   description:
                     "Optional. See [Creating and managing labels](https://cloud.google.com/pubsub/docs/labels).",
                 },
-                enableMessageOrdering: {
+                enable_message_ordering: {
                   type: "boolean",
                   description:
                     "Optional. If true, messages published with the same `ordering_key` in `PubsubMessage` will be delivered to the subscribers in the order in which they are received by the Pub/Sub system. Otherwise, they may be delivered in any order.",
                 },
-                expirationPolicy: {
+                expiration_policy: {
                   type: "object",
                   properties: {
                     ttl: {
@@ -331,15 +326,15 @@ const listSubscriptions: AppBlock = {
                   description:
                     "Optional. An expression written in the Pub/Sub [filter language](https://cloud.google.com/pubsub/docs/filtering). If non-empty, then only `PubsubMessage`s whose `attributes` field matches the filter are delivered on this subscription. If empty, then no messages are filtered out.",
                 },
-                deadLetterPolicy: {
+                dead_letter_policy: {
                   type: "object",
                   properties: {
-                    deadLetterTopic: {
+                    dead_letter_topic: {
                       type: "string",
                       description:
                         "Optional. The name of the topic to which dead letter messages should be published. Format is `projects/{project}/topics/{topic}`.The Pub/Sub service account associated with the enclosing subscription's parent project (i.e., service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com) must have permission to Publish() to this topic.  The operation will fail if the topic does not exist. Users should ensure that there is a subscription attached to this topic since messages published to a topic with no subscriptions are lost.",
                     },
-                    maxDeliveryAttempts: {
+                    max_delivery_attempts: {
                       type: "integer",
                       description:
                         "Optional. The maximum number of delivery attempts for any message. The value must be between 5 and 100.  The number of delivery attempts is defined as 1 + (the sum of number of NACKs and number of times the acknowledgment deadline has been exceeded for the message).  A NACK is any call to ModifyAckDeadline with a 0 deadline. Note that client libraries may automatically extend ack_deadlines.  This field will be honored on a best effort basis.  If this parameter is 0, a default value of 5 is used.",
@@ -349,14 +344,14 @@ const listSubscriptions: AppBlock = {
                     "Dead lettering is done on a best effort basis. The same message might be dead lettered multiple times.  If validation on any of the fields fails at subscription creation/updation, the create/update subscription request will fail.",
                   additionalProperties: true,
                 },
-                retryPolicy: {
+                retry_policy: {
                   type: "object",
                   properties: {
-                    minimumBackoff: {
+                    minimum_backoff: {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
-                    maximumBackoff: {
+                    maximum_backoff: {
                       type: "string",
                       description: "Duration string (e.g., '1.5s', '300s')",
                     },
@@ -370,12 +365,12 @@ const listSubscriptions: AppBlock = {
                   description:
                     "Optional. Indicates whether the subscription is detached from its topic. Detached subscriptions don't receive messages from their topic and don't retain any backlog. `Pull` and `StreamingPull` requests will return FAILED_PRECONDITION. If the subscription is a push subscription, pushes to the endpoint will not be made.",
                 },
-                enableExactlyOnceDelivery: {
+                enable_exactly_once_delivery: {
                   type: "boolean",
                   description:
                     "Optional. If true, Pub/Sub provides the following guarantees for the delivery of a message with a given value of `message_id` on this subscription:  * The message sent to a subscriber is guaranteed not to be resent before the message's acknowledgment deadline expires. * An acknowledged message will not be resent to a subscriber.  Note that subscribers may still receive multiple copies of a message when `enable_exactly_once_delivery` is true if the message was published multiple times by a publisher client. These copies are  considered distinct by Pub/Sub and have distinct `message_id` values.",
                 },
-                topicMessageRetentionDuration: {
+                topic_message_retention_duration: {
                   type: "string",
                   description: "Duration string (e.g., '1.5s', '300s')",
                 },
@@ -385,7 +380,7 @@ const listSubscriptions: AppBlock = {
                   description:
                     "Output only. An output-only field indicating whether or not the subscription can receive messages.",
                 },
-                analyticsHubSubscriptionInfo: {
+                analytics_hub_subscription_info: {
                   type: "object",
                   properties: {
                     listing: {
@@ -403,15 +398,15 @@ const listSubscriptions: AppBlock = {
                     "Information about an associated [Analytics Hub subscription](https://cloud.google.com/bigquery/docs/analytics-hub-manage-subscriptions).",
                   additionalProperties: true,
                 },
-                messageTransforms: {
+                message_transforms: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      javascriptUdf: {
+                      javascript_udf: {
                         type: "object",
                         properties: {
-                          functionName: {
+                          function_name: {
                             type: "string",
                             description:
                               "Required. Name of the JavasScript function that should applied to Pub/Sub messages.",
@@ -422,12 +417,12 @@ const listSubscriptions: AppBlock = {
                               "Required. JavaScript code that contains a function `function_name` with the below signature:  ```   /**   * Transforms a Pub/Sub message.    * @return {(Object<string, (string | Object<string, string>)>|null)} - To   * filter a message, return `null`. To transform a message return a map   * with the following keys:   *   - (required) 'data' : {string}   *   - (optional) 'attributes' : {Object<string, string>}   * Returning empty `attributes` will remove all attributes from the   * message.   *   * @param  {(Object<string, (string | Object<string, string>)>} Pub/Sub   * message. Keys:   *   - (required) 'data' : {string}   *   - (required) 'attributes' : {Object<string, string>}   *   * @param  {Object<string, any>} metadata - Pub/Sub message metadata.   * Keys:   *   - (optional) 'message_id'  : {string}   *   - (optional) 'publish_time': {string} YYYY-MM-DDTHH:MM:SSZ format   *   - (optional) 'ordering_key': {string}   */    function <function_name>(message, metadata) {   } ```",
                           },
                         },
-                        required: ["functionName", "code"],
+                        required: ["function_name", "code"],
                         description:
                           "User-defined JavaScript function that can transform or filter a Pub/Sub message. (Part of 'transform' - only one field in this group can be set)",
                         additionalProperties: true,
                       },
-                      aiInference: {
+                      ai_inference: {
                         type: "object",
                         properties: {
                           endpoint: {
@@ -435,7 +430,7 @@ const listSubscriptions: AppBlock = {
                             description:
                               "Required. An endpoint to a Vertex AI model of the form `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`. Vertex AI API requests will be sent to this endpoint.",
                           },
-                          unstructuredInference: {
+                          unstructured_inference: {
                             type: "object",
                             properties: {
                               parameters: {
@@ -449,7 +444,7 @@ const listSubscriptions: AppBlock = {
                               "Configuration for making inferences using arbitrary JSON payloads.",
                             additionalProperties: true,
                           },
-                          serviceAccountEmail: {
+                          service_account_email: {
                             type: "string",
                             description:
                               "Optional. The service account to use to make prediction requests against endpoints. The resource creator or updater that specifies this field must have `iam.serviceAccounts.actAs` permission on the service account. If not specified, the Pub/Sub [service agent]({$universe.dns_names.final_documentation_domain}/iam/docs/service-agents), service-{project_number}@gcp-sa-pubsub.iam.gserviceaccount.com, is used.",
@@ -485,7 +480,7 @@ const listSubscriptions: AppBlock = {
             },
             description: "Optional. The subscriptions that match the request.",
           },
-          nextPageToken: {
+          next_page_token: {
             type: "string",
             description:
               "Optional. If not empty, indicates that there may be more subscriptions that match the request; this value should be passed in a new `ListSubscriptionsRequest` to get more subscriptions.",

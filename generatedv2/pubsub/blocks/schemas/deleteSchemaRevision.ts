@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSchemaServiceClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const deleteSchemaRevision: AppBlock = {
   name: "Delete Schema Revision",
@@ -23,7 +19,7 @@ const deleteSchemaRevision: AppBlock = {
           },
           required: true,
         },
-        revisionId: {
+        revision_id: {
           name: "Revision Id",
           description:
             "Optional. This field is deprecated and should not be used for specifying the revision ID. The revision ID should be specified via the `name` parameter.",
@@ -41,26 +37,22 @@ const deleteSchemaRevision: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.revisionId !== undefined)
-          request.revisionId = input.event.inputConfig.revisionId;
+        if (input.event.inputConfig.revision_id !== undefined)
+          request.revision_id = input.event.inputConfig.revision_id;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.deleteSchemaRevision(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.deleteSchemaRevision(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -85,12 +77,12 @@ const deleteSchemaRevision: AppBlock = {
             description:
               "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
           },
-          revisionId: {
+          revision_id: {
             type: "string",
             description:
               "Output only. Immutable. The revision ID of the schema.",
           },
-          revisionCreateTime: {
+          revision_create_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },

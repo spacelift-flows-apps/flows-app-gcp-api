@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSubscriberClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSubscriberClient } from "../../lib/grpcClient.ts";
 
 const listSnapshots: AppBlock = {
   name: "List Snapshots",
@@ -23,7 +19,7 @@ const listSnapshots: AppBlock = {
           },
           required: true,
         },
-        pageSize: {
+        page_size: {
           name: "Page Size",
           description: "Optional. Maximum number of snapshots to return.",
           type: {
@@ -32,7 +28,7 @@ const listSnapshots: AppBlock = {
           },
           required: false,
         },
-        pageToken: {
+        page_token: {
           name: "Page Token",
           description:
             "Optional. The value returned by the last `ListSnapshotsResponse`; indicates that this is a continuation of a prior `ListSnapshots` call, and that the system should return the next page of data.",
@@ -50,14 +46,13 @@ const listSnapshots: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.project !== undefined)
           request.project = input.event.inputConfig.project;
-        if (input.event.inputConfig.pageSize !== undefined)
-          request.pageSize = input.event.inputConfig.pageSize;
-        if (input.event.inputConfig.pageToken !== undefined)
-          request.pageToken = input.event.inputConfig.pageToken;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listSnapshots(protoRequest, (err: any, response: any) => {
+          client.listSnapshots(request, (err: any, response: any) => {
             if (err)
               reject(
                 new Error(
@@ -68,7 +63,7 @@ const listSnapshots: AppBlock = {
           });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -92,7 +87,7 @@ const listSnapshots: AppBlock = {
                   description:
                     "Optional. The name of the topic from which this snapshot is retaining messages.",
                 },
-                expireTime: {
+                expire_time: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -112,7 +107,7 @@ const listSnapshots: AppBlock = {
             },
             description: "Optional. The resulting snapshots.",
           },
-          nextPageToken: {
+          next_page_token: {
             type: "string",
             description:
               "Optional. If not empty, indicates that there may be more snapshot that match the request; this value should be passed in a new `ListSnapshotsRequest`.",

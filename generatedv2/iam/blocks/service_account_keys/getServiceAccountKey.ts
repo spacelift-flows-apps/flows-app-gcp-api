@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getIAMClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getIAMClient } from "../../lib/grpcClient.ts";
 
 const getServiceAccountKey: AppBlock = {
   name: "Get Service Account Key",
@@ -23,7 +19,7 @@ const getServiceAccountKey: AppBlock = {
           },
           required: true,
         },
-        publicKeyType: {
+        public_key_type: {
           name: "Public Key Type",
           description:
             "Optional. The output format of the public key. The default is `TYPE_NONE`, which means that the public key is not returned.",
@@ -41,26 +37,22 @@ const getServiceAccountKey: AppBlock = {
         const request: Record<string, any> = {};
         if (input.event.inputConfig.name !== undefined)
           request.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.publicKeyType !== undefined)
-          request.publicKeyType = input.event.inputConfig.publicKeyType;
+        if (input.event.inputConfig.public_key_type !== undefined)
+          request.public_key_type = input.event.inputConfig.public_key_type;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.getServiceAccountKey(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.getServiceAccountKey(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -75,7 +67,7 @@ const getServiceAccountKey: AppBlock = {
             description:
               "The resource name of the service account key in the following format `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.",
           },
-          privateKeyType: {
+          private_key_type: {
             type: "string",
             enum: [
               "TYPE_UNSPECIFIED",
@@ -84,7 +76,7 @@ const getServiceAccountKey: AppBlock = {
             ],
             description: "Supported private key output formats.",
           },
-          keyAlgorithm: {
+          key_algorithm: {
             type: "string",
             enum: [
               "KEY_ALG_UNSPECIFIED",
@@ -93,28 +85,28 @@ const getServiceAccountKey: AppBlock = {
             ],
             description: "Supported key algorithms.",
           },
-          privateKeyData: {
+          private_key_data: {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          publicKeyData: {
+          public_key_data: {
             type: "string",
             description: "Base64-encoded bytes",
           },
-          validAfterTime: {
+          valid_after_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          validBeforeTime: {
+          valid_before_time: {
             type: "string",
             description: "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
           },
-          keyOrigin: {
+          key_origin: {
             type: "string",
             enum: ["ORIGIN_UNSPECIFIED", "USER_PROVIDED", "GOOGLE_PROVIDED"],
             description: "Service Account Key Origin.",
           },
-          keyType: {
+          key_type: {
             type: "string",
             enum: ["KEY_TYPE_UNSPECIFIED", "USER_MANAGED", "SYSTEM_MANAGED"],
             description: "The key type.",

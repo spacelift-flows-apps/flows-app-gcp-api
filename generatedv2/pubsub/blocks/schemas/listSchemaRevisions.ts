@@ -1,9 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import {
-  getSchemaServiceClient,
-  toSnakeCase,
-  toCamelCase,
-} from "../../lib/grpcClient.ts";
+import { getSchemaServiceClient } from "../../lib/grpcClient.ts";
 
 const listSchemaRevisions: AppBlock = {
   name: "List Schema Revisions",
@@ -35,7 +31,7 @@ const listSchemaRevisions: AppBlock = {
           },
           required: false,
         },
-        pageSize: {
+        page_size: {
           name: "Page Size",
           description: "The maximum number of revisions to return per page.",
           type: {
@@ -44,7 +40,7 @@ const listSchemaRevisions: AppBlock = {
           },
           required: false,
         },
-        pageToken: {
+        page_token: {
           name: "Page Token",
           description:
             "The page token, received from a previous ListSchemaRevisions call. Provide this to retrieve the subsequent page.",
@@ -64,28 +60,24 @@ const listSchemaRevisions: AppBlock = {
           request.name = input.event.inputConfig.name;
         if (input.event.inputConfig.view !== undefined)
           request.view = input.event.inputConfig.view;
-        if (input.event.inputConfig.pageSize !== undefined)
-          request.pageSize = input.event.inputConfig.pageSize;
-        if (input.event.inputConfig.pageToken !== undefined)
-          request.pageToken = input.event.inputConfig.pageToken;
+        if (input.event.inputConfig.page_size !== undefined)
+          request.page_size = input.event.inputConfig.page_size;
+        if (input.event.inputConfig.page_token !== undefined)
+          request.page_token = input.event.inputConfig.page_token;
 
-        const protoRequest = toSnakeCase(request);
         const result = await new Promise<any>((resolve, reject) => {
-          client.listSchemaRevisions(
-            protoRequest,
-            (err: any, response: any) => {
-              if (err)
-                reject(
-                  new Error(
-                    `gRPC error [${err.code}]: ${err.details || err.message}`,
-                  ),
-                );
-              else resolve(response);
-            },
-          );
+          client.listSchemaRevisions(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
         });
 
-        await events.emit(result ? toCamelCase(result) : {});
+        await events.emit(result || {});
       },
     },
   },
@@ -115,12 +107,12 @@ const listSchemaRevisions: AppBlock = {
                   description:
                     "The definition of the schema. This should contain a string representing the full definition of the schema that is a valid schema definition of the type specified in `type`.",
                 },
-                revisionId: {
+                revision_id: {
                   type: "string",
                   description:
                     "Output only. Immutable. The revision ID of the schema.",
                 },
-                revisionCreateTime: {
+                revision_create_time: {
                   type: "string",
                   description:
                     "RFC3339 timestamp (e.g., '2024-01-15T10:30:00Z')",
@@ -132,7 +124,7 @@ const listSchemaRevisions: AppBlock = {
             },
             description: "The revisions of the schema.",
           },
-          nextPageToken: {
+          next_page_token: {
             type: "string",
             description:
               "A token that can be sent as `page_token` to retrieve the next page. If this field is empty, there are no subsequent pages.",
