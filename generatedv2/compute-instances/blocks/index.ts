@@ -1,352 +1,338 @@
-import accelerator_types_aggregatedList from "./accelerator_types/aggregatedList.ts";
-import accelerator_types_get from "./accelerator_types/get.ts";
-import accelerator_types_list from "./accelerator_types/list.ts";
-import autoscalers_aggregatedList from "./autoscalers/aggregatedList.ts";
-import autoscalers_deleteOperation from "./autoscalers/deleteOperation.ts";
-import autoscalers_get from "./autoscalers/get.ts";
-import autoscalers_insert from "./autoscalers/insert.ts";
-import autoscalers_list from "./autoscalers/list.ts";
-import autoscalers_patch from "./autoscalers/patch.ts";
-import autoscalers_update from "./autoscalers/update.ts";
-import instance_group_manager_resize_requests_cancel from "./instance_group_manager_resize_requests/cancel.ts";
-import instance_group_manager_resize_requests_deleteOperation from "./instance_group_manager_resize_requests/deleteOperation.ts";
-import instance_group_manager_resize_requests_get from "./instance_group_manager_resize_requests/get.ts";
-import instance_group_manager_resize_requests_insert from "./instance_group_manager_resize_requests/insert.ts";
-import instance_group_manager_resize_requests_list from "./instance_group_manager_resize_requests/list.ts";
-import instance_group_managers_abandonInstances from "./instance_group_managers/abandonInstances.ts";
-import instance_group_managers_aggregatedList from "./instance_group_managers/aggregatedList.ts";
-import instance_group_managers_applyUpdatesToInstances from "./instance_group_managers/applyUpdatesToInstances.ts";
-import instance_group_managers_createInstances from "./instance_group_managers/createInstances.ts";
-import instance_group_managers_deleteInstances from "./instance_group_managers/deleteInstances.ts";
-import instance_group_managers_deleteOperation from "./instance_group_managers/deleteOperation.ts";
-import instance_group_managers_deletePerInstanceConfigs from "./instance_group_managers/deletePerInstanceConfigs.ts";
-import instance_group_managers_get from "./instance_group_managers/get.ts";
-import instance_group_managers_insert from "./instance_group_managers/insert.ts";
-import instance_group_managers_list from "./instance_group_managers/list.ts";
-import instance_group_managers_listErrors from "./instance_group_managers/listErrors.ts";
-import instance_group_managers_listManagedInstances from "./instance_group_managers/listManagedInstances.ts";
-import instance_group_managers_listPerInstanceConfigs from "./instance_group_managers/listPerInstanceConfigs.ts";
-import instance_group_managers_patch from "./instance_group_managers/patch.ts";
-import instance_group_managers_patchPerInstanceConfigs from "./instance_group_managers/patchPerInstanceConfigs.ts";
-import instance_group_managers_recreateInstances from "./instance_group_managers/recreateInstances.ts";
-import instance_group_managers_resize from "./instance_group_managers/resize.ts";
-import instance_group_managers_resumeInstances from "./instance_group_managers/resumeInstances.ts";
-import instance_group_managers_setInstanceTemplate from "./instance_group_managers/setInstanceTemplate.ts";
-import instance_group_managers_setTargetPools from "./instance_group_managers/setTargetPools.ts";
-import instance_group_managers_startInstances from "./instance_group_managers/startInstances.ts";
-import instance_group_managers_stopInstances from "./instance_group_managers/stopInstances.ts";
-import instance_group_managers_suspendInstances from "./instance_group_managers/suspendInstances.ts";
-import instance_group_managers_updatePerInstanceConfigs from "./instance_group_managers/updatePerInstanceConfigs.ts";
-import instance_groups_addInstances from "./instance_groups/addInstances.ts";
-import instance_groups_aggregatedList from "./instance_groups/aggregatedList.ts";
-import instance_groups_deleteOperation from "./instance_groups/deleteOperation.ts";
-import instance_groups_get from "./instance_groups/get.ts";
-import instance_groups_insert from "./instance_groups/insert.ts";
-import instance_groups_list from "./instance_groups/list.ts";
-import instance_groups_listInstances from "./instance_groups/listInstances.ts";
-import instance_groups_removeInstances from "./instance_groups/removeInstances.ts";
-import instance_groups_setNamedPorts from "./instance_groups/setNamedPorts.ts";
-import instance_settings_service_get from "./instance_settings_service/get.ts";
-import instance_settings_service_patch from "./instance_settings_service/patch.ts";
-import instance_templates_aggregatedList from "./instance_templates/aggregatedList.ts";
-import instance_templates_deleteOperation from "./instance_templates/deleteOperation.ts";
-import instance_templates_get from "./instance_templates/get.ts";
-import instance_templates_insert from "./instance_templates/insert.ts";
-import instance_templates_list from "./instance_templates/list.ts";
-import instances_addAccessConfig from "./instances/addAccessConfig.ts";
-import instances_addNetworkInterface from "./instances/addNetworkInterface.ts";
-import instances_addResourcePolicies from "./instances/addResourcePolicies.ts";
-import instances_aggregatedList from "./instances/aggregatedList.ts";
-import instances_attachDisk from "./instances/attachDisk.ts";
-import instances_bulkInsert from "./instances/bulkInsert.ts";
-import instances_deleteAccessConfig from "./instances/deleteAccessConfig.ts";
-import instances_deleteNetworkInterface from "./instances/deleteNetworkInterface.ts";
-import instances_deleteOperation from "./instances/deleteOperation.ts";
-import instances_detachDisk from "./instances/detachDisk.ts";
-import instances_get from "./instances/get.ts";
-import instances_getEffectiveFirewalls from "./instances/getEffectiveFirewalls.ts";
-import instances_getGuestAttributes from "./instances/getGuestAttributes.ts";
-import instances_getScreenshot from "./instances/getScreenshot.ts";
-import instances_getSerialPortOutput from "./instances/getSerialPortOutput.ts";
-import instances_getShieldedInstanceIdentity from "./instances/getShieldedInstanceIdentity.ts";
-import instances_insert from "./instances/insert.ts";
-import instances_list from "./instances/list.ts";
-import instances_listReferrers from "./instances/listReferrers.ts";
-import instances_performMaintenance from "./instances/performMaintenance.ts";
-import instances_removeResourcePolicies from "./instances/removeResourcePolicies.ts";
-import instances_reportHostAsFaulty from "./instances/reportHostAsFaulty.ts";
-import instances_reset from "./instances/reset.ts";
-import instances_resume from "./instances/resume.ts";
-import instances_sendDiagnosticInterrupt from "./instances/sendDiagnosticInterrupt.ts";
-import instances_setDeletionProtection from "./instances/setDeletionProtection.ts";
-import instances_setDiskAutoDelete from "./instances/setDiskAutoDelete.ts";
-import instances_setLabels from "./instances/setLabels.ts";
-import instances_setMachineResources from "./instances/setMachineResources.ts";
-import instances_setMachineType from "./instances/setMachineType.ts";
-import instances_setMetadata from "./instances/setMetadata.ts";
-import instances_setMinCpuPlatform from "./instances/setMinCpuPlatform.ts";
-import instances_setName from "./instances/setName.ts";
-import instances_setScheduling from "./instances/setScheduling.ts";
-import instances_setSecurityPolicy from "./instances/setSecurityPolicy.ts";
-import instances_setServiceAccount from "./instances/setServiceAccount.ts";
-import instances_setShieldedInstanceIntegrityPolicy from "./instances/setShieldedInstanceIntegrityPolicy.ts";
-import instances_setTags from "./instances/setTags.ts";
-import instances_simulateMaintenanceEvent from "./instances/simulateMaintenanceEvent.ts";
-import instances_start from "./instances/start.ts";
-import instances_startWithEncryptionKey from "./instances/startWithEncryptionKey.ts";
-import instances_stop from "./instances/stop.ts";
-import instances_suspend from "./instances/suspend.ts";
-import instances_update from "./instances/update.ts";
-import instances_updateAccessConfig from "./instances/updateAccessConfig.ts";
-import instances_updateDisplayDevice from "./instances/updateDisplayDevice.ts";
-import instances_updateNetworkInterface from "./instances/updateNetworkInterface.ts";
-import instances_updateShieldedInstanceConfig from "./instances/updateShieldedInstanceConfig.ts";
-import machine_images_deleteOperation from "./machine_images/deleteOperation.ts";
-import machine_images_get from "./machine_images/get.ts";
-import machine_images_insert from "./machine_images/insert.ts";
-import machine_images_list from "./machine_images/list.ts";
-import machine_images_setLabels from "./machine_images/setLabels.ts";
-import machine_types_aggregatedList from "./machine_types/aggregatedList.ts";
-import machine_types_get from "./machine_types/get.ts";
-import machine_types_list from "./machine_types/list.ts";
-import region_autoscalers_deleteOperation from "./region_autoscalers/deleteOperation.ts";
-import region_autoscalers_get from "./region_autoscalers/get.ts";
-import region_autoscalers_insert from "./region_autoscalers/insert.ts";
-import region_autoscalers_list from "./region_autoscalers/list.ts";
-import region_autoscalers_patch from "./region_autoscalers/patch.ts";
-import region_autoscalers_update from "./region_autoscalers/update.ts";
-import region_instance_group_managers_abandonInstances from "./region_instance_group_managers/abandonInstances.ts";
-import region_instance_group_managers_applyUpdatesToInstances from "./region_instance_group_managers/applyUpdatesToInstances.ts";
-import region_instance_group_managers_createInstances from "./region_instance_group_managers/createInstances.ts";
-import region_instance_group_managers_deleteInstances from "./region_instance_group_managers/deleteInstances.ts";
-import region_instance_group_managers_deleteOperation from "./region_instance_group_managers/deleteOperation.ts";
-import region_instance_group_managers_deletePerInstanceConfigs from "./region_instance_group_managers/deletePerInstanceConfigs.ts";
-import region_instance_group_managers_get from "./region_instance_group_managers/get.ts";
-import region_instance_group_managers_insert from "./region_instance_group_managers/insert.ts";
-import region_instance_group_managers_list from "./region_instance_group_managers/list.ts";
-import region_instance_group_managers_listErrors from "./region_instance_group_managers/listErrors.ts";
-import region_instance_group_managers_listManagedInstances from "./region_instance_group_managers/listManagedInstances.ts";
-import region_instance_group_managers_listPerInstanceConfigs from "./region_instance_group_managers/listPerInstanceConfigs.ts";
-import region_instance_group_managers_patch from "./region_instance_group_managers/patch.ts";
-import region_instance_group_managers_patchPerInstanceConfigs from "./region_instance_group_managers/patchPerInstanceConfigs.ts";
-import region_instance_group_managers_recreateInstances from "./region_instance_group_managers/recreateInstances.ts";
-import region_instance_group_managers_resize from "./region_instance_group_managers/resize.ts";
-import region_instance_group_managers_resumeInstances from "./region_instance_group_managers/resumeInstances.ts";
-import region_instance_group_managers_setInstanceTemplate from "./region_instance_group_managers/setInstanceTemplate.ts";
-import region_instance_group_managers_setTargetPools from "./region_instance_group_managers/setTargetPools.ts";
-import region_instance_group_managers_startInstances from "./region_instance_group_managers/startInstances.ts";
-import region_instance_group_managers_stopInstances from "./region_instance_group_managers/stopInstances.ts";
-import region_instance_group_managers_suspendInstances from "./region_instance_group_managers/suspendInstances.ts";
-import region_instance_group_managers_updatePerInstanceConfigs from "./region_instance_group_managers/updatePerInstanceConfigs.ts";
-import region_instance_groups_get from "./region_instance_groups/get.ts";
-import region_instance_groups_list from "./region_instance_groups/list.ts";
-import region_instance_groups_listInstances from "./region_instance_groups/listInstances.ts";
-import region_instance_groups_setNamedPorts from "./region_instance_groups/setNamedPorts.ts";
-import region_instance_templates_deleteOperation from "./region_instance_templates/deleteOperation.ts";
-import region_instance_templates_get from "./region_instance_templates/get.ts";
-import region_instance_templates_insert from "./region_instance_templates/insert.ts";
-import region_instance_templates_list from "./region_instance_templates/list.ts";
-import region_instances_bulkInsert from "./region_instances/bulkInsert.ts";
-import zone_operations_deleteOperation from "./zone_operations/deleteOperation.ts";
-import zone_operations_get from "./zone_operations/get.ts";
-import zone_operations_list from "./zone_operations/list.ts";
-import zone_operations_wait from "./zone_operations/wait.ts";
+import acceleratorTypesAggregatedList from "./accelerator_types/acceleratorTypesAggregatedList.ts";
+import acceleratorTypesGet from "./accelerator_types/acceleratorTypesGet.ts";
+import acceleratorTypesList from "./accelerator_types/acceleratorTypesList.ts";
+import autoscalersAggregatedList from "./autoscalers/autoscalersAggregatedList.ts";
+import autoscalersDelete from "./autoscalers/autoscalersDelete.ts";
+import autoscalersGet from "./autoscalers/autoscalersGet.ts";
+import autoscalersInsert from "./autoscalers/autoscalersInsert.ts";
+import autoscalersList from "./autoscalers/autoscalersList.ts";
+import autoscalersPatch from "./autoscalers/autoscalersPatch.ts";
+import autoscalersUpdate from "./autoscalers/autoscalersUpdate.ts";
+import instanceGroupManagerResizeRequestsCancel from "./instance_group_manager_resize_requests/instanceGroupManagerResizeRequestsCancel.ts";
+import instanceGroupManagerResizeRequestsDelete from "./instance_group_manager_resize_requests/instanceGroupManagerResizeRequestsDelete.ts";
+import instanceGroupManagerResizeRequestsGet from "./instance_group_manager_resize_requests/instanceGroupManagerResizeRequestsGet.ts";
+import instanceGroupManagerResizeRequestsInsert from "./instance_group_manager_resize_requests/instanceGroupManagerResizeRequestsInsert.ts";
+import instanceGroupManagerResizeRequestsList from "./instance_group_manager_resize_requests/instanceGroupManagerResizeRequestsList.ts";
+import instanceGroupManagersAbandonInstances from "./instance_group_managers/instanceGroupManagersAbandonInstances.ts";
+import instanceGroupManagersAggregatedList from "./instance_group_managers/instanceGroupManagersAggregatedList.ts";
+import instanceGroupManagersApplyUpdatesToInstances from "./instance_group_managers/instanceGroupManagersApplyUpdatesToInstances.ts";
+import instanceGroupManagersCreateInstances from "./instance_group_managers/instanceGroupManagersCreateInstances.ts";
+import instanceGroupManagersDelete from "./instance_group_managers/instanceGroupManagersDelete.ts";
+import instanceGroupManagersDeleteInstances from "./instance_group_managers/instanceGroupManagersDeleteInstances.ts";
+import instanceGroupManagersDeletePerInstanceConfigs from "./instance_group_managers/instanceGroupManagersDeletePerInstanceConfigs.ts";
+import instanceGroupManagersGet from "./instance_group_managers/instanceGroupManagersGet.ts";
+import instanceGroupManagersInsert from "./instance_group_managers/instanceGroupManagersInsert.ts";
+import instanceGroupManagersList from "./instance_group_managers/instanceGroupManagersList.ts";
+import instanceGroupManagersListErrors from "./instance_group_managers/instanceGroupManagersListErrors.ts";
+import instanceGroupManagersListManagedInstances from "./instance_group_managers/instanceGroupManagersListManagedInstances.ts";
+import instanceGroupManagersListPerInstanceConfigs from "./instance_group_managers/instanceGroupManagersListPerInstanceConfigs.ts";
+import instanceGroupManagersPatch from "./instance_group_managers/instanceGroupManagersPatch.ts";
+import instanceGroupManagersPatchPerInstanceConfigs from "./instance_group_managers/instanceGroupManagersPatchPerInstanceConfigs.ts";
+import instanceGroupManagersRecreateInstances from "./instance_group_managers/instanceGroupManagersRecreateInstances.ts";
+import instanceGroupManagersResize from "./instance_group_managers/instanceGroupManagersResize.ts";
+import instanceGroupManagersResumeInstances from "./instance_group_managers/instanceGroupManagersResumeInstances.ts";
+import instanceGroupManagersSetInstanceTemplate from "./instance_group_managers/instanceGroupManagersSetInstanceTemplate.ts";
+import instanceGroupManagersSetTargetPools from "./instance_group_managers/instanceGroupManagersSetTargetPools.ts";
+import instanceGroupManagersStartInstances from "./instance_group_managers/instanceGroupManagersStartInstances.ts";
+import instanceGroupManagersStopInstances from "./instance_group_managers/instanceGroupManagersStopInstances.ts";
+import instanceGroupManagersSuspendInstances from "./instance_group_managers/instanceGroupManagersSuspendInstances.ts";
+import instanceGroupManagersUpdatePerInstanceConfigs from "./instance_group_managers/instanceGroupManagersUpdatePerInstanceConfigs.ts";
+import instanceGroupsAddInstances from "./instance_groups/instanceGroupsAddInstances.ts";
+import instanceGroupsAggregatedList from "./instance_groups/instanceGroupsAggregatedList.ts";
+import instanceGroupsDelete from "./instance_groups/instanceGroupsDelete.ts";
+import instanceGroupsGet from "./instance_groups/instanceGroupsGet.ts";
+import instanceGroupsInsert from "./instance_groups/instanceGroupsInsert.ts";
+import instanceGroupsList from "./instance_groups/instanceGroupsList.ts";
+import instanceGroupsListInstances from "./instance_groups/instanceGroupsListInstances.ts";
+import instanceGroupsRemoveInstances from "./instance_groups/instanceGroupsRemoveInstances.ts";
+import instanceGroupsSetNamedPorts from "./instance_groups/instanceGroupsSetNamedPorts.ts";
+import instanceSettingsServiceGet from "./instance_settings_service/instanceSettingsServiceGet.ts";
+import instanceSettingsServicePatch from "./instance_settings_service/instanceSettingsServicePatch.ts";
+import instanceTemplatesAggregatedList from "./instance_templates/instanceTemplatesAggregatedList.ts";
+import instanceTemplatesDelete from "./instance_templates/instanceTemplatesDelete.ts";
+import instanceTemplatesGet from "./instance_templates/instanceTemplatesGet.ts";
+import instanceTemplatesInsert from "./instance_templates/instanceTemplatesInsert.ts";
+import instanceTemplatesList from "./instance_templates/instanceTemplatesList.ts";
+import instancesAddAccessConfig from "./instances/instancesAddAccessConfig.ts";
+import instancesAddNetworkInterface from "./instances/instancesAddNetworkInterface.ts";
+import instancesAddResourcePolicies from "./instances/instancesAddResourcePolicies.ts";
+import instancesAggregatedList from "./instances/instancesAggregatedList.ts";
+import instancesAttachDisk from "./instances/instancesAttachDisk.ts";
+import instancesBulkInsert from "./instances/instancesBulkInsert.ts";
+import instancesDelete from "./instances/instancesDelete.ts";
+import instancesDeleteAccessConfig from "./instances/instancesDeleteAccessConfig.ts";
+import instancesDeleteNetworkInterface from "./instances/instancesDeleteNetworkInterface.ts";
+import instancesDetachDisk from "./instances/instancesDetachDisk.ts";
+import instancesGet from "./instances/instancesGet.ts";
+import instancesGetEffectiveFirewalls from "./instances/instancesGetEffectiveFirewalls.ts";
+import instancesGetGuestAttributes from "./instances/instancesGetGuestAttributes.ts";
+import instancesGetScreenshot from "./instances/instancesGetScreenshot.ts";
+import instancesGetSerialPortOutput from "./instances/instancesGetSerialPortOutput.ts";
+import instancesGetShieldedInstanceIdentity from "./instances/instancesGetShieldedInstanceIdentity.ts";
+import instancesInsert from "./instances/instancesInsert.ts";
+import instancesList from "./instances/instancesList.ts";
+import instancesListReferrers from "./instances/instancesListReferrers.ts";
+import instancesPerformMaintenance from "./instances/instancesPerformMaintenance.ts";
+import instancesRemoveResourcePolicies from "./instances/instancesRemoveResourcePolicies.ts";
+import instancesReportHostAsFaulty from "./instances/instancesReportHostAsFaulty.ts";
+import instancesReset from "./instances/instancesReset.ts";
+import instancesResume from "./instances/instancesResume.ts";
+import instancesSendDiagnosticInterrupt from "./instances/instancesSendDiagnosticInterrupt.ts";
+import instancesSetDeletionProtection from "./instances/instancesSetDeletionProtection.ts";
+import instancesSetDiskAutoDelete from "./instances/instancesSetDiskAutoDelete.ts";
+import instancesSetLabels from "./instances/instancesSetLabels.ts";
+import instancesSetMachineResources from "./instances/instancesSetMachineResources.ts";
+import instancesSetMachineType from "./instances/instancesSetMachineType.ts";
+import instancesSetMetadata from "./instances/instancesSetMetadata.ts";
+import instancesSetMinCpuPlatform from "./instances/instancesSetMinCpuPlatform.ts";
+import instancesSetName from "./instances/instancesSetName.ts";
+import instancesSetScheduling from "./instances/instancesSetScheduling.ts";
+import instancesSetSecurityPolicy from "./instances/instancesSetSecurityPolicy.ts";
+import instancesSetServiceAccount from "./instances/instancesSetServiceAccount.ts";
+import instancesSetShieldedInstanceIntegrityPolicy from "./instances/instancesSetShieldedInstanceIntegrityPolicy.ts";
+import instancesSetTags from "./instances/instancesSetTags.ts";
+import instancesSimulateMaintenanceEvent from "./instances/instancesSimulateMaintenanceEvent.ts";
+import instancesStart from "./instances/instancesStart.ts";
+import instancesStartWithEncryptionKey from "./instances/instancesStartWithEncryptionKey.ts";
+import instancesStop from "./instances/instancesStop.ts";
+import instancesSuspend from "./instances/instancesSuspend.ts";
+import instancesUpdate from "./instances/instancesUpdate.ts";
+import instancesUpdateAccessConfig from "./instances/instancesUpdateAccessConfig.ts";
+import instancesUpdateDisplayDevice from "./instances/instancesUpdateDisplayDevice.ts";
+import instancesUpdateNetworkInterface from "./instances/instancesUpdateNetworkInterface.ts";
+import instancesUpdateShieldedInstanceConfig from "./instances/instancesUpdateShieldedInstanceConfig.ts";
+import machineImagesDelete from "./machine_images/machineImagesDelete.ts";
+import machineImagesGet from "./machine_images/machineImagesGet.ts";
+import machineImagesInsert from "./machine_images/machineImagesInsert.ts";
+import machineImagesList from "./machine_images/machineImagesList.ts";
+import machineImagesSetLabels from "./machine_images/machineImagesSetLabels.ts";
+import machineTypesAggregatedList from "./machine_types/machineTypesAggregatedList.ts";
+import machineTypesGet from "./machine_types/machineTypesGet.ts";
+import machineTypesList from "./machine_types/machineTypesList.ts";
+import regionAutoscalersDelete from "./region_autoscalers/regionAutoscalersDelete.ts";
+import regionAutoscalersGet from "./region_autoscalers/regionAutoscalersGet.ts";
+import regionAutoscalersInsert from "./region_autoscalers/regionAutoscalersInsert.ts";
+import regionAutoscalersList from "./region_autoscalers/regionAutoscalersList.ts";
+import regionAutoscalersPatch from "./region_autoscalers/regionAutoscalersPatch.ts";
+import regionAutoscalersUpdate from "./region_autoscalers/regionAutoscalersUpdate.ts";
+import regionInstanceGroupManagersAbandonInstances from "./region_instance_group_managers/regionInstanceGroupManagersAbandonInstances.ts";
+import regionInstanceGroupManagersApplyUpdatesToInstances from "./region_instance_group_managers/regionInstanceGroupManagersApplyUpdatesToInstances.ts";
+import regionInstanceGroupManagersCreateInstances from "./region_instance_group_managers/regionInstanceGroupManagersCreateInstances.ts";
+import regionInstanceGroupManagersDelete from "./region_instance_group_managers/regionInstanceGroupManagersDelete.ts";
+import regionInstanceGroupManagersDeleteInstances from "./region_instance_group_managers/regionInstanceGroupManagersDeleteInstances.ts";
+import regionInstanceGroupManagersDeletePerInstanceConfigs from "./region_instance_group_managers/regionInstanceGroupManagersDeletePerInstanceConfigs.ts";
+import regionInstanceGroupManagersGet from "./region_instance_group_managers/regionInstanceGroupManagersGet.ts";
+import regionInstanceGroupManagersInsert from "./region_instance_group_managers/regionInstanceGroupManagersInsert.ts";
+import regionInstanceGroupManagersList from "./region_instance_group_managers/regionInstanceGroupManagersList.ts";
+import regionInstanceGroupManagersListErrors from "./region_instance_group_managers/regionInstanceGroupManagersListErrors.ts";
+import regionInstanceGroupManagersListManagedInstances from "./region_instance_group_managers/regionInstanceGroupManagersListManagedInstances.ts";
+import regionInstanceGroupManagersListPerInstanceConfigs from "./region_instance_group_managers/regionInstanceGroupManagersListPerInstanceConfigs.ts";
+import regionInstanceGroupManagersPatch from "./region_instance_group_managers/regionInstanceGroupManagersPatch.ts";
+import regionInstanceGroupManagersPatchPerInstanceConfigs from "./region_instance_group_managers/regionInstanceGroupManagersPatchPerInstanceConfigs.ts";
+import regionInstanceGroupManagersRecreateInstances from "./region_instance_group_managers/regionInstanceGroupManagersRecreateInstances.ts";
+import regionInstanceGroupManagersResize from "./region_instance_group_managers/regionInstanceGroupManagersResize.ts";
+import regionInstanceGroupManagersResumeInstances from "./region_instance_group_managers/regionInstanceGroupManagersResumeInstances.ts";
+import regionInstanceGroupManagersSetInstanceTemplate from "./region_instance_group_managers/regionInstanceGroupManagersSetInstanceTemplate.ts";
+import regionInstanceGroupManagersSetTargetPools from "./region_instance_group_managers/regionInstanceGroupManagersSetTargetPools.ts";
+import regionInstanceGroupManagersStartInstances from "./region_instance_group_managers/regionInstanceGroupManagersStartInstances.ts";
+import regionInstanceGroupManagersStopInstances from "./region_instance_group_managers/regionInstanceGroupManagersStopInstances.ts";
+import regionInstanceGroupManagersSuspendInstances from "./region_instance_group_managers/regionInstanceGroupManagersSuspendInstances.ts";
+import regionInstanceGroupManagersUpdatePerInstanceConfigs from "./region_instance_group_managers/regionInstanceGroupManagersUpdatePerInstanceConfigs.ts";
+import regionInstanceGroupsGet from "./region_instance_groups/regionInstanceGroupsGet.ts";
+import regionInstanceGroupsList from "./region_instance_groups/regionInstanceGroupsList.ts";
+import regionInstanceGroupsListInstances from "./region_instance_groups/regionInstanceGroupsListInstances.ts";
+import regionInstanceGroupsSetNamedPorts from "./region_instance_groups/regionInstanceGroupsSetNamedPorts.ts";
+import regionInstanceTemplatesDelete from "./region_instance_templates/regionInstanceTemplatesDelete.ts";
+import regionInstanceTemplatesGet from "./region_instance_templates/regionInstanceTemplatesGet.ts";
+import regionInstanceTemplatesInsert from "./region_instance_templates/regionInstanceTemplatesInsert.ts";
+import regionInstanceTemplatesList from "./region_instance_templates/regionInstanceTemplatesList.ts";
+import regionInstancesBulkInsert from "./region_instances/regionInstancesBulkInsert.ts";
+import zoneOperationsDelete from "./zone_operations/zoneOperationsDelete.ts";
+import zoneOperationsGet from "./zone_operations/zoneOperationsGet.ts";
+import zoneOperationsList from "./zone_operations/zoneOperationsList.ts";
+import zoneOperationsWait from "./zone_operations/zoneOperationsWait.ts";
 
 export const blocks = {
-  accelerator_types_aggregatedList: accelerator_types_aggregatedList,
-  accelerator_types_get: accelerator_types_get,
-  accelerator_types_list: accelerator_types_list,
-  autoscalers_aggregatedList: autoscalers_aggregatedList,
-  autoscalers_deleteOperation: autoscalers_deleteOperation,
-  autoscalers_get: autoscalers_get,
-  autoscalers_insert: autoscalers_insert,
-  autoscalers_list: autoscalers_list,
-  autoscalers_patch: autoscalers_patch,
-  autoscalers_update: autoscalers_update,
-  instance_group_manager_resize_requests_cancel:
-    instance_group_manager_resize_requests_cancel,
-  instance_group_manager_resize_requests_deleteOperation:
-    instance_group_manager_resize_requests_deleteOperation,
-  instance_group_manager_resize_requests_get:
-    instance_group_manager_resize_requests_get,
-  instance_group_manager_resize_requests_insert:
-    instance_group_manager_resize_requests_insert,
-  instance_group_manager_resize_requests_list:
-    instance_group_manager_resize_requests_list,
-  instance_group_managers_abandonInstances:
-    instance_group_managers_abandonInstances,
-  instance_group_managers_aggregatedList:
-    instance_group_managers_aggregatedList,
-  instance_group_managers_applyUpdatesToInstances:
-    instance_group_managers_applyUpdatesToInstances,
-  instance_group_managers_createInstances:
-    instance_group_managers_createInstances,
-  instance_group_managers_deleteInstances:
-    instance_group_managers_deleteInstances,
-  instance_group_managers_deleteOperation:
-    instance_group_managers_deleteOperation,
-  instance_group_managers_deletePerInstanceConfigs:
-    instance_group_managers_deletePerInstanceConfigs,
-  instance_group_managers_get: instance_group_managers_get,
-  instance_group_managers_insert: instance_group_managers_insert,
-  instance_group_managers_list: instance_group_managers_list,
-  instance_group_managers_listErrors: instance_group_managers_listErrors,
-  instance_group_managers_listManagedInstances:
-    instance_group_managers_listManagedInstances,
-  instance_group_managers_listPerInstanceConfigs:
-    instance_group_managers_listPerInstanceConfigs,
-  instance_group_managers_patch: instance_group_managers_patch,
-  instance_group_managers_patchPerInstanceConfigs:
-    instance_group_managers_patchPerInstanceConfigs,
-  instance_group_managers_recreateInstances:
-    instance_group_managers_recreateInstances,
-  instance_group_managers_resize: instance_group_managers_resize,
-  instance_group_managers_resumeInstances:
-    instance_group_managers_resumeInstances,
-  instance_group_managers_setInstanceTemplate:
-    instance_group_managers_setInstanceTemplate,
-  instance_group_managers_setTargetPools:
-    instance_group_managers_setTargetPools,
-  instance_group_managers_startInstances:
-    instance_group_managers_startInstances,
-  instance_group_managers_stopInstances: instance_group_managers_stopInstances,
-  instance_group_managers_suspendInstances:
-    instance_group_managers_suspendInstances,
-  instance_group_managers_updatePerInstanceConfigs:
-    instance_group_managers_updatePerInstanceConfigs,
-  instance_groups_addInstances: instance_groups_addInstances,
-  instance_groups_aggregatedList: instance_groups_aggregatedList,
-  instance_groups_deleteOperation: instance_groups_deleteOperation,
-  instance_groups_get: instance_groups_get,
-  instance_groups_insert: instance_groups_insert,
-  instance_groups_list: instance_groups_list,
-  instance_groups_listInstances: instance_groups_listInstances,
-  instance_groups_removeInstances: instance_groups_removeInstances,
-  instance_groups_setNamedPorts: instance_groups_setNamedPorts,
-  instance_settings_service_get: instance_settings_service_get,
-  instance_settings_service_patch: instance_settings_service_patch,
-  instance_templates_aggregatedList: instance_templates_aggregatedList,
-  instance_templates_deleteOperation: instance_templates_deleteOperation,
-  instance_templates_get: instance_templates_get,
-  instance_templates_insert: instance_templates_insert,
-  instance_templates_list: instance_templates_list,
-  instances_addAccessConfig: instances_addAccessConfig,
-  instances_addNetworkInterface: instances_addNetworkInterface,
-  instances_addResourcePolicies: instances_addResourcePolicies,
-  instances_aggregatedList: instances_aggregatedList,
-  instances_attachDisk: instances_attachDisk,
-  instances_bulkInsert: instances_bulkInsert,
-  instances_deleteAccessConfig: instances_deleteAccessConfig,
-  instances_deleteNetworkInterface: instances_deleteNetworkInterface,
-  instances_deleteOperation: instances_deleteOperation,
-  instances_detachDisk: instances_detachDisk,
-  instances_get: instances_get,
-  instances_getEffectiveFirewalls: instances_getEffectiveFirewalls,
-  instances_getGuestAttributes: instances_getGuestAttributes,
-  instances_getScreenshot: instances_getScreenshot,
-  instances_getSerialPortOutput: instances_getSerialPortOutput,
-  instances_getShieldedInstanceIdentity: instances_getShieldedInstanceIdentity,
-  instances_insert: instances_insert,
-  instances_list: instances_list,
-  instances_listReferrers: instances_listReferrers,
-  instances_performMaintenance: instances_performMaintenance,
-  instances_removeResourcePolicies: instances_removeResourcePolicies,
-  instances_reportHostAsFaulty: instances_reportHostAsFaulty,
-  instances_reset: instances_reset,
-  instances_resume: instances_resume,
-  instances_sendDiagnosticInterrupt: instances_sendDiagnosticInterrupt,
-  instances_setDeletionProtection: instances_setDeletionProtection,
-  instances_setDiskAutoDelete: instances_setDiskAutoDelete,
-  instances_setLabels: instances_setLabels,
-  instances_setMachineResources: instances_setMachineResources,
-  instances_setMachineType: instances_setMachineType,
-  instances_setMetadata: instances_setMetadata,
-  instances_setMinCpuPlatform: instances_setMinCpuPlatform,
-  instances_setName: instances_setName,
-  instances_setScheduling: instances_setScheduling,
-  instances_setSecurityPolicy: instances_setSecurityPolicy,
-  instances_setServiceAccount: instances_setServiceAccount,
-  instances_setShieldedInstanceIntegrityPolicy:
-    instances_setShieldedInstanceIntegrityPolicy,
-  instances_setTags: instances_setTags,
-  instances_simulateMaintenanceEvent: instances_simulateMaintenanceEvent,
-  instances_start: instances_start,
-  instances_startWithEncryptionKey: instances_startWithEncryptionKey,
-  instances_stop: instances_stop,
-  instances_suspend: instances_suspend,
-  instances_update: instances_update,
-  instances_updateAccessConfig: instances_updateAccessConfig,
-  instances_updateDisplayDevice: instances_updateDisplayDevice,
-  instances_updateNetworkInterface: instances_updateNetworkInterface,
-  instances_updateShieldedInstanceConfig:
-    instances_updateShieldedInstanceConfig,
-  machine_images_deleteOperation: machine_images_deleteOperation,
-  machine_images_get: machine_images_get,
-  machine_images_insert: machine_images_insert,
-  machine_images_list: machine_images_list,
-  machine_images_setLabels: machine_images_setLabels,
-  machine_types_aggregatedList: machine_types_aggregatedList,
-  machine_types_get: machine_types_get,
-  machine_types_list: machine_types_list,
-  region_autoscalers_deleteOperation: region_autoscalers_deleteOperation,
-  region_autoscalers_get: region_autoscalers_get,
-  region_autoscalers_insert: region_autoscalers_insert,
-  region_autoscalers_list: region_autoscalers_list,
-  region_autoscalers_patch: region_autoscalers_patch,
-  region_autoscalers_update: region_autoscalers_update,
-  region_instance_group_managers_abandonInstances:
-    region_instance_group_managers_abandonInstances,
-  region_instance_group_managers_applyUpdatesToInstances:
-    region_instance_group_managers_applyUpdatesToInstances,
-  region_instance_group_managers_createInstances:
-    region_instance_group_managers_createInstances,
-  region_instance_group_managers_deleteInstances:
-    region_instance_group_managers_deleteInstances,
-  region_instance_group_managers_deleteOperation:
-    region_instance_group_managers_deleteOperation,
-  region_instance_group_managers_deletePerInstanceConfigs:
-    region_instance_group_managers_deletePerInstanceConfigs,
-  region_instance_group_managers_get: region_instance_group_managers_get,
-  region_instance_group_managers_insert: region_instance_group_managers_insert,
-  region_instance_group_managers_list: region_instance_group_managers_list,
-  region_instance_group_managers_listErrors:
-    region_instance_group_managers_listErrors,
-  region_instance_group_managers_listManagedInstances:
-    region_instance_group_managers_listManagedInstances,
-  region_instance_group_managers_listPerInstanceConfigs:
-    region_instance_group_managers_listPerInstanceConfigs,
-  region_instance_group_managers_patch: region_instance_group_managers_patch,
-  region_instance_group_managers_patchPerInstanceConfigs:
-    region_instance_group_managers_patchPerInstanceConfigs,
-  region_instance_group_managers_recreateInstances:
-    region_instance_group_managers_recreateInstances,
-  region_instance_group_managers_resize: region_instance_group_managers_resize,
-  region_instance_group_managers_resumeInstances:
-    region_instance_group_managers_resumeInstances,
-  region_instance_group_managers_setInstanceTemplate:
-    region_instance_group_managers_setInstanceTemplate,
-  region_instance_group_managers_setTargetPools:
-    region_instance_group_managers_setTargetPools,
-  region_instance_group_managers_startInstances:
-    region_instance_group_managers_startInstances,
-  region_instance_group_managers_stopInstances:
-    region_instance_group_managers_stopInstances,
-  region_instance_group_managers_suspendInstances:
-    region_instance_group_managers_suspendInstances,
-  region_instance_group_managers_updatePerInstanceConfigs:
-    region_instance_group_managers_updatePerInstanceConfigs,
-  region_instance_groups_get: region_instance_groups_get,
-  region_instance_groups_list: region_instance_groups_list,
-  region_instance_groups_listInstances: region_instance_groups_listInstances,
-  region_instance_groups_setNamedPorts: region_instance_groups_setNamedPorts,
-  region_instance_templates_deleteOperation:
-    region_instance_templates_deleteOperation,
-  region_instance_templates_get: region_instance_templates_get,
-  region_instance_templates_insert: region_instance_templates_insert,
-  region_instance_templates_list: region_instance_templates_list,
-  region_instances_bulkInsert: region_instances_bulkInsert,
-  zone_operations_deleteOperation: zone_operations_deleteOperation,
-  zone_operations_get: zone_operations_get,
-  zone_operations_list: zone_operations_list,
-  zone_operations_wait: zone_operations_wait,
+  acceleratorTypesAggregatedList: acceleratorTypesAggregatedList,
+  acceleratorTypesGet: acceleratorTypesGet,
+  acceleratorTypesList: acceleratorTypesList,
+  autoscalersAggregatedList: autoscalersAggregatedList,
+  autoscalersDelete: autoscalersDelete,
+  autoscalersGet: autoscalersGet,
+  autoscalersInsert: autoscalersInsert,
+  autoscalersList: autoscalersList,
+  autoscalersPatch: autoscalersPatch,
+  autoscalersUpdate: autoscalersUpdate,
+  instanceGroupManagerResizeRequestsCancel:
+    instanceGroupManagerResizeRequestsCancel,
+  instanceGroupManagerResizeRequestsDelete:
+    instanceGroupManagerResizeRequestsDelete,
+  instanceGroupManagerResizeRequestsGet: instanceGroupManagerResizeRequestsGet,
+  instanceGroupManagerResizeRequestsInsert:
+    instanceGroupManagerResizeRequestsInsert,
+  instanceGroupManagerResizeRequestsList:
+    instanceGroupManagerResizeRequestsList,
+  instanceGroupManagersAbandonInstances: instanceGroupManagersAbandonInstances,
+  instanceGroupManagersAggregatedList: instanceGroupManagersAggregatedList,
+  instanceGroupManagersApplyUpdatesToInstances:
+    instanceGroupManagersApplyUpdatesToInstances,
+  instanceGroupManagersCreateInstances: instanceGroupManagersCreateInstances,
+  instanceGroupManagersDelete: instanceGroupManagersDelete,
+  instanceGroupManagersDeleteInstances: instanceGroupManagersDeleteInstances,
+  instanceGroupManagersDeletePerInstanceConfigs:
+    instanceGroupManagersDeletePerInstanceConfigs,
+  instanceGroupManagersGet: instanceGroupManagersGet,
+  instanceGroupManagersInsert: instanceGroupManagersInsert,
+  instanceGroupManagersList: instanceGroupManagersList,
+  instanceGroupManagersListErrors: instanceGroupManagersListErrors,
+  instanceGroupManagersListManagedInstances:
+    instanceGroupManagersListManagedInstances,
+  instanceGroupManagersListPerInstanceConfigs:
+    instanceGroupManagersListPerInstanceConfigs,
+  instanceGroupManagersPatch: instanceGroupManagersPatch,
+  instanceGroupManagersPatchPerInstanceConfigs:
+    instanceGroupManagersPatchPerInstanceConfigs,
+  instanceGroupManagersRecreateInstances:
+    instanceGroupManagersRecreateInstances,
+  instanceGroupManagersResize: instanceGroupManagersResize,
+  instanceGroupManagersResumeInstances: instanceGroupManagersResumeInstances,
+  instanceGroupManagersSetInstanceTemplate:
+    instanceGroupManagersSetInstanceTemplate,
+  instanceGroupManagersSetTargetPools: instanceGroupManagersSetTargetPools,
+  instanceGroupManagersStartInstances: instanceGroupManagersStartInstances,
+  instanceGroupManagersStopInstances: instanceGroupManagersStopInstances,
+  instanceGroupManagersSuspendInstances: instanceGroupManagersSuspendInstances,
+  instanceGroupManagersUpdatePerInstanceConfigs:
+    instanceGroupManagersUpdatePerInstanceConfigs,
+  instanceGroupsAddInstances: instanceGroupsAddInstances,
+  instanceGroupsAggregatedList: instanceGroupsAggregatedList,
+  instanceGroupsDelete: instanceGroupsDelete,
+  instanceGroupsGet: instanceGroupsGet,
+  instanceGroupsInsert: instanceGroupsInsert,
+  instanceGroupsList: instanceGroupsList,
+  instanceGroupsListInstances: instanceGroupsListInstances,
+  instanceGroupsRemoveInstances: instanceGroupsRemoveInstances,
+  instanceGroupsSetNamedPorts: instanceGroupsSetNamedPorts,
+  instanceSettingsServiceGet: instanceSettingsServiceGet,
+  instanceSettingsServicePatch: instanceSettingsServicePatch,
+  instanceTemplatesAggregatedList: instanceTemplatesAggregatedList,
+  instanceTemplatesDelete: instanceTemplatesDelete,
+  instanceTemplatesGet: instanceTemplatesGet,
+  instanceTemplatesInsert: instanceTemplatesInsert,
+  instanceTemplatesList: instanceTemplatesList,
+  instancesAddAccessConfig: instancesAddAccessConfig,
+  instancesAddNetworkInterface: instancesAddNetworkInterface,
+  instancesAddResourcePolicies: instancesAddResourcePolicies,
+  instancesAggregatedList: instancesAggregatedList,
+  instancesAttachDisk: instancesAttachDisk,
+  instancesBulkInsert: instancesBulkInsert,
+  instancesDelete: instancesDelete,
+  instancesDeleteAccessConfig: instancesDeleteAccessConfig,
+  instancesDeleteNetworkInterface: instancesDeleteNetworkInterface,
+  instancesDetachDisk: instancesDetachDisk,
+  instancesGet: instancesGet,
+  instancesGetEffectiveFirewalls: instancesGetEffectiveFirewalls,
+  instancesGetGuestAttributes: instancesGetGuestAttributes,
+  instancesGetScreenshot: instancesGetScreenshot,
+  instancesGetSerialPortOutput: instancesGetSerialPortOutput,
+  instancesGetShieldedInstanceIdentity: instancesGetShieldedInstanceIdentity,
+  instancesInsert: instancesInsert,
+  instancesList: instancesList,
+  instancesListReferrers: instancesListReferrers,
+  instancesPerformMaintenance: instancesPerformMaintenance,
+  instancesRemoveResourcePolicies: instancesRemoveResourcePolicies,
+  instancesReportHostAsFaulty: instancesReportHostAsFaulty,
+  instancesReset: instancesReset,
+  instancesResume: instancesResume,
+  instancesSendDiagnosticInterrupt: instancesSendDiagnosticInterrupt,
+  instancesSetDeletionProtection: instancesSetDeletionProtection,
+  instancesSetDiskAutoDelete: instancesSetDiskAutoDelete,
+  instancesSetLabels: instancesSetLabels,
+  instancesSetMachineResources: instancesSetMachineResources,
+  instancesSetMachineType: instancesSetMachineType,
+  instancesSetMetadata: instancesSetMetadata,
+  instancesSetMinCpuPlatform: instancesSetMinCpuPlatform,
+  instancesSetName: instancesSetName,
+  instancesSetScheduling: instancesSetScheduling,
+  instancesSetSecurityPolicy: instancesSetSecurityPolicy,
+  instancesSetServiceAccount: instancesSetServiceAccount,
+  instancesSetShieldedInstanceIntegrityPolicy:
+    instancesSetShieldedInstanceIntegrityPolicy,
+  instancesSetTags: instancesSetTags,
+  instancesSimulateMaintenanceEvent: instancesSimulateMaintenanceEvent,
+  instancesStart: instancesStart,
+  instancesStartWithEncryptionKey: instancesStartWithEncryptionKey,
+  instancesStop: instancesStop,
+  instancesSuspend: instancesSuspend,
+  instancesUpdate: instancesUpdate,
+  instancesUpdateAccessConfig: instancesUpdateAccessConfig,
+  instancesUpdateDisplayDevice: instancesUpdateDisplayDevice,
+  instancesUpdateNetworkInterface: instancesUpdateNetworkInterface,
+  instancesUpdateShieldedInstanceConfig: instancesUpdateShieldedInstanceConfig,
+  machineImagesDelete: machineImagesDelete,
+  machineImagesGet: machineImagesGet,
+  machineImagesInsert: machineImagesInsert,
+  machineImagesList: machineImagesList,
+  machineImagesSetLabels: machineImagesSetLabels,
+  machineTypesAggregatedList: machineTypesAggregatedList,
+  machineTypesGet: machineTypesGet,
+  machineTypesList: machineTypesList,
+  regionAutoscalersDelete: regionAutoscalersDelete,
+  regionAutoscalersGet: regionAutoscalersGet,
+  regionAutoscalersInsert: regionAutoscalersInsert,
+  regionAutoscalersList: regionAutoscalersList,
+  regionAutoscalersPatch: regionAutoscalersPatch,
+  regionAutoscalersUpdate: regionAutoscalersUpdate,
+  regionInstanceGroupManagersAbandonInstances:
+    regionInstanceGroupManagersAbandonInstances,
+  regionInstanceGroupManagersApplyUpdatesToInstances:
+    regionInstanceGroupManagersApplyUpdatesToInstances,
+  regionInstanceGroupManagersCreateInstances:
+    regionInstanceGroupManagersCreateInstances,
+  regionInstanceGroupManagersDelete: regionInstanceGroupManagersDelete,
+  regionInstanceGroupManagersDeleteInstances:
+    regionInstanceGroupManagersDeleteInstances,
+  regionInstanceGroupManagersDeletePerInstanceConfigs:
+    regionInstanceGroupManagersDeletePerInstanceConfigs,
+  regionInstanceGroupManagersGet: regionInstanceGroupManagersGet,
+  regionInstanceGroupManagersInsert: regionInstanceGroupManagersInsert,
+  regionInstanceGroupManagersList: regionInstanceGroupManagersList,
+  regionInstanceGroupManagersListErrors: regionInstanceGroupManagersListErrors,
+  regionInstanceGroupManagersListManagedInstances:
+    regionInstanceGroupManagersListManagedInstances,
+  regionInstanceGroupManagersListPerInstanceConfigs:
+    regionInstanceGroupManagersListPerInstanceConfigs,
+  regionInstanceGroupManagersPatch: regionInstanceGroupManagersPatch,
+  regionInstanceGroupManagersPatchPerInstanceConfigs:
+    regionInstanceGroupManagersPatchPerInstanceConfigs,
+  regionInstanceGroupManagersRecreateInstances:
+    regionInstanceGroupManagersRecreateInstances,
+  regionInstanceGroupManagersResize: regionInstanceGroupManagersResize,
+  regionInstanceGroupManagersResumeInstances:
+    regionInstanceGroupManagersResumeInstances,
+  regionInstanceGroupManagersSetInstanceTemplate:
+    regionInstanceGroupManagersSetInstanceTemplate,
+  regionInstanceGroupManagersSetTargetPools:
+    regionInstanceGroupManagersSetTargetPools,
+  regionInstanceGroupManagersStartInstances:
+    regionInstanceGroupManagersStartInstances,
+  regionInstanceGroupManagersStopInstances:
+    regionInstanceGroupManagersStopInstances,
+  regionInstanceGroupManagersSuspendInstances:
+    regionInstanceGroupManagersSuspendInstances,
+  regionInstanceGroupManagersUpdatePerInstanceConfigs:
+    regionInstanceGroupManagersUpdatePerInstanceConfigs,
+  regionInstanceGroupsGet: regionInstanceGroupsGet,
+  regionInstanceGroupsList: regionInstanceGroupsList,
+  regionInstanceGroupsListInstances: regionInstanceGroupsListInstances,
+  regionInstanceGroupsSetNamedPorts: regionInstanceGroupsSetNamedPorts,
+  regionInstanceTemplatesDelete: regionInstanceTemplatesDelete,
+  regionInstanceTemplatesGet: regionInstanceTemplatesGet,
+  regionInstanceTemplatesInsert: regionInstanceTemplatesInsert,
+  regionInstanceTemplatesList: regionInstanceTemplatesList,
+  regionInstancesBulkInsert: regionInstancesBulkInsert,
+  zoneOperationsDelete: zoneOperationsDelete,
+  zoneOperationsGet: zoneOperationsGet,
+  zoneOperationsList: zoneOperationsList,
+  zoneOperationsWait: zoneOperationsWait,
 };

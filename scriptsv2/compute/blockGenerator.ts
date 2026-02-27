@@ -4,7 +4,7 @@
  * Generates individual Flows block .ts files for each REST RPC.
  */
 
-import { messageToInputConfig, messageToOutputSchema } from "../grpc/schemaMapper.ts";
+import { messageToInputConfig, messageToOutputSchema, fieldToSchema, INPUT_SCHEMA_OPTIONS } from "../grpc/schemaMapper.ts";
 import { cleanComment } from "../grpc/naming.ts";
 import { ComputeGeneratedBlock } from "./types.ts";
 
@@ -143,10 +143,11 @@ function buildInputConfig(
       .split("_")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
+    const fieldSchema = field ? fieldToSchema(field, INPUT_SCHEMA_OPTIONS) : { type: "string" };
     config[configKey] = {
       name: humanName,
       description: field?.comment || `${humanName} for this request.`,
-      type: { type: "string" },
+      type: fieldSchema,
       required: true,
     };
   }
@@ -171,10 +172,11 @@ function buildInputConfig(
       .split("_")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
+    const fieldSchema = field ? fieldToSchema(field, INPUT_SCHEMA_OPTIONS) : { type: "string" };
     config[configKey] = {
       name: humanName,
       description: field?.comment || `${humanName} parameter.`,
-      type: { type: "string" },
+      type: fieldSchema,
       required: false,
     };
   }

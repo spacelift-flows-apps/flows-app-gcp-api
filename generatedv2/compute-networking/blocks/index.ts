@@ -1,328 +1,316 @@
-import addresses_aggregatedList from "./addresses/aggregatedList.ts";
-import addresses_deleteOperation from "./addresses/deleteOperation.ts";
-import addresses_get from "./addresses/get.ts";
-import addresses_insert from "./addresses/insert.ts";
-import addresses_list from "./addresses/list.ts";
-import addresses_move from "./addresses/move.ts";
-import addresses_setLabels from "./addresses/setLabels.ts";
-import external_vpn_gateways_deleteOperation from "./external_vpn_gateways/deleteOperation.ts";
-import external_vpn_gateways_get from "./external_vpn_gateways/get.ts";
-import external_vpn_gateways_insert from "./external_vpn_gateways/insert.ts";
-import external_vpn_gateways_list from "./external_vpn_gateways/list.ts";
-import external_vpn_gateways_setLabels from "./external_vpn_gateways/setLabels.ts";
-import global_addresses_deleteOperation from "./global_addresses/deleteOperation.ts";
-import global_addresses_get from "./global_addresses/get.ts";
-import global_addresses_insert from "./global_addresses/insert.ts";
-import global_addresses_list from "./global_addresses/list.ts";
-import global_addresses_move from "./global_addresses/move.ts";
-import global_addresses_setLabels from "./global_addresses/setLabels.ts";
-import global_network_endpoint_groups_attachNetworkEndpoints from "./global_network_endpoint_groups/attachNetworkEndpoints.ts";
-import global_network_endpoint_groups_deleteOperation from "./global_network_endpoint_groups/deleteOperation.ts";
-import global_network_endpoint_groups_detachNetworkEndpoints from "./global_network_endpoint_groups/detachNetworkEndpoints.ts";
-import global_network_endpoint_groups_get from "./global_network_endpoint_groups/get.ts";
-import global_network_endpoint_groups_insert from "./global_network_endpoint_groups/insert.ts";
-import global_network_endpoint_groups_list from "./global_network_endpoint_groups/list.ts";
-import global_network_endpoint_groups_listNetworkEndpoints from "./global_network_endpoint_groups/listNetworkEndpoints.ts";
-import global_public_delegated_prefixes_deleteOperation from "./global_public_delegated_prefixes/deleteOperation.ts";
-import global_public_delegated_prefixes_get from "./global_public_delegated_prefixes/get.ts";
-import global_public_delegated_prefixes_insert from "./global_public_delegated_prefixes/insert.ts";
-import global_public_delegated_prefixes_list from "./global_public_delegated_prefixes/list.ts";
-import global_public_delegated_prefixes_patch from "./global_public_delegated_prefixes/patch.ts";
-import interconnect_attachments_aggregatedList from "./interconnect_attachments/aggregatedList.ts";
-import interconnect_attachments_deleteOperation from "./interconnect_attachments/deleteOperation.ts";
-import interconnect_attachments_get from "./interconnect_attachments/get.ts";
-import interconnect_attachments_insert from "./interconnect_attachments/insert.ts";
-import interconnect_attachments_list from "./interconnect_attachments/list.ts";
-import interconnect_attachments_patch from "./interconnect_attachments/patch.ts";
-import interconnect_attachments_setLabels from "./interconnect_attachments/setLabels.ts";
-import interconnect_locations_get from "./interconnect_locations/get.ts";
-import interconnect_locations_list from "./interconnect_locations/list.ts";
-import interconnect_remote_locations_get from "./interconnect_remote_locations/get.ts";
-import interconnect_remote_locations_list from "./interconnect_remote_locations/list.ts";
-import interconnects_deleteOperation from "./interconnects/deleteOperation.ts";
-import interconnects_get from "./interconnects/get.ts";
-import interconnects_getDiagnostics from "./interconnects/getDiagnostics.ts";
-import interconnects_getMacsecConfig from "./interconnects/getMacsecConfig.ts";
-import interconnects_insert from "./interconnects/insert.ts";
-import interconnects_list from "./interconnects/list.ts";
-import interconnects_patch from "./interconnects/patch.ts";
-import interconnects_setLabels from "./interconnects/setLabels.ts";
-import network_attachments_aggregatedList from "./network_attachments/aggregatedList.ts";
-import network_attachments_deleteOperation from "./network_attachments/deleteOperation.ts";
-import network_attachments_get from "./network_attachments/get.ts";
-import network_attachments_insert from "./network_attachments/insert.ts";
-import network_attachments_list from "./network_attachments/list.ts";
-import network_attachments_patch from "./network_attachments/patch.ts";
-import network_endpoint_groups_aggregatedList from "./network_endpoint_groups/aggregatedList.ts";
-import network_endpoint_groups_attachNetworkEndpoints from "./network_endpoint_groups/attachNetworkEndpoints.ts";
-import network_endpoint_groups_deleteOperation from "./network_endpoint_groups/deleteOperation.ts";
-import network_endpoint_groups_detachNetworkEndpoints from "./network_endpoint_groups/detachNetworkEndpoints.ts";
-import network_endpoint_groups_get from "./network_endpoint_groups/get.ts";
-import network_endpoint_groups_insert from "./network_endpoint_groups/insert.ts";
-import network_endpoint_groups_list from "./network_endpoint_groups/list.ts";
-import network_endpoint_groups_listNetworkEndpoints from "./network_endpoint_groups/listNetworkEndpoints.ts";
-import networks_addPeering from "./networks/addPeering.ts";
-import networks_deleteOperation from "./networks/deleteOperation.ts";
-import networks_get from "./networks/get.ts";
-import networks_getEffectiveFirewalls from "./networks/getEffectiveFirewalls.ts";
-import networks_insert from "./networks/insert.ts";
-import networks_list from "./networks/list.ts";
-import networks_listPeeringRoutes from "./networks/listPeeringRoutes.ts";
-import networks_patch from "./networks/patch.ts";
-import networks_removePeering from "./networks/removePeering.ts";
-import networks_requestRemovePeering from "./networks/requestRemovePeering.ts";
-import networks_switchToCustomMode from "./networks/switchToCustomMode.ts";
-import networks_updatePeering from "./networks/updatePeering.ts";
-import packet_mirrorings_aggregatedList from "./packet_mirrorings/aggregatedList.ts";
-import packet_mirrorings_deleteOperation from "./packet_mirrorings/deleteOperation.ts";
-import packet_mirrorings_get from "./packet_mirrorings/get.ts";
-import packet_mirrorings_insert from "./packet_mirrorings/insert.ts";
-import packet_mirrorings_list from "./packet_mirrorings/list.ts";
-import packet_mirrorings_patch from "./packet_mirrorings/patch.ts";
-import public_advertised_prefixes_announce from "./public_advertised_prefixes/announce.ts";
-import public_advertised_prefixes_deleteOperation from "./public_advertised_prefixes/deleteOperation.ts";
-import public_advertised_prefixes_get from "./public_advertised_prefixes/get.ts";
-import public_advertised_prefixes_insert from "./public_advertised_prefixes/insert.ts";
-import public_advertised_prefixes_list from "./public_advertised_prefixes/list.ts";
-import public_advertised_prefixes_patch from "./public_advertised_prefixes/patch.ts";
-import public_advertised_prefixes_withdraw from "./public_advertised_prefixes/withdraw.ts";
-import public_delegated_prefixes_aggregatedList from "./public_delegated_prefixes/aggregatedList.ts";
-import public_delegated_prefixes_announce from "./public_delegated_prefixes/announce.ts";
-import public_delegated_prefixes_deleteOperation from "./public_delegated_prefixes/deleteOperation.ts";
-import public_delegated_prefixes_get from "./public_delegated_prefixes/get.ts";
-import public_delegated_prefixes_insert from "./public_delegated_prefixes/insert.ts";
-import public_delegated_prefixes_list from "./public_delegated_prefixes/list.ts";
-import public_delegated_prefixes_patch from "./public_delegated_prefixes/patch.ts";
-import public_delegated_prefixes_withdraw from "./public_delegated_prefixes/withdraw.ts";
-import region_network_endpoint_groups_attachNetworkEndpoints from "./region_network_endpoint_groups/attachNetworkEndpoints.ts";
-import region_network_endpoint_groups_deleteOperation from "./region_network_endpoint_groups/deleteOperation.ts";
-import region_network_endpoint_groups_detachNetworkEndpoints from "./region_network_endpoint_groups/detachNetworkEndpoints.ts";
-import region_network_endpoint_groups_get from "./region_network_endpoint_groups/get.ts";
-import region_network_endpoint_groups_insert from "./region_network_endpoint_groups/insert.ts";
-import region_network_endpoint_groups_list from "./region_network_endpoint_groups/list.ts";
-import region_network_endpoint_groups_listNetworkEndpoints from "./region_network_endpoint_groups/listNetworkEndpoints.ts";
-import routers_aggregatedList from "./routers/aggregatedList.ts";
-import routers_deleteOperation from "./routers/deleteOperation.ts";
-import routers_deleteRoutePolicy from "./routers/deleteRoutePolicy.ts";
-import routers_get from "./routers/get.ts";
-import routers_getNatIpInfo from "./routers/getNatIpInfo.ts";
-import routers_getNatMappingInfo from "./routers/getNatMappingInfo.ts";
-import routers_getRoutePolicy from "./routers/getRoutePolicy.ts";
-import routers_getRouterStatus from "./routers/getRouterStatus.ts";
-import routers_insert from "./routers/insert.ts";
-import routers_list from "./routers/list.ts";
-import routers_listBgpRoutes from "./routers/listBgpRoutes.ts";
-import routers_listRoutePolicies from "./routers/listRoutePolicies.ts";
-import routers_patch from "./routers/patch.ts";
-import routers_patchRoutePolicy from "./routers/patchRoutePolicy.ts";
-import routers_preview from "./routers/preview.ts";
-import routers_update from "./routers/update.ts";
-import routers_updateRoutePolicy from "./routers/updateRoutePolicy.ts";
-import routes_deleteOperation from "./routes/deleteOperation.ts";
-import routes_get from "./routes/get.ts";
-import routes_insert from "./routes/insert.ts";
-import routes_list from "./routes/list.ts";
-import service_attachments_aggregatedList from "./service_attachments/aggregatedList.ts";
-import service_attachments_deleteOperation from "./service_attachments/deleteOperation.ts";
-import service_attachments_get from "./service_attachments/get.ts";
-import service_attachments_insert from "./service_attachments/insert.ts";
-import service_attachments_list from "./service_attachments/list.ts";
-import service_attachments_patch from "./service_attachments/patch.ts";
-import subnetworks_aggregatedList from "./subnetworks/aggregatedList.ts";
-import subnetworks_deleteOperation from "./subnetworks/deleteOperation.ts";
-import subnetworks_expandIpCidrRange from "./subnetworks/expandIpCidrRange.ts";
-import subnetworks_get from "./subnetworks/get.ts";
-import subnetworks_insert from "./subnetworks/insert.ts";
-import subnetworks_list from "./subnetworks/list.ts";
-import subnetworks_listUsable from "./subnetworks/listUsable.ts";
-import subnetworks_patch from "./subnetworks/patch.ts";
-import subnetworks_setPrivateIpGoogleAccess from "./subnetworks/setPrivateIpGoogleAccess.ts";
-import vpn_gateways_aggregatedList from "./vpn_gateways/aggregatedList.ts";
-import vpn_gateways_deleteOperation from "./vpn_gateways/deleteOperation.ts";
-import vpn_gateways_get from "./vpn_gateways/get.ts";
-import vpn_gateways_getStatus from "./vpn_gateways/getStatus.ts";
-import vpn_gateways_insert from "./vpn_gateways/insert.ts";
-import vpn_gateways_list from "./vpn_gateways/list.ts";
-import vpn_gateways_setLabels from "./vpn_gateways/setLabels.ts";
-import vpn_tunnels_aggregatedList from "./vpn_tunnels/aggregatedList.ts";
-import vpn_tunnels_deleteOperation from "./vpn_tunnels/deleteOperation.ts";
-import vpn_tunnels_get from "./vpn_tunnels/get.ts";
-import vpn_tunnels_insert from "./vpn_tunnels/insert.ts";
-import vpn_tunnels_list from "./vpn_tunnels/list.ts";
-import vpn_tunnels_setLabels from "./vpn_tunnels/setLabels.ts";
+import addressesAggregatedList from "./addresses/addressesAggregatedList.ts";
+import addressesDelete from "./addresses/addressesDelete.ts";
+import addressesGet from "./addresses/addressesGet.ts";
+import addressesInsert from "./addresses/addressesInsert.ts";
+import addressesList from "./addresses/addressesList.ts";
+import addressesMove from "./addresses/addressesMove.ts";
+import addressesSetLabels from "./addresses/addressesSetLabels.ts";
+import externalVpnGatewaysDelete from "./external_vpn_gateways/externalVpnGatewaysDelete.ts";
+import externalVpnGatewaysGet from "./external_vpn_gateways/externalVpnGatewaysGet.ts";
+import externalVpnGatewaysInsert from "./external_vpn_gateways/externalVpnGatewaysInsert.ts";
+import externalVpnGatewaysList from "./external_vpn_gateways/externalVpnGatewaysList.ts";
+import externalVpnGatewaysSetLabels from "./external_vpn_gateways/externalVpnGatewaysSetLabels.ts";
+import globalAddressesDelete from "./global_addresses/globalAddressesDelete.ts";
+import globalAddressesGet from "./global_addresses/globalAddressesGet.ts";
+import globalAddressesInsert from "./global_addresses/globalAddressesInsert.ts";
+import globalAddressesList from "./global_addresses/globalAddressesList.ts";
+import globalAddressesMove from "./global_addresses/globalAddressesMove.ts";
+import globalAddressesSetLabels from "./global_addresses/globalAddressesSetLabels.ts";
+import globalNetworkEndpointGroupsAttachNetworkEndpoints from "./global_network_endpoint_groups/globalNetworkEndpointGroupsAttachNetworkEndpoints.ts";
+import globalNetworkEndpointGroupsDelete from "./global_network_endpoint_groups/globalNetworkEndpointGroupsDelete.ts";
+import globalNetworkEndpointGroupsDetachNetworkEndpoints from "./global_network_endpoint_groups/globalNetworkEndpointGroupsDetachNetworkEndpoints.ts";
+import globalNetworkEndpointGroupsGet from "./global_network_endpoint_groups/globalNetworkEndpointGroupsGet.ts";
+import globalNetworkEndpointGroupsInsert from "./global_network_endpoint_groups/globalNetworkEndpointGroupsInsert.ts";
+import globalNetworkEndpointGroupsList from "./global_network_endpoint_groups/globalNetworkEndpointGroupsList.ts";
+import globalNetworkEndpointGroupsListNetworkEndpoints from "./global_network_endpoint_groups/globalNetworkEndpointGroupsListNetworkEndpoints.ts";
+import globalPublicDelegatedPrefixesDelete from "./global_public_delegated_prefixes/globalPublicDelegatedPrefixesDelete.ts";
+import globalPublicDelegatedPrefixesGet from "./global_public_delegated_prefixes/globalPublicDelegatedPrefixesGet.ts";
+import globalPublicDelegatedPrefixesInsert from "./global_public_delegated_prefixes/globalPublicDelegatedPrefixesInsert.ts";
+import globalPublicDelegatedPrefixesList from "./global_public_delegated_prefixes/globalPublicDelegatedPrefixesList.ts";
+import globalPublicDelegatedPrefixesPatch from "./global_public_delegated_prefixes/globalPublicDelegatedPrefixesPatch.ts";
+import interconnectAttachmentsAggregatedList from "./interconnect_attachments/interconnectAttachmentsAggregatedList.ts";
+import interconnectAttachmentsDelete from "./interconnect_attachments/interconnectAttachmentsDelete.ts";
+import interconnectAttachmentsGet from "./interconnect_attachments/interconnectAttachmentsGet.ts";
+import interconnectAttachmentsInsert from "./interconnect_attachments/interconnectAttachmentsInsert.ts";
+import interconnectAttachmentsList from "./interconnect_attachments/interconnectAttachmentsList.ts";
+import interconnectAttachmentsPatch from "./interconnect_attachments/interconnectAttachmentsPatch.ts";
+import interconnectAttachmentsSetLabels from "./interconnect_attachments/interconnectAttachmentsSetLabels.ts";
+import interconnectLocationsGet from "./interconnect_locations/interconnectLocationsGet.ts";
+import interconnectLocationsList from "./interconnect_locations/interconnectLocationsList.ts";
+import interconnectRemoteLocationsGet from "./interconnect_remote_locations/interconnectRemoteLocationsGet.ts";
+import interconnectRemoteLocationsList from "./interconnect_remote_locations/interconnectRemoteLocationsList.ts";
+import interconnectsDelete from "./interconnects/interconnectsDelete.ts";
+import interconnectsGet from "./interconnects/interconnectsGet.ts";
+import interconnectsGetDiagnostics from "./interconnects/interconnectsGetDiagnostics.ts";
+import interconnectsGetMacsecConfig from "./interconnects/interconnectsGetMacsecConfig.ts";
+import interconnectsInsert from "./interconnects/interconnectsInsert.ts";
+import interconnectsList from "./interconnects/interconnectsList.ts";
+import interconnectsPatch from "./interconnects/interconnectsPatch.ts";
+import interconnectsSetLabels from "./interconnects/interconnectsSetLabels.ts";
+import networkAttachmentsAggregatedList from "./network_attachments/networkAttachmentsAggregatedList.ts";
+import networkAttachmentsDelete from "./network_attachments/networkAttachmentsDelete.ts";
+import networkAttachmentsGet from "./network_attachments/networkAttachmentsGet.ts";
+import networkAttachmentsInsert from "./network_attachments/networkAttachmentsInsert.ts";
+import networkAttachmentsList from "./network_attachments/networkAttachmentsList.ts";
+import networkAttachmentsPatch from "./network_attachments/networkAttachmentsPatch.ts";
+import networkEndpointGroupsAggregatedList from "./network_endpoint_groups/networkEndpointGroupsAggregatedList.ts";
+import networkEndpointGroupsAttachNetworkEndpoints from "./network_endpoint_groups/networkEndpointGroupsAttachNetworkEndpoints.ts";
+import networkEndpointGroupsDelete from "./network_endpoint_groups/networkEndpointGroupsDelete.ts";
+import networkEndpointGroupsDetachNetworkEndpoints from "./network_endpoint_groups/networkEndpointGroupsDetachNetworkEndpoints.ts";
+import networkEndpointGroupsGet from "./network_endpoint_groups/networkEndpointGroupsGet.ts";
+import networkEndpointGroupsInsert from "./network_endpoint_groups/networkEndpointGroupsInsert.ts";
+import networkEndpointGroupsList from "./network_endpoint_groups/networkEndpointGroupsList.ts";
+import networkEndpointGroupsListNetworkEndpoints from "./network_endpoint_groups/networkEndpointGroupsListNetworkEndpoints.ts";
+import networksAddPeering from "./networks/networksAddPeering.ts";
+import networksDelete from "./networks/networksDelete.ts";
+import networksGet from "./networks/networksGet.ts";
+import networksGetEffectiveFirewalls from "./networks/networksGetEffectiveFirewalls.ts";
+import networksInsert from "./networks/networksInsert.ts";
+import networksList from "./networks/networksList.ts";
+import networksListPeeringRoutes from "./networks/networksListPeeringRoutes.ts";
+import networksPatch from "./networks/networksPatch.ts";
+import networksRemovePeering from "./networks/networksRemovePeering.ts";
+import networksRequestRemovePeering from "./networks/networksRequestRemovePeering.ts";
+import networksSwitchToCustomMode from "./networks/networksSwitchToCustomMode.ts";
+import networksUpdatePeering from "./networks/networksUpdatePeering.ts";
+import packetMirroringsAggregatedList from "./packet_mirrorings/packetMirroringsAggregatedList.ts";
+import packetMirroringsDelete from "./packet_mirrorings/packetMirroringsDelete.ts";
+import packetMirroringsGet from "./packet_mirrorings/packetMirroringsGet.ts";
+import packetMirroringsInsert from "./packet_mirrorings/packetMirroringsInsert.ts";
+import packetMirroringsList from "./packet_mirrorings/packetMirroringsList.ts";
+import packetMirroringsPatch from "./packet_mirrorings/packetMirroringsPatch.ts";
+import publicAdvertisedPrefixesAnnounce from "./public_advertised_prefixes/publicAdvertisedPrefixesAnnounce.ts";
+import publicAdvertisedPrefixesDelete from "./public_advertised_prefixes/publicAdvertisedPrefixesDelete.ts";
+import publicAdvertisedPrefixesGet from "./public_advertised_prefixes/publicAdvertisedPrefixesGet.ts";
+import publicAdvertisedPrefixesInsert from "./public_advertised_prefixes/publicAdvertisedPrefixesInsert.ts";
+import publicAdvertisedPrefixesList from "./public_advertised_prefixes/publicAdvertisedPrefixesList.ts";
+import publicAdvertisedPrefixesPatch from "./public_advertised_prefixes/publicAdvertisedPrefixesPatch.ts";
+import publicAdvertisedPrefixesWithdraw from "./public_advertised_prefixes/publicAdvertisedPrefixesWithdraw.ts";
+import publicDelegatedPrefixesAggregatedList from "./public_delegated_prefixes/publicDelegatedPrefixesAggregatedList.ts";
+import publicDelegatedPrefixesAnnounce from "./public_delegated_prefixes/publicDelegatedPrefixesAnnounce.ts";
+import publicDelegatedPrefixesDelete from "./public_delegated_prefixes/publicDelegatedPrefixesDelete.ts";
+import publicDelegatedPrefixesGet from "./public_delegated_prefixes/publicDelegatedPrefixesGet.ts";
+import publicDelegatedPrefixesInsert from "./public_delegated_prefixes/publicDelegatedPrefixesInsert.ts";
+import publicDelegatedPrefixesList from "./public_delegated_prefixes/publicDelegatedPrefixesList.ts";
+import publicDelegatedPrefixesPatch from "./public_delegated_prefixes/publicDelegatedPrefixesPatch.ts";
+import publicDelegatedPrefixesWithdraw from "./public_delegated_prefixes/publicDelegatedPrefixesWithdraw.ts";
+import regionNetworkEndpointGroupsAttachNetworkEndpoints from "./region_network_endpoint_groups/regionNetworkEndpointGroupsAttachNetworkEndpoints.ts";
+import regionNetworkEndpointGroupsDelete from "./region_network_endpoint_groups/regionNetworkEndpointGroupsDelete.ts";
+import regionNetworkEndpointGroupsDetachNetworkEndpoints from "./region_network_endpoint_groups/regionNetworkEndpointGroupsDetachNetworkEndpoints.ts";
+import regionNetworkEndpointGroupsGet from "./region_network_endpoint_groups/regionNetworkEndpointGroupsGet.ts";
+import regionNetworkEndpointGroupsInsert from "./region_network_endpoint_groups/regionNetworkEndpointGroupsInsert.ts";
+import regionNetworkEndpointGroupsList from "./region_network_endpoint_groups/regionNetworkEndpointGroupsList.ts";
+import regionNetworkEndpointGroupsListNetworkEndpoints from "./region_network_endpoint_groups/regionNetworkEndpointGroupsListNetworkEndpoints.ts";
+import routersAggregatedList from "./routers/routersAggregatedList.ts";
+import routersDelete from "./routers/routersDelete.ts";
+import routersDeleteRoutePolicy from "./routers/routersDeleteRoutePolicy.ts";
+import routersGet from "./routers/routersGet.ts";
+import routersGetNatIpInfo from "./routers/routersGetNatIpInfo.ts";
+import routersGetNatMappingInfo from "./routers/routersGetNatMappingInfo.ts";
+import routersGetRoutePolicy from "./routers/routersGetRoutePolicy.ts";
+import routersGetRouterStatus from "./routers/routersGetRouterStatus.ts";
+import routersInsert from "./routers/routersInsert.ts";
+import routersList from "./routers/routersList.ts";
+import routersListBgpRoutes from "./routers/routersListBgpRoutes.ts";
+import routersListRoutePolicies from "./routers/routersListRoutePolicies.ts";
+import routersPatch from "./routers/routersPatch.ts";
+import routersPatchRoutePolicy from "./routers/routersPatchRoutePolicy.ts";
+import routersPreview from "./routers/routersPreview.ts";
+import routersUpdate from "./routers/routersUpdate.ts";
+import routersUpdateRoutePolicy from "./routers/routersUpdateRoutePolicy.ts";
+import routesDelete from "./routes/routesDelete.ts";
+import routesGet from "./routes/routesGet.ts";
+import routesInsert from "./routes/routesInsert.ts";
+import routesList from "./routes/routesList.ts";
+import serviceAttachmentsAggregatedList from "./service_attachments/serviceAttachmentsAggregatedList.ts";
+import serviceAttachmentsDelete from "./service_attachments/serviceAttachmentsDelete.ts";
+import serviceAttachmentsGet from "./service_attachments/serviceAttachmentsGet.ts";
+import serviceAttachmentsInsert from "./service_attachments/serviceAttachmentsInsert.ts";
+import serviceAttachmentsList from "./service_attachments/serviceAttachmentsList.ts";
+import serviceAttachmentsPatch from "./service_attachments/serviceAttachmentsPatch.ts";
+import subnetworksAggregatedList from "./subnetworks/subnetworksAggregatedList.ts";
+import subnetworksDelete from "./subnetworks/subnetworksDelete.ts";
+import subnetworksExpandIpCidrRange from "./subnetworks/subnetworksExpandIpCidrRange.ts";
+import subnetworksGet from "./subnetworks/subnetworksGet.ts";
+import subnetworksInsert from "./subnetworks/subnetworksInsert.ts";
+import subnetworksList from "./subnetworks/subnetworksList.ts";
+import subnetworksListUsable from "./subnetworks/subnetworksListUsable.ts";
+import subnetworksPatch from "./subnetworks/subnetworksPatch.ts";
+import subnetworksSetPrivateIpGoogleAccess from "./subnetworks/subnetworksSetPrivateIpGoogleAccess.ts";
+import vpnGatewaysAggregatedList from "./vpn_gateways/vpnGatewaysAggregatedList.ts";
+import vpnGatewaysDelete from "./vpn_gateways/vpnGatewaysDelete.ts";
+import vpnGatewaysGet from "./vpn_gateways/vpnGatewaysGet.ts";
+import vpnGatewaysGetStatus from "./vpn_gateways/vpnGatewaysGetStatus.ts";
+import vpnGatewaysInsert from "./vpn_gateways/vpnGatewaysInsert.ts";
+import vpnGatewaysList from "./vpn_gateways/vpnGatewaysList.ts";
+import vpnGatewaysSetLabels from "./vpn_gateways/vpnGatewaysSetLabels.ts";
+import vpnTunnelsAggregatedList from "./vpn_tunnels/vpnTunnelsAggregatedList.ts";
+import vpnTunnelsDelete from "./vpn_tunnels/vpnTunnelsDelete.ts";
+import vpnTunnelsGet from "./vpn_tunnels/vpnTunnelsGet.ts";
+import vpnTunnelsInsert from "./vpn_tunnels/vpnTunnelsInsert.ts";
+import vpnTunnelsList from "./vpn_tunnels/vpnTunnelsList.ts";
+import vpnTunnelsSetLabels from "./vpn_tunnels/vpnTunnelsSetLabels.ts";
 
 export const blocks = {
-  addresses_aggregatedList: addresses_aggregatedList,
-  addresses_deleteOperation: addresses_deleteOperation,
-  addresses_get: addresses_get,
-  addresses_insert: addresses_insert,
-  addresses_list: addresses_list,
-  addresses_move: addresses_move,
-  addresses_setLabels: addresses_setLabels,
-  external_vpn_gateways_deleteOperation: external_vpn_gateways_deleteOperation,
-  external_vpn_gateways_get: external_vpn_gateways_get,
-  external_vpn_gateways_insert: external_vpn_gateways_insert,
-  external_vpn_gateways_list: external_vpn_gateways_list,
-  external_vpn_gateways_setLabels: external_vpn_gateways_setLabels,
-  global_addresses_deleteOperation: global_addresses_deleteOperation,
-  global_addresses_get: global_addresses_get,
-  global_addresses_insert: global_addresses_insert,
-  global_addresses_list: global_addresses_list,
-  global_addresses_move: global_addresses_move,
-  global_addresses_setLabels: global_addresses_setLabels,
-  global_network_endpoint_groups_attachNetworkEndpoints:
-    global_network_endpoint_groups_attachNetworkEndpoints,
-  global_network_endpoint_groups_deleteOperation:
-    global_network_endpoint_groups_deleteOperation,
-  global_network_endpoint_groups_detachNetworkEndpoints:
-    global_network_endpoint_groups_detachNetworkEndpoints,
-  global_network_endpoint_groups_get: global_network_endpoint_groups_get,
-  global_network_endpoint_groups_insert: global_network_endpoint_groups_insert,
-  global_network_endpoint_groups_list: global_network_endpoint_groups_list,
-  global_network_endpoint_groups_listNetworkEndpoints:
-    global_network_endpoint_groups_listNetworkEndpoints,
-  global_public_delegated_prefixes_deleteOperation:
-    global_public_delegated_prefixes_deleteOperation,
-  global_public_delegated_prefixes_get: global_public_delegated_prefixes_get,
-  global_public_delegated_prefixes_insert:
-    global_public_delegated_prefixes_insert,
-  global_public_delegated_prefixes_list: global_public_delegated_prefixes_list,
-  global_public_delegated_prefixes_patch:
-    global_public_delegated_prefixes_patch,
-  interconnect_attachments_aggregatedList:
-    interconnect_attachments_aggregatedList,
-  interconnect_attachments_deleteOperation:
-    interconnect_attachments_deleteOperation,
-  interconnect_attachments_get: interconnect_attachments_get,
-  interconnect_attachments_insert: interconnect_attachments_insert,
-  interconnect_attachments_list: interconnect_attachments_list,
-  interconnect_attachments_patch: interconnect_attachments_patch,
-  interconnect_attachments_setLabels: interconnect_attachments_setLabels,
-  interconnect_locations_get: interconnect_locations_get,
-  interconnect_locations_list: interconnect_locations_list,
-  interconnect_remote_locations_get: interconnect_remote_locations_get,
-  interconnect_remote_locations_list: interconnect_remote_locations_list,
-  interconnects_deleteOperation: interconnects_deleteOperation,
-  interconnects_get: interconnects_get,
-  interconnects_getDiagnostics: interconnects_getDiagnostics,
-  interconnects_getMacsecConfig: interconnects_getMacsecConfig,
-  interconnects_insert: interconnects_insert,
-  interconnects_list: interconnects_list,
-  interconnects_patch: interconnects_patch,
-  interconnects_setLabels: interconnects_setLabels,
-  network_attachments_aggregatedList: network_attachments_aggregatedList,
-  network_attachments_deleteOperation: network_attachments_deleteOperation,
-  network_attachments_get: network_attachments_get,
-  network_attachments_insert: network_attachments_insert,
-  network_attachments_list: network_attachments_list,
-  network_attachments_patch: network_attachments_patch,
-  network_endpoint_groups_aggregatedList:
-    network_endpoint_groups_aggregatedList,
-  network_endpoint_groups_attachNetworkEndpoints:
-    network_endpoint_groups_attachNetworkEndpoints,
-  network_endpoint_groups_deleteOperation:
-    network_endpoint_groups_deleteOperation,
-  network_endpoint_groups_detachNetworkEndpoints:
-    network_endpoint_groups_detachNetworkEndpoints,
-  network_endpoint_groups_get: network_endpoint_groups_get,
-  network_endpoint_groups_insert: network_endpoint_groups_insert,
-  network_endpoint_groups_list: network_endpoint_groups_list,
-  network_endpoint_groups_listNetworkEndpoints:
-    network_endpoint_groups_listNetworkEndpoints,
-  networks_addPeering: networks_addPeering,
-  networks_deleteOperation: networks_deleteOperation,
-  networks_get: networks_get,
-  networks_getEffectiveFirewalls: networks_getEffectiveFirewalls,
-  networks_insert: networks_insert,
-  networks_list: networks_list,
-  networks_listPeeringRoutes: networks_listPeeringRoutes,
-  networks_patch: networks_patch,
-  networks_removePeering: networks_removePeering,
-  networks_requestRemovePeering: networks_requestRemovePeering,
-  networks_switchToCustomMode: networks_switchToCustomMode,
-  networks_updatePeering: networks_updatePeering,
-  packet_mirrorings_aggregatedList: packet_mirrorings_aggregatedList,
-  packet_mirrorings_deleteOperation: packet_mirrorings_deleteOperation,
-  packet_mirrorings_get: packet_mirrorings_get,
-  packet_mirrorings_insert: packet_mirrorings_insert,
-  packet_mirrorings_list: packet_mirrorings_list,
-  packet_mirrorings_patch: packet_mirrorings_patch,
-  public_advertised_prefixes_announce: public_advertised_prefixes_announce,
-  public_advertised_prefixes_deleteOperation:
-    public_advertised_prefixes_deleteOperation,
-  public_advertised_prefixes_get: public_advertised_prefixes_get,
-  public_advertised_prefixes_insert: public_advertised_prefixes_insert,
-  public_advertised_prefixes_list: public_advertised_prefixes_list,
-  public_advertised_prefixes_patch: public_advertised_prefixes_patch,
-  public_advertised_prefixes_withdraw: public_advertised_prefixes_withdraw,
-  public_delegated_prefixes_aggregatedList:
-    public_delegated_prefixes_aggregatedList,
-  public_delegated_prefixes_announce: public_delegated_prefixes_announce,
-  public_delegated_prefixes_deleteOperation:
-    public_delegated_prefixes_deleteOperation,
-  public_delegated_prefixes_get: public_delegated_prefixes_get,
-  public_delegated_prefixes_insert: public_delegated_prefixes_insert,
-  public_delegated_prefixes_list: public_delegated_prefixes_list,
-  public_delegated_prefixes_patch: public_delegated_prefixes_patch,
-  public_delegated_prefixes_withdraw: public_delegated_prefixes_withdraw,
-  region_network_endpoint_groups_attachNetworkEndpoints:
-    region_network_endpoint_groups_attachNetworkEndpoints,
-  region_network_endpoint_groups_deleteOperation:
-    region_network_endpoint_groups_deleteOperation,
-  region_network_endpoint_groups_detachNetworkEndpoints:
-    region_network_endpoint_groups_detachNetworkEndpoints,
-  region_network_endpoint_groups_get: region_network_endpoint_groups_get,
-  region_network_endpoint_groups_insert: region_network_endpoint_groups_insert,
-  region_network_endpoint_groups_list: region_network_endpoint_groups_list,
-  region_network_endpoint_groups_listNetworkEndpoints:
-    region_network_endpoint_groups_listNetworkEndpoints,
-  routers_aggregatedList: routers_aggregatedList,
-  routers_deleteOperation: routers_deleteOperation,
-  routers_deleteRoutePolicy: routers_deleteRoutePolicy,
-  routers_get: routers_get,
-  routers_getNatIpInfo: routers_getNatIpInfo,
-  routers_getNatMappingInfo: routers_getNatMappingInfo,
-  routers_getRoutePolicy: routers_getRoutePolicy,
-  routers_getRouterStatus: routers_getRouterStatus,
-  routers_insert: routers_insert,
-  routers_list: routers_list,
-  routers_listBgpRoutes: routers_listBgpRoutes,
-  routers_listRoutePolicies: routers_listRoutePolicies,
-  routers_patch: routers_patch,
-  routers_patchRoutePolicy: routers_patchRoutePolicy,
-  routers_preview: routers_preview,
-  routers_update: routers_update,
-  routers_updateRoutePolicy: routers_updateRoutePolicy,
-  routes_deleteOperation: routes_deleteOperation,
-  routes_get: routes_get,
-  routes_insert: routes_insert,
-  routes_list: routes_list,
-  service_attachments_aggregatedList: service_attachments_aggregatedList,
-  service_attachments_deleteOperation: service_attachments_deleteOperation,
-  service_attachments_get: service_attachments_get,
-  service_attachments_insert: service_attachments_insert,
-  service_attachments_list: service_attachments_list,
-  service_attachments_patch: service_attachments_patch,
-  subnetworks_aggregatedList: subnetworks_aggregatedList,
-  subnetworks_deleteOperation: subnetworks_deleteOperation,
-  subnetworks_expandIpCidrRange: subnetworks_expandIpCidrRange,
-  subnetworks_get: subnetworks_get,
-  subnetworks_insert: subnetworks_insert,
-  subnetworks_list: subnetworks_list,
-  subnetworks_listUsable: subnetworks_listUsable,
-  subnetworks_patch: subnetworks_patch,
-  subnetworks_setPrivateIpGoogleAccess: subnetworks_setPrivateIpGoogleAccess,
-  vpn_gateways_aggregatedList: vpn_gateways_aggregatedList,
-  vpn_gateways_deleteOperation: vpn_gateways_deleteOperation,
-  vpn_gateways_get: vpn_gateways_get,
-  vpn_gateways_getStatus: vpn_gateways_getStatus,
-  vpn_gateways_insert: vpn_gateways_insert,
-  vpn_gateways_list: vpn_gateways_list,
-  vpn_gateways_setLabels: vpn_gateways_setLabels,
-  vpn_tunnels_aggregatedList: vpn_tunnels_aggregatedList,
-  vpn_tunnels_deleteOperation: vpn_tunnels_deleteOperation,
-  vpn_tunnels_get: vpn_tunnels_get,
-  vpn_tunnels_insert: vpn_tunnels_insert,
-  vpn_tunnels_list: vpn_tunnels_list,
-  vpn_tunnels_setLabels: vpn_tunnels_setLabels,
+  addressesAggregatedList: addressesAggregatedList,
+  addressesDelete: addressesDelete,
+  addressesGet: addressesGet,
+  addressesInsert: addressesInsert,
+  addressesList: addressesList,
+  addressesMove: addressesMove,
+  addressesSetLabels: addressesSetLabels,
+  externalVpnGatewaysDelete: externalVpnGatewaysDelete,
+  externalVpnGatewaysGet: externalVpnGatewaysGet,
+  externalVpnGatewaysInsert: externalVpnGatewaysInsert,
+  externalVpnGatewaysList: externalVpnGatewaysList,
+  externalVpnGatewaysSetLabels: externalVpnGatewaysSetLabels,
+  globalAddressesDelete: globalAddressesDelete,
+  globalAddressesGet: globalAddressesGet,
+  globalAddressesInsert: globalAddressesInsert,
+  globalAddressesList: globalAddressesList,
+  globalAddressesMove: globalAddressesMove,
+  globalAddressesSetLabels: globalAddressesSetLabels,
+  globalNetworkEndpointGroupsAttachNetworkEndpoints:
+    globalNetworkEndpointGroupsAttachNetworkEndpoints,
+  globalNetworkEndpointGroupsDelete: globalNetworkEndpointGroupsDelete,
+  globalNetworkEndpointGroupsDetachNetworkEndpoints:
+    globalNetworkEndpointGroupsDetachNetworkEndpoints,
+  globalNetworkEndpointGroupsGet: globalNetworkEndpointGroupsGet,
+  globalNetworkEndpointGroupsInsert: globalNetworkEndpointGroupsInsert,
+  globalNetworkEndpointGroupsList: globalNetworkEndpointGroupsList,
+  globalNetworkEndpointGroupsListNetworkEndpoints:
+    globalNetworkEndpointGroupsListNetworkEndpoints,
+  globalPublicDelegatedPrefixesDelete: globalPublicDelegatedPrefixesDelete,
+  globalPublicDelegatedPrefixesGet: globalPublicDelegatedPrefixesGet,
+  globalPublicDelegatedPrefixesInsert: globalPublicDelegatedPrefixesInsert,
+  globalPublicDelegatedPrefixesList: globalPublicDelegatedPrefixesList,
+  globalPublicDelegatedPrefixesPatch: globalPublicDelegatedPrefixesPatch,
+  interconnectAttachmentsAggregatedList: interconnectAttachmentsAggregatedList,
+  interconnectAttachmentsDelete: interconnectAttachmentsDelete,
+  interconnectAttachmentsGet: interconnectAttachmentsGet,
+  interconnectAttachmentsInsert: interconnectAttachmentsInsert,
+  interconnectAttachmentsList: interconnectAttachmentsList,
+  interconnectAttachmentsPatch: interconnectAttachmentsPatch,
+  interconnectAttachmentsSetLabels: interconnectAttachmentsSetLabels,
+  interconnectLocationsGet: interconnectLocationsGet,
+  interconnectLocationsList: interconnectLocationsList,
+  interconnectRemoteLocationsGet: interconnectRemoteLocationsGet,
+  interconnectRemoteLocationsList: interconnectRemoteLocationsList,
+  interconnectsDelete: interconnectsDelete,
+  interconnectsGet: interconnectsGet,
+  interconnectsGetDiagnostics: interconnectsGetDiagnostics,
+  interconnectsGetMacsecConfig: interconnectsGetMacsecConfig,
+  interconnectsInsert: interconnectsInsert,
+  interconnectsList: interconnectsList,
+  interconnectsPatch: interconnectsPatch,
+  interconnectsSetLabels: interconnectsSetLabels,
+  networkAttachmentsAggregatedList: networkAttachmentsAggregatedList,
+  networkAttachmentsDelete: networkAttachmentsDelete,
+  networkAttachmentsGet: networkAttachmentsGet,
+  networkAttachmentsInsert: networkAttachmentsInsert,
+  networkAttachmentsList: networkAttachmentsList,
+  networkAttachmentsPatch: networkAttachmentsPatch,
+  networkEndpointGroupsAggregatedList: networkEndpointGroupsAggregatedList,
+  networkEndpointGroupsAttachNetworkEndpoints:
+    networkEndpointGroupsAttachNetworkEndpoints,
+  networkEndpointGroupsDelete: networkEndpointGroupsDelete,
+  networkEndpointGroupsDetachNetworkEndpoints:
+    networkEndpointGroupsDetachNetworkEndpoints,
+  networkEndpointGroupsGet: networkEndpointGroupsGet,
+  networkEndpointGroupsInsert: networkEndpointGroupsInsert,
+  networkEndpointGroupsList: networkEndpointGroupsList,
+  networkEndpointGroupsListNetworkEndpoints:
+    networkEndpointGroupsListNetworkEndpoints,
+  networksAddPeering: networksAddPeering,
+  networksDelete: networksDelete,
+  networksGet: networksGet,
+  networksGetEffectiveFirewalls: networksGetEffectiveFirewalls,
+  networksInsert: networksInsert,
+  networksList: networksList,
+  networksListPeeringRoutes: networksListPeeringRoutes,
+  networksPatch: networksPatch,
+  networksRemovePeering: networksRemovePeering,
+  networksRequestRemovePeering: networksRequestRemovePeering,
+  networksSwitchToCustomMode: networksSwitchToCustomMode,
+  networksUpdatePeering: networksUpdatePeering,
+  packetMirroringsAggregatedList: packetMirroringsAggregatedList,
+  packetMirroringsDelete: packetMirroringsDelete,
+  packetMirroringsGet: packetMirroringsGet,
+  packetMirroringsInsert: packetMirroringsInsert,
+  packetMirroringsList: packetMirroringsList,
+  packetMirroringsPatch: packetMirroringsPatch,
+  publicAdvertisedPrefixesAnnounce: publicAdvertisedPrefixesAnnounce,
+  publicAdvertisedPrefixesDelete: publicAdvertisedPrefixesDelete,
+  publicAdvertisedPrefixesGet: publicAdvertisedPrefixesGet,
+  publicAdvertisedPrefixesInsert: publicAdvertisedPrefixesInsert,
+  publicAdvertisedPrefixesList: publicAdvertisedPrefixesList,
+  publicAdvertisedPrefixesPatch: publicAdvertisedPrefixesPatch,
+  publicAdvertisedPrefixesWithdraw: publicAdvertisedPrefixesWithdraw,
+  publicDelegatedPrefixesAggregatedList: publicDelegatedPrefixesAggregatedList,
+  publicDelegatedPrefixesAnnounce: publicDelegatedPrefixesAnnounce,
+  publicDelegatedPrefixesDelete: publicDelegatedPrefixesDelete,
+  publicDelegatedPrefixesGet: publicDelegatedPrefixesGet,
+  publicDelegatedPrefixesInsert: publicDelegatedPrefixesInsert,
+  publicDelegatedPrefixesList: publicDelegatedPrefixesList,
+  publicDelegatedPrefixesPatch: publicDelegatedPrefixesPatch,
+  publicDelegatedPrefixesWithdraw: publicDelegatedPrefixesWithdraw,
+  regionNetworkEndpointGroupsAttachNetworkEndpoints:
+    regionNetworkEndpointGroupsAttachNetworkEndpoints,
+  regionNetworkEndpointGroupsDelete: regionNetworkEndpointGroupsDelete,
+  regionNetworkEndpointGroupsDetachNetworkEndpoints:
+    regionNetworkEndpointGroupsDetachNetworkEndpoints,
+  regionNetworkEndpointGroupsGet: regionNetworkEndpointGroupsGet,
+  regionNetworkEndpointGroupsInsert: regionNetworkEndpointGroupsInsert,
+  regionNetworkEndpointGroupsList: regionNetworkEndpointGroupsList,
+  regionNetworkEndpointGroupsListNetworkEndpoints:
+    regionNetworkEndpointGroupsListNetworkEndpoints,
+  routersAggregatedList: routersAggregatedList,
+  routersDelete: routersDelete,
+  routersDeleteRoutePolicy: routersDeleteRoutePolicy,
+  routersGet: routersGet,
+  routersGetNatIpInfo: routersGetNatIpInfo,
+  routersGetNatMappingInfo: routersGetNatMappingInfo,
+  routersGetRoutePolicy: routersGetRoutePolicy,
+  routersGetRouterStatus: routersGetRouterStatus,
+  routersInsert: routersInsert,
+  routersList: routersList,
+  routersListBgpRoutes: routersListBgpRoutes,
+  routersListRoutePolicies: routersListRoutePolicies,
+  routersPatch: routersPatch,
+  routersPatchRoutePolicy: routersPatchRoutePolicy,
+  routersPreview: routersPreview,
+  routersUpdate: routersUpdate,
+  routersUpdateRoutePolicy: routersUpdateRoutePolicy,
+  routesDelete: routesDelete,
+  routesGet: routesGet,
+  routesInsert: routesInsert,
+  routesList: routesList,
+  serviceAttachmentsAggregatedList: serviceAttachmentsAggregatedList,
+  serviceAttachmentsDelete: serviceAttachmentsDelete,
+  serviceAttachmentsGet: serviceAttachmentsGet,
+  serviceAttachmentsInsert: serviceAttachmentsInsert,
+  serviceAttachmentsList: serviceAttachmentsList,
+  serviceAttachmentsPatch: serviceAttachmentsPatch,
+  subnetworksAggregatedList: subnetworksAggregatedList,
+  subnetworksDelete: subnetworksDelete,
+  subnetworksExpandIpCidrRange: subnetworksExpandIpCidrRange,
+  subnetworksGet: subnetworksGet,
+  subnetworksInsert: subnetworksInsert,
+  subnetworksList: subnetworksList,
+  subnetworksListUsable: subnetworksListUsable,
+  subnetworksPatch: subnetworksPatch,
+  subnetworksSetPrivateIpGoogleAccess: subnetworksSetPrivateIpGoogleAccess,
+  vpnGatewaysAggregatedList: vpnGatewaysAggregatedList,
+  vpnGatewaysDelete: vpnGatewaysDelete,
+  vpnGatewaysGet: vpnGatewaysGet,
+  vpnGatewaysGetStatus: vpnGatewaysGetStatus,
+  vpnGatewaysInsert: vpnGatewaysInsert,
+  vpnGatewaysList: vpnGatewaysList,
+  vpnGatewaysSetLabels: vpnGatewaysSetLabels,
+  vpnTunnelsAggregatedList: vpnTunnelsAggregatedList,
+  vpnTunnelsDelete: vpnTunnelsDelete,
+  vpnTunnelsGet: vpnTunnelsGet,
+  vpnTunnelsInsert: vpnTunnelsInsert,
+  vpnTunnelsList: vpnTunnelsList,
+  vpnTunnelsSetLabels: vpnTunnelsSetLabels,
 };

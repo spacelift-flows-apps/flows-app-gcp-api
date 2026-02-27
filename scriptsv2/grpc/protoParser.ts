@@ -475,6 +475,31 @@ function convertField(
     }
   }
 
+  // Heuristic: Some protos (notably Compute Engine) define enum fields as
+  // `optional string` with a comment like "Check the XyzEnum enum for the
+  // list of possible values." Try to resolve the enum from the parent type.
+  if (!isEnum && field.type === "string") {
+    const shortParent = stripPackagePrefix(parentType.fullName);
+    const commentKey = `${shortParent}.${field.name}`;
+    const fieldComment = sourceComments.get(commentKey);
+    if (fieldComment) {
+      const enumNameMatch = fieldComment.match(
+        /Check the (\w+) enum for the list of possible values/,
+      );
+      if (enumNameMatch) {
+        try {
+          const enumType = parentType.lookupEnum(enumNameMatch[1]);
+          if (enumType) {
+            isEnum = true;
+            resolvedEnum = convertEnum(enumType, sourceComments);
+          }
+        } catch {
+          // Enum not found in parent — leave as string
+        }
+      }
+    }
+  }
+
   // Look up field behaviors using the short message.field path
   const shortParent = stripPackagePrefix(parentType.fullName);
   const behaviorKey = `${shortParent}.${field.name}`;

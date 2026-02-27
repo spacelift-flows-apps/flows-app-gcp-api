@@ -169,8 +169,7 @@ export async function computeFetch(options: ComputeFetchOptions): Promise<any> {
  * Generate blocks/index.ts with all block imports and exports.
  */
 function generateBlocksIndex(blocks: ComputeGeneratedBlock[]): string {
-  const importId = (b: ComputeGeneratedBlock) =>
-    `${b.categoryDir}_${b.blockName}`;
+  const importId = (b: ComputeGeneratedBlock) => b.blockName;
 
   const imports = blocks
     .map(

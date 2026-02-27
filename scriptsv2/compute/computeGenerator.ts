@@ -15,7 +15,6 @@ import fs from "fs";
 import path from "path";
 import { parseProtoFiles } from "../grpc/protoParser.ts";
 import {
-  rpcToBlockName,
   humanizePascalCase,
   categoryToDirName,
 } from "../grpc/naming.ts";
@@ -210,7 +209,10 @@ async function generateApp(
         continue;
       }
 
-      const blockName = rpcToBlockName(rpc.name);
+      // Derive block name from service + RPC: "Instances" + "List" → "instancesList"
+      const serviceCamel = service.name.charAt(0).toLowerCase() + service.name.slice(1);
+      const rpcPascal = rpc.name.charAt(0).toUpperCase() + rpc.name.slice(1);
+      const blockName = serviceCamel + rpcPascal;
       const humanName = `${category} - ${humanizePascalCase(rpc.name)}`;
       const { pathParams, queryParams, bodyFieldName } = classifyFields(rpc, annotation);
 
@@ -222,32 +224,12 @@ async function generateApp(
         fileName: `${blockName}.ts`,
         serviceName: service.name,
         rpcName: rpc.name,
-        rpcMethodName: rpc.name.charAt(0).toLowerCase() + rpc.name.slice(1),
         rpc,
         httpAnnotation: annotation,
         pathParams,
         queryParams,
         bodyFieldName,
       });
-    }
-  }
-
-  // Disambiguate blocks with duplicate categoryDir/blockName
-  const pathCounts = new Map<string, number>();
-  for (const b of blocks) {
-    const key = `${b.categoryDir}/${b.blockName}`;
-    pathCounts.set(key, (pathCounts.get(key) ?? 0) + 1);
-  }
-  for (const b of blocks) {
-    const key = `${b.categoryDir}/${b.blockName}`;
-    if ((pathCounts.get(key) ?? 0) > 1) {
-      const prefix =
-        b.serviceName.charAt(0).toLowerCase() + b.serviceName.slice(1);
-      const oldBlock = b.blockName;
-      b.blockName =
-        prefix + oldBlock.charAt(0).toUpperCase() + oldBlock.slice(1);
-      b.fileName = `${b.blockName}.ts`;
-      b.humanName = `${b.serviceName} - ${b.humanName}`;
     }
   }
 

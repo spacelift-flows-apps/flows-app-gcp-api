@@ -2,7 +2,7 @@ import { defineApp } from "@slflows/sdk/v1";
 import { blocks } from "./blocks/index.ts";
 
 export const app = defineApp({
-  name: "Compute Engine - Load Balancing",
+  name: "Compute Engine API - Load Balancing",
   installationInstructions: `## Authentication Setup
 
 You need to authenticate with GCP using **one** of these methods:

@@ -1,312 +1,304 @@
-import backend_buckets_addSignedUrlKey from "./backend_buckets/addSignedUrlKey.ts";
-import backend_buckets_deleteOperation from "./backend_buckets/deleteOperation.ts";
-import backend_buckets_deleteSignedUrlKey from "./backend_buckets/deleteSignedUrlKey.ts";
-import backend_buckets_get from "./backend_buckets/get.ts";
-import backend_buckets_insert from "./backend_buckets/insert.ts";
-import backend_buckets_list from "./backend_buckets/list.ts";
-import backend_buckets_patch from "./backend_buckets/patch.ts";
-import backend_buckets_setEdgeSecurityPolicy from "./backend_buckets/setEdgeSecurityPolicy.ts";
-import backend_buckets_update from "./backend_buckets/update.ts";
-import backend_services_addSignedUrlKey from "./backend_services/addSignedUrlKey.ts";
-import backend_services_aggregatedList from "./backend_services/aggregatedList.ts";
-import backend_services_deleteOperation from "./backend_services/deleteOperation.ts";
-import backend_services_deleteSignedUrlKey from "./backend_services/deleteSignedUrlKey.ts";
-import backend_services_get from "./backend_services/get.ts";
-import backend_services_getEffectiveSecurityPolicies from "./backend_services/getEffectiveSecurityPolicies.ts";
-import backend_services_getHealth from "./backend_services/getHealth.ts";
-import backend_services_insert from "./backend_services/insert.ts";
-import backend_services_list from "./backend_services/list.ts";
-import backend_services_listUsable from "./backend_services/listUsable.ts";
-import backend_services_patch from "./backend_services/patch.ts";
-import backend_services_setEdgeSecurityPolicy from "./backend_services/setEdgeSecurityPolicy.ts";
-import backend_services_setSecurityPolicy from "./backend_services/setSecurityPolicy.ts";
-import backend_services_update from "./backend_services/update.ts";
-import forwarding_rules_aggregatedList from "./forwarding_rules/aggregatedList.ts";
-import forwarding_rules_deleteOperation from "./forwarding_rules/deleteOperation.ts";
-import forwarding_rules_get from "./forwarding_rules/get.ts";
-import forwarding_rules_insert from "./forwarding_rules/insert.ts";
-import forwarding_rules_list from "./forwarding_rules/list.ts";
-import forwarding_rules_patch from "./forwarding_rules/patch.ts";
-import forwarding_rules_setLabels from "./forwarding_rules/setLabels.ts";
-import forwarding_rules_setTarget from "./forwarding_rules/setTarget.ts";
-import global_forwarding_rules_deleteOperation from "./global_forwarding_rules/deleteOperation.ts";
-import global_forwarding_rules_get from "./global_forwarding_rules/get.ts";
-import global_forwarding_rules_insert from "./global_forwarding_rules/insert.ts";
-import global_forwarding_rules_list from "./global_forwarding_rules/list.ts";
-import global_forwarding_rules_patch from "./global_forwarding_rules/patch.ts";
-import global_forwarding_rules_setLabels from "./global_forwarding_rules/setLabels.ts";
-import global_forwarding_rules_setTarget from "./global_forwarding_rules/setTarget.ts";
-import health_checks_aggregatedList from "./health_checks/aggregatedList.ts";
-import health_checks_deleteOperation from "./health_checks/deleteOperation.ts";
-import health_checks_get from "./health_checks/get.ts";
-import health_checks_insert from "./health_checks/insert.ts";
-import health_checks_list from "./health_checks/list.ts";
-import health_checks_patch from "./health_checks/patch.ts";
-import health_checks_update from "./health_checks/update.ts";
-import region_backend_services_deleteOperation from "./region_backend_services/deleteOperation.ts";
-import region_backend_services_get from "./region_backend_services/get.ts";
-import region_backend_services_getHealth from "./region_backend_services/getHealth.ts";
-import region_backend_services_insert from "./region_backend_services/insert.ts";
-import region_backend_services_list from "./region_backend_services/list.ts";
-import region_backend_services_listUsable from "./region_backend_services/listUsable.ts";
-import region_backend_services_patch from "./region_backend_services/patch.ts";
-import region_backend_services_setSecurityPolicy from "./region_backend_services/setSecurityPolicy.ts";
-import region_backend_services_update from "./region_backend_services/update.ts";
-import region_health_checks_deleteOperation from "./region_health_checks/deleteOperation.ts";
-import region_health_checks_get from "./region_health_checks/get.ts";
-import region_health_checks_insert from "./region_health_checks/insert.ts";
-import region_health_checks_list from "./region_health_checks/list.ts";
-import region_health_checks_patch from "./region_health_checks/patch.ts";
-import region_health_checks_update from "./region_health_checks/update.ts";
-import region_target_http_proxies_deleteOperation from "./region_target_http_proxies/deleteOperation.ts";
-import region_target_http_proxies_get from "./region_target_http_proxies/get.ts";
-import region_target_http_proxies_insert from "./region_target_http_proxies/insert.ts";
-import region_target_http_proxies_list from "./region_target_http_proxies/list.ts";
-import region_target_http_proxies_setUrlMap from "./region_target_http_proxies/setUrlMap.ts";
-import region_target_https_proxies_deleteOperation from "./region_target_https_proxies/deleteOperation.ts";
-import region_target_https_proxies_get from "./region_target_https_proxies/get.ts";
-import region_target_https_proxies_insert from "./region_target_https_proxies/insert.ts";
-import region_target_https_proxies_list from "./region_target_https_proxies/list.ts";
-import region_target_https_proxies_patch from "./region_target_https_proxies/patch.ts";
-import region_target_https_proxies_setSslCertificates from "./region_target_https_proxies/setSslCertificates.ts";
-import region_target_https_proxies_setUrlMap from "./region_target_https_proxies/setUrlMap.ts";
-import region_target_tcp_proxies_deleteOperation from "./region_target_tcp_proxies/deleteOperation.ts";
-import region_target_tcp_proxies_get from "./region_target_tcp_proxies/get.ts";
-import region_target_tcp_proxies_insert from "./region_target_tcp_proxies/insert.ts";
-import region_target_tcp_proxies_list from "./region_target_tcp_proxies/list.ts";
-import region_url_maps_deleteOperation from "./region_url_maps/deleteOperation.ts";
-import region_url_maps_get from "./region_url_maps/get.ts";
-import region_url_maps_insert from "./region_url_maps/insert.ts";
-import region_url_maps_list from "./region_url_maps/list.ts";
-import region_url_maps_patch from "./region_url_maps/patch.ts";
-import region_url_maps_update from "./region_url_maps/update.ts";
-import region_url_maps_validate from "./region_url_maps/validate.ts";
-import target_grpc_proxies_deleteOperation from "./target_grpc_proxies/deleteOperation.ts";
-import target_grpc_proxies_get from "./target_grpc_proxies/get.ts";
-import target_grpc_proxies_insert from "./target_grpc_proxies/insert.ts";
-import target_grpc_proxies_list from "./target_grpc_proxies/list.ts";
-import target_grpc_proxies_patch from "./target_grpc_proxies/patch.ts";
-import target_http_proxies_aggregatedList from "./target_http_proxies/aggregatedList.ts";
-import target_http_proxies_deleteOperation from "./target_http_proxies/deleteOperation.ts";
-import target_http_proxies_get from "./target_http_proxies/get.ts";
-import target_http_proxies_insert from "./target_http_proxies/insert.ts";
-import target_http_proxies_list from "./target_http_proxies/list.ts";
-import target_http_proxies_patch from "./target_http_proxies/patch.ts";
-import target_http_proxies_setUrlMap from "./target_http_proxies/setUrlMap.ts";
-import target_https_proxies_aggregatedList from "./target_https_proxies/aggregatedList.ts";
-import target_https_proxies_deleteOperation from "./target_https_proxies/deleteOperation.ts";
-import target_https_proxies_get from "./target_https_proxies/get.ts";
-import target_https_proxies_insert from "./target_https_proxies/insert.ts";
-import target_https_proxies_list from "./target_https_proxies/list.ts";
-import target_https_proxies_patch from "./target_https_proxies/patch.ts";
-import target_https_proxies_setCertificateMap from "./target_https_proxies/setCertificateMap.ts";
-import target_https_proxies_setQuicOverride from "./target_https_proxies/setQuicOverride.ts";
-import target_https_proxies_setSslCertificates from "./target_https_proxies/setSslCertificates.ts";
-import target_https_proxies_setSslPolicy from "./target_https_proxies/setSslPolicy.ts";
-import target_https_proxies_setUrlMap from "./target_https_proxies/setUrlMap.ts";
-import target_instances_aggregatedList from "./target_instances/aggregatedList.ts";
-import target_instances_deleteOperation from "./target_instances/deleteOperation.ts";
-import target_instances_get from "./target_instances/get.ts";
-import target_instances_insert from "./target_instances/insert.ts";
-import target_instances_list from "./target_instances/list.ts";
-import target_instances_setSecurityPolicy from "./target_instances/setSecurityPolicy.ts";
-import target_pools_addHealthCheck from "./target_pools/addHealthCheck.ts";
-import target_pools_addInstance from "./target_pools/addInstance.ts";
-import target_pools_aggregatedList from "./target_pools/aggregatedList.ts";
-import target_pools_deleteOperation from "./target_pools/deleteOperation.ts";
-import target_pools_get from "./target_pools/get.ts";
-import target_pools_getHealth from "./target_pools/getHealth.ts";
-import target_pools_insert from "./target_pools/insert.ts";
-import target_pools_list from "./target_pools/list.ts";
-import target_pools_removeHealthCheck from "./target_pools/removeHealthCheck.ts";
-import target_pools_removeInstance from "./target_pools/removeInstance.ts";
-import target_pools_setBackup from "./target_pools/setBackup.ts";
-import target_pools_setSecurityPolicy from "./target_pools/setSecurityPolicy.ts";
-import target_ssl_proxies_deleteOperation from "./target_ssl_proxies/deleteOperation.ts";
-import target_ssl_proxies_get from "./target_ssl_proxies/get.ts";
-import target_ssl_proxies_insert from "./target_ssl_proxies/insert.ts";
-import target_ssl_proxies_list from "./target_ssl_proxies/list.ts";
-import target_ssl_proxies_setBackendService from "./target_ssl_proxies/setBackendService.ts";
-import target_ssl_proxies_setCertificateMap from "./target_ssl_proxies/setCertificateMap.ts";
-import target_ssl_proxies_setProxyHeader from "./target_ssl_proxies/setProxyHeader.ts";
-import target_ssl_proxies_setSslCertificates from "./target_ssl_proxies/setSslCertificates.ts";
-import target_ssl_proxies_setSslPolicy from "./target_ssl_proxies/setSslPolicy.ts";
-import target_tcp_proxies_aggregatedList from "./target_tcp_proxies/aggregatedList.ts";
-import target_tcp_proxies_deleteOperation from "./target_tcp_proxies/deleteOperation.ts";
-import target_tcp_proxies_get from "./target_tcp_proxies/get.ts";
-import target_tcp_proxies_insert from "./target_tcp_proxies/insert.ts";
-import target_tcp_proxies_list from "./target_tcp_proxies/list.ts";
-import target_tcp_proxies_setBackendService from "./target_tcp_proxies/setBackendService.ts";
-import target_tcp_proxies_setProxyHeader from "./target_tcp_proxies/setProxyHeader.ts";
-import url_maps_aggregatedList from "./url_maps/aggregatedList.ts";
-import url_maps_deleteOperation from "./url_maps/deleteOperation.ts";
-import url_maps_get from "./url_maps/get.ts";
-import url_maps_insert from "./url_maps/insert.ts";
-import url_maps_invalidateCache from "./url_maps/invalidateCache.ts";
-import url_maps_list from "./url_maps/list.ts";
-import url_maps_patch from "./url_maps/patch.ts";
-import url_maps_update from "./url_maps/update.ts";
-import url_maps_validate from "./url_maps/validate.ts";
+import backendBucketsAddSignedUrlKey from "./backend_buckets/backendBucketsAddSignedUrlKey.ts";
+import backendBucketsDelete from "./backend_buckets/backendBucketsDelete.ts";
+import backendBucketsDeleteSignedUrlKey from "./backend_buckets/backendBucketsDeleteSignedUrlKey.ts";
+import backendBucketsGet from "./backend_buckets/backendBucketsGet.ts";
+import backendBucketsInsert from "./backend_buckets/backendBucketsInsert.ts";
+import backendBucketsList from "./backend_buckets/backendBucketsList.ts";
+import backendBucketsPatch from "./backend_buckets/backendBucketsPatch.ts";
+import backendBucketsSetEdgeSecurityPolicy from "./backend_buckets/backendBucketsSetEdgeSecurityPolicy.ts";
+import backendBucketsUpdate from "./backend_buckets/backendBucketsUpdate.ts";
+import backendServicesAddSignedUrlKey from "./backend_services/backendServicesAddSignedUrlKey.ts";
+import backendServicesAggregatedList from "./backend_services/backendServicesAggregatedList.ts";
+import backendServicesDelete from "./backend_services/backendServicesDelete.ts";
+import backendServicesDeleteSignedUrlKey from "./backend_services/backendServicesDeleteSignedUrlKey.ts";
+import backendServicesGet from "./backend_services/backendServicesGet.ts";
+import backendServicesGetEffectiveSecurityPolicies from "./backend_services/backendServicesGetEffectiveSecurityPolicies.ts";
+import backendServicesGetHealth from "./backend_services/backendServicesGetHealth.ts";
+import backendServicesInsert from "./backend_services/backendServicesInsert.ts";
+import backendServicesList from "./backend_services/backendServicesList.ts";
+import backendServicesListUsable from "./backend_services/backendServicesListUsable.ts";
+import backendServicesPatch from "./backend_services/backendServicesPatch.ts";
+import backendServicesSetEdgeSecurityPolicy from "./backend_services/backendServicesSetEdgeSecurityPolicy.ts";
+import backendServicesSetSecurityPolicy from "./backend_services/backendServicesSetSecurityPolicy.ts";
+import backendServicesUpdate from "./backend_services/backendServicesUpdate.ts";
+import forwardingRulesAggregatedList from "./forwarding_rules/forwardingRulesAggregatedList.ts";
+import forwardingRulesDelete from "./forwarding_rules/forwardingRulesDelete.ts";
+import forwardingRulesGet from "./forwarding_rules/forwardingRulesGet.ts";
+import forwardingRulesInsert from "./forwarding_rules/forwardingRulesInsert.ts";
+import forwardingRulesList from "./forwarding_rules/forwardingRulesList.ts";
+import forwardingRulesPatch from "./forwarding_rules/forwardingRulesPatch.ts";
+import forwardingRulesSetLabels from "./forwarding_rules/forwardingRulesSetLabels.ts";
+import forwardingRulesSetTarget from "./forwarding_rules/forwardingRulesSetTarget.ts";
+import globalForwardingRulesDelete from "./global_forwarding_rules/globalForwardingRulesDelete.ts";
+import globalForwardingRulesGet from "./global_forwarding_rules/globalForwardingRulesGet.ts";
+import globalForwardingRulesInsert from "./global_forwarding_rules/globalForwardingRulesInsert.ts";
+import globalForwardingRulesList from "./global_forwarding_rules/globalForwardingRulesList.ts";
+import globalForwardingRulesPatch from "./global_forwarding_rules/globalForwardingRulesPatch.ts";
+import globalForwardingRulesSetLabels from "./global_forwarding_rules/globalForwardingRulesSetLabels.ts";
+import globalForwardingRulesSetTarget from "./global_forwarding_rules/globalForwardingRulesSetTarget.ts";
+import healthChecksAggregatedList from "./health_checks/healthChecksAggregatedList.ts";
+import healthChecksDelete from "./health_checks/healthChecksDelete.ts";
+import healthChecksGet from "./health_checks/healthChecksGet.ts";
+import healthChecksInsert from "./health_checks/healthChecksInsert.ts";
+import healthChecksList from "./health_checks/healthChecksList.ts";
+import healthChecksPatch from "./health_checks/healthChecksPatch.ts";
+import healthChecksUpdate from "./health_checks/healthChecksUpdate.ts";
+import regionBackendServicesDelete from "./region_backend_services/regionBackendServicesDelete.ts";
+import regionBackendServicesGet from "./region_backend_services/regionBackendServicesGet.ts";
+import regionBackendServicesGetHealth from "./region_backend_services/regionBackendServicesGetHealth.ts";
+import regionBackendServicesInsert from "./region_backend_services/regionBackendServicesInsert.ts";
+import regionBackendServicesList from "./region_backend_services/regionBackendServicesList.ts";
+import regionBackendServicesListUsable from "./region_backend_services/regionBackendServicesListUsable.ts";
+import regionBackendServicesPatch from "./region_backend_services/regionBackendServicesPatch.ts";
+import regionBackendServicesSetSecurityPolicy from "./region_backend_services/regionBackendServicesSetSecurityPolicy.ts";
+import regionBackendServicesUpdate from "./region_backend_services/regionBackendServicesUpdate.ts";
+import regionHealthChecksDelete from "./region_health_checks/regionHealthChecksDelete.ts";
+import regionHealthChecksGet from "./region_health_checks/regionHealthChecksGet.ts";
+import regionHealthChecksInsert from "./region_health_checks/regionHealthChecksInsert.ts";
+import regionHealthChecksList from "./region_health_checks/regionHealthChecksList.ts";
+import regionHealthChecksPatch from "./region_health_checks/regionHealthChecksPatch.ts";
+import regionHealthChecksUpdate from "./region_health_checks/regionHealthChecksUpdate.ts";
+import regionTargetHttpProxiesDelete from "./region_target_http_proxies/regionTargetHttpProxiesDelete.ts";
+import regionTargetHttpProxiesGet from "./region_target_http_proxies/regionTargetHttpProxiesGet.ts";
+import regionTargetHttpProxiesInsert from "./region_target_http_proxies/regionTargetHttpProxiesInsert.ts";
+import regionTargetHttpProxiesList from "./region_target_http_proxies/regionTargetHttpProxiesList.ts";
+import regionTargetHttpProxiesSetUrlMap from "./region_target_http_proxies/regionTargetHttpProxiesSetUrlMap.ts";
+import regionTargetHttpsProxiesDelete from "./region_target_https_proxies/regionTargetHttpsProxiesDelete.ts";
+import regionTargetHttpsProxiesGet from "./region_target_https_proxies/regionTargetHttpsProxiesGet.ts";
+import regionTargetHttpsProxiesInsert from "./region_target_https_proxies/regionTargetHttpsProxiesInsert.ts";
+import regionTargetHttpsProxiesList from "./region_target_https_proxies/regionTargetHttpsProxiesList.ts";
+import regionTargetHttpsProxiesPatch from "./region_target_https_proxies/regionTargetHttpsProxiesPatch.ts";
+import regionTargetHttpsProxiesSetSslCertificates from "./region_target_https_proxies/regionTargetHttpsProxiesSetSslCertificates.ts";
+import regionTargetHttpsProxiesSetUrlMap from "./region_target_https_proxies/regionTargetHttpsProxiesSetUrlMap.ts";
+import regionTargetTcpProxiesDelete from "./region_target_tcp_proxies/regionTargetTcpProxiesDelete.ts";
+import regionTargetTcpProxiesGet from "./region_target_tcp_proxies/regionTargetTcpProxiesGet.ts";
+import regionTargetTcpProxiesInsert from "./region_target_tcp_proxies/regionTargetTcpProxiesInsert.ts";
+import regionTargetTcpProxiesList from "./region_target_tcp_proxies/regionTargetTcpProxiesList.ts";
+import regionUrlMapsDelete from "./region_url_maps/regionUrlMapsDelete.ts";
+import regionUrlMapsGet from "./region_url_maps/regionUrlMapsGet.ts";
+import regionUrlMapsInsert from "./region_url_maps/regionUrlMapsInsert.ts";
+import regionUrlMapsList from "./region_url_maps/regionUrlMapsList.ts";
+import regionUrlMapsPatch from "./region_url_maps/regionUrlMapsPatch.ts";
+import regionUrlMapsUpdate from "./region_url_maps/regionUrlMapsUpdate.ts";
+import regionUrlMapsValidate from "./region_url_maps/regionUrlMapsValidate.ts";
+import targetGrpcProxiesDelete from "./target_grpc_proxies/targetGrpcProxiesDelete.ts";
+import targetGrpcProxiesGet from "./target_grpc_proxies/targetGrpcProxiesGet.ts";
+import targetGrpcProxiesInsert from "./target_grpc_proxies/targetGrpcProxiesInsert.ts";
+import targetGrpcProxiesList from "./target_grpc_proxies/targetGrpcProxiesList.ts";
+import targetGrpcProxiesPatch from "./target_grpc_proxies/targetGrpcProxiesPatch.ts";
+import targetHttpProxiesAggregatedList from "./target_http_proxies/targetHttpProxiesAggregatedList.ts";
+import targetHttpProxiesDelete from "./target_http_proxies/targetHttpProxiesDelete.ts";
+import targetHttpProxiesGet from "./target_http_proxies/targetHttpProxiesGet.ts";
+import targetHttpProxiesInsert from "./target_http_proxies/targetHttpProxiesInsert.ts";
+import targetHttpProxiesList from "./target_http_proxies/targetHttpProxiesList.ts";
+import targetHttpProxiesPatch from "./target_http_proxies/targetHttpProxiesPatch.ts";
+import targetHttpProxiesSetUrlMap from "./target_http_proxies/targetHttpProxiesSetUrlMap.ts";
+import targetHttpsProxiesAggregatedList from "./target_https_proxies/targetHttpsProxiesAggregatedList.ts";
+import targetHttpsProxiesDelete from "./target_https_proxies/targetHttpsProxiesDelete.ts";
+import targetHttpsProxiesGet from "./target_https_proxies/targetHttpsProxiesGet.ts";
+import targetHttpsProxiesInsert from "./target_https_proxies/targetHttpsProxiesInsert.ts";
+import targetHttpsProxiesList from "./target_https_proxies/targetHttpsProxiesList.ts";
+import targetHttpsProxiesPatch from "./target_https_proxies/targetHttpsProxiesPatch.ts";
+import targetHttpsProxiesSetCertificateMap from "./target_https_proxies/targetHttpsProxiesSetCertificateMap.ts";
+import targetHttpsProxiesSetQuicOverride from "./target_https_proxies/targetHttpsProxiesSetQuicOverride.ts";
+import targetHttpsProxiesSetSslCertificates from "./target_https_proxies/targetHttpsProxiesSetSslCertificates.ts";
+import targetHttpsProxiesSetSslPolicy from "./target_https_proxies/targetHttpsProxiesSetSslPolicy.ts";
+import targetHttpsProxiesSetUrlMap from "./target_https_proxies/targetHttpsProxiesSetUrlMap.ts";
+import targetInstancesAggregatedList from "./target_instances/targetInstancesAggregatedList.ts";
+import targetInstancesDelete from "./target_instances/targetInstancesDelete.ts";
+import targetInstancesGet from "./target_instances/targetInstancesGet.ts";
+import targetInstancesInsert from "./target_instances/targetInstancesInsert.ts";
+import targetInstancesList from "./target_instances/targetInstancesList.ts";
+import targetInstancesSetSecurityPolicy from "./target_instances/targetInstancesSetSecurityPolicy.ts";
+import targetPoolsAddHealthCheck from "./target_pools/targetPoolsAddHealthCheck.ts";
+import targetPoolsAddInstance from "./target_pools/targetPoolsAddInstance.ts";
+import targetPoolsAggregatedList from "./target_pools/targetPoolsAggregatedList.ts";
+import targetPoolsDelete from "./target_pools/targetPoolsDelete.ts";
+import targetPoolsGet from "./target_pools/targetPoolsGet.ts";
+import targetPoolsGetHealth from "./target_pools/targetPoolsGetHealth.ts";
+import targetPoolsInsert from "./target_pools/targetPoolsInsert.ts";
+import targetPoolsList from "./target_pools/targetPoolsList.ts";
+import targetPoolsRemoveHealthCheck from "./target_pools/targetPoolsRemoveHealthCheck.ts";
+import targetPoolsRemoveInstance from "./target_pools/targetPoolsRemoveInstance.ts";
+import targetPoolsSetBackup from "./target_pools/targetPoolsSetBackup.ts";
+import targetPoolsSetSecurityPolicy from "./target_pools/targetPoolsSetSecurityPolicy.ts";
+import targetSslProxiesDelete from "./target_ssl_proxies/targetSslProxiesDelete.ts";
+import targetSslProxiesGet from "./target_ssl_proxies/targetSslProxiesGet.ts";
+import targetSslProxiesInsert from "./target_ssl_proxies/targetSslProxiesInsert.ts";
+import targetSslProxiesList from "./target_ssl_proxies/targetSslProxiesList.ts";
+import targetSslProxiesSetBackendService from "./target_ssl_proxies/targetSslProxiesSetBackendService.ts";
+import targetSslProxiesSetCertificateMap from "./target_ssl_proxies/targetSslProxiesSetCertificateMap.ts";
+import targetSslProxiesSetProxyHeader from "./target_ssl_proxies/targetSslProxiesSetProxyHeader.ts";
+import targetSslProxiesSetSslCertificates from "./target_ssl_proxies/targetSslProxiesSetSslCertificates.ts";
+import targetSslProxiesSetSslPolicy from "./target_ssl_proxies/targetSslProxiesSetSslPolicy.ts";
+import targetTcpProxiesAggregatedList from "./target_tcp_proxies/targetTcpProxiesAggregatedList.ts";
+import targetTcpProxiesDelete from "./target_tcp_proxies/targetTcpProxiesDelete.ts";
+import targetTcpProxiesGet from "./target_tcp_proxies/targetTcpProxiesGet.ts";
+import targetTcpProxiesInsert from "./target_tcp_proxies/targetTcpProxiesInsert.ts";
+import targetTcpProxiesList from "./target_tcp_proxies/targetTcpProxiesList.ts";
+import targetTcpProxiesSetBackendService from "./target_tcp_proxies/targetTcpProxiesSetBackendService.ts";
+import targetTcpProxiesSetProxyHeader from "./target_tcp_proxies/targetTcpProxiesSetProxyHeader.ts";
+import urlMapsAggregatedList from "./url_maps/urlMapsAggregatedList.ts";
+import urlMapsDelete from "./url_maps/urlMapsDelete.ts";
+import urlMapsGet from "./url_maps/urlMapsGet.ts";
+import urlMapsInsert from "./url_maps/urlMapsInsert.ts";
+import urlMapsInvalidateCache from "./url_maps/urlMapsInvalidateCache.ts";
+import urlMapsList from "./url_maps/urlMapsList.ts";
+import urlMapsPatch from "./url_maps/urlMapsPatch.ts";
+import urlMapsUpdate from "./url_maps/urlMapsUpdate.ts";
+import urlMapsValidate from "./url_maps/urlMapsValidate.ts";
 
 export const blocks = {
-  backend_buckets_addSignedUrlKey: backend_buckets_addSignedUrlKey,
-  backend_buckets_deleteOperation: backend_buckets_deleteOperation,
-  backend_buckets_deleteSignedUrlKey: backend_buckets_deleteSignedUrlKey,
-  backend_buckets_get: backend_buckets_get,
-  backend_buckets_insert: backend_buckets_insert,
-  backend_buckets_list: backend_buckets_list,
-  backend_buckets_patch: backend_buckets_patch,
-  backend_buckets_setEdgeSecurityPolicy: backend_buckets_setEdgeSecurityPolicy,
-  backend_buckets_update: backend_buckets_update,
-  backend_services_addSignedUrlKey: backend_services_addSignedUrlKey,
-  backend_services_aggregatedList: backend_services_aggregatedList,
-  backend_services_deleteOperation: backend_services_deleteOperation,
-  backend_services_deleteSignedUrlKey: backend_services_deleteSignedUrlKey,
-  backend_services_get: backend_services_get,
-  backend_services_getEffectiveSecurityPolicies:
-    backend_services_getEffectiveSecurityPolicies,
-  backend_services_getHealth: backend_services_getHealth,
-  backend_services_insert: backend_services_insert,
-  backend_services_list: backend_services_list,
-  backend_services_listUsable: backend_services_listUsable,
-  backend_services_patch: backend_services_patch,
-  backend_services_setEdgeSecurityPolicy:
-    backend_services_setEdgeSecurityPolicy,
-  backend_services_setSecurityPolicy: backend_services_setSecurityPolicy,
-  backend_services_update: backend_services_update,
-  forwarding_rules_aggregatedList: forwarding_rules_aggregatedList,
-  forwarding_rules_deleteOperation: forwarding_rules_deleteOperation,
-  forwarding_rules_get: forwarding_rules_get,
-  forwarding_rules_insert: forwarding_rules_insert,
-  forwarding_rules_list: forwarding_rules_list,
-  forwarding_rules_patch: forwarding_rules_patch,
-  forwarding_rules_setLabels: forwarding_rules_setLabels,
-  forwarding_rules_setTarget: forwarding_rules_setTarget,
-  global_forwarding_rules_deleteOperation:
-    global_forwarding_rules_deleteOperation,
-  global_forwarding_rules_get: global_forwarding_rules_get,
-  global_forwarding_rules_insert: global_forwarding_rules_insert,
-  global_forwarding_rules_list: global_forwarding_rules_list,
-  global_forwarding_rules_patch: global_forwarding_rules_patch,
-  global_forwarding_rules_setLabels: global_forwarding_rules_setLabels,
-  global_forwarding_rules_setTarget: global_forwarding_rules_setTarget,
-  health_checks_aggregatedList: health_checks_aggregatedList,
-  health_checks_deleteOperation: health_checks_deleteOperation,
-  health_checks_get: health_checks_get,
-  health_checks_insert: health_checks_insert,
-  health_checks_list: health_checks_list,
-  health_checks_patch: health_checks_patch,
-  health_checks_update: health_checks_update,
-  region_backend_services_deleteOperation:
-    region_backend_services_deleteOperation,
-  region_backend_services_get: region_backend_services_get,
-  region_backend_services_getHealth: region_backend_services_getHealth,
-  region_backend_services_insert: region_backend_services_insert,
-  region_backend_services_list: region_backend_services_list,
-  region_backend_services_listUsable: region_backend_services_listUsable,
-  region_backend_services_patch: region_backend_services_patch,
-  region_backend_services_setSecurityPolicy:
-    region_backend_services_setSecurityPolicy,
-  region_backend_services_update: region_backend_services_update,
-  region_health_checks_deleteOperation: region_health_checks_deleteOperation,
-  region_health_checks_get: region_health_checks_get,
-  region_health_checks_insert: region_health_checks_insert,
-  region_health_checks_list: region_health_checks_list,
-  region_health_checks_patch: region_health_checks_patch,
-  region_health_checks_update: region_health_checks_update,
-  region_target_http_proxies_deleteOperation:
-    region_target_http_proxies_deleteOperation,
-  region_target_http_proxies_get: region_target_http_proxies_get,
-  region_target_http_proxies_insert: region_target_http_proxies_insert,
-  region_target_http_proxies_list: region_target_http_proxies_list,
-  region_target_http_proxies_setUrlMap: region_target_http_proxies_setUrlMap,
-  region_target_https_proxies_deleteOperation:
-    region_target_https_proxies_deleteOperation,
-  region_target_https_proxies_get: region_target_https_proxies_get,
-  region_target_https_proxies_insert: region_target_https_proxies_insert,
-  region_target_https_proxies_list: region_target_https_proxies_list,
-  region_target_https_proxies_patch: region_target_https_proxies_patch,
-  region_target_https_proxies_setSslCertificates:
-    region_target_https_proxies_setSslCertificates,
-  region_target_https_proxies_setUrlMap: region_target_https_proxies_setUrlMap,
-  region_target_tcp_proxies_deleteOperation:
-    region_target_tcp_proxies_deleteOperation,
-  region_target_tcp_proxies_get: region_target_tcp_proxies_get,
-  region_target_tcp_proxies_insert: region_target_tcp_proxies_insert,
-  region_target_tcp_proxies_list: region_target_tcp_proxies_list,
-  region_url_maps_deleteOperation: region_url_maps_deleteOperation,
-  region_url_maps_get: region_url_maps_get,
-  region_url_maps_insert: region_url_maps_insert,
-  region_url_maps_list: region_url_maps_list,
-  region_url_maps_patch: region_url_maps_patch,
-  region_url_maps_update: region_url_maps_update,
-  region_url_maps_validate: region_url_maps_validate,
-  target_grpc_proxies_deleteOperation: target_grpc_proxies_deleteOperation,
-  target_grpc_proxies_get: target_grpc_proxies_get,
-  target_grpc_proxies_insert: target_grpc_proxies_insert,
-  target_grpc_proxies_list: target_grpc_proxies_list,
-  target_grpc_proxies_patch: target_grpc_proxies_patch,
-  target_http_proxies_aggregatedList: target_http_proxies_aggregatedList,
-  target_http_proxies_deleteOperation: target_http_proxies_deleteOperation,
-  target_http_proxies_get: target_http_proxies_get,
-  target_http_proxies_insert: target_http_proxies_insert,
-  target_http_proxies_list: target_http_proxies_list,
-  target_http_proxies_patch: target_http_proxies_patch,
-  target_http_proxies_setUrlMap: target_http_proxies_setUrlMap,
-  target_https_proxies_aggregatedList: target_https_proxies_aggregatedList,
-  target_https_proxies_deleteOperation: target_https_proxies_deleteOperation,
-  target_https_proxies_get: target_https_proxies_get,
-  target_https_proxies_insert: target_https_proxies_insert,
-  target_https_proxies_list: target_https_proxies_list,
-  target_https_proxies_patch: target_https_proxies_patch,
-  target_https_proxies_setCertificateMap:
-    target_https_proxies_setCertificateMap,
-  target_https_proxies_setQuicOverride: target_https_proxies_setQuicOverride,
-  target_https_proxies_setSslCertificates:
-    target_https_proxies_setSslCertificates,
-  target_https_proxies_setSslPolicy: target_https_proxies_setSslPolicy,
-  target_https_proxies_setUrlMap: target_https_proxies_setUrlMap,
-  target_instances_aggregatedList: target_instances_aggregatedList,
-  target_instances_deleteOperation: target_instances_deleteOperation,
-  target_instances_get: target_instances_get,
-  target_instances_insert: target_instances_insert,
-  target_instances_list: target_instances_list,
-  target_instances_setSecurityPolicy: target_instances_setSecurityPolicy,
-  target_pools_addHealthCheck: target_pools_addHealthCheck,
-  target_pools_addInstance: target_pools_addInstance,
-  target_pools_aggregatedList: target_pools_aggregatedList,
-  target_pools_deleteOperation: target_pools_deleteOperation,
-  target_pools_get: target_pools_get,
-  target_pools_getHealth: target_pools_getHealth,
-  target_pools_insert: target_pools_insert,
-  target_pools_list: target_pools_list,
-  target_pools_removeHealthCheck: target_pools_removeHealthCheck,
-  target_pools_removeInstance: target_pools_removeInstance,
-  target_pools_setBackup: target_pools_setBackup,
-  target_pools_setSecurityPolicy: target_pools_setSecurityPolicy,
-  target_ssl_proxies_deleteOperation: target_ssl_proxies_deleteOperation,
-  target_ssl_proxies_get: target_ssl_proxies_get,
-  target_ssl_proxies_insert: target_ssl_proxies_insert,
-  target_ssl_proxies_list: target_ssl_proxies_list,
-  target_ssl_proxies_setBackendService: target_ssl_proxies_setBackendService,
-  target_ssl_proxies_setCertificateMap: target_ssl_proxies_setCertificateMap,
-  target_ssl_proxies_setProxyHeader: target_ssl_proxies_setProxyHeader,
-  target_ssl_proxies_setSslCertificates: target_ssl_proxies_setSslCertificates,
-  target_ssl_proxies_setSslPolicy: target_ssl_proxies_setSslPolicy,
-  target_tcp_proxies_aggregatedList: target_tcp_proxies_aggregatedList,
-  target_tcp_proxies_deleteOperation: target_tcp_proxies_deleteOperation,
-  target_tcp_proxies_get: target_tcp_proxies_get,
-  target_tcp_proxies_insert: target_tcp_proxies_insert,
-  target_tcp_proxies_list: target_tcp_proxies_list,
-  target_tcp_proxies_setBackendService: target_tcp_proxies_setBackendService,
-  target_tcp_proxies_setProxyHeader: target_tcp_proxies_setProxyHeader,
-  url_maps_aggregatedList: url_maps_aggregatedList,
-  url_maps_deleteOperation: url_maps_deleteOperation,
-  url_maps_get: url_maps_get,
-  url_maps_insert: url_maps_insert,
-  url_maps_invalidateCache: url_maps_invalidateCache,
-  url_maps_list: url_maps_list,
-  url_maps_patch: url_maps_patch,
-  url_maps_update: url_maps_update,
-  url_maps_validate: url_maps_validate,
+  backendBucketsAddSignedUrlKey: backendBucketsAddSignedUrlKey,
+  backendBucketsDelete: backendBucketsDelete,
+  backendBucketsDeleteSignedUrlKey: backendBucketsDeleteSignedUrlKey,
+  backendBucketsGet: backendBucketsGet,
+  backendBucketsInsert: backendBucketsInsert,
+  backendBucketsList: backendBucketsList,
+  backendBucketsPatch: backendBucketsPatch,
+  backendBucketsSetEdgeSecurityPolicy: backendBucketsSetEdgeSecurityPolicy,
+  backendBucketsUpdate: backendBucketsUpdate,
+  backendServicesAddSignedUrlKey: backendServicesAddSignedUrlKey,
+  backendServicesAggregatedList: backendServicesAggregatedList,
+  backendServicesDelete: backendServicesDelete,
+  backendServicesDeleteSignedUrlKey: backendServicesDeleteSignedUrlKey,
+  backendServicesGet: backendServicesGet,
+  backendServicesGetEffectiveSecurityPolicies:
+    backendServicesGetEffectiveSecurityPolicies,
+  backendServicesGetHealth: backendServicesGetHealth,
+  backendServicesInsert: backendServicesInsert,
+  backendServicesList: backendServicesList,
+  backendServicesListUsable: backendServicesListUsable,
+  backendServicesPatch: backendServicesPatch,
+  backendServicesSetEdgeSecurityPolicy: backendServicesSetEdgeSecurityPolicy,
+  backendServicesSetSecurityPolicy: backendServicesSetSecurityPolicy,
+  backendServicesUpdate: backendServicesUpdate,
+  forwardingRulesAggregatedList: forwardingRulesAggregatedList,
+  forwardingRulesDelete: forwardingRulesDelete,
+  forwardingRulesGet: forwardingRulesGet,
+  forwardingRulesInsert: forwardingRulesInsert,
+  forwardingRulesList: forwardingRulesList,
+  forwardingRulesPatch: forwardingRulesPatch,
+  forwardingRulesSetLabels: forwardingRulesSetLabels,
+  forwardingRulesSetTarget: forwardingRulesSetTarget,
+  globalForwardingRulesDelete: globalForwardingRulesDelete,
+  globalForwardingRulesGet: globalForwardingRulesGet,
+  globalForwardingRulesInsert: globalForwardingRulesInsert,
+  globalForwardingRulesList: globalForwardingRulesList,
+  globalForwardingRulesPatch: globalForwardingRulesPatch,
+  globalForwardingRulesSetLabels: globalForwardingRulesSetLabels,
+  globalForwardingRulesSetTarget: globalForwardingRulesSetTarget,
+  healthChecksAggregatedList: healthChecksAggregatedList,
+  healthChecksDelete: healthChecksDelete,
+  healthChecksGet: healthChecksGet,
+  healthChecksInsert: healthChecksInsert,
+  healthChecksList: healthChecksList,
+  healthChecksPatch: healthChecksPatch,
+  healthChecksUpdate: healthChecksUpdate,
+  regionBackendServicesDelete: regionBackendServicesDelete,
+  regionBackendServicesGet: regionBackendServicesGet,
+  regionBackendServicesGetHealth: regionBackendServicesGetHealth,
+  regionBackendServicesInsert: regionBackendServicesInsert,
+  regionBackendServicesList: regionBackendServicesList,
+  regionBackendServicesListUsable: regionBackendServicesListUsable,
+  regionBackendServicesPatch: regionBackendServicesPatch,
+  regionBackendServicesSetSecurityPolicy:
+    regionBackendServicesSetSecurityPolicy,
+  regionBackendServicesUpdate: regionBackendServicesUpdate,
+  regionHealthChecksDelete: regionHealthChecksDelete,
+  regionHealthChecksGet: regionHealthChecksGet,
+  regionHealthChecksInsert: regionHealthChecksInsert,
+  regionHealthChecksList: regionHealthChecksList,
+  regionHealthChecksPatch: regionHealthChecksPatch,
+  regionHealthChecksUpdate: regionHealthChecksUpdate,
+  regionTargetHttpProxiesDelete: regionTargetHttpProxiesDelete,
+  regionTargetHttpProxiesGet: regionTargetHttpProxiesGet,
+  regionTargetHttpProxiesInsert: regionTargetHttpProxiesInsert,
+  regionTargetHttpProxiesList: regionTargetHttpProxiesList,
+  regionTargetHttpProxiesSetUrlMap: regionTargetHttpProxiesSetUrlMap,
+  regionTargetHttpsProxiesDelete: regionTargetHttpsProxiesDelete,
+  regionTargetHttpsProxiesGet: regionTargetHttpsProxiesGet,
+  regionTargetHttpsProxiesInsert: regionTargetHttpsProxiesInsert,
+  regionTargetHttpsProxiesList: regionTargetHttpsProxiesList,
+  regionTargetHttpsProxiesPatch: regionTargetHttpsProxiesPatch,
+  regionTargetHttpsProxiesSetSslCertificates:
+    regionTargetHttpsProxiesSetSslCertificates,
+  regionTargetHttpsProxiesSetUrlMap: regionTargetHttpsProxiesSetUrlMap,
+  regionTargetTcpProxiesDelete: regionTargetTcpProxiesDelete,
+  regionTargetTcpProxiesGet: regionTargetTcpProxiesGet,
+  regionTargetTcpProxiesInsert: regionTargetTcpProxiesInsert,
+  regionTargetTcpProxiesList: regionTargetTcpProxiesList,
+  regionUrlMapsDelete: regionUrlMapsDelete,
+  regionUrlMapsGet: regionUrlMapsGet,
+  regionUrlMapsInsert: regionUrlMapsInsert,
+  regionUrlMapsList: regionUrlMapsList,
+  regionUrlMapsPatch: regionUrlMapsPatch,
+  regionUrlMapsUpdate: regionUrlMapsUpdate,
+  regionUrlMapsValidate: regionUrlMapsValidate,
+  targetGrpcProxiesDelete: targetGrpcProxiesDelete,
+  targetGrpcProxiesGet: targetGrpcProxiesGet,
+  targetGrpcProxiesInsert: targetGrpcProxiesInsert,
+  targetGrpcProxiesList: targetGrpcProxiesList,
+  targetGrpcProxiesPatch: targetGrpcProxiesPatch,
+  targetHttpProxiesAggregatedList: targetHttpProxiesAggregatedList,
+  targetHttpProxiesDelete: targetHttpProxiesDelete,
+  targetHttpProxiesGet: targetHttpProxiesGet,
+  targetHttpProxiesInsert: targetHttpProxiesInsert,
+  targetHttpProxiesList: targetHttpProxiesList,
+  targetHttpProxiesPatch: targetHttpProxiesPatch,
+  targetHttpProxiesSetUrlMap: targetHttpProxiesSetUrlMap,
+  targetHttpsProxiesAggregatedList: targetHttpsProxiesAggregatedList,
+  targetHttpsProxiesDelete: targetHttpsProxiesDelete,
+  targetHttpsProxiesGet: targetHttpsProxiesGet,
+  targetHttpsProxiesInsert: targetHttpsProxiesInsert,
+  targetHttpsProxiesList: targetHttpsProxiesList,
+  targetHttpsProxiesPatch: targetHttpsProxiesPatch,
+  targetHttpsProxiesSetCertificateMap: targetHttpsProxiesSetCertificateMap,
+  targetHttpsProxiesSetQuicOverride: targetHttpsProxiesSetQuicOverride,
+  targetHttpsProxiesSetSslCertificates: targetHttpsProxiesSetSslCertificates,
+  targetHttpsProxiesSetSslPolicy: targetHttpsProxiesSetSslPolicy,
+  targetHttpsProxiesSetUrlMap: targetHttpsProxiesSetUrlMap,
+  targetInstancesAggregatedList: targetInstancesAggregatedList,
+  targetInstancesDelete: targetInstancesDelete,
+  targetInstancesGet: targetInstancesGet,
+  targetInstancesInsert: targetInstancesInsert,
+  targetInstancesList: targetInstancesList,
+  targetInstancesSetSecurityPolicy: targetInstancesSetSecurityPolicy,
+  targetPoolsAddHealthCheck: targetPoolsAddHealthCheck,
+  targetPoolsAddInstance: targetPoolsAddInstance,
+  targetPoolsAggregatedList: targetPoolsAggregatedList,
+  targetPoolsDelete: targetPoolsDelete,
+  targetPoolsGet: targetPoolsGet,
+  targetPoolsGetHealth: targetPoolsGetHealth,
+  targetPoolsInsert: targetPoolsInsert,
+  targetPoolsList: targetPoolsList,
+  targetPoolsRemoveHealthCheck: targetPoolsRemoveHealthCheck,
+  targetPoolsRemoveInstance: targetPoolsRemoveInstance,
+  targetPoolsSetBackup: targetPoolsSetBackup,
+  targetPoolsSetSecurityPolicy: targetPoolsSetSecurityPolicy,
+  targetSslProxiesDelete: targetSslProxiesDelete,
+  targetSslProxiesGet: targetSslProxiesGet,
+  targetSslProxiesInsert: targetSslProxiesInsert,
+  targetSslProxiesList: targetSslProxiesList,
+  targetSslProxiesSetBackendService: targetSslProxiesSetBackendService,
+  targetSslProxiesSetCertificateMap: targetSslProxiesSetCertificateMap,
+  targetSslProxiesSetProxyHeader: targetSslProxiesSetProxyHeader,
+  targetSslProxiesSetSslCertificates: targetSslProxiesSetSslCertificates,
+  targetSslProxiesSetSslPolicy: targetSslProxiesSetSslPolicy,
+  targetTcpProxiesAggregatedList: targetTcpProxiesAggregatedList,
+  targetTcpProxiesDelete: targetTcpProxiesDelete,
+  targetTcpProxiesGet: targetTcpProxiesGet,
+  targetTcpProxiesInsert: targetTcpProxiesInsert,
+  targetTcpProxiesList: targetTcpProxiesList,
+  targetTcpProxiesSetBackendService: targetTcpProxiesSetBackendService,
+  targetTcpProxiesSetProxyHeader: targetTcpProxiesSetProxyHeader,
+  urlMapsAggregatedList: urlMapsAggregatedList,
+  urlMapsDelete: urlMapsDelete,
+  urlMapsGet: urlMapsGet,
+  urlMapsInsert: urlMapsInsert,
+  urlMapsInvalidateCache: urlMapsInvalidateCache,
+  urlMapsList: urlMapsList,
+  urlMapsPatch: urlMapsPatch,
+  urlMapsUpdate: urlMapsUpdate,
+  urlMapsValidate: urlMapsValidate,
 };
