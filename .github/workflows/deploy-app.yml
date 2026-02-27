@@ -7,6 +7,11 @@ on:
         description: 'Name of the GCP API app to deploy (e.g., "pubsub", "storage")'
         required: true
         type: string
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
 
 jobs:
   deploy:

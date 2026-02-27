@@ -1,0 +1,82 @@
+name: Deploy Changed Apps
+
+on:
+  workflow_dispatch:
+
+jobs:
+  detect:
+    name: Detect unreleased apps
+    runs-on: ubuntu-latest
+    environment: Deployment
+    outputs:
+      candidates: ${{ steps.check.outputs.candidates }}
+      summary: ${{ steps.check.outputs.summary }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for unreleased versions
+        id: check
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.FLOWS_REGISTRY_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.FLOWS_REGISTRY_R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_BUCKET: registry-useflows-com
+          R2_ENDPOINT_URL: https://5f0d4105431f10a4af1e1f0266f26a97.r2.cloudflarestorage.com
+        run: |
+          candidates=()
+          summary=""
+
+          for dir in generated/*/; do
+            app_name=$(basename "$dir")
+            version_file="${dir}VERSION"
+
+            if [ ! -f "$version_file" ]; then
+              echo "⚠ $app_name: no VERSION file, skipping"
+              continue
+            fi
+
+            version=$(cat "$version_file" | tr -d '\n')
+            if [ -z "$version" ]; then
+              echo "⚠ $app_name: empty VERSION file, skipping"
+              continue
+            fi
+
+            r2_key="core/apps/gcp-api-${app_name}/versions/${version}.tar.gz"
+
+            if aws s3api head-object \
+              --bucket "$R2_BUCKET" \
+              --key "$r2_key" \
+              --endpoint-url "$R2_ENDPOINT_URL" \
+              > /dev/null 2>&1; then
+              echo "✓ $app_name v$version already released"
+            else
+              echo "→ $app_name v$version needs release"
+              candidates+=("$app_name")
+              summary="${summary}- ${app_name} v${version}\n"
+            fi
+          done
+
+          json=$(printf '%s\n' "${candidates[@]}" | jq -R -s -c 'split("\n")[:-1]')
+          echo "candidates=$json" >> $GITHUB_OUTPUT
+          echo "summary=$summary" >> $GITHUB_OUTPUT
+
+          echo ""
+          if [ ${#candidates[@]} -eq 0 ]; then
+            echo "✅ All apps are up to date, nothing to deploy."
+          else
+            echo "📦 Apps to deploy:"
+            printf '  %s\n' "${candidates[@]}"
+          fi
+
+  deploy:
+    name: Deploy ${{ matrix.app }}
+    needs: detect
+    if: needs.detect.outputs.candidates != '[]'
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.detect.outputs.candidates) }}
+      max-parallel: 1
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      app_name: ${{ matrix.app }}
+    secrets: inherit
