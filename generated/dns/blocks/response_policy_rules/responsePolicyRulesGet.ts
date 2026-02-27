@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const responsePolicyRulesGet: AppBlock = {
   name: "Response Policy Rules - Get",
@@ -12,84 +12,57 @@ const responsePolicyRulesGet: AppBlock = {
           name: "Response Policy Rule",
           description:
             "User assigned name of the Response Policy Rule addressed by this request.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         responsePolicy: {
           name: "Response Policy",
           description:
             "User assigned name of the Response Policy containing the Response Policy Rule.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         clientOperationId: {
-          name: "Client Operation ID",
+          name: "Client Operation Id",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/cloud-platform.read-only",
-              "https://www.googleapis.com/auth/ndev.clouddns.readonly",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.responsePolicyRule !== undefined)
+          pathParams["responsePolicyRule"] = String(
+            input.event.inputConfig.responsePolicyRule,
           );
-        }
+        if (input.event.inputConfig.responsePolicy !== undefined)
+          pathParams["responsePolicy"] = String(
+            input.event.inputConfig.responsePolicy,
+          );
 
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/responsePolicies/{responsePolicy}/rules/{responsePolicyRule}`;
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.clientOperationId !== undefined)
+          queryParams["clientOperationId"] = String(
+            input.event.inputConfig.clientOperationId,
+          );
 
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await dnsFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "dns/v1/projects/{project}/responsePolicies/{responsePolicy}/rules/{responsePolicyRule}",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -103,15 +76,21 @@ const responsePolicyRulesGet: AppBlock = {
           behavior: {
             type: "string",
             enum: ["behaviorUnspecified", "bypassResponsePolicy"],
+            description:
+              "Answer this query with a behavior rather than DNS data.",
           },
           dnsName: {
             type: "string",
+            description:
+              "The DNS name (wildcard or exact) to apply this rule to. Must be unique within the Response Policy Rule.",
           },
           kind: {
             type: "string",
           },
           ruleName: {
             type: "string",
+            description:
+              "An identifier for this rule. Must be unique with the ResponsePolicy.",
           },
           localData: {
             type: "object",
@@ -120,14 +99,82 @@ const responsePolicyRulesGet: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    rrdatas: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                      description:
+                        "As defined in RFC 1035 (section 5) and RFC 1034 (section 3.6.1) -- see examples.",
+                    },
+                    name: {
+                      type: "string",
+                      description: "For example, www.example.com.",
+                    },
+                    ttl: {
+                      type: "integer",
+                      description:
+                        "Number of seconds that this `ResourceRecordSet` can be cached by resolvers.",
+                    },
+                    signatureRrdatas: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                      description: "As defined in RFC 4034 (section 3.2).",
+                    },
+                    routingPolicy: {
+                      type: "object",
+                      properties: {
+                        geo: {
+                          type: "object",
+                          additionalProperties: true,
+                        },
+                        kind: {
+                          type: "object",
+                          additionalProperties: true,
+                        },
+                        wrr: {
+                          type: "object",
+                          additionalProperties: true,
+                        },
+                        healthCheck: {
+                          type: "object",
+                          additionalProperties: true,
+                        },
+                        primaryBackup: {
+                          type: "object",
+                          additionalProperties: true,
+                        },
+                      },
+                      additionalProperties: true,
+                      description:
+                        "A RRSetRoutingPolicy represents ResourceRecordSet data that is returned dynamically with the response varying based on configured properties such as geolocation or by weighted random selection.",
+                    },
+                    type: {
+                      type: "string",
+                      description:
+                        "The identifier of a supported record type. See the list of Supported DNS record types.",
+                    },
+                    kind: {
+                      type: "string",
+                    },
+                  },
                   additionalProperties: true,
+                  description:
+                    "A unit of data that is returned by the DNS servers.",
                 },
+                description:
+                  "All resource record sets for this selector, one per resource record type. The name must match the dns_name.",
               },
             },
             additionalProperties: true,
           },
         },
         additionalProperties: true,
+        description:
+          "A Response Policy Rule is a selector that applies its behavior to queries that match the selector. Selectors are DNS names, which may be wildcards or exact matches. Each DNS query subject to a Response Policy matches at most one ResponsePolicyRule, as identified by the dns_name field with the longest matching suffix.",
       },
     },
   },

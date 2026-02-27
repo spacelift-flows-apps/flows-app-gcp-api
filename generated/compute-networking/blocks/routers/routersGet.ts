@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const routersGet: AppBlock = {
   name: "Routers - Get",
-  description: `Returns the specified Router resource.`,
+  description: `Returns the specified Zone resource.`,
   category: "Routers",
   inputs: {
     default: {
@@ -11,75 +11,38 @@ const routersGet: AppBlock = {
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the region for this request.",
+          },
           required: true,
         },
         router: {
           name: "Router",
           description: "Name of the Router resource to return.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the Router resource to return.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.router !== undefined)
+          pathParams["router"] = String(input.event.inputConfig.router);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/routers/{router}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/routers/{router}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -90,319 +53,356 @@ const routersGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          creationTimestamp: {
-            type: "string",
-          },
-          encryptedInterconnectRouter: {
-            type: "boolean",
-          },
-          description: {
-            type: "string",
-          },
-          region: {
-            type: "string",
-          },
-          nats: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                natIpAllocateOption: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                tcpTimeWaitTimeoutSec: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                type: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                autoNetworkTier: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                tcpEstablishedIdleTimeoutSec: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                sourceSubnetworkIpRangesToNat64: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                minPortsPerVm: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                subnetworks: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                icmpIdleTimeoutSec: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                enableEndpointIndependentMapping: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                nat64Subnetworks: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                tcpTransitoryIdleTimeoutSec: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                maxPortsPerVm: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                sourceSubnetworkIpRangesToNat: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                drainNatIps: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                endpointTypes: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                enableDynamicPortAllocation: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                rules: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                logConfig: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                name: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                udpIdleTimeoutSec: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                natIps: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-              },
-              additionalProperties: true,
-            },
-          },
-          kind: {
-            type: "string",
-          },
           bgp: {
             type: "object",
             properties: {
               advertiseMode: {
                 type: "string",
-                enum: ["CUSTOM", "DEFAULT"],
+                enum: ["UNDEFINED_ADVERTISE_MODE", "CUSTOM", "DEFAULT"],
+                description:
+                  "User-specified flag to indicate which mode to use for advertisement. The options are DEFAULT or CUSTOM. Check the AdvertiseMode enum for the list of possible values.",
+              },
+              advertisedGroups: {
+                type: "array",
+                items: {
+                  type: "string",
+                  enum: ["UNDEFINED_ADVERTISED_GROUPS", "ALL_SUBNETS"],
+                },
+                description:
+                  "User-specified list of prefix groups to advertise in custom mode. This field can only be populated if advertise_mode is CUSTOM and is advertised to all peers of the router. These groups will be advertised in addition to any specified prefixes. Leave this field blank to advertise no custom groups. Check the AdvertisedGroups enum for the list of possible values.",
               },
               advertisedIpRanges: {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    description: {
+                      type: "string",
+                      description:
+                        "User-specified description for the IP range.",
+                    },
+                    range: {
+                      type: "string",
+                      description:
+                        "The IP range to advertise. The value must be a CIDR-formatted string.",
+                    },
+                  },
+                  description:
+                    "Description-tagged IP ranges for the router to advertise.",
                   additionalProperties: true,
                 },
+                description:
+                  "User-specified list of individual IP ranges to advertise in custom mode. This field can only be populated if advertise_mode is CUSTOM and is advertised to all peers of the router. These IP ranges will be advertised in addition to any specified groups. Leave this field blank to advertise no custom IP ranges.",
               },
               asn: {
-                type: "number",
-              },
-              keepaliveInterval: {
-                type: "number",
-              },
-              advertisedGroups: {
-                type: "array",
-                items: {
-                  type: "object",
-                  additionalProperties: true,
-                },
+                type: "integer",
+                description:
+                  "Local BGP Autonomous System Number (ASN). Must be anRFC6996 private ASN, either 16-bit or 32-bit. The value will be fixed for this router resource. All VPN tunnels that link to this router will have the same local ASN.",
               },
               identifierRange: {
                 type: "string",
+                description:
+                  'Explicitly specifies a range of valid BGP Identifiers for this Router. It is provided as a link-local IPv4 range (from 169.254.0.0/16), of size at least /30, even if the BGP sessions are over IPv6. It must not overlap with any IPv4 BGP session ranges.   Other vendors commonly call this "router ID".',
+              },
+              keepaliveInterval: {
+                type: "integer",
+                description:
+                  "The interval in seconds between BGP keepalive messages that are sent to the peer.   Hold time is three times the interval at which keepalive messages are sent, and the hold time is the maximum number of seconds allowed to elapse between successive keepalive messages that BGP receives from a peer.   BGP will use the smaller of either the local hold time value or the peer's hold time value as the hold time for the BGP connection between the two peers.   If set, this value must be between 20 and 60. The default is 20.",
               },
             },
             additionalProperties: true,
-          },
-          interfaces: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                privateIpAddress: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                linkedInterconnectAttachment: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                subnetwork: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                redundantInterface: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                managementType: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                ipRange: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                linkedVpnTunnel: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                ipVersion: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                name: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-              },
-              additionalProperties: true,
-            },
-          },
-          id: {
-            type: "string",
-          },
-          network: {
-            type: "string",
-          },
-          name: {
-            type: "string",
+            description: "BGP information specific to this router.",
           },
           bgpPeers: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                ipv4NexthopAddress: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                enableIpv4: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                peerIpv6NexthopAddress: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                peerAsn: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                md5AuthenticationKeyName: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                peerIpv4NexthopAddress: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                exportPolicies: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                ipAddress: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                routerApplianceInstance: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                customLearnedRoutePriority: {
-                  type: "object",
-                  additionalProperties: true,
-                },
                 advertiseMode: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  enum: ["UNDEFINED_ADVERTISE_MODE", "CUSTOM", "DEFAULT"],
+                  description:
+                    "User-specified flag to indicate which mode to use for advertisement. Check the AdvertiseMode enum for the list of possible values.",
                 },
                 advertisedGroups: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: ["UNDEFINED_ADVERTISED_GROUPS", "ALL_SUBNETS"],
+                  },
+                  description:
+                    'User-specified list of prefix groups to advertise in custom mode, which currently supports the following option:     - ALL_SUBNETS: Advertises all of the router\'s own VPC subnets. This    excludes any routes learned for subnets that use    VPC Network Peering.   Note that this field can only be populated if advertise_mode is CUSTOM and overrides the list defined for the router (in the "bgp" message). These groups are advertised in addition to any specified prefixes. Leave this field blank to advertise no custom groups. Check the AdvertisedGroups enum for the list of possible values.',
                 },
-                ipv6NexthopAddress: {
-                  type: "object",
-                  additionalProperties: true,
+                advertisedIpRanges: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      description: {
+                        type: "string",
+                        description:
+                          "User-specified description for the IP range.",
+                      },
+                      range: {
+                        type: "string",
+                        description:
+                          "The IP range to advertise. The value must be a CIDR-formatted string.",
+                      },
+                    },
+                    description:
+                      "Description-tagged IP ranges for the router to advertise.",
+                    additionalProperties: true,
+                  },
+                  description:
+                    'User-specified list of individual IP ranges to advertise in custom mode. This field can only be populated if advertise_mode is CUSTOM and overrides the list defined for the router (in the "bgp" message). These IP ranges are advertised in addition to any specified groups. Leave this field blank to advertise no custom IP ranges.',
                 },
-                name: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                peerIpAddress: {
-                  type: "object",
-                  additionalProperties: true,
+                advertisedRoutePriority: {
+                  type: "integer",
+                  description:
+                    "The priority of routes advertised to this BGP peer. Where there is more than one matching route of maximum length, the routes with the lowest priority value win.",
                 },
                 bfd: {
                   type: "object",
+                  properties: {
+                    minReceiveInterval: {
+                      type: "integer",
+                      description:
+                        "The minimum interval, in milliseconds, between BFD control packets received from the peer router. The actual value is negotiated between the two routers and is equal to the greater of this value and the transmit interval of the other router.   If set, this value must be between 1000 and 30000.   The default is 1000.",
+                    },
+                    minTransmitInterval: {
+                      type: "integer",
+                      description:
+                        "The minimum interval, in milliseconds, between BFD control packets transmitted to the peer router. The actual value is negotiated between the two routers and is equal to the greater of this value and the corresponding receive interval of the other router.   If set, this value must be between 1000 and 30000.   The default is 1000.",
+                    },
+                    multiplier: {
+                      type: "integer",
+                      description:
+                        "The number of consecutive BFD packets that must be missed before BFD declares that a peer is unavailable.   If set, the value must be a value between 5 and 16.   The default is 5.",
+                    },
+                    sessionInitializationMode: {
+                      type: "string",
+                      enum: [
+                        "UNDEFINED_SESSION_INITIALIZATION_MODE",
+                        "ACTIVE",
+                        "DISABLED",
+                        "PASSIVE",
+                      ],
+                      description:
+                        "The BFD session initialization mode for this BGP peer.   If set to ACTIVE, the Cloud Router will initiate the BFD session for this BGP peer. If set to PASSIVE, the Cloud Router will wait for the peer router to initiate the BFD session for this BGP peer. If set to DISABLED, BFD is disabled for this BGP peer. The default is DISABLED. Check the SessionInitializationMode enum for the list of possible values.",
+                    },
+                  },
                   additionalProperties: true,
-                },
-                enable: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                advertisedIpRanges: {
-                  type: "object",
-                  additionalProperties: true,
+                  description: "BFD configuration for the BGP peering.",
                 },
                 customLearnedIpRanges: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      range: {
+                        type: "string",
+                        description:
+                          "The custom learned route IP address range. Must be a valid CIDR-formatted prefix. If an IP address is provided without a subnet mask, it is interpreted as, for IPv4, a `/32` singular IP address range, and, for IPv6, `/128`.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  description:
+                    "A list of user-defined custom learned route IP address ranges for a BGP session.",
                 },
-                advertisedRoutePriority: {
-                  type: "object",
-                  additionalProperties: true,
+                customLearnedRoutePriority: {
+                  type: "integer",
+                  description:
+                    "The user-defined custom learned route priority for a BGP session. This value is applied to all custom learned route ranges for the session. You can choose a value from `0` to `65335`. If you don't provide a value, Google Cloud assigns a priority of `100` to the ranges.",
                 },
-                importPolicies: {
-                  type: "object",
-                  additionalProperties: true,
+                enable: {
+                  type: "string",
+                  enum: ["UNDEFINED_ENABLE", "FALSE", "TRUE"],
+                  description:
+                    "The status of the BGP peer connection.   If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE. Check the Enable enum for the list of possible values.",
                 },
-                managementType: {
-                  type: "object",
-                  additionalProperties: true,
+                enableIpv4: {
+                  type: "boolean",
+                  description:
+                    "Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.",
                 },
                 enableIpv6: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "boolean",
+                  description:
+                    "Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.",
+                },
+                exportPolicies: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.",
+                },
+                importPolicies: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.",
                 },
                 interfaceName: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Name of the interface the BGP peer is associated with.",
+                },
+                ipAddress: {
+                  type: "string",
+                  description:
+                    "IP address of the interface inside Google Cloud Platform.",
+                },
+                ipv4NexthopAddress: {
+                  type: "string",
+                  description:
+                    "IPv4 address of the interface inside Google Cloud Platform.",
+                },
+                ipv6NexthopAddress: {
+                  type: "string",
+                  description:
+                    "IPv6 address of the interface inside Google Cloud Platform.",
+                },
+                managementType: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_MANAGEMENT_TYPE",
+                    "MANAGED_BY_ATTACHMENT",
+                    "MANAGED_BY_USER",
+                  ],
+                  description:
+                    "Output only. [Output Only] The resource that configures and manages this BGP peer.     -  MANAGED_BY_USER is the default value and can be managed by you    or other users    - MANAGED_BY_ATTACHMENT is a BGP peer that is configured and managed    by Cloud Interconnect, specifically by an InterconnectAttachment of type    PARTNER. Google automatically creates, updates, and deletes this type of    BGP peer when the PARTNER InterconnectAttachment is created, updated,    or deleted. Check the ManagementType enum for the list of possible values.",
+                },
+                md5AuthenticationKeyName: {
+                  type: "string",
+                  description:
+                    "Present if MD5 authentication is enabled for the peering. Must be the name of one of the entries in the Router.md5_authentication_keys. The field must comply with RFC1035.",
+                },
+                name: {
+                  type: "string",
+                  description:
+                    "Name of this BGP peer. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                },
+                peerAsn: {
+                  type: "integer",
+                  description:
+                    "Peer BGP Autonomous System Number (ASN). Each BGP interface may use a different value.",
+                },
+                peerIpAddress: {
+                  type: "string",
+                  description:
+                    "IP address of the BGP interface outside Google Cloud Platform.",
+                },
+                peerIpv4NexthopAddress: {
+                  type: "string",
+                  description:
+                    "IPv4 address of the BGP interface outside Google Cloud Platform.",
+                },
+                peerIpv6NexthopAddress: {
+                  type: "string",
+                  description:
+                    "IPv6 address of the BGP interface outside Google Cloud Platform.",
+                },
+                routerApplianceInstance: {
+                  type: "string",
+                  description:
+                    "URI of the VM instance that is used as third-party router appliances such as Next Gen Firewalls, Virtual Routers, or Router Appliances. The VM instance must be located in zones contained in the same region as this Cloud Router. The VM instance is the peer side of the BGP session.",
                 },
               },
               additionalProperties: true,
             },
+            description:
+              "BGP information that must be configured into the routing stack to establish BGP peering. This information must specify the peer ASN and either the interface name, IP address, or peer IP address. Please refer toRFC4273.",
           },
-          params: {
-            type: "object",
-            properties: {
-              resourceManagerTags: {
-                type: "object",
-                additionalProperties: true,
+          creationTimestamp: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
+          },
+          encryptedInterconnectRouter: {
+            type: "boolean",
+            description:
+              "Indicates if a router is dedicated for use with encrypted VLAN attachments (interconnectAttachments).",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          interfaces: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                ipRange: {
+                  type: "string",
+                  description:
+                    "IP address and range of the interface.     - For Internet Protocol version 4 (IPv4), the IP range must be in theRFC3927 link-local IP address space. The value must    be a CIDR-formatted string, for example, 169.254.0.1/30.    Note: Do not truncate the IP address, as it represents the IP address of    the interface.    - For Internet Protocol version 6 (IPv6), the value    must be a unique local address (ULA) range from fdff:1::/64    with a mask length of 126 or less. This value should be a CIDR-formatted    string, for example, fdff:1::1/112. Within the router's    VPC, this IPv6 prefix will be reserved exclusively for this connection    and cannot be used for any other purpose.",
+                },
+                ipVersion: {
+                  type: "string",
+                  enum: ["UNDEFINED_IP_VERSION", "IPV4", "IPV6"],
+                  description:
+                    "IP version of this interface. Check the IpVersion enum for the list of possible values.",
+                },
+                linkedInterconnectAttachment: {
+                  type: "string",
+                  description:
+                    "URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.",
+                },
+                linkedVpnTunnel: {
+                  type: "string",
+                  description:
+                    "URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.",
+                },
+                managementType: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_MANAGEMENT_TYPE",
+                    "MANAGED_BY_ATTACHMENT",
+                    "MANAGED_BY_USER",
+                  ],
+                  description:
+                    "Output only. [Output Only] The resource that configures and manages this interface.     - MANAGED_BY_USER is the default value and can be managed directly    by users.    - MANAGED_BY_ATTACHMENT is an interface that is configured and    managed by Cloud Interconnect, specifically, by an InterconnectAttachment    of type PARTNER. Google automatically creates, updates, and deletes    this type of interface when the PARTNER InterconnectAttachment is    created, updated, or deleted. Check the ManagementType enum for the list of possible values.",
+                },
+                name: {
+                  type: "string",
+                  description:
+                    "Name of this interface entry. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                },
+                privateIpAddress: {
+                  type: "string",
+                  description:
+                    "The regional private internal IP address that is used to establish BGP sessions to a VM instance acting as a third-party Router Appliance, such as a Next Gen Firewall, a Virtual Router, or an SD-WAN VM.",
+                },
+                redundantInterface: {
+                  type: "string",
+                  description:
+                    "Name of the interface that will be redundant with the current interface you are creating. The redundantInterface must belong to the same Cloud Router as the interface here. To establish the BGP session to a Router Appliance VM, you must create two BGP peers. The two BGP peers must be attached to two separate interfaces that are redundant with each other. The redundant_interface must be 1-63 characters long, and comply withRFC1035. Specifically, the redundant_interface must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                },
+                subnetwork: {
+                  type: "string",
+                  description:
+                    "The URI of the subnetwork resource that this interface belongs to, which must be in the same region as the Cloud Router. When you establish a BGP session to a VM instance using this interface, the VM instance must belong to the same subnetwork as the subnetwork specified here.",
+                },
               },
+              additionalProperties: true,
             },
-            additionalProperties: true,
+            description:
+              "Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified:     - linkedVpnTunnel    - linkedInterconnectAttachment    - subnetwork   You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of resource. Always compute#router for routers.",
           },
           md5AuthenticationKeys: {
             type: "array",
@@ -410,21 +410,319 @@ const routersGet: AppBlock = {
               type: "object",
               properties: {
                 name: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                key: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Name used to identify the key.  Must be unique within a router. Must be referenced by exactly one bgpPeer. Must comply withRFC1035.",
                 },
               },
               additionalProperties: true,
             },
+            description: "Keys used for MD5 authentication.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          nats: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                autoNetworkTier: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_AUTO_NETWORK_TIER",
+                    "FIXED_STANDARD",
+                    "PREMIUM",
+                    "STANDARD",
+                    "STANDARD_OVERRIDES_FIXED_STANDARD",
+                  ],
+                  description:
+                    "The network tier to use when automatically reserving NAT IP addresses. Must be one of: PREMIUM, STANDARD. If not specified, then the current project-level default tier is used. Check the AutoNetworkTier enum for the list of possible values.",
+                },
+                drainNatIps: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "A list of URLs of the IP resources to be drained. These IPs must be valid static external IPs that have been assigned to the NAT. These IPs should be used for updating/patching a NAT only.",
+                },
+                enableDynamicPortAllocation: {
+                  type: "boolean",
+                  description:
+                    "Enable Dynamic Port Allocation.   If not specified, it is disabled by default.   If set to true,     - Dynamic Port Allocation will be enabled on this NAT    config.    - enableEndpointIndependentMapping cannot be set to true.    - If minPorts is set, minPortsPerVm must be set to a    power of two greater than or equal to 32. If minPortsPerVm is not set, a    minimum of 32 ports will be allocated to a VM from this NAT    config.",
+                },
+                enableEndpointIndependentMapping: {
+                  type: "boolean",
+                },
+                endpointTypes: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                    enum: [
+                      "UNDEFINED_ENDPOINT_TYPES",
+                      "ENDPOINT_TYPE_MANAGED_PROXY_LB",
+                      "ENDPOINT_TYPE_SWG",
+                      "ENDPOINT_TYPE_VM",
+                    ],
+                  },
+                  description:
+                    "List of NAT-ted endpoint types supported by the Nat Gateway. If the list is empty, then it will be equivalent to include ENDPOINT_TYPE_VM Check the EndpointTypes enum for the list of possible values.",
+                },
+                icmpIdleTimeoutSec: {
+                  type: "integer",
+                  description:
+                    "Timeout (in seconds) for ICMP connections. Defaults to 30s if not set.",
+                },
+                logConfig: {
+                  type: "object",
+                  properties: {
+                    enable: {
+                      type: "boolean",
+                      description:
+                        "Indicates whether or not to export logs. This is false by default.",
+                    },
+                    filter: {
+                      type: "string",
+                      enum: [
+                        "UNDEFINED_FILTER",
+                        "ALL",
+                        "ERRORS_ONLY",
+                        "TRANSLATIONS_ONLY",
+                      ],
+                      description:
+                        "Specify the desired filtering of logs on this NAT. If unspecified, logs are exported for all connections handled by this NAT. This option can take one of the following values:     - ERRORS_ONLY: Export logs only for connection failures.    - TRANSLATIONS_ONLY: Export logs only for successful    connections.    - ALL: Export logs for all connections, successful and    unsuccessful. Check the Filter enum for the list of possible values.",
+                    },
+                  },
+                  description: "Configuration of logging on a NAT.",
+                  additionalProperties: true,
+                },
+                maxPortsPerVm: {
+                  type: "integer",
+                  description:
+                    "Maximum number of ports allocated to a VM from this NAT config when Dynamic Port Allocation is enabled.   If Dynamic Port Allocation is not enabled, this field has no effect.   If Dynamic Port Allocation is enabled, and this field is set, it must be set to a power of two greater than minPortsPerVm, or 64 if minPortsPerVm is not set.   If Dynamic Port Allocation is enabled and this field is not set, a maximum of 65536 ports will be allocated to a VM from this NAT config.",
+                },
+                minPortsPerVm: {
+                  type: "integer",
+                  description:
+                    "Minimum number of ports allocated to a VM from this NAT config. If not set, a default number of ports is allocated to a VM. This is rounded up to the nearest power of 2. For example, if the value of this field is 50, at least 64 ports are allocated to a VM.",
+                },
+                name: {
+                  type: "string",
+                  description:
+                    "Unique name of this Nat service. The name must be 1-63 characters long and comply withRFC1035.",
+                },
+                nat64Subnetworks: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: {
+                        type: "string",
+                        description:
+                          "URL for the subnetwork resource that will use NAT64.",
+                      },
+                    },
+                    description: "Specifies a subnetwork to enable NAT64.",
+                    additionalProperties: true,
+                  },
+                  description:
+                    "List of Subnetwork resources whose traffic should be translated by NAT64 Gateway. It is used only when LIST_OF_IPV6_SUBNETWORKS is selected for the SubnetworkIpRangeToNat64Option above.",
+                },
+                natIpAllocateOption: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_NAT_IP_ALLOCATE_OPTION",
+                    "AUTO_ONLY",
+                    "MANUAL_ONLY",
+                  ],
+                  description:
+                    "Specify the NatIpAllocateOption, which can take one of the following values:     - MANUAL_ONLY: Uses only Nat IP addresses provided by    customers. When there are not enough specified Nat IPs, the Nat service    fails for new VMs.    - AUTO_ONLY: Nat IPs are allocated by Google Cloud Platform; customers    can't specify any Nat IPs. When choosing AUTO_ONLY, then nat_ip should    be empty. Check the NatIpAllocateOption enum for the list of possible values.",
+                },
+                natIps: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "A list of URLs of the IP resources used for this Nat service. These IP addresses must be valid static external IP addresses assigned to the project.",
+                },
+                rules: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      action: {
+                        type: "object",
+                        properties: {
+                          sourceNatActiveIps: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                            description:
+                              "A list of URLs of the IP resources used for this NAT rule. These IP addresses must be valid static external IP addresses assigned to the project. This field is used for public NAT.",
+                          },
+                          sourceNatActiveRanges: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                            description:
+                              "A list of URLs of the subnetworks used as source ranges for this NAT Rule. These subnetworks must have purpose set to PRIVATE_NAT. This field is used for private NAT.",
+                          },
+                          sourceNatDrainIps: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                            description:
+                              "A list of URLs of the IP resources to be drained. These IPs must be valid static external IPs that have been assigned to the NAT. These IPs should be used for updating/patching a NAT rule only. This field is used for public NAT.",
+                          },
+                          sourceNatDrainRanges: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                            description:
+                              "A list of URLs of subnetworks representing source ranges to be drained. This is only supported on patch/update, and these subnetworks must have previously been used as active ranges in this NAT Rule. This field is used for private NAT.",
+                          },
+                        },
+                        additionalProperties: true,
+                        description:
+                          "The action to be enforced for traffic that matches this rule.",
+                      },
+                      description: {
+                        type: "string",
+                        description: "An optional description of this rule.",
+                      },
+                      match: {
+                        type: "string",
+                        description:
+                          "CEL expression that specifies the match condition that egress traffic from a VM is evaluated against. If it evaluates to true, the corresponding `action` is enforced.  The following examples are valid match expressions for public NAT:  `inIpRange(destination.ip, '1.1.0.0/16') || inIpRange(destination.ip,      '2.2.0.0/16')`  `destination.ip == '1.1.0.1' || destination.ip == '8.8.8.8'`  The following example is a valid match expression for private NAT:  `nexthop.hub == '//networkconnectivity.googleapis.com/projects/my-project/locations/global/hubs/hub-1'`",
+                      },
+                      ruleNumber: {
+                        type: "integer",
+                        description:
+                          "An integer uniquely identifying a rule in the list. The rule number must be a positive value between 0 and 65000, and must be unique among rules within a NAT.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  description: "A list of rules associated with this NAT.",
+                },
+                sourceSubnetworkIpRangesToNat: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_SOURCE_SUBNETWORK_IP_RANGES_TO_NAT",
+                    "ALL_SUBNETWORKS_ALL_IP_RANGES",
+                    "ALL_SUBNETWORKS_ALL_PRIMARY_IP_RANGES",
+                    "LIST_OF_SUBNETWORKS",
+                  ],
+                  description:
+                    "Specify the Nat option, which can take one of the following values:     - ALL_SUBNETWORKS_ALL_IP_RANGES: All of the IP ranges in every    Subnetwork are allowed to Nat.    - ALL_SUBNETWORKS_ALL_PRIMARY_IP_RANGES: All of the primary IP ranges    in every Subnetwork are allowed to Nat.    - LIST_OF_SUBNETWORKS: A list of Subnetworks are allowed to Nat    (specified in the field subnetwork below)   The default is SUBNETWORK_IP_RANGE_TO_NAT_OPTION_UNSPECIFIED. Note that if this field contains ALL_SUBNETWORKS_ALL_IP_RANGES then there should not be any other Router.Nat section in any Router for this network in this region. Check the SourceSubnetworkIpRangesToNat enum for the list of possible values.",
+                },
+                sourceSubnetworkIpRangesToNat64: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_SOURCE_SUBNETWORK_IP_RANGES_TO_NAT64",
+                    "ALL_IPV6_SUBNETWORKS",
+                    "LIST_OF_IPV6_SUBNETWORKS",
+                  ],
+                  description:
+                    "Specify the Nat option for NAT64, which can take one of the following values:     - ALL_IPV6_SUBNETWORKS: All of the IP ranges in    every Subnetwork are allowed to Nat.    - LIST_OF_IPV6_SUBNETWORKS: A list of Subnetworks are allowed to Nat    (specified in the field nat64_subnetwork below)   The default is NAT64_OPTION_UNSPECIFIED. Note that if this field contains NAT64_ALL_V6_SUBNETWORKS no other Router.Nat section in this region can also enable NAT64 for any Subnetworks in this network. Other Router.Nat sections can still be present to enable NAT44 only. Check the SourceSubnetworkIpRangesToNat64 enum for the list of possible values.",
+                },
+                subnetworks: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: {
+                        type: "string",
+                        description:
+                          "URL for the subnetwork resource that will use NAT.",
+                      },
+                      secondaryIpRangeNames: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          'A list of the secondary ranges of the Subnetwork that are allowed to use NAT. This can be populated only if "LIST_OF_SECONDARY_IP_RANGES" is one of the values in source_ip_ranges_to_nat.',
+                      },
+                      sourceIpRangesToNat: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                          enum: [
+                            "UNDEFINED_SOURCE_IP_RANGES_TO_NAT",
+                            "ALL_IP_RANGES",
+                            "LIST_OF_SECONDARY_IP_RANGES",
+                            "PRIMARY_IP_RANGE",
+                          ],
+                        },
+                        description:
+                          'Specify the options for NAT ranges in the Subnetwork. All options of a single value are valid except NAT_IP_RANGE_OPTION_UNSPECIFIED. The only valid option with multiple values is: ["PRIMARY_IP_RANGE", "LIST_OF_SECONDARY_IP_RANGES"] Default: [ALL_IP_RANGES] Check the SourceIpRangesToNat enum for the list of possible values.',
+                      },
+                    },
+                    description:
+                      "Defines the IP ranges that want to use NAT for a subnetwork.",
+                    additionalProperties: true,
+                  },
+                  description:
+                    "A list of Subnetwork resources whose traffic should be translated by NAT Gateway. It is used only when LIST_OF_SUBNETWORKS is selected for the SubnetworkIpRangeToNatOption above.",
+                },
+                tcpEstablishedIdleTimeoutSec: {
+                  type: "integer",
+                  description:
+                    "Timeout (in seconds) for TCP established connections. Defaults to 1200s if not set.",
+                },
+                tcpTimeWaitTimeoutSec: {
+                  type: "integer",
+                  description:
+                    "Timeout (in seconds) for TCP connections that are in TIME_WAIT state. Defaults to 120s if not set.",
+                },
+                tcpTransitoryIdleTimeoutSec: {
+                  type: "integer",
+                  description:
+                    "Timeout (in seconds) for TCP transitory connections. Defaults to 30s if not set.",
+                },
+                type: {
+                  type: "string",
+                  enum: ["UNDEFINED_TYPE", "PRIVATE", "PUBLIC"],
+                  description:
+                    "Indicates whether this NAT is used for public or private IP translation. If unspecified, it defaults to PUBLIC. Check the Type enum for the list of possible values.",
+                },
+                udpIdleTimeoutSec: {
+                  type: "integer",
+                  description:
+                    "Timeout (in seconds) for UDP connections. Defaults to 30s if not set.",
+                },
+              },
+              description:
+                "Represents a Nat resource. It enables the VMs within the specified subnetworks to access Internet without external IP addresses. It specifies a list of subnetworks (and the ranges within) that want to use NAT. Customers can also provide the external IPs that would be used for NAT. GCP would auto-allocate ephemeral IPs if no external IPs are provided.",
+              additionalProperties: true,
+            },
+            description: "A list of NAT services created in this router.",
+          },
+          network: {
+            type: "string",
+            description: "URI of the network to which this router belongs.",
+          },
+          region: {
+            type: "string",
+            description:
+              "[Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
           selfLink: {
             type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
           },
         },
+        description:
+          "Represents a Cloud Router resource.  For more information about Cloud Router, read theCloud Router overview.",
         additionalProperties: true,
       },
     },

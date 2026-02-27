@@ -1,85 +1,48 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const vpnTunnelsGet: AppBlock = {
-  name: "VPN Tunnels - Get",
-  description: `Returns the specified VpnTunnel resource.`,
-  category: "VPN Tunnels",
+  name: "Vpn Tunnels - Get",
+  description: `Returns the specified Zone resource.`,
+  category: "Vpn Tunnels",
   inputs: {
     default: {
       config: {
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the region for this request.",
+          },
           required: true,
         },
         vpnTunnel: {
-          name: "VPN Tunnel",
+          name: "Vpn Tunnel",
           description: "Name of the VpnTunnel resource to return.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the VpnTunnel resource to return.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.vpnTunnel !== undefined)
+          pathParams["vpn_tunnel"] = String(input.event.inputConfig.vpnTunnel);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/vpnTunnels/{vpnTunnel}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/vpnTunnels/{vpn_tunnel}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -90,53 +53,178 @@ const vpnTunnelsGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          sharedSecretHash: {
-            type: "string",
-          },
-          kind: {
-            type: "string",
-          },
-          ikeVersion: {
-            type: "number",
-          },
-          name: {
-            type: "string",
-          },
-          peerIp: {
-            type: "string",
-          },
-          labelFingerprint: {
-            type: "string",
-          },
-          router: {
-            type: "string",
-          },
-          vpnGateway: {
-            type: "string",
-          },
-          peerGcpGateway: {
-            type: "string",
-          },
           cipherSuite: {
             type: "object",
             properties: {
-              phase2: {
-                type: "object",
-                additionalProperties: true,
-              },
               phase1: {
                 type: "object",
+                properties: {
+                  dh: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  encryption: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  integrity: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  prf: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                },
+                additionalProperties: true,
+              },
+              phase2: {
+                type: "object",
+                properties: {
+                  encryption: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  integrity: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  pfs: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                },
                 additionalProperties: true,
               },
             },
             additionalProperties: true,
+            description:
+              "User specified list of ciphers to use for the phase 1 and phase 2 of the IKE protocol.",
+          },
+          creationTimestamp: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           description: {
             type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
+          },
+          detailedStatus: {
+            type: "string",
+            description:
+              "[Output Only] Detailed status message for the VPN tunnel.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          ikeVersion: {
+            type: "integer",
+            description:
+              "IKE protocol version to use when establishing the VPN tunnel with the peer VPN gateway. Acceptable IKE versions are 1 or 2. The default version is 2.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of resource. Always compute#vpnTunnel for VPN tunnels.",
+          },
+          labelFingerprint: {
+            type: "string",
+            description:
+              "A fingerprint for the labels being applied to this VpnTunnel, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a VpnTunnel.",
+          },
+          labels: {
+            type: "object",
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
+          },
+          localTrafficSelector: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "Local traffic selector to use when establishing the VPN tunnel with the peer VPN gateway. The value should be a CIDR formatted string, for example: 192.168.0.0/16. The ranges must be disjoint. Only IPv4 is supported for Classic VPN tunnels. This field is output only for HA VPN tunnels.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          peerExternalGateway: {
+            type: "string",
+            description:
+              "URL of the peer side external VPN gateway to which this VPN tunnel is connected. Provided by the client when the VPN tunnel is created. This field is exclusive with the field peerGcpGateway.",
+          },
+          peerExternalGatewayInterface: {
+            type: "integer",
+            description:
+              "The interface ID of the external VPN gateway to which this VPN tunnel is connected. Provided by the client when the VPN tunnel is created. Possible values are: `0`, `1`, `2`, `3`. The number of IDs in use depends on the external VPN gateway redundancy type.",
+          },
+          peerGcpGateway: {
+            type: "string",
+            description:
+              "URL of the peer side HA VPN gateway to which this VPN tunnel is connected. Provided by the client when the VPN tunnel is created. This field can be used when creating highly available VPN from VPC network to VPC network, the field is exclusive with the field peerExternalGateway. If provided, the VPN tunnel will automatically use the same vpnGatewayInterface ID in the peer Google Cloud VPN gateway.",
+          },
+          peerIp: {
+            type: "string",
+            description:
+              "IP address of the peer VPN gateway. Only IPv4 is supported. This field can be set only for Classic VPN tunnels.",
+          },
+          region: {
+            type: "string",
+            description:
+              "[Output Only] URL of the region where the VPN tunnel resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          },
+          remoteTrafficSelector: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "Remote traffic selectors to use when establishing the VPN tunnel with the peer VPN gateway. The value should be a CIDR formatted string, for example: 192.168.0.0/16. The ranges should be disjoint. Only IPv4 is supported for Classic VPN tunnels. This field is output only for HA VPN tunnels.",
+          },
+          router: {
+            type: "string",
+            description:
+              "URL of the router resource to be used for dynamic routing.",
+          },
+          selfLink: {
+            type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
+          },
+          sharedSecret: {
+            type: "string",
+            description:
+              "Shared secret used to set the secure session between the Cloud VPN gateway and the peer VPN gateway.",
+          },
+          sharedSecretHash: {
+            type: "string",
+            description: "Hash of the shared secret.",
           },
           status: {
             type: "string",
             enum: [
+              "UNDEFINED_STATUS",
               "ALLOCATING_RESOURCES",
               "AUTHORIZATION_ERROR",
               "DEPROVISIONING",
@@ -151,54 +239,27 @@ const vpnTunnelsGet: AppBlock = {
               "STOPPED",
               "WAITING_FOR_FULL_CONFIG",
             ],
-          },
-          id: {
-            type: "string",
-          },
-          remoteTrafficSelector: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          selfLink: {
-            type: "string",
-          },
-          sharedSecret: {
-            type: "string",
-          },
-          labels: {
-            type: "object",
-            additionalProperties: true,
-          },
-          detailedStatus: {
-            type: "string",
-          },
-          vpnGatewayInterface: {
-            type: "number",
+            description:
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           targetVpnGateway: {
             type: "string",
+            description:
+              "URL of the Target VPN gateway with which this VPN tunnel is associated. Provided by the client when the VPN tunnel is created. This field can be set only for Classic VPN tunnels.",
           },
-          creationTimestamp: {
+          vpnGateway: {
             type: "string",
+            description:
+              "URL of the VPN gateway with which this VPN tunnel is associated. Provided by the client when the VPN tunnel is created. This must be used (instead of target_vpn_gateway) if a High Availability VPN gateway resource is created.",
           },
-          peerExternalGateway: {
-            type: "string",
-          },
-          localTrafficSelector: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          region: {
-            type: "string",
-          },
-          peerExternalGatewayInterface: {
-            type: "number",
+          vpnGatewayInterface: {
+            type: "integer",
+            description:
+              "The interface ID of the VPN gateway with which this VPN tunnel is associated. Possible values are: `0`, `1`.",
           },
         },
+        description:
+          "Represents a Cloud VPN Tunnel resource.  For more information about VPN, read the the Cloud VPN Overview.",
         additionalProperties: true,
       },
     },

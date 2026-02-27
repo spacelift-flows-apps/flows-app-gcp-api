@@ -1,85 +1,50 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const vpnGatewaysGetStatus: AppBlock = {
-  name: "VPN Gateways - Get Status",
+  name: "Vpn Gateways - Get Status",
   description: `Returns the status for the specified VPN gateway.`,
-  category: "VPN Gateways",
+  category: "Vpn Gateways",
   inputs: {
     default: {
       config: {
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the region for this request.",
+          },
           required: true,
         },
         vpnGateway: {
-          name: "VPN Gateway",
+          name: "Vpn Gateway",
           description: "Name of the VPN gateway to return.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the VPN gateway to return.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.vpnGateway !== undefined)
+          pathParams["vpn_gateway"] = String(
+            input.event.inputConfig.vpnGateway,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/vpnGateways/{vpnGateway}/getStatus`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/vpnGateways/{vpn_gateway}/getStatus",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -97,8 +62,79 @@ const vpnGatewaysGetStatus: AppBlock = {
                 type: "array",
                 items: {
                   type: "object",
+                  properties: {
+                    peerExternalGateway: {
+                      type: "string",
+                      description:
+                        "Output only. URL reference to the peer external VPN gateways to which the VPN tunnels in this VPN connection are connected. This field is mutually exclusive with peer_gcp_gateway.",
+                    },
+                    peerGcpGateway: {
+                      type: "string",
+                      description:
+                        "Output only. URL reference to the peer side VPN gateways to which the VPN tunnels in this VPN connection are connected. This field is mutually exclusive with peer_gcp_gateway.",
+                    },
+                    state: {
+                      type: "object",
+                      properties: {
+                        state: {
+                          type: "string",
+                          enum: [
+                            "UNDEFINED_STATE",
+                            "CONNECTION_REDUNDANCY_MET",
+                            "CONNECTION_REDUNDANCY_NOT_MET",
+                          ],
+                          description:
+                            "Indicates the high availability requirement state for the VPN connection. Valid values are CONNECTION_REDUNDANCY_MET,CONNECTION_REDUNDANCY_NOT_MET. Check the State enum for the list of possible values.",
+                        },
+                        unsatisfiedReason: {
+                          type: "string",
+                          enum: [
+                            "UNDEFINED_UNSATISFIED_REASON",
+                            "INCOMPLETE_TUNNELS_COVERAGE",
+                          ],
+                          description:
+                            "Indicates the reason why the VPN connection does not meet the high availability redundancy criteria/requirement. Valid values is INCOMPLETE_TUNNELS_COVERAGE. Check the UnsatisfiedReason enum for the list of possible values.",
+                        },
+                      },
+                      description:
+                        "Describes the high availability requirement state for the VPN connection between this Cloud VPN gateway and a peer gateway.",
+                      additionalProperties: true,
+                    },
+                    tunnels: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          localGatewayInterface: {
+                            type: "integer",
+                            description:
+                              "Output only. The VPN gateway interface this VPN tunnel is associated with.",
+                          },
+                          peerGatewayInterface: {
+                            type: "integer",
+                            description:
+                              "Output only. The peer gateway interface this VPN tunnel is connected to, the peer gateway could either be an external VPN gateway or a Google Cloud VPN gateway.",
+                          },
+                          tunnelUrl: {
+                            type: "string",
+                            description:
+                              "Output only. URL reference to the VPN tunnel.",
+                          },
+                        },
+                        description:
+                          "Contains some information about a VPN tunnel.",
+                        additionalProperties: true,
+                      },
+                      description:
+                        "List of VPN tunnels that are in this VPN connection.",
+                    },
+                  },
+                  description:
+                    "A VPN connection contains all VPN tunnels connected from this VpnGateway to the same peer gateway. The peer gateway could either be an external VPN gateway or a Google Cloud VPN gateway.",
                   additionalProperties: true,
                 },
+                description:
+                  "Output only. List of VPN connection for this VpnGateway.",
               },
             },
             additionalProperties: true,

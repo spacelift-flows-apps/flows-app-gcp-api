@@ -1,108 +1,97 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const networksList: AppBlock = {
   name: "Networks - List",
-  description: `Retrieves the list of networks available to the specified project.`,
+  description: `Retrieves the list of Zone resources available to the specified project.`,
   category: "Networks",
   inputs: {
     default: {
       config: {
-        orderBy: {
-          name: "Order By",
+        filter: {
+          name: "Filter",
           description:
-            'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: "string",
+            'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
+          type: {
+            type: "string",
+            description:
+              'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
+          },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
-            "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
-          type: "number",
+            "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+          type: {
+            type: "integer",
+            description:
+              "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+          },
           required: false,
         },
-        returnPartialSuccess: {
-          name: "Return Partial Success",
+        orderBy: {
+          name: "Order By",
           description:
-            "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: "boolean",
-          required: false,
-        },
-        filter: {
-          name: "Filter",
-          description:
-            'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
-          type: "string",
+            'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          type: {
+            type: "string",
+            description:
+              'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
-            "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: "string",
+            "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          type: {
+            type: "string",
+            description:
+              "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          },
+          required: false,
+        },
+        returnPartialSuccess: {
+          name: "Return Partial Success",
+          description:
+            "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+          type: {
+            type: "boolean",
+            description:
+              "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+          },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.filter !== undefined)
+          queryParams["filter"] = String(input.event.inputConfig.filter);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
+          queryParams["returnPartialSuccess"] = String(
+            input.event.inputConfig.returnPartialSuccess,
+          );
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/global/networks`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate: "/compute/v1/projects/{project}/global/networks",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -115,95 +104,356 @@ const networksList: AppBlock = {
         properties: {
           id: {
             type: "string",
+            description:
+              "[Output Only] Unique identifier for the resource; defined by the server.",
           },
           items: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                internalIpv6Range: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                kind: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                selfLinkWithId: {
-                  type: "object",
-                  additionalProperties: true,
+                IPv4Range: {
+                  type: "string",
+                  description:
+                    "Deprecated in favor of subnet mode networks. The range of internal addresses that are legal on this network. This range is aCIDR specification, for example:192.168.0.0/16. Provided by the client when the network is created.",
                 },
                 autoCreateSubnetworks: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                params: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "boolean",
+                  description:
+                    "Must be set to create a VPC network. If not set, a legacy network is created.  When set to true, the VPC network is created in auto mode. When set to false, the VPC network is created in custom mode.  An auto mode VPC network starts with one subnet per region. Each subnet has a predetermined range as described inAuto mode VPC network IP ranges.  For custom mode VPC networks, you can add subnets using the subnetworksinsert method.",
                 },
                 creationTimestamp: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                selfLink: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                mtu: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                subnetworks: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
                 },
                 description: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this field when you create the resource.",
                 },
-                networkFirewallPolicyEnforcementOrder: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                gatewayIPv4: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                peerings: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                id: {
-                  type: "object",
-                  additionalProperties: true,
+                enableUlaInternalIpv6: {
+                  type: "boolean",
+                  description:
+                    "Enable ULA internal ipv6 on this network. Enabling this feature will assign a /48 from google defined ULA prefix fd20::/20. .",
                 },
                 firewallPolicy: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] URL of the firewall policy the network is associated with.",
+                },
+                gatewayIPv4: {
+                  type: "string",
+                  description:
+                    "[Output Only] The gateway address for default routing out of the network, selected by Google Cloud.",
+                },
+                id: {
+                  type: "string",
+                  description: "64-bit integer as string",
+                },
+                internalIpv6Range: {
+                  type: "string",
+                  description:
+                    "When enabling ula internal ipv6, caller optionally can specify the /48 range they want from the google defined ULA prefix fd20::/20. The input must be a valid /48 ULA IPv6 address and must be within the fd20::/20. Operation will fail if the speficied /48 is already in used by another resource. If the field is not speficied, then a /48 range will be randomly allocated from fd20::/20 and returned via this field. .",
+                },
+                kind: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Type of the resource. Always compute#network for networks.",
+                },
+                mtu: {
+                  type: "integer",
+                  description:
+                    "Maximum Transmission Unit in bytes. The minimum value for this field is 1300 and the maximum value is 8896. The suggested value is 1500, which is the default MTU used on the Internet, or 8896 if you want to use Jumbo frames. If unspecified, the value defaults to 1460.",
+                },
+                name: {
+                  type: "string",
+                  description:
+                    "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all following characters (except for the last character) must be a dash, lowercase letter, or digit. The last character must be a lowercase letter or digit.",
+                },
+                networkFirewallPolicyEnforcementOrder: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_NETWORK_FIREWALL_POLICY_ENFORCEMENT_ORDER",
+                    "AFTER_CLASSIC_FIREWALL",
+                    "BEFORE_CLASSIC_FIREWALL",
+                  ],
+                  description:
+                    "The network firewall policy enforcement order. Can be either AFTER_CLASSIC_FIREWALL or BEFORE_CLASSIC_FIREWALL. Defaults to AFTER_CLASSIC_FIREWALL if the field is not specified. Check the NetworkFirewallPolicyEnforcementOrder enum for the list of possible values.",
+                },
+                networkProfile: {
+                  type: "string",
+                  description:
+                    "A full or partial URL of the network profile to apply to this network. This field can be set only at resource creation time. For example, the following are valid URLs:     - https://www.googleapis.com/compute/{api_version}/projects/{project_id}/global/networkProfiles/{network_profile_name}    - projects/{project_id}/global/networkProfiles/{network_profile_name}",
+                },
+                peerings: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      autoCreateRoutes: {
+                        type: "boolean",
+                        description:
+                          "This field will be deprecated soon. Use theexchange_subnet_routes field instead. Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
+                      },
+                      connectionStatus: {
+                        type: "object",
+                        properties: {
+                          consensusState: {
+                            type: "object",
+                            properties: {
+                              deleteStatus: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_DELETE_STATUS",
+                                  "DELETE_ACKNOWLEDGED",
+                                  "DELETE_STATUS_UNSPECIFIED",
+                                  "LOCAL_DELETE_REQUESTED",
+                                  "PEER_DELETE_REQUESTED",
+                                ],
+                                description:
+                                  "The status of the delete request. Check the DeleteStatus enum for the list of possible values.",
+                              },
+                              updateStatus: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_UPDATE_STATUS",
+                                  "IN_SYNC",
+                                  "PENDING_LOCAL_ACKNOWLEDMENT",
+                                  "PENDING_PEER_ACKNOWLEDGEMENT",
+                                  "UPDATE_STATUS_UNSPECIFIED",
+                                ],
+                                description:
+                                  "The status of the update request. Check the UpdateStatus enum for the list of possible values.",
+                              },
+                            },
+                            description:
+                              "The status of update/delete for a consensus peering connection. Only set when connection_status.update_strategy isCONSENSUS or a network peering is proposing to update the strategy to CONSENSUS.",
+                            additionalProperties: true,
+                          },
+                          trafficConfiguration: {
+                            type: "object",
+                            properties: {
+                              exportCustomRoutesToPeer: {
+                                type: "boolean",
+                                description:
+                                  "Whether custom routes are being exported to the peer network.",
+                              },
+                              exportSubnetRoutesWithPublicIpToPeer: {
+                                type: "boolean",
+                                description:
+                                  "Whether subnet routes with public IP ranges are being exported to the peer network.",
+                              },
+                              importCustomRoutesFromPeer: {
+                                type: "boolean",
+                                description:
+                                  "Whether custom routes are being imported from the peer network.",
+                              },
+                              importSubnetRoutesWithPublicIpFromPeer: {
+                                type: "boolean",
+                                description:
+                                  "Whether subnet routes with public IP ranges are being imported from the peer network.",
+                              },
+                              stackType: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_STACK_TYPE",
+                                  "IPV4_IPV6",
+                                  "IPV4_ONLY",
+                                ],
+                                description:
+                                  "Which IP version(s) of traffic and routes are being imported or exported between peer networks. Check the StackType enum for the list of possible values.",
+                              },
+                            },
+                            additionalProperties: true,
+                            description:
+                              "The active connectivity settings for the peering connection based on the settings of the network peerings.",
+                          },
+                          updateStrategy: {
+                            type: "string",
+                            enum: [
+                              "UNDEFINED_UPDATE_STRATEGY",
+                              "CONSENSUS",
+                              "INDEPENDENT",
+                              "UNSPECIFIED",
+                            ],
+                            description:
+                              "The update strategy determines the update/delete semantics for this peering connection. Check the UpdateStrategy enum for the list of possible values.",
+                          },
+                        },
+                        description:
+                          "[Output Only] Describes the state of a peering connection, not just the local peering. This field provides information about the effective settings for the connection as a whole, including pending delete/update requests for CONSENSUS peerings.",
+                        additionalProperties: true,
+                      },
+                      exchangeSubnetRoutes: {
+                        type: "boolean",
+                        description:
+                          "Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
+                      },
+                      exportCustomRoutes: {
+                        type: "boolean",
+                        description:
+                          "Whether to export the custom routes to peer network. The default value is false.",
+                      },
+                      exportSubnetRoutesWithPublicIp: {
+                        type: "boolean",
+                        description:
+                          "Whether subnet routes with public IP range are exported. The default value is true, all subnet routes are exported.IPv4 special-use ranges are always exported to peers and are not controlled by this field.",
+                      },
+                      importCustomRoutes: {
+                        type: "boolean",
+                        description:
+                          "Whether to import the custom routes from peer network. The default value is false.",
+                      },
+                      importSubnetRoutesWithPublicIp: {
+                        type: "boolean",
+                        description:
+                          "Whether subnet routes with public IP range are imported. The default value is false.IPv4 special-use ranges are always imported from peers and are not controlled by this field.",
+                      },
+                      name: {
+                        type: "string",
+                        description:
+                          "Name of this peering. Provided by the client when the peering is created. The name must comply withRFC1035. Specifically, the name must be 1-63 characters long and match regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all the following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                      },
+                      network: {
+                        type: "string",
+                        description:
+                          "The URL of the peer network. It can be either full URL or partial URL. The peer network may belong to a different project. If the partial URL does not contain project, it is assumed that the peer network is in the same project as the current network.",
+                      },
+                      peerMtu: {
+                        type: "integer",
+                        description:
+                          "Output only. [Output Only] Maximum Transmission Unit in bytes of the peer network.",
+                      },
+                      stackType: {
+                        type: "string",
+                        enum: [
+                          "UNDEFINED_STACK_TYPE",
+                          "IPV4_IPV6",
+                          "IPV4_ONLY",
+                        ],
+                        description:
+                          "Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Check the StackType enum for the list of possible values.",
+                      },
+                      state: {
+                        type: "string",
+                        enum: ["UNDEFINED_STATE", "ACTIVE", "INACTIVE"],
+                        description:
+                          "Output only. [Output Only] State for the peering, either `ACTIVE` or `INACTIVE`. The peering is `ACTIVE` when there's a matching configuration in the peer network. Check the State enum for the list of possible values.",
+                      },
+                      stateDetails: {
+                        type: "string",
+                        description:
+                          "Output only. [Output Only] Details about the current state of the peering.",
+                      },
+                      updateStrategy: {
+                        type: "string",
+                        enum: [
+                          "UNDEFINED_UPDATE_STRATEGY",
+                          "CONSENSUS",
+                          "INDEPENDENT",
+                          "UNSPECIFIED",
+                        ],
+                        description:
+                          "The update strategy determines the semantics for updates and deletes to the peering connection configuration. Check the UpdateStrategy enum for the list of possible values.",
+                      },
+                    },
+                    description:
+                      "A network peering attached to a network resource. The message includes the peering name, peer network, peering state, and a flag indicating whether Google Compute Engine should automatically create routes for the peering.",
+                    additionalProperties: true,
+                  },
+                  description:
+                    "Output only. [Output Only] A list of network peerings for the resource.",
                 },
                 routingConfig: {
                   type: "object",
+                  properties: {
+                    bgpAlwaysCompareMed: {
+                      type: "boolean",
+                      description:
+                        "Enable comparison of Multi-Exit Discriminators (MED) across routes with different neighbor ASNs when using the STANDARD BGP best path selection algorithm.",
+                    },
+                    bgpBestPathSelectionMode: {
+                      type: "string",
+                      enum: [
+                        "UNDEFINED_BGP_BEST_PATH_SELECTION_MODE",
+                        "LEGACY",
+                        "STANDARD",
+                      ],
+                      description:
+                        "The BGP best path selection algorithm to be employed within this network for dynamic routes learned by Cloud Routers. Can be LEGACY (default) or STANDARD. Check the BgpBestPathSelectionMode enum for the list of possible values.",
+                    },
+                    bgpInterRegionCost: {
+                      type: "string",
+                      enum: [
+                        "UNDEFINED_BGP_INTER_REGION_COST",
+                        "ADD_COST_TO_MED",
+                        "DEFAULT",
+                      ],
+                      description:
+                        "Allows to define a preferred approach for handling inter-region cost in the selection process when using the STANDARD BGP best path selection algorithm. Can be DEFAULT orADD_COST_TO_MED. Check the BgpInterRegionCost enum for the list of possible values.",
+                    },
+                    effectiveBgpAlwaysCompareMed: {
+                      type: "boolean",
+                      description:
+                        "Output only. [Output Only] Effective value of the bgp_always_compare_med field.",
+                    },
+                    effectiveBgpInterRegionCost: {
+                      type: "string",
+                      enum: ["UNDEFINED_EFFECTIVE_BGP_INTER_REGION_COST"],
+                      description:
+                        "Output only. [Output Only] Effective value of the bgp_inter_region_cost field. Check the EffectiveBgpInterRegionCost enum for the list of possible values.",
+                    },
+                    routingMode: {
+                      type: "string",
+                      enum: ["UNDEFINED_ROUTING_MODE", "GLOBAL", "REGIONAL"],
+                      description:
+                        "The network-wide routing mode to use. If set to REGIONAL, this network's Cloud Routers will only advertise routes with subnets of this network in the same region as the router. If set toGLOBAL, this network's Cloud Routers will advertise routes with all subnets of this network, across regions. Check the RoutingMode enum for the list of possible values.",
+                    },
+                  },
+                  description:
+                    "A routing configuration attached to a network resource. The message includes the list of routers associated with the network, and a flag indicating the type of routing behavior to enforce network-wide.",
                   additionalProperties: true,
                 },
-                IPv4Range: {
-                  type: "object",
-                  additionalProperties: true,
+                selfLink: {
+                  type: "string",
+                  description:
+                    "[Output Only] Server-defined URL for the resource.",
                 },
-                networkProfile: {
-                  type: "object",
-                  additionalProperties: true,
+                selfLinkWithId: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
                 },
-                name: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                enableUlaInternalIpv6: {
-                  type: "object",
-                  additionalProperties: true,
+                subnetworks: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "[Output Only] Server-defined fully-qualified URLs for all subnetworks in this VPC network.",
                 },
               },
+              description:
+                "Represents a VPC Network resource.  Networks connect resources to each other and to the internet. For more information, readVirtual Private Cloud (VPC) Network.",
               additionalProperties: true,
             },
+            description: "A list of Network resources.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of resource. Always compute#networkList for lists of networks.",
+          },
+          nextPageToken: {
+            type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for this resource.",
           },
           warning: {
             type: "object",
@@ -211,6 +461,7 @@ const networksList: AppBlock = {
               code: {
                 type: "string",
                 enum: [
+                  "UNDEFINED_CODE",
                   "CLEANUP_FAILED",
                   "DEPRECATED_RESOURCE_USED",
                   "DEPRECATED_TYPE_USED",
@@ -241,9 +492,8 @@ const networksList: AppBlock = {
                   "UNDECLARED_PROPERTIES",
                   "UNREACHABLE",
                 ],
-              },
-              message: {
-                type: "string",
+                description:
+                  "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
               },
               data: {
                 type: "array",
@@ -251,30 +501,32 @@ const networksList: AppBlock = {
                   type: "object",
                   properties: {
                     key: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
                     },
                     value: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A warning data value corresponding to the key.",
                     },
                   },
                   additionalProperties: true,
                 },
+                description:
+                  '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+              },
+              message: {
+                type: "string",
+                description:
+                  "[Output Only] A human-readable description of the warning code.",
               },
             },
+            description: "Informational warning message.",
             additionalProperties: true,
           },
-          kind: {
-            type: "string",
-          },
-          nextPageToken: {
-            type: "string",
-          },
-          selfLink: {
-            type: "string",
-          },
         },
+        description: "Contains a list of networks.",
         additionalProperties: true,
       },
     },

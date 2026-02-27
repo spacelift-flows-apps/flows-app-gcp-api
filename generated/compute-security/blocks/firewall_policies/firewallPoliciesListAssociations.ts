@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const firewallPoliciesListAssociations: AppBlock = {
   name: "Firewall Policies - List Associations",
-  description: `Lists associations of a specified target, i.`,
+  description: `Lists associations of a specified target, i.e., organization or folder. Use this API to read Cloud Armor policies. Previously, alpha and beta versions of this API were used to read firewall policies. This usage is now disabled for most organizations. Use firewallPolicies.listAssociations instead.`,
   category: "Firewall Policies",
   inputs: {
     default: {
@@ -11,70 +11,34 @@ const firewallPoliciesListAssociations: AppBlock = {
         targetResource: {
           name: "Target Resource",
           description:
-            "The target resource to list associations. It is an organization, or a\nfolder.",
-          type: "string",
+            "The target resource to list associations. It is an organization, or a folder.",
+          type: {
+            type: "string",
+            description:
+              "The target resource to list associations. It is an organization, or a folder.",
+          },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.targetResource !== undefined)
+          queryParams["targetResource"] = String(
+            input.event.inputConfig.targetResource,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `locations/global/firewallPolicies/listAssociations`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/locations/global/firewallPolicies/listAssociations",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -90,32 +54,39 @@ const firewallPoliciesListAssociations: AppBlock = {
             items: {
               type: "object",
               properties: {
-                displayName: {
-                  type: "object",
-                  additionalProperties: true,
+                attachmentTarget: {
+                  type: "string",
+                  description:
+                    "The target that the firewall policy is attached to.",
                 },
-                name: {
-                  type: "object",
-                  additionalProperties: true,
+                displayName: {
+                  type: "string",
+                  description:
+                    "[Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.",
                 },
                 firewallPolicyId: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] The firewall policy ID of the association.",
+                },
+                name: {
+                  type: "string",
+                  description: "The name for an association.",
                 },
                 shortName: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                attachmentTarget: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] The short name of the firewall policy of the association.",
                 },
               },
               additionalProperties: true,
             },
+            description: "A list of associations.",
           },
           kind: {
             type: "string",
+            description:
+              "Output only. [Output Only] Type of firewallPolicy associations. Alwayscompute#FirewallPoliciesListAssociations for lists of firewallPolicy associations.",
           },
         },
         additionalProperties: true,

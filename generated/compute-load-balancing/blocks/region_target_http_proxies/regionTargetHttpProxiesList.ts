@@ -1,114 +1,109 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const regionTargetHttpProxiesList: AppBlock = {
-  name: "Region Target HTTP Proxies - List",
-  description: `Retrieves the list of TargetHttpProxy resources available to the specified project in the specified region.`,
-  category: "Region Target HTTP Proxies",
+  name: "Region Target Http Proxies - List",
+  description: `Retrieves the list of Zone resources available to the specified project.`,
+  category: "Region Target Http Proxies",
   inputs: {
     default: {
       config: {
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the region scoping this request.",
+          },
           required: true,
-        },
-        orderBy: {
-          name: "Order By",
-          description:
-            'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: "string",
-          required: false,
         },
         filter: {
           name: "Filter",
           description:
-            'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
-          type: "string",
+            'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
+          type: {
+            type: "string",
+            description:
+              'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
+          },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
-            "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
-          type: "number",
+            "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+          type: {
+            type: "integer",
+            description:
+              "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+          },
+          required: false,
+        },
+        orderBy: {
+          name: "Order By",
+          description:
+            'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          type: {
+            type: "string",
+            description:
+              'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
-            "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: "string",
+            "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          type: {
+            type: "string",
+            description:
+              "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          },
           required: false,
         },
         returnPartialSuccess: {
           name: "Return Partial Success",
           description:
-            "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: "boolean",
+            "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+          type: {
+            type: "boolean",
+            description:
+              "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+          },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.filter !== undefined)
+          queryParams["filter"] = String(input.event.inputConfig.filter);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
+          queryParams["returnPartialSuccess"] = String(
+            input.event.inputConfig.returnPartialSuccess,
+          );
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/targetHttpProxies`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/targetHttpProxies",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -119,67 +114,91 @@ const regionTargetHttpProxiesList: AppBlock = {
       type: {
         type: "object",
         properties: {
-          kind: {
+          id: {
             type: "string",
-          },
-          nextPageToken: {
-            type: "string",
+            description:
+              "[Output Only] Unique identifier for the resource; defined by the server.",
           },
           items: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                description: {
-                  type: "object",
-                  additionalProperties: true,
+                creationTimestamp: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
                 },
-                id: {
-                  type: "object",
-                  additionalProperties: true,
+                description: {
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this property when you create the resource.",
                 },
                 fingerprint: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a TargetHttpProxy. An up-to-date fingerprint must be provided in order to patch/update the TargetHttpProxy; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the TargetHttpProxy.",
                 },
                 httpKeepAliveTimeoutSec: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "integer",
+                  description:
+                    "Specifies how long to keep a connection open, after completing a response, while there is no matching traffic (in seconds). If an HTTP keep-alive is not specified, a default value (610 seconds) will be used.  For global external Application Load Balancers, the minimum allowed value is 5 seconds and the maximum allowed value is 1200 seconds.  For classic Application Load Balancers, this option is not supported.",
                 },
-                name: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                proxyBind: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                creationTimestamp: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                selfLink: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                region: {
-                  type: "object",
-                  additionalProperties: true,
-                },
-                urlMap: {
-                  type: "object",
-                  additionalProperties: true,
+                id: {
+                  type: "string",
+                  description: "64-bit integer as string",
                 },
                 kind: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Type of resource. Always compute#targetHttpProxy for target HTTP proxies.",
+                },
+                name: {
+                  type: "string",
+                  description:
+                    "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                },
+                proxyBind: {
+                  type: "boolean",
+                  description:
+                    "This field only applies when the forwarding rule that references this target proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.  When this field is set to true, Envoy proxies set up inbound traffic interception and bind to the IP address and port specified in the forwarding rule. This is generally useful when using Traffic Director to configure Envoy as a gateway or middle proxy (in other words, not a sidecar proxy). The Envoy proxy listens for inbound requests and handles requests when it receives them.  The default is false.",
+                },
+                region: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] URL of the region where the regional Target HTTP Proxy resides. This field is not applicable to global Target HTTP Proxies.",
+                },
+                selfLink: {
+                  type: "string",
+                  description:
+                    "[Output Only] Server-defined URL for the resource.",
+                },
+                urlMap: {
+                  type: "string",
+                  description:
+                    "URL to the UrlMap resource that defines the mapping from URL to the BackendService.",
                 },
               },
+              description:
+                "Represents a Target HTTP Proxy resource.  Google Compute Engine has two Target HTTP Proxy resources:  * [Global](/compute/docs/reference/rest/v1/targetHttpProxies) * [Regional](/compute/docs/reference/rest/v1/regionTargetHttpProxies)  A target HTTP proxy is a component of Google Cloud HTTP load balancers.  * targetHttpProxies are used by global external Application Load Balancers,   classic Application Load Balancers, cross-region internal Application Load   Balancers, and Traffic Director. * regionTargetHttpProxies are used by regional internal Application Load   Balancers and regional external Application Load Balancers.  Forwarding rules reference a target HTTP proxy, and the target proxy then references a URL map. For more information, readUsing Target Proxies and Forwarding rule concepts.",
               additionalProperties: true,
             },
+            description: "A list of TargetHttpProxy resources.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. Type of resource. Always compute#targetHttpProxyList for lists of target HTTP proxies.",
+          },
+          nextPageToken: {
+            type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
           selfLink: {
             type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for this resource.",
           },
           warning: {
             type: "object",
@@ -187,6 +206,7 @@ const regionTargetHttpProxiesList: AppBlock = {
               code: {
                 type: "string",
                 enum: [
+                  "UNDEFINED_CODE",
                   "CLEANUP_FAILED",
                   "DEPRECATED_RESOURCE_USED",
                   "DEPRECATED_TYPE_USED",
@@ -217,34 +237,41 @@ const regionTargetHttpProxiesList: AppBlock = {
                   "UNDECLARED_PROPERTIES",
                   "UNREACHABLE",
                 ],
-              },
-              message: {
-                type: "string",
+                description:
+                  "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
               },
               data: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    value: {
-                      type: "object",
-                      additionalProperties: true,
-                    },
                     key: {
-                      type: "object",
-                      additionalProperties: true,
+                      type: "string",
+                      description:
+                        "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                    },
+                    value: {
+                      type: "string",
+                      description:
+                        "[Output Only] A warning data value corresponding to the key.",
                     },
                   },
                   additionalProperties: true,
                 },
+                description:
+                  '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+              },
+              message: {
+                type: "string",
+                description:
+                  "[Output Only] A human-readable description of the warning code.",
               },
             },
+            description: "Informational warning message.",
             additionalProperties: true,
           },
-          id: {
-            type: "string",
-          },
         },
+        description: "A list of TargetHttpProxy resources.",
         additionalProperties: true,
       },
     },

@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const instancesGetScreenshot: AppBlock = {
   name: "Instances - Get Screenshot",
@@ -8,78 +8,41 @@ const instancesGetScreenshot: AppBlock = {
   inputs: {
     default: {
       config: {
-        instance: {
-          name: "Instance",
-          description: "Name of the instance scoping this request.",
-          type: "string",
-          required: true,
-        },
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The name of the zone for this request.",
+          },
+          required: true,
+        },
+        instance: {
+          name: "Instance",
+          description: "Name of the instance scoping this request.",
+          type: {
+            type: "string",
+            description: "Name of the instance scoping this request.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.zone !== undefined)
+          pathParams["zone"] = String(input.event.inputConfig.zone);
+        if (input.event.inputConfig.instance !== undefined)
+          pathParams["instance"] = String(input.event.inputConfig.instance);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/zones/{zone}/instances/{instance}/screenshot`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/zones/{zone}/instances/{instance}/screenshot",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -90,13 +53,17 @@ const instancesGetScreenshot: AppBlock = {
       type: {
         type: "object",
         properties: {
-          kind: {
-            type: "string",
-          },
           contents: {
             type: "string",
+            description: "[Output Only] The Base64-encoded screenshot data.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of the resource. Always compute#screenshot for the screenshots.",
           },
         },
+        description: "An instance's screenshot.",
         additionalProperties: true,
       },
     },

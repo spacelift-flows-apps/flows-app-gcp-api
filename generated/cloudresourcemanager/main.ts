@@ -1,5 +1,5 @@
 import { defineApp } from "@slflows/sdk/v1";
-import { blocks } from "./blocks";
+import { blocks } from "./blocks/index.ts";
 
 export const app = defineApp({
   name: "Cloud Resource Manager API",
@@ -25,25 +25,8 @@ For better security, use short-lived access tokens instead of long-lived keys:
 3. Use that app to generate access tokens
 4. Pass the token to the **Access Token** field below
 
-This approach eliminates the need for long-lived credentials and provides better audit trails.
-
-## Project ID
-
-Find your GCP Project ID:
-- In the [GCP Console](https://console.cloud.google.com) (top navigation)
-- Or run: \`gcloud config get-value project\``,
+This approach eliminates the need for long-lived credentials and provides better audit trails.`,
   config: {
-    projectId: {
-      name: "Project ID",
-      description: `Your GCP Project ID (e.g., \`my-project-123\`)
-
-Find this in the [GCP Console](https://console.cloud.google.com) or run:
-\`\`\`bash
-gcloud config get-value project
-\`\`\``,
-      type: "string",
-      required: true,
-    },
     serviceAccountKey: {
       name: "Service Account Key",
       description: `**Long-lived credentials** (optional if using Access Token below)

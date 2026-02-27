@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const addressesGet: AppBlock = {
   name: "Addresses - Get",
-  description: `Returns the specified address resource.`,
+  description: `Returns the specified Zone resource.`,
   category: "Addresses",
   inputs: {
     default: {
@@ -11,75 +11,38 @@ const addressesGet: AppBlock = {
         region: {
           name: "Region",
           description: "Name of the region for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the region for this request.",
+          },
           required: true,
         },
         address: {
           name: "Address",
           description: "Name of the address resource to return.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the address resource to return.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.address !== undefined)
+          pathParams["address"] = String(input.event.inputConfig.address);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/addresses/{address}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/addresses/{address}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -90,15 +53,106 @@ const addressesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          prefixLength: {
-            type: "number",
-          },
-          selfLink: {
+          address: {
             type: "string",
+            description: "The static IP address represented by this resource.",
+          },
+          addressType: {
+            type: "string",
+            enum: [
+              "UNDEFINED_ADDRESS_TYPE",
+              "EXTERNAL",
+              "INTERNAL",
+              "UNSPECIFIED_TYPE",
+            ],
+            description:
+              "The type of address to reserve, either INTERNAL orEXTERNAL. If unspecified, defaults to EXTERNAL. Check the AddressType enum for the list of possible values.",
+          },
+          creationTimestamp: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this field when you create the resource.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          ipCollection: {
+            type: "string",
+            description:
+              "Reference to the source of external IPv4 addresses, like a PublicDelegatedPrefix (PDP) for BYOIP. The PDP must support enhanced IPv4 allocations.  Use one of the following formats to specify a PDP when reserving an external IPv4 address using BYOIP.     -    Full resource URL, as inhttps://www.googleapis.com/compute/v1/projects/projectId/regions/region/publicDelegatedPrefixes/pdp-name    -    Partial URL, as in             - projects/projectId/regions/region/publicDelegatedPrefixes/pdp-name           - regions/region/publicDelegatedPrefixes/pdp-name",
+          },
+          ipVersion: {
+            type: "string",
+            enum: [
+              "UNDEFINED_IP_VERSION",
+              "IPV4",
+              "IPV6",
+              "UNSPECIFIED_VERSION",
+            ],
+            description:
+              "The IP version that will be used by this address. Valid options areIPV4 or IPV6. Check the IpVersion enum for the list of possible values.",
+          },
+          ipv6EndpointType: {
+            type: "string",
+            enum: ["UNDEFINED_IPV6_ENDPOINT_TYPE", "NETLB", "VM"],
+            description:
+              "The endpoint type of this address, which should be VM or NETLB. This is used for deciding which type of endpoint this address can be used after the external IPv6 address reservation. Check the Ipv6EndpointType enum for the list of possible values.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of the resource. Always compute#address for addresses.",
+          },
+          labelFingerprint: {
+            type: "string",
+            description:
+              "A fingerprint for the labels being applied to this Address, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an Address.",
+          },
+          labels: {
+            type: "object",
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all following characters (except for the last character) must be a dash, lowercase letter, or digit. The last character must be a lowercase letter or digit.",
+          },
+          network: {
+            type: "string",
+            description:
+              "The URL of the network in which to reserve the address. This field can only be used with INTERNAL type with theVPC_PEERING purpose.",
+          },
+          networkTier: {
+            type: "string",
+            enum: [
+              "UNDEFINED_NETWORK_TIER",
+              "FIXED_STANDARD",
+              "PREMIUM",
+              "STANDARD",
+              "STANDARD_OVERRIDES_FIXED_STANDARD",
+            ],
+            description:
+              "This signifies the networking tier used for configuring this address and can only take the following values: PREMIUM orSTANDARD. Internal IP addresses are always Premium Tier; global external IP addresses are always Premium Tier; regional external IP addresses can be either Standard or Premium Tier.  If this field is not specified, it is assumed to be PREMIUM. Check the NetworkTier enum for the list of possible values.",
+          },
+          prefixLength: {
+            type: "integer",
+            description:
+              "The prefix length if the resource represents an IP range.",
           },
           purpose: {
             type: "string",
             enum: [
+              "UNDEFINED_PURPOSE",
               "DNS_RESOLVER",
               "GCE_ENDPOINT",
               "IPSEC_INTERCONNECT",
@@ -108,73 +162,40 @@ const addressesGet: AppBlock = {
               "SHARED_LOADBALANCER_VIP",
               "VPC_PEERING",
             ],
+            description:
+              "The purpose of this resource, which can be one of the following values:        - GCE_ENDPOINT for addresses that are used by VM      instances, alias IP ranges, load balancers, and similar resources.      - DNS_RESOLVER for a DNS resolver address in a subnetwork        for a Cloud DNS  inbound        forwarder IP addresses (regional internal IP address in a subnet of        a VPC network)      - VPC_PEERING for global internal IP addresses used for            private services access allocated ranges.      - NAT_AUTO for the regional external IP addresses used by           Cloud NAT when allocating addresses using            automatic NAT IP address allocation.      - IPSEC_INTERCONNECT for addresses created from a private      IP range that are reserved for a VLAN attachment in an      *HA VPN over Cloud Interconnect* configuration. These addresses      are regional resources.      - `SHARED_LOADBALANCER_VIP` for an internal IP address that is assigned      to multiple internal forwarding rules.      - `PRIVATE_SERVICE_CONNECT` for a private network address that is      used to configure Private Service Connect. Only global internal addresses      can use this purpose. Check the Purpose enum for the list of possible values.",
           },
-          ipVersion: {
+          region: {
             type: "string",
-            enum: ["IPV4", "IPV6", "UNSPECIFIED_VERSION"],
+            description:
+              "Output only. [Output Only] The URL of the region where a regional address resides. For regional addresses, you must specify the region as a path parameter in the HTTP request URL. *This field is not applicable to global addresses.*",
+          },
+          selfLink: {
+            type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
+          },
+          status: {
+            type: "string",
+            enum: ["UNDEFINED_STATUS", "IN_USE", "RESERVED", "RESERVING"],
+            description:
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
+          },
+          subnetwork: {
+            type: "string",
+            description:
+              "The URL of the subnetwork in which to reserve the address. If an IP address is specified, it must be within the subnetwork's IP range. This field can only be used with INTERNAL type with aGCE_ENDPOINT or DNS_RESOLVER purpose.",
           },
           users: {
             type: "array",
             items: {
               type: "string",
             },
-          },
-          id: {
-            type: "string",
-          },
-          address: {
-            type: "string",
-          },
-          addressType: {
-            type: "string",
-            enum: ["EXTERNAL", "INTERNAL", "UNSPECIFIED_TYPE"],
-          },
-          ipv6EndpointType: {
-            type: "string",
-            enum: ["NETLB", "VM"],
-          },
-          region: {
-            type: "string",
-          },
-          description: {
-            type: "string",
-          },
-          network: {
-            type: "string",
-          },
-          labelFingerprint: {
-            type: "string",
-          },
-          labels: {
-            type: "object",
-            additionalProperties: true,
-          },
-          kind: {
-            type: "string",
-          },
-          subnetwork: {
-            type: "string",
-          },
-          name: {
-            type: "string",
-          },
-          status: {
-            type: "string",
-            enum: ["IN_USE", "RESERVED", "RESERVING"],
-          },
-          creationTimestamp: {
-            type: "string",
-          },
-          networkTier: {
-            type: "string",
-            enum: [
-              "FIXED_STANDARD",
-              "PREMIUM",
-              "STANDARD",
-              "STANDARD_OVERRIDES_FIXED_STANDARD",
-            ],
+            description:
+              "[Output Only] The URLs of the resources that are using this address.",
           },
         },
+        description:
+          "Represents an IP Address resource.  Google Compute Engine has two IP Address resources:  * [Global (external and internal)](https://cloud.google.com/compute/docs/reference/rest/v1/globalAddresses) * [Regional (external and internal)](https://cloud.google.com/compute/docs/reference/rest/v1/addresses)  For more information, see Reserving a static external IP address.",
         additionalProperties: true,
       },
     },

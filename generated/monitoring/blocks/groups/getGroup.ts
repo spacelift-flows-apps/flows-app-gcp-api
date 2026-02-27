@@ -1,0 +1,91 @@
+import { AppBlock, events } from "@slflows/sdk/v1";
+import { getGroupServiceClient, convertKeys } from "../../lib/grpcClient.ts";
+
+const outputMapping = {
+  display_name: "displayName",
+  parent_name: "parentName",
+  is_cluster: "isCluster",
+};
+
+const getGroup: AppBlock = {
+  name: "Get Group",
+  description: `Gets a single group.`,
+  category: "Groups",
+  inputs: {
+    default: {
+      config: {
+        name: {
+          name: "Name",
+          description:
+            "Required. The group to retrieve. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]",
+          type: {
+            type: "string",
+            description:
+              "Required. The group to retrieve. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]",
+          },
+          required: true,
+        },
+      },
+      onEvent: async (input) => {
+        const client = await getGroupServiceClient(input.app.config);
+
+        const request = { ...input.event.inputConfig };
+
+        const result = await new Promise<any>((resolve, reject) => {
+          client.getGroup(request, (err: any, response: any) => {
+            if (err)
+              reject(
+                new Error(
+                  `gRPC error [${err.code}]: ${err.details || err.message}`,
+                ),
+              );
+            else resolve(response);
+          });
+        });
+
+        const output = convertKeys(result || {}, outputMapping);
+        await events.emit(output);
+      },
+    },
+  },
+  outputs: {
+    default: {
+      possiblePrimaryParents: ["default"],
+      type: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            description:
+              "Output only. The name of this group. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  When creating a group, this field is ignored and a new name is created consisting of the project specified in the call to `CreateGroup` and a unique `[GROUP_ID]` that is generated automatically.",
+          },
+          displayName: {
+            type: "string",
+            description:
+              "A user-assigned name for this group, used only for display purposes.",
+          },
+          parentName: {
+            type: "string",
+            description:
+              'The name of the group\'s parent, if it has one. The format is:      projects/[PROJECT_ID_OR_NUMBER]/groups/[GROUP_ID]  For groups with no parent, `parent_name` is the empty string, `""`.',
+          },
+          filter: {
+            type: "string",
+            description:
+              "The filter used to determine which monitored resources belong to this group.",
+          },
+          isCluster: {
+            type: "boolean",
+            description:
+              "If true, the members of this group are considered to be a cluster. The system can perform additional analysis on groups that are clusters.",
+          },
+        },
+        description:
+          'The description of a dynamic collection of monitored resources. Each group has a filter that is matched against monitored resources and their associated metadata. If a group\'s filter matches an available monitored resource, then that resource is a member of that group.  Groups can contain any number of monitored resources, and each monitored resource can be a member of any number of groups.  Groups can be nested in parent-child hierarchies. The `parentName` field identifies an optional parent for each group.  If a group has a parent, then the only monitored resources available to be matched by the group\'s filter are the resources contained in the parent group.  In other words, a group contains the monitored resources that match its filter and the filters of all the group\'s ancestors.  A group without a parent can contain any monitored resource.  For example, consider an infrastructure running a set of instances with two user-defined tags: `"environment"` and `"role"`. A parent group has a filter, `environment="production"`.  A child of that parent group has a filter, `role="transcoder"`.  The parent group contains all instances in the production environment, regardless of their roles.  The child group contains instances that have the transcoder role *and* are in the production environment.  The monitored resources contained in a group can change at any moment, depending on what resources exist and what filters are associated with the group and its ancestors.',
+        additionalProperties: true,
+      },
+    },
+  },
+};
+
+export default getGroup;

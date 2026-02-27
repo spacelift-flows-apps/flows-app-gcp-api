@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const instanceGroupsGet: AppBlock = {
   name: "Instance Groups - Get",
-  description: `Returns the specified zonal instance group.`,
+  description: `Returns the specified Zone resource.`,
   category: "Instance Groups",
   inputs: {
     default: {
@@ -11,76 +11,42 @@ const instanceGroupsGet: AppBlock = {
         zone: {
           name: "Zone",
           description:
-            "The name of the zone\nwhere the instance group is located.",
-          type: "string",
+            "The name of the zone where the instance group is located.",
+          type: {
+            type: "string",
+            description:
+              "The name of the zone where the instance group is located.",
+          },
           required: true,
         },
         instanceGroup: {
           name: "Instance Group",
           description: "The name of the instance group.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The name of the instance group.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.zone !== undefined)
+          pathParams["zone"] = String(input.event.inputConfig.zone);
+        if (input.event.inputConfig.instanceGroup !== undefined)
+          pathParams["instance_group"] = String(
+            input.event.inputConfig.instanceGroup,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/zones/{zone}/instanceGroups/{instanceGroup}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/zones/{zone}/instanceGroups/{instance_group}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -91,60 +57,90 @@ const instanceGroupsGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          id: {
+          creationTimestamp: {
             type: "string",
+            description:
+              "Output only. [Output Only] The creation timestamp for this instance group inRFC3339 text format.",
           },
-          region: {
+          description: {
             type: "string",
-          },
-          network: {
-            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
           },
           fingerprint: {
             type: "string",
+            description:
+              "Output only. [Output Only] The fingerprint of the named ports. The system uses this fingerprint to detect conflicts when multiple users change the named ports concurrently.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] The resource type, which is alwayscompute#instanceGroup for instance groups.",
+          },
+          name: {
+            type: "string",
+            description:
+              "The name of the instance group. The name must be 1-63 characters long, and comply withRFC1035.",
           },
           namedPorts: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                port: {
-                  type: "object",
-                  additionalProperties: true,
-                },
                 name: {
-                  type: "object",
-                  additionalProperties: true,
+                  type: "string",
+                  description:
+                    "The name for this named port. The name must be 1-63 characters long, and comply withRFC1035.",
+                },
+                port: {
+                  type: "integer",
+                  description:
+                    "The port number, which can be a value between 1 and 65535.",
                 },
               },
+              description: 'The named port. For example: <"http", 80>.',
               additionalProperties: true,
             },
+            description:
+              'Optional. Assigns a name to a port number. For example:{name: "http", port: 80}  This allows the system to reference ports by the assigned name instead of a port number. Named ports can also contain multiple ports. For example:[{name: "app1", port: 8080}, {name: "app1", port: 8081}, {name: "app2", port: 8082}]  Named ports apply to all instances in this instance group.',
           },
-          creationTimestamp: {
+          network: {
             type: "string",
+            description:
+              "[Output Only] The URL of the network to which all instances in the instance group belong. If your instance has multiple network interfaces, then the network and subnetwork fields only refer to the network and subnet used by your primary interface (nic0).",
           },
-          zone: {
+          region: {
             type: "string",
+            description:
+              "Output only. [Output Only] The URL of theregion where the instance group is located (for regional resources).",
           },
           selfLink: {
             type: "string",
+            description:
+              "Output only. [Output Only] The URL for this instance group. The server generates this URL.",
           },
           size: {
-            type: "number",
+            type: "integer",
+            description:
+              "Output only. [Output Only] The total number of instances in the instance group.",
           },
           subnetwork: {
             type: "string",
+            description:
+              "Output only. [Output Only] The URL of the subnetwork to which all instances in the instance group belong. If your instance has multiple network interfaces, then the network and subnetwork fields only refer to the network and subnet used by your primary interface (nic0).",
           },
-          name: {
+          zone: {
             type: "string",
-          },
-          kind: {
-            type: "string",
-          },
-          description: {
-            type: "string",
+            description:
+              "Output only. [Output Only] The URL of thezone where the instance group is located (for zonal resources).",
           },
         },
+        description:
+          "Represents an Instance Group resource.  Instance Groups can be used to configure a target forload balancing.  Instance groups can either be managed or unmanaged.  To create managed instance groups, use the instanceGroupManager orregionInstanceGroupManager resource instead.  Use zonal unmanaged instance groups if you need to applyload balancing to groups of heterogeneous instances or if you need to manage the instances yourself. You cannot create regional unmanaged instance groups.  For more information, readInstance groups.",
         additionalProperties: true,
       },
     },

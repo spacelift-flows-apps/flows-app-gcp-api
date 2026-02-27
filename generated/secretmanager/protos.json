@@ -1,0 +1,4992 @@
+{
+  "file": [
+    {
+      "enumType": [
+        {
+          "name": "ClientLibraryDestination",
+          "value": [
+            {
+              "name": "CLIENT_LIBRARY_DESTINATION_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "GITHUB",
+              "number": 10
+            },
+            {
+              "name": "PACKAGE_MANAGER",
+              "number": 20
+            }
+          ]
+        },
+        {
+          "name": "ClientLibraryOrganization",
+          "value": [
+            {
+              "name": "ADS",
+              "number": 2
+            },
+            {
+              "name": "CLIENT_LIBRARY_ORGANIZATION_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "CLOUD",
+              "number": 1
+            },
+            {
+              "name": "GENERATIVE_AI",
+              "number": 7
+            },
+            {
+              "name": "GEO",
+              "number": 6
+            },
+            {
+              "name": "PHOTOS",
+              "number": 3
+            },
+            {
+              "name": "SHOPPING",
+              "number": 5
+            },
+            {
+              "name": "STREET_VIEW",
+              "number": 4
+            }
+          ]
+        },
+        {
+          "name": "FieldBehavior",
+          "value": [
+            {
+              "name": "FIELD_BEHAVIOR_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "IDENTIFIER",
+              "number": 8
+            },
+            {
+              "name": "IMMUTABLE",
+              "number": 5
+            },
+            {
+              "name": "INPUT_ONLY",
+              "number": 4
+            },
+            {
+              "name": "NON_EMPTY_DEFAULT",
+              "number": 7
+            },
+            {
+              "name": "OPTIONAL",
+              "number": 1
+            },
+            {
+              "name": "OUTPUT_ONLY",
+              "number": 3
+            },
+            {
+              "name": "REQUIRED",
+              "number": 2
+            },
+            {
+              "name": "UNORDERED_LIST",
+              "number": 6
+            }
+          ]
+        },
+        {
+          "name": "LaunchStage",
+          "value": [
+            {
+              "name": "ALPHA",
+              "number": 2
+            },
+            {
+              "name": "BETA",
+              "number": 3
+            },
+            {
+              "name": "DEPRECATED",
+              "number": 5
+            },
+            {
+              "name": "EARLY_ACCESS",
+              "number": 1
+            },
+            {
+              "name": "GA",
+              "number": 4
+            },
+            {
+              "name": "LAUNCH_STAGE_UNSPECIFIED",
+              "number": 0
+            },
+            {
+              "name": "PRELAUNCH",
+              "number": 7
+            },
+            {
+              "name": "UNIMPLEMENTED",
+              "number": 6
+            }
+          ]
+        }
+      ],
+      "extension": [
+        {
+          "extendee": ".google.protobuf.ServiceOptions",
+          "label": "LABEL_OPTIONAL",
+          "name": "api_version",
+          "number": 525000001,
+          "type": "TYPE_STRING"
+        },
+        {
+          "extendee": ".google.protobuf.ServiceOptions",
+          "label": "LABEL_OPTIONAL",
+          "name": "default_host",
+          "number": 1049,
+          "type": "TYPE_STRING"
+        },
+        {
+          "extendee": ".google.protobuf.FieldOptions",
+          "label": "LABEL_REPEATED",
+          "name": "field_behavior",
+          "number": 1052,
+          "options": {
+            "packed": false
+          },
+          "type": "TYPE_ENUM",
+          "typeName": "FieldBehavior"
+        },
+        {
+          "extendee": ".google.protobuf.MethodOptions",
+          "label": "LABEL_OPTIONAL",
+          "name": "http",
+          "number": 72295728,
+          "type": "TYPE_MESSAGE",
+          "typeName": "HttpRule"
+        },
+        {
+          "extendee": ".google.protobuf.MethodOptions",
+          "label": "LABEL_REPEATED",
+          "name": "method_signature",
+          "number": 1051,
+          "type": "TYPE_STRING"
+        },
+        {
+          "extendee": ".google.protobuf.ServiceOptions",
+          "label": "LABEL_OPTIONAL",
+          "name": "oauth_scopes",
+          "number": 1050,
+          "type": "TYPE_STRING"
+        },
+        {
+          "extendee": ".google.protobuf.MessageOptions",
+          "label": "LABEL_OPTIONAL",
+          "name": "resource",
+          "number": 1053,
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceDescriptor"
+        },
+        {
+          "extendee": ".google.protobuf.FileOptions",
+          "label": "LABEL_REPEATED",
+          "name": "resource_definition",
+          "number": 1053,
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceDescriptor"
+        },
+        {
+          "extendee": ".google.protobuf.FieldOptions",
+          "label": "LABEL_OPTIONAL",
+          "name": "resource_reference",
+          "number": 1055,
+          "type": "TYPE_MESSAGE",
+          "typeName": "ResourceReference"
+        }
+      ],
+      "messageType": [
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "cpp_settings",
+              "number": 22,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CppSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "dotnet_settings",
+              "number": 26,
+              "type": "TYPE_MESSAGE",
+              "typeName": "DotnetSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "go_settings",
+              "number": 28,
+              "type": "TYPE_MESSAGE",
+              "typeName": "GoSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "java_settings",
+              "number": 21,
+              "type": "TYPE_MESSAGE",
+              "typeName": "JavaSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "launch_stage",
+              "number": 2,
+              "type": "TYPE_ENUM",
+              "typeName": "LaunchStage"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "node_settings",
+              "number": 25,
+              "type": "TYPE_MESSAGE",
+              "typeName": "NodeSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "php_settings",
+              "number": 23,
+              "type": "TYPE_MESSAGE",
+              "typeName": "PhpSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "python_settings",
+              "number": 24,
+              "type": "TYPE_MESSAGE",
+              "typeName": "PythonSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "rest_numeric_enums",
+              "number": 3,
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "ruby_settings",
+              "number": 27,
+              "type": "TYPE_MESSAGE",
+              "typeName": "RubySettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "version",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "ClientLibrarySettings"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "destinations",
+              "number": 2,
+              "type": "TYPE_ENUM",
+              "typeName": "ClientLibraryDestination"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "reference_docs_uri",
+              "number": 1,
+              "options": {
+                "deprecated": true
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "selective_gapic_generation",
+              "number": 3,
+              "type": "TYPE_MESSAGE",
+              "typeName": "SelectiveGapicGeneration"
+            }
+          ],
+          "name": "CommonLanguageSettings"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            }
+          ],
+          "name": "CppSettings"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "kind",
+              "number": 1,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "path",
+              "number": 2,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "CustomHttpPattern"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "forced_namespace_aliases",
+              "number": 5,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "handwritten_signatures",
+              "number": 6,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "ignored_resources",
+              "number": 4,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "renamed_resources",
+              "number": 3,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Renamed_resources"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "renamed_services",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Renamed_services"
+            }
+          ],
+          "name": "DotnetSettings",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Renamed_resources",
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Renamed_services",
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "renamed_services",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Renamed_services"
+            }
+          ],
+          "name": "GoSettings",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Renamed_services",
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "fully_decode_reserved_expansion",
+              "number": 2,
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "rules",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "HttpRule"
+            }
+          ],
+          "name": "Http"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "additional_bindings",
+              "number": 11,
+              "type": "TYPE_MESSAGE",
+              "typeName": "HttpRule"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "body",
+              "number": 7,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "custom",
+              "number": 8,
+              "oneofIndex": 0,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CustomHttpPattern"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "delete",
+              "number": 5,
+              "oneofIndex": 0,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "get",
+              "number": 2,
+              "oneofIndex": 0,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "patch",
+              "number": 6,
+              "oneofIndex": 0,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "post",
+              "number": 4,
+              "oneofIndex": 0,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "put",
+              "number": 3,
+              "oneofIndex": 0,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "response_body",
+              "number": 12,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "selector",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "HttpRule",
+          "oneofDecl": [
+            {
+              "name": "pattern"
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 3,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "library_package",
+              "number": 1,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "service_class_names",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Service_class_names"
+            }
+          ],
+          "name": "JavaSettings",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Service_class_names",
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "auto_populated_fields",
+              "number": 3,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "long_running",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "LongRunning"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "selector",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "MethodSettings",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "initial_poll_delay",
+                  "number": 1,
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "protobuf.Duration"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "max_poll_delay",
+                  "number": 3,
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "protobuf.Duration"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "poll_delay_multiplier",
+                  "number": 2,
+                  "type": "TYPE_FLOAT"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "total_poll_timeout",
+                  "number": 4,
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "protobuf.Duration"
+                }
+              ],
+              "name": "LongRunning"
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            }
+          ],
+          "name": "NodeSettings"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            }
+          ],
+          "name": "PhpSettings"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "api_short_name",
+              "number": 103,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "codeowner_github_teams",
+              "number": 105,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "doc_tag_prefix",
+              "number": 106,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "documentation_uri",
+              "number": 102,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "github_label",
+              "number": 104,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "library_settings",
+              "number": 109,
+              "type": "TYPE_MESSAGE",
+              "typeName": "ClientLibrarySettings"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "method_settings",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "MethodSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "new_issue_uri",
+              "number": 101,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "organization",
+              "number": 107,
+              "type": "TYPE_ENUM",
+              "typeName": "ClientLibraryOrganization"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "proto_reference_documentation_uri",
+              "number": 110,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "rest_reference_documentation_uri",
+              "number": 111,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "Publishing"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "experimental_features",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "ExperimentalFeatures"
+            }
+          ],
+          "name": "PythonSettings",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "protobuf_pythonic_types_enabled",
+                  "number": 2,
+                  "type": "TYPE_BOOL"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "rest_async_io_enabled",
+                  "number": 1,
+                  "type": "TYPE_BOOL"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "unversioned_package_disabled",
+                  "number": 3,
+                  "type": "TYPE_BOOL"
+                }
+              ],
+              "name": "ExperimentalFeatures"
+            }
+          ]
+        },
+        {
+          "enumType": [
+            {
+              "name": "History",
+              "value": [
+                {
+                  "name": "FUTURE_MULTI_PATTERN",
+                  "number": 2
+                },
+                {
+                  "name": "HISTORY_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ORIGINALLY_SINGLE_PATTERN",
+                  "number": 1
+                }
+              ]
+            },
+            {
+              "name": "Style",
+              "value": [
+                {
+                  "name": "DECLARATIVE_FRIENDLY",
+                  "number": 1
+                },
+                {
+                  "name": "STYLE_UNSPECIFIED",
+                  "number": 0
+                }
+              ]
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "history",
+              "number": 4,
+              "type": "TYPE_ENUM",
+              "typeName": "History"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name_field",
+              "number": 3,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "pattern",
+              "number": 2,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "plural",
+              "number": 5,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "singular",
+              "number": 6,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "style",
+              "number": 10,
+              "type": "TYPE_ENUM",
+              "typeName": "Style"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "type",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "ResourceDescriptor"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "child_type",
+              "number": 2,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "type",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "ResourceReference"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "common",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "CommonLanguageSettings"
+            }
+          ],
+          "name": "RubySettings"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "generate_omitted_as_internal",
+              "number": 2,
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "methods",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "SelectiveGapicGeneration"
+        }
+      ],
+      "name": "google_api.proto",
+      "package": "google.api",
+      "syntax": "proto3"
+    },
+    {
+      "messageType": [
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "AccessSecretVersionRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "payload",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "SecretPayload"
+            }
+          ],
+          "name": "AccessSecretVersionResponse"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "parent",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "payload",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "SecretPayload"
+            }
+          ],
+          "name": "AddSecretVersionRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "parent",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "secret",
+              "number": 3,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Secret"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "secret_id",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "CreateSecretRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "kms_key_name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "CustomerManagedEncryption"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "kms_key_version_name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "CustomerManagedEncryptionStatus"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "DeleteSecretRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "DestroySecretVersionRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "DisableSecretVersionRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "EnableSecretVersionRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "GetSecretRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "GetSecretVersionRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "filter",
+              "number": 4,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "page_size",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "page_token",
+              "number": 3,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "parent",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "ListSecretsRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "next_page_token",
+              "number": 2,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "secrets",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Secret"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "total_size",
+              "number": 3,
+              "type": "TYPE_INT32"
+            }
+          ],
+          "name": "ListSecretsResponse"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "filter",
+              "number": 4,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "page_size",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "page_token",
+              "number": 3,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "parent",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "ListSecretVersionsRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "next_page_token",
+              "number": 2,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "total_size",
+              "number": 3,
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "versions",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "SecretVersion"
+            }
+          ],
+          "name": "ListSecretVersionsResponse"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "automatic",
+              "number": 1,
+              "oneofIndex": 0,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Automatic"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "user_managed",
+              "number": 2,
+              "oneofIndex": 0,
+              "type": "TYPE_MESSAGE",
+              "typeName": "UserManaged"
+            }
+          ],
+          "name": "Replication",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "customer_managed_encryption",
+                  "number": 1,
+                  "options": {},
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "CustomerManagedEncryption"
+                }
+              ],
+              "name": "Automatic"
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_REPEATED",
+                  "name": "replicas",
+                  "number": 1,
+                  "options": {},
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "Replica"
+                }
+              ],
+              "name": "UserManaged",
+              "nestedType": [
+                {
+                  "field": [
+                    {
+                      "label": "LABEL_OPTIONAL",
+                      "name": "customer_managed_encryption",
+                      "number": 2,
+                      "options": {},
+                      "type": "TYPE_MESSAGE",
+                      "typeName": "CustomerManagedEncryption"
+                    },
+                    {
+                      "label": "LABEL_OPTIONAL",
+                      "name": "location",
+                      "number": 1,
+                      "type": "TYPE_STRING"
+                    }
+                  ],
+                  "name": "Replica"
+                }
+              ]
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "replication"
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "automatic",
+              "number": 1,
+              "oneofIndex": 0,
+              "type": "TYPE_MESSAGE",
+              "typeName": "AutomaticStatus"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "user_managed",
+              "number": 2,
+              "oneofIndex": 0,
+              "type": "TYPE_MESSAGE",
+              "typeName": "UserManagedStatus"
+            }
+          ],
+          "name": "ReplicationStatus",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "customer_managed_encryption",
+                  "number": 1,
+                  "options": {},
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "CustomerManagedEncryptionStatus"
+                }
+              ],
+              "name": "AutomaticStatus"
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_REPEATED",
+                  "name": "replicas",
+                  "number": 1,
+                  "options": {},
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "ReplicaStatus"
+                }
+              ],
+              "name": "UserManagedStatus",
+              "nestedType": [
+                {
+                  "field": [
+                    {
+                      "label": "LABEL_OPTIONAL",
+                      "name": "customer_managed_encryption",
+                      "number": 2,
+                      "options": {},
+                      "type": "TYPE_MESSAGE",
+                      "typeName": "CustomerManagedEncryptionStatus"
+                    },
+                    {
+                      "label": "LABEL_OPTIONAL",
+                      "name": "location",
+                      "number": 1,
+                      "options": {},
+                      "type": "TYPE_STRING"
+                    }
+                  ],
+                  "name": "ReplicaStatus"
+                }
+              ]
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "replication_status"
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "next_rotation_time",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "rotation_period",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration"
+            }
+          ],
+          "name": "Rotation"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "annotations",
+              "number": 13,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Annotations"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "create_time",
+              "number": 3,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "customer_managed_encryption",
+              "number": 15,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "CustomerManagedEncryption"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 8,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "expire_time",
+              "number": 6,
+              "oneofIndex": 0,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "labels",
+              "number": 4,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Labels"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "replication",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Replication"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "rotation",
+              "number": 9,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Rotation"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "tags",
+              "number": 16,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Tags"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "topics",
+              "number": 5,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Topic"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "ttl",
+              "number": 7,
+              "oneofIndex": 0,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "version_aliases",
+              "number": 11,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Version_aliases"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "version_destroy_ttl",
+              "number": 14,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Duration"
+            }
+          ],
+          "name": "Secret",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Annotations",
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Labels",
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Tags",
+              "options": {
+                "mapEntry": true
+              }
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "key",
+                  "number": 1,
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "type": "TYPE_INT64"
+                }
+              ],
+              "name": "Version_aliases",
+              "options": {
+                "mapEntry": true
+              }
+            }
+          ],
+          "oneofDecl": [
+            {
+              "name": "expiration"
+            }
+          ],
+          "options": {}
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "data",
+              "number": 1,
+              "type": "TYPE_BYTES"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "data_crc32c",
+              "number": 2,
+              "oneofIndex": 0,
+              "options": {},
+              "type": "TYPE_INT64"
+            }
+          ],
+          "name": "SecretPayload",
+          "oneofDecl": [
+            {
+              "name": "_data_crc32c"
+            }
+          ]
+        },
+        {
+          "enumType": [
+            {
+              "name": "State",
+              "value": [
+                {
+                  "name": "DESTROYED",
+                  "number": 3
+                },
+                {
+                  "name": "DISABLED",
+                  "number": 2
+                },
+                {
+                  "name": "ENABLED",
+                  "number": 1
+                },
+                {
+                  "name": "STATE_UNSPECIFIED",
+                  "number": 0
+                }
+              ]
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "client_specified_payload_checksum",
+              "number": 7,
+              "options": {},
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "create_time",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "customer_managed_encryption",
+              "number": 9,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "CustomerManagedEncryptionStatus"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "destroy_time",
+              "number": 3,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 6,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "replication_status",
+              "number": 5,
+              "type": "TYPE_MESSAGE",
+              "typeName": "ReplicationStatus"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "scheduled_destroy_time",
+              "number": 8,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.Timestamp"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "state",
+              "number": 4,
+              "options": {},
+              "type": "TYPE_ENUM",
+              "typeName": "State"
+            }
+          ],
+          "name": "SecretVersion",
+          "options": {}
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "Topic",
+          "options": {}
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "secret",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Secret"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "update_mask",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask"
+            }
+          ],
+          "name": "UpdateSecretRequest"
+        }
+      ],
+      "name": "google_cloud_secretmanager_v1.proto",
+      "package": "google.cloud.secretmanager.v1",
+      "service": [
+        {
+          "method": [
+            {
+              "inputType": ".google.cloud.secretmanager.v1.AccessSecretVersionRequest",
+              "name": "AccessSecretVersion",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.AccessSecretVersionResponse"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.AddSecretVersionRequest",
+              "name": "AddSecretVersion",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.SecretVersion"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.CreateSecretRequest",
+              "name": "CreateSecret",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.Secret"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.DeleteSecretRequest",
+              "name": "DeleteSecret",
+              "options": {},
+              "outputType": ".google.protobuf.Empty"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.DestroySecretVersionRequest",
+              "name": "DestroySecretVersion",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.SecretVersion"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.DisableSecretVersionRequest",
+              "name": "DisableSecretVersion",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.SecretVersion"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.EnableSecretVersionRequest",
+              "name": "EnableSecretVersion",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.SecretVersion"
+            },
+            {
+              "inputType": ".google.iam.v1.GetIamPolicyRequest",
+              "name": "GetIamPolicy",
+              "options": {},
+              "outputType": ".google.iam.v1.Policy"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.GetSecretRequest",
+              "name": "GetSecret",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.Secret"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.GetSecretVersionRequest",
+              "name": "GetSecretVersion",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.SecretVersion"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.ListSecretsRequest",
+              "name": "ListSecrets",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.ListSecretsResponse"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.ListSecretVersionsRequest",
+              "name": "ListSecretVersions",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.ListSecretVersionsResponse"
+            },
+            {
+              "inputType": ".google.iam.v1.SetIamPolicyRequest",
+              "name": "SetIamPolicy",
+              "options": {},
+              "outputType": ".google.iam.v1.Policy"
+            },
+            {
+              "inputType": ".google.iam.v1.TestIamPermissionsRequest",
+              "name": "TestIamPermissions",
+              "options": {},
+              "outputType": ".google.iam.v1.TestIamPermissionsResponse"
+            },
+            {
+              "inputType": ".google.cloud.secretmanager.v1.UpdateSecretRequest",
+              "name": "UpdateSecret",
+              "options": {},
+              "outputType": ".google.cloud.secretmanager.v1.Secret"
+            }
+          ],
+          "name": "SecretManagerService",
+          "options": {}
+        }
+      ],
+      "syntax": "proto3"
+    },
+    {
+      "messageType": [
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "audit_log_configs",
+              "number": 3,
+              "type": "TYPE_MESSAGE",
+              "typeName": "AuditLogConfig"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "service",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "AuditConfig"
+        },
+        {
+          "enumType": [
+            {
+              "name": "Action",
+              "value": [
+                {
+                  "name": "ACTION_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ADD",
+                  "number": 1
+                },
+                {
+                  "name": "REMOVE",
+                  "number": 2
+                }
+              ]
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "action",
+              "number": 1,
+              "type": "TYPE_ENUM",
+              "typeName": "Action"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "exempted_member",
+              "number": 3,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "log_type",
+              "number": 4,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "service",
+              "number": 2,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "AuditConfigDelta"
+        },
+        {
+          "enumType": [
+            {
+              "name": "LogType",
+              "value": [
+                {
+                  "name": "ADMIN_READ",
+                  "number": 1
+                },
+                {
+                  "name": "DATA_READ",
+                  "number": 3
+                },
+                {
+                  "name": "DATA_WRITE",
+                  "number": 2
+                },
+                {
+                  "name": "LOG_TYPE_UNSPECIFIED",
+                  "number": 0
+                }
+              ]
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "exempted_members",
+              "number": 2,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "log_type",
+              "number": 1,
+              "type": "TYPE_ENUM",
+              "typeName": "LogType"
+            }
+          ],
+          "name": "AuditLogConfig"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "condition",
+              "number": 3,
+              "type": "TYPE_MESSAGE",
+              "typeName": "type.Expr"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "members",
+              "number": 2,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "role",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "Binding"
+        },
+        {
+          "enumType": [
+            {
+              "name": "Action",
+              "value": [
+                {
+                  "name": "ACTION_UNSPECIFIED",
+                  "number": 0
+                },
+                {
+                  "name": "ADD",
+                  "number": 1
+                },
+                {
+                  "name": "REMOVE",
+                  "number": 2
+                }
+              ]
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "action",
+              "number": 1,
+              "type": "TYPE_ENUM",
+              "typeName": "Action"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "condition",
+              "number": 4,
+              "type": "TYPE_MESSAGE",
+              "typeName": "type.Expr"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "member",
+              "number": 3,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "role",
+              "number": 2,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "BindingDelta"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "GetPolicyOptions"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "resource",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "GetIamPolicyRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "requested_policy_version",
+              "number": 1,
+              "type": "TYPE_INT32"
+            }
+          ],
+          "name": "GetPolicyOptions"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "audit_configs",
+              "number": 6,
+              "type": "TYPE_MESSAGE",
+              "typeName": "AuditConfig"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "bindings",
+              "number": 4,
+              "type": "TYPE_MESSAGE",
+              "typeName": "Binding"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "etag",
+              "number": 3,
+              "type": "TYPE_BYTES"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "version",
+              "number": 1,
+              "type": "TYPE_INT32"
+            }
+          ],
+          "name": "Policy"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "audit_config_deltas",
+              "number": 2,
+              "type": "TYPE_MESSAGE",
+              "typeName": "AuditConfigDelta"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "binding_deltas",
+              "number": 1,
+              "type": "TYPE_MESSAGE",
+              "typeName": "BindingDelta"
+            }
+          ],
+          "name": "PolicyDelta"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "policy",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_MESSAGE",
+              "typeName": "Policy"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "resource",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "update_mask",
+              "number": 3,
+              "type": "TYPE_MESSAGE",
+              "typeName": "protobuf.FieldMask"
+            }
+          ],
+          "name": "SetIamPolicyRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "permissions",
+              "number": 2,
+              "options": {},
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "resource",
+              "number": 1,
+              "options": {},
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "TestIamPermissionsRequest"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "permissions",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "TestIamPermissionsResponse"
+        }
+      ],
+      "name": "google_iam_v1.proto",
+      "package": "google.iam.v1",
+      "service": [
+        {
+          "method": [
+            {
+              "inputType": ".google.iam.v1.GetIamPolicyRequest",
+              "name": "GetIamPolicy",
+              "options": {},
+              "outputType": ".google.iam.v1.Policy"
+            },
+            {
+              "inputType": ".google.iam.v1.SetIamPolicyRequest",
+              "name": "SetIamPolicy",
+              "options": {},
+              "outputType": ".google.iam.v1.Policy"
+            },
+            {
+              "inputType": ".google.iam.v1.TestIamPermissionsRequest",
+              "name": "TestIamPermissions",
+              "options": {},
+              "outputType": ".google.iam.v1.TestIamPermissionsResponse"
+            }
+          ],
+          "name": "IAMPolicy",
+          "options": {}
+        }
+      ],
+      "syntax": "proto3"
+    },
+    {
+      "enumType": [
+        {
+          "name": "Edition",
+          "value": [
+            {
+              "name": "EDITION_1_TEST_ONLY",
+              "number": 1
+            },
+            {
+              "name": "EDITION_2_TEST_ONLY",
+              "number": 2
+            },
+            {
+              "name": "EDITION_2023",
+              "number": 1000
+            },
+            {
+              "name": "EDITION_2024",
+              "number": 1001
+            },
+            {
+              "name": "EDITION_99997_TEST_ONLY",
+              "number": 99997
+            },
+            {
+              "name": "EDITION_99998_TEST_ONLY",
+              "number": 99998
+            },
+            {
+              "name": "EDITION_99999_TEST_ONLY",
+              "number": 99999
+            },
+            {
+              "name": "EDITION_LEGACY",
+              "number": 900
+            },
+            {
+              "name": "EDITION_MAX",
+              "number": 2147483647
+            },
+            {
+              "name": "EDITION_PROTO2",
+              "number": 998
+            },
+            {
+              "name": "EDITION_PROTO3",
+              "number": 999
+            },
+            {
+              "name": "EDITION_UNKNOWN",
+              "number": 0
+            },
+            {
+              "name": "EDITION_UNSTABLE",
+              "number": 9999
+            }
+          ]
+        },
+        {
+          "name": "SymbolVisibility",
+          "value": [
+            {
+              "name": "VISIBILITY_EXPORT",
+              "number": 2
+            },
+            {
+              "name": "VISIBILITY_LOCAL",
+              "number": 1
+            },
+            {
+              "name": "VISIBILITY_UNSET",
+              "number": 0
+            }
+          ]
+        }
+      ],
+      "messageType": [
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "enum_type",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnumDescriptorProto"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "extension",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FieldDescriptorProto"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "extension_range",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "ExtensionRange"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "field",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FieldDescriptorProto"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "nested_type",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "DescriptorProto"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "oneof_decl",
+              "number": 8,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "OneofDescriptorProto"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 7,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "MessageOptions"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "reserved_name",
+              "number": 10,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "reserved_range",
+              "number": 9,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "ReservedRange"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "visibility",
+              "number": 11,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "SymbolVisibility"
+            }
+          ],
+          "name": "DescriptorProto",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "end",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "options",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "ExtensionRangeOptions"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "start",
+                  "number": 1,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                }
+              ],
+              "name": "ExtensionRange"
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "end",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "start",
+                  "number": 1,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                }
+              ],
+              "name": "ReservedRange"
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "nanos",
+              "number": 2,
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "seconds",
+              "number": 1,
+              "type": "TYPE_INT64"
+            }
+          ],
+          "name": "Duration"
+        },
+        {
+          "name": "Empty"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnumOptions"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "reserved_name",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "reserved_range",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnumReservedRange"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "value",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnumValueDescriptorProto"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "visibility",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "SymbolVisibility"
+            }
+          ],
+          "name": "EnumDescriptorProto",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "end",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "start",
+                  "number": 1,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                }
+              ],
+              "name": "EnumReservedRange"
+            }
+          ]
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "allow_alias",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated_legacy_json_field_conflicts",
+              "number": 6,
+              "options": {
+                "deprecated": true,
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 7,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "EnumOptions",
+          "reservedRange": [
+            {
+              "end": 5,
+              "start": 5
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "number",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnumValueOptions"
+            }
+          ],
+          "name": "EnumValueDescriptorProto"
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "debug_redact",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "feature_support",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FieldOptions.FeatureSupport"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "EnumValueOptions"
+        },
+        {
+          "enumType": [
+            {
+              "name": "VerificationState",
+              "value": [
+                {
+                  "name": "DECLARATION",
+                  "number": 0
+                },
+                {
+                  "name": "UNVERIFIED",
+                  "number": 1
+                }
+              ]
+            }
+          ],
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "declaration",
+              "number": 2,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_SOURCE"
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "Declaration"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 50,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            },
+            {
+              "defaultValue": "UNVERIFIED",
+              "label": "LABEL_OPTIONAL",
+              "name": "verification",
+              "number": 3,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_SOURCE"
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "VerificationState"
+            }
+          ],
+          "name": "ExtensionRangeOptions",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "full_name",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "number",
+                  "number": 1,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "repeated",
+                  "number": 6,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_BOOL"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "reserved",
+                  "number": 5,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_BOOL"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "type",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Declaration",
+              "reservedRange": [
+                {
+                  "end": 4,
+                  "start": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "enumType": [
+            {
+              "name": "EnforceNamingStyle",
+              "value": [
+                {
+                  "name": "ENFORCE_NAMING_STYLE_UNKNOWN",
+                  "number": 0
+                },
+                {
+                  "name": "STYLE_LEGACY",
+                  "number": 2
+                },
+                {
+                  "name": "STYLE2024",
+                  "number": 1
+                }
+              ]
+            },
+            {
+              "name": "EnumType",
+              "value": [
+                {
+                  "name": "CLOSED",
+                  "number": 2
+                },
+                {
+                  "name": "ENUM_TYPE_UNKNOWN",
+                  "number": 0
+                },
+                {
+                  "name": "OPEN",
+                  "number": 1
+                }
+              ]
+            },
+            {
+              "name": "FieldPresence",
+              "value": [
+                {
+                  "name": "EXPLICIT",
+                  "number": 1
+                },
+                {
+                  "name": "FIELD_PRESENCE_UNKNOWN",
+                  "number": 0
+                },
+                {
+                  "name": "IMPLICIT",
+                  "number": 2
+                },
+                {
+                  "name": "LEGACY_REQUIRED",
+                  "number": 3
+                }
+              ]
+            },
+            {
+              "name": "JsonFormat",
+              "value": [
+                {
+                  "name": "ALLOW",
+                  "number": 1
+                },
+                {
+                  "name": "JSON_FORMAT_UNKNOWN",
+                  "number": 0
+                },
+                {
+                  "name": "LEGACY_BEST_EFFORT",
+                  "number": 2
+                }
+              ]
+            },
+            {
+              "name": "MessageEncoding",
+              "value": [
+                {
+                  "name": "DELIMITED",
+                  "number": 2
+                },
+                {
+                  "name": "LENGTH_PREFIXED",
+                  "number": 1
+                },
+                {
+                  "name": "MESSAGE_ENCODING_UNKNOWN",
+                  "number": 0
+                }
+              ]
+            },
+            {
+              "name": "RepeatedFieldEncoding",
+              "value": [
+                {
+                  "name": "EXPANDED",
+                  "number": 2
+                },
+                {
+                  "name": "PACKED",
+                  "number": 1
+                },
+                {
+                  "name": "REPEATED_FIELD_ENCODING_UNKNOWN",
+                  "number": 0
+                }
+              ]
+            },
+            {
+              "name": "Utf8Validation",
+              "value": [
+                {
+                  "name": "NONE",
+                  "number": 3
+                },
+                {
+                  "name": "UTF8_VALIDATION_UNKNOWN",
+                  "number": 0
+                },
+                {
+                  "name": "VERIFY",
+                  "number": 2
+                }
+              ]
+            }
+          ],
+          "extensionRange": [
+            {
+              "end": 9994,
+              "start": 1000
+            },
+            {
+              "end": 9999,
+              "start": 9995
+            },
+            {
+              "end": 10000,
+              "start": 10000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "default_symbol_visibility",
+              "number": 8,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_SOURCE",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "VisibilityFeature.DefaultSymbolVisibility"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "enforce_naming_style",
+              "number": 7,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_SOURCE",
+                "targets": ["TARGET_TYPE_METHOD"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "EnforceNamingStyle"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "enum_type",
+              "number": 2,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_RUNTIME",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "EnumType"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "field_presence",
+              "number": 1,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_RUNTIME",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "FieldPresence"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "json_format",
+              "number": 6,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_RUNTIME",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "JsonFormat"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "message_encoding",
+              "number": 5,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_RUNTIME",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "MessageEncoding"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "repeated_field_encoding",
+              "number": 3,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_RUNTIME",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "RepeatedFieldEncoding"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "utf8_validation",
+              "number": 4,
+              "options": {
+                "packed": false,
+                "retention": "RETENTION_RUNTIME",
+                "targets": ["TARGET_TYPE_FILE"]
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "Utf8Validation"
+            }
+          ],
+          "name": "FeatureSet",
+          "nestedType": [
+            {
+              "enumType": [
+                {
+                  "name": "DefaultSymbolVisibility",
+                  "value": [
+                    {
+                      "name": "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN",
+                      "number": 0
+                    },
+                    {
+                      "name": "EXPORT_ALL",
+                      "number": 1
+                    },
+                    {
+                      "name": "EXPORT_TOP_LEVEL",
+                      "number": 2
+                    },
+                    {
+                      "name": "LOCAL_ALL",
+                      "number": 3
+                    },
+                    {
+                      "name": "STRICT",
+                      "number": 4
+                    }
+                  ]
+                }
+              ],
+              "name": "VisibilityFeature",
+              "reservedRange": [
+                {
+                  "end": 536870911,
+                  "start": 1
+                }
+              ]
+            }
+          ],
+          "reservedRange": [
+            {
+              "end": 999,
+              "start": 999
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "defaults",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSetEditionDefault"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "maximum_edition",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "Edition"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "minimum_edition",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "Edition"
+            }
+          ],
+          "name": "FeatureSetDefaults",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "edition",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_ENUM",
+                  "typeName": "Edition"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "fixed_features",
+                  "number": 5,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "FeatureSet"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "overridable_features",
+                  "number": 4,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_MESSAGE",
+                  "typeName": "FeatureSet"
+                }
+              ],
+              "name": "FeatureSetEditionDefault",
+              "reservedName": ["features"],
+              "reservedRange": [
+                {
+                  "end": 1,
+                  "start": 1
+                },
+                {
+                  "end": 2,
+                  "start": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "enumType": [
+            {
+              "name": "Label",
+              "value": [
+                {
+                  "name": "LABEL_OPTIONAL",
+                  "number": 1
+                },
+                {
+                  "name": "LABEL_REPEATED",
+                  "number": 3
+                },
+                {
+                  "name": "LABEL_REQUIRED",
+                  "number": 2
+                }
+              ]
+            },
+            {
+              "name": "Type",
+              "value": [
+                {
+                  "name": "TYPE_BOOL",
+                  "number": 8
+                },
+                {
+                  "name": "TYPE_BYTES",
+                  "number": 12
+                },
+                {
+                  "name": "TYPE_DOUBLE",
+                  "number": 1
+                },
+                {
+                  "name": "TYPE_ENUM",
+                  "number": 14
+                },
+                {
+                  "name": "TYPE_FIXED32",
+                  "number": 7
+                },
+                {
+                  "name": "TYPE_FIXED64",
+                  "number": 6
+                },
+                {
+                  "name": "TYPE_FLOAT",
+                  "number": 2
+                },
+                {
+                  "name": "TYPE_GROUP",
+                  "number": 10
+                },
+                {
+                  "name": "TYPE_INT32",
+                  "number": 5
+                },
+                {
+                  "name": "TYPE_INT64",
+                  "number": 3
+                },
+                {
+                  "name": "TYPE_MESSAGE",
+                  "number": 11
+                },
+                {
+                  "name": "TYPE_SFIXED32",
+                  "number": 15
+                },
+                {
+                  "name": "TYPE_SFIXED64",
+                  "number": 16
+                },
+                {
+                  "name": "TYPE_SINT32",
+                  "number": 17
+                },
+                {
+                  "name": "TYPE_SINT64",
+                  "number": 18
+                },
+                {
+                  "name": "TYPE_STRING",
+                  "number": 9
+                },
+                {
+                  "name": "TYPE_UINT32",
+                  "number": 13
+                },
+                {
+                  "name": "TYPE_UINT64",
+                  "number": 4
+                }
+              ]
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "default_value",
+              "number": 7,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "extendee",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "json_name",
+              "number": 10,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "label",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "Label"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "number",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "oneof_index",
+              "number": 9,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 8,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FieldOptions"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "proto3_optional",
+              "number": 17,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "type",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "Type"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "type_name",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "FieldDescriptorProto"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "paths",
+              "number": 1,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "FieldMask"
+        },
+        {
+          "enumType": [
+            {
+              "name": "CType",
+              "value": [
+                {
+                  "name": "CORD",
+                  "number": 1
+                },
+                {
+                  "name": "STRING",
+                  "number": 0
+                },
+                {
+                  "name": "STRING_PIECE",
+                  "number": 2
+                }
+              ]
+            },
+            {
+              "name": "JSType",
+              "value": [
+                {
+                  "name": "JS_NORMAL",
+                  "number": 0
+                },
+                {
+                  "name": "JS_NUMBER",
+                  "number": 2
+                },
+                {
+                  "name": "JS_STRING",
+                  "number": 1
+                }
+              ]
+            },
+            {
+              "name": "OptionRetention",
+              "value": [
+                {
+                  "name": "RETENTION_RUNTIME",
+                  "number": 1
+                },
+                {
+                  "name": "RETENTION_SOURCE",
+                  "number": 2
+                },
+                {
+                  "name": "RETENTION_UNKNOWN",
+                  "number": 0
+                }
+              ]
+            },
+            {
+              "name": "OptionTargetType",
+              "value": [
+                {
+                  "name": "TARGET_TYPE_ENUM",
+                  "number": 6
+                },
+                {
+                  "name": "TARGET_TYPE_ENUM_ENTRY",
+                  "number": 7
+                },
+                {
+                  "name": "TARGET_TYPE_EXTENSION_RANGE",
+                  "number": 2
+                },
+                {
+                  "name": "TARGET_TYPE_FIELD",
+                  "number": 4
+                },
+                {
+                  "name": "TARGET_TYPE_FILE",
+                  "number": 1
+                },
+                {
+                  "name": "TARGET_TYPE_MESSAGE",
+                  "number": 3
+                },
+                {
+                  "name": "TARGET_TYPE_METHOD",
+                  "number": 9
+                },
+                {
+                  "name": "TARGET_TYPE_ONEOF",
+                  "number": 5
+                },
+                {
+                  "name": "TARGET_TYPE_SERVICE",
+                  "number": 8
+                },
+                {
+                  "name": "TARGET_TYPE_UNKNOWN",
+                  "number": 0
+                }
+              ]
+            }
+          ],
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": ".google.api.field_behavior",
+              "number": 1052,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "api.FieldBehavior"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": ".google.api.resource_reference",
+              "number": 1055,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.ResourceReference"
+            },
+            {
+              "defaultValue": "STRING",
+              "label": "LABEL_OPTIONAL",
+              "name": "ctype",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "CType"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "debug_redact",
+              "number": 16,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "edition_defaults",
+              "number": 20,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EditionDefault"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "feature_support",
+              "number": 22,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSupport"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 21,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "defaultValue": "JS_NORMAL",
+              "label": "LABEL_OPTIONAL",
+              "name": "jstype",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "JSType"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "lazy",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "packed",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "retention",
+              "number": 17,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "OptionRetention"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "targets",
+              "number": 19,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "OptionTargetType"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "unverified_lazy",
+              "number": 15,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "weak",
+              "number": 10,
+              "options": {
+                "deprecated": true,
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            }
+          ],
+          "name": "FieldOptions",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "edition",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_ENUM",
+                  "typeName": "Edition"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "value",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "EditionDefault"
+            },
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "deprecation_warning",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "edition_deprecated",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_ENUM",
+                  "typeName": "Edition"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "edition_introduced",
+                  "number": 1,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_ENUM",
+                  "typeName": "Edition"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "edition_removed",
+                  "number": 4,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_ENUM",
+                  "typeName": "Edition"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "removal_error",
+                  "number": 5,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "FeatureSupport"
+            }
+          ],
+          "reservedRange": [
+            {
+              "end": 4,
+              "start": 4
+            },
+            {
+              "end": 18,
+              "start": 18
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "dependency",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "edition",
+              "number": 14,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "Edition"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "enum_type",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "EnumDescriptorProto"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "extension",
+              "number": 7,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FieldDescriptorProto"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "message_type",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "DescriptorProto"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "option_dependency",
+              "number": 15,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 8,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FileOptions"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "package",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "public_dependency",
+              "number": 10,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "service",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "ServiceDescriptorProto"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "source_code_info",
+              "number": 9,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "SourceCodeInfo"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "syntax",
+              "number": 12,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "weak_dependency",
+              "number": 11,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_INT32"
+            }
+          ],
+          "name": "FileDescriptorProto"
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536000000,
+              "start": 536000000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "file",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FileDescriptorProto"
+            }
+          ],
+          "name": "FileDescriptorSet"
+        },
+        {
+          "enumType": [
+            {
+              "name": "OptimizeMode",
+              "value": [
+                {
+                  "name": "CODE_SIZE",
+                  "number": 2
+                },
+                {
+                  "name": "LITE_RUNTIME",
+                  "number": 3
+                },
+                {
+                  "name": "SPEED",
+                  "number": 1
+                }
+              ]
+            }
+          ],
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": ".google.api.resource_definition",
+              "number": 1053,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.ResourceDescriptor"
+            },
+            {
+              "defaultValue": "true",
+              "label": "LABEL_OPTIONAL",
+              "name": "cc_enable_arenas",
+              "number": 31,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "cc_generic_services",
+              "number": 16,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "csharp_namespace",
+              "number": 37,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 23,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 50,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "go_package",
+              "number": 11,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "java_generate_equals_and_hash",
+              "number": 20,
+              "options": {
+                "deprecated": true,
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "java_generic_services",
+              "number": 17,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "java_multiple_files",
+              "number": 10,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "java_outer_classname",
+              "number": 8,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "java_package",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "java_string_check_utf8",
+              "number": 27,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "objc_class_prefix",
+              "number": 36,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "SPEED",
+              "label": "LABEL_OPTIONAL",
+              "name": "optimize_for",
+              "number": 9,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "OptimizeMode"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "php_class_prefix",
+              "number": 40,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "php_metadata_namespace",
+              "number": 44,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "php_namespace",
+              "number": 41,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "py_generic_services",
+              "number": 18,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "ruby_package",
+              "number": 45,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "swift_prefix",
+              "number": 39,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "FileOptions",
+          "reservedName": ["php_generic_services"],
+          "reservedRange": [
+            {
+              "end": 42,
+              "start": 42
+            },
+            {
+              "end": 38,
+              "start": 38
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "annotation",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "Annotation"
+            }
+          ],
+          "name": "GeneratedCodeInfo",
+          "nestedType": [
+            {
+              "enumType": [
+                {
+                  "name": "Semantic",
+                  "value": [
+                    {
+                      "name": "ALIAS",
+                      "number": 2
+                    },
+                    {
+                      "name": "NONE",
+                      "number": 0
+                    },
+                    {
+                      "name": "SET",
+                      "number": 1
+                    }
+                  ]
+                }
+              ],
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "begin",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "end",
+                  "number": 4,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_REPEATED",
+                  "name": "path",
+                  "number": 1,
+                  "options": {
+                    "packed": true
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "semantic",
+                  "number": 5,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_ENUM",
+                  "typeName": "Semantic"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "source_file",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Annotation"
+            }
+          ]
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": ".google.api.resource",
+              "number": 1053,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.ResourceDescriptor"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated_legacy_json_field_conflicts",
+              "number": 11,
+              "options": {
+                "deprecated": true,
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 12,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "map_entry",
+              "number": 7,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "message_set_wire_format",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "no_standard_descriptor_accessor",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "MessageOptions",
+          "reservedRange": [
+            {
+              "end": 4,
+              "start": 4
+            },
+            {
+              "end": 5,
+              "start": 5
+            },
+            {
+              "end": 6,
+              "start": 6
+            },
+            {
+              "end": 8,
+              "start": 8
+            },
+            {
+              "end": 9,
+              "start": 9
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "client_streaming",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "input_type",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "MethodOptions"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "output_type",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "server_streaming",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            }
+          ],
+          "name": "MethodDescriptorProto"
+        },
+        {
+          "enumType": [
+            {
+              "name": "IdempotencyLevel",
+              "value": [
+                {
+                  "name": "IDEMPOTENCY_UNKNOWN",
+                  "number": 0
+                },
+                {
+                  "name": "IDEMPOTENT",
+                  "number": 2
+                },
+                {
+                  "name": "NO_SIDE_EFFECTS",
+                  "number": 1
+                }
+              ]
+            }
+          ],
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": ".google.api.http",
+              "number": 72295728,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "api.HttpRule"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": ".google.api.method_signature",
+              "number": 1051,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 33,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 35,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "defaultValue": "IDEMPOTENCY_UNKNOWN",
+              "label": "LABEL_OPTIONAL",
+              "name": "idempotency_level",
+              "number": 34,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_ENUM",
+              "typeName": "IdempotencyLevel"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "MethodOptions"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "OneofOptions"
+            }
+          ],
+          "name": "OneofDescriptorProto"
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "OneofOptions"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "method",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "MethodDescriptorProto"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "name",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "options",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "ServiceOptions"
+            }
+          ],
+          "name": "ServiceDescriptorProto",
+          "reservedName": ["stream"],
+          "reservedRange": [
+            {
+              "end": 4,
+              "start": 4
+            }
+          ]
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536870911,
+              "start": 1000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": ".google.api.api_version",
+              "number": 525000001,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": ".google.api.default_host",
+              "number": 1049,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": ".google.api.oauth_scopes",
+              "number": 1050,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "defaultValue": "false",
+              "label": "LABEL_OPTIONAL",
+              "name": "deprecated",
+              "number": 33,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BOOL"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "features",
+              "number": 34,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "FeatureSet"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "uninterpreted_option",
+              "number": 999,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "UninterpretedOption"
+            }
+          ],
+          "name": "ServiceOptions"
+        },
+        {
+          "extensionRange": [
+            {
+              "end": 536000000,
+              "start": 536000000
+            }
+          ],
+          "field": [
+            {
+              "label": "LABEL_REPEATED",
+              "name": "location",
+              "number": 1,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "Location"
+            }
+          ],
+          "name": "SourceCodeInfo",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "leading_comments",
+                  "number": 3,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_REPEATED",
+                  "name": "leading_detached_comments",
+                  "number": 6,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                },
+                {
+                  "label": "LABEL_REPEATED",
+                  "name": "path",
+                  "number": 1,
+                  "options": {
+                    "packed": true
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_REPEATED",
+                  "name": "span",
+                  "number": 2,
+                  "options": {
+                    "packed": true
+                  },
+                  "type": "TYPE_INT32"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "trailing_comments",
+                  "number": 4,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "Location"
+            }
+          ]
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "nanos",
+              "number": 2,
+              "type": "TYPE_INT32"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "seconds",
+              "number": 1,
+              "type": "TYPE_INT64"
+            }
+          ],
+          "name": "Timestamp"
+        },
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "aggregate_value",
+              "number": 8,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "double_value",
+              "number": 6,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_DOUBLE"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "identifier_value",
+              "number": 3,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_REPEATED",
+              "name": "name",
+              "number": 2,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_MESSAGE",
+              "typeName": "NamePart"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "negative_int_value",
+              "number": 5,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_INT64"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "positive_int_value",
+              "number": 4,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_UINT64"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "string_value",
+              "number": 7,
+              "options": {
+                "packed": false
+              },
+              "type": "TYPE_BYTES"
+            }
+          ],
+          "name": "UninterpretedOption",
+          "nestedType": [
+            {
+              "field": [
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "is_extension",
+                  "number": 2,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_BOOL"
+                },
+                {
+                  "label": "LABEL_OPTIONAL",
+                  "name": "name_part",
+                  "number": 1,
+                  "options": {
+                    "packed": false
+                  },
+                  "type": "TYPE_STRING"
+                }
+              ],
+              "name": "NamePart"
+            }
+          ]
+        }
+      ],
+      "name": "google_protobuf.proto",
+      "package": "google.protobuf",
+      "syntax": "proto3"
+    },
+    {
+      "messageType": [
+        {
+          "field": [
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "description",
+              "number": 3,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "expression",
+              "number": 1,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "location",
+              "number": 4,
+              "type": "TYPE_STRING"
+            },
+            {
+              "label": "LABEL_OPTIONAL",
+              "name": "title",
+              "number": 2,
+              "type": "TYPE_STRING"
+            }
+          ],
+          "name": "Expr"
+        }
+      ],
+      "name": "google_type.proto",
+      "package": "google.type",
+      "syntax": "proto3"
+    }
+  ]
+}

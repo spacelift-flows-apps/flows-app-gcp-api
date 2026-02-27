@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const managedZonesTestIamPermissions: AppBlock = {
   name: "Managed Zones - Test IAM Permissions",
-  description: `Returns permissions that a caller has on the specified resource.`,
+  description: `Returns permissions that a caller has on the specified resource. If the resource does not exist, this returns an empty set of permissions, not a 'NOT_FOUND' error. Note: This operation is designed to be used for building permission-aware UIs and command-line tools, not for authorization checking. This operation may "fail open" without warning.`,
   category: "Managed Zones",
   inputs: {
     default: {
@@ -12,12 +12,15 @@ const managedZonesTestIamPermissions: AppBlock = {
           name: "Resource",
           description:
             "REQUIRED: The resource for which the policy detail is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
-          type: "string",
+          type: {
+            type: "string",
+          },
           required: true,
         },
         permissions: {
           name: "Permissions",
-          description: "The set of permissions to check for the 'resource'.",
+          description:
+            "The set of permissions to check for the `resource`. Permissions with wildcards (such as `*` or `storage.*`) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).",
           type: {
             type: "array",
             items: {
@@ -28,75 +31,23 @@ const managedZonesTestIamPermissions: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.resource !== undefined)
+          pathParams["resource"] = String(input.event.inputConfig.resource);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/cloud-platform.read-only",
-              "https://www.googleapis.com/auth/ndev.clouddns.readonly",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/{+resource}:testIamPermissions`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
+        const body: Record<string, any> = {};
         if (input.event.inputConfig.permissions !== undefined)
-          requestBody.permissions = input.event.inputConfig.permissions;
+          body.permissions = input.event.inputConfig.permissions;
 
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
+        const result = await dnsFetch({
+          config: input.app.config,
+          method: "POST",
+          pathTemplate: "dns/v1/{+resource}:testIamPermissions",
+          pathParams,
+          body: Object.keys(body).length > 0 ? body : undefined,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -112,9 +63,12 @@ const managedZonesTestIamPermissions: AppBlock = {
             items: {
               type: "string",
             },
+            description:
+              "A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
           },
         },
         additionalProperties: true,
+        description: "Response message for `TestIamPermissions` method.",
       },
     },
   },

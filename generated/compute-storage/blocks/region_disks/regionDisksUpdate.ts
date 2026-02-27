@@ -1,83 +1,63 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const regionDisksUpdate: AppBlock = {
   name: "Region Disks - Update",
-  description: `Update the specified disk with the data included in the request.`,
+  description: `Updates the specified UrlMap resource with the data included in the request.`,
   category: "Region Disks",
   inputs: {
     default: {
       config: {
         region: {
           name: "Region",
-          description:
-            "[Output Only] URL of the region where the disk resides.",
-          type: "string",
-          required: false,
+          description: "The name of the region for this request.",
+          type: {
+            type: "string",
+            description: "The name of the region for this request.",
+          },
+          required: true,
         },
         disk: {
           name: "Disk",
           description: "The disk name for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The disk name for this request.",
+          },
           required: true,
         },
-        paths: {
-          name: "Paths",
-          description: "Parameter: paths",
-          type: "string",
-          required: false,
-        },
-        updateMask: {
-          name: "Update Mask",
+        accessMode: {
+          name: "Access Mode",
           description:
-            "update_mask indicates fields to be updated as part of this request.",
-          type: "string",
+            "The access mode of the disk.        - READ_WRITE_SINGLE: The default AccessMode, means the      disk can be attached to single instance in RW mode.      - READ_WRITE_MANY: The AccessMode means the disk can be      attached to multiple instances in RW mode.      - READ_ONLY_MANY: The AccessMode means the disk can be      attached to multiple instances in RO mode.   The AccessMode is only valid for Hyperdisk disk types. Check the AccessMode enum for the list of possible values.",
+          type: {
+            type: "string",
+            enum: [
+              "UNDEFINED_ACCESS_MODE",
+              "READ_ONLY_MANY",
+              "READ_WRITE_MANY",
+              "READ_WRITE_SINGLE",
+            ],
+            description:
+              "The access mode of the disk.        - READ_WRITE_SINGLE: The default AccessMode, means the      disk can be attached to single instance in RW mode.      - READ_WRITE_MANY: The AccessMode means the disk can be      attached to multiple instances in RW mode.      - READ_ONLY_MANY: The AccessMode means the disk can be      attached to multiple instances in RO mode.   The AccessMode is only valid for Hyperdisk disk types. Check the AccessMode enum for the list of possible values.",
+          },
           required: false,
         },
-        requestId: {
-          name: "Request ID",
+        architecture: {
+          name: "Architecture",
           description:
-            "An optional request ID to identify requests. Specify a unique request ID so\nthat if you must retry your request, the server will know to ignore the\nrequest if it has already been completed.\n\nFor example, consider a situation where you make an initial request and\nthe request times out. If you make the request again with the same\nrequest ID, the server can check if original operation with the same\nrequest ID was received, and if so, will ignore the second request. This\nprevents clients from accidentally creating duplicate commitments.\n\nThe request ID must be\na valid UUID with the exception that zero UUID is not supported\n(00000000-0000-0000-0000-000000000000).",
-          type: "string",
-          required: false,
-        },
-        provisionedThroughput: {
-          name: "Provisioned Throughput",
-          description:
-            "Indicates how much throughput to provision for the disk.",
-          type: "string",
-          required: false,
-        },
-        labelFingerprint: {
-          name: "Label Fingerprint",
-          description:
-            "A fingerprint for the labels being applied to this disk, which is essentially a hash of the labels set used for optimistic locking.",
-          type: "string",
-          required: false,
-        },
-        lastAttachTimestamp: {
-          name: "Last Attach Timestamp",
-          description:
-            "[Output Only] Last attach timestamp inRFC3339 text format.",
-          type: "string",
-          required: false,
-        },
-        storagePool: {
-          name: "Storage Pool",
-          description: "The storage pool in which the new disk is created.",
-          type: "string",
-          required: false,
-        },
-        sizeGb: {
-          name: "Size Gb",
-          description: "Size, in GB, of the persistent disk.",
-          type: "string",
-          required: false,
-        },
-        options: {
-          name: "Options",
-          description: "Internal use only.",
-          type: "string",
+            "The architecture of the disk. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
+          type: {
+            type: "string",
+            enum: [
+              "UNDEFINED_ARCHITECTURE",
+              "ARCHITECTURE_UNSPECIFIED",
+              "ARM64",
+              "X86_64",
+            ],
+            description:
+              "The architecture of the disk. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
+          },
           required: false,
         },
         asyncPrimaryDisk: {
@@ -88,411 +68,74 @@ const regionDisksUpdate: AppBlock = {
             properties: {
               disk: {
                 type: "string",
-              },
-              consistencyGroupPolicyId: {
-                type: "string",
-              },
-              diskId: {
-                type: "string",
-              },
-              consistencyGroupPolicy: {
-                type: "string",
+                description:
+                  "The other disk asynchronously replicated to or from the current disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk    - projects/project/zones/zone/disks/disk    - zones/zone/disks/disk",
               },
             },
             additionalProperties: true,
-          },
-          required: false,
-        },
-        licenses: {
-          name: "Licenses",
-          description: "A list of publicly visible licenses.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          required: false,
-        },
-        sourceSnapshotId: {
-          name: "Source Snapshot ID",
-          description:
-            "[Output Only] The unique ID of the snapshot used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        licenseCodes: {
-          name: "License Codes",
-          description:
-            "Integer license codes indicating which licenses are attached to this disk.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          required: false,
-        },
-        sourceConsistencyGroupPolicy: {
-          name: "Source Consistency Group Policy",
-          description:
-            "[Output Only] URL of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
-          type: "string",
-          required: false,
-        },
-        lastDetachTimestamp: {
-          name: "Last Detach Timestamp",
-          description:
-            "[Output Only] Last detach timestamp inRFC3339 text format.",
-          type: "string",
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description: "[Output Only] Type of the resource.",
-          type: "string",
-          required: false,
-        },
-        type: {
-          name: "Type",
-          description:
-            "URL of the disk type resource describing which disk type to use to create the disk.",
-          type: "string",
-          required: false,
-        },
-        resourceStatus: {
-          name: "Resource Status",
-          description:
-            "[Output Only] Status information for the disk resource.",
-          type: {
-            type: "object",
-            properties: {
-              asyncPrimaryDisk: {
-                type: "object",
-                properties: {
-                  state: {
-                    type: "object",
-                    additionalProperties: true,
-                  },
-                },
-                additionalProperties: true,
-              },
-              asyncSecondaryDisks: {
-                type: "object",
-                additionalProperties: true,
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        physicalBlockSizeBytes: {
-          name: "Physical Block Size Bytes",
-          description: "Physical block size of the persistent disk, in bytes.",
-          type: "string",
-          required: false,
-        },
-        id: {
-          name: "ID",
-          description: "[Output Only] The unique identifier for the resource.",
-          type: "string",
-          required: false,
-        },
-        diskEncryptionKey: {
-          name: "Disk Encryption Key",
-          description:
-            "Encrypts the disk using a customer-supplied encryption key or a customer-managed encryption key.",
-          type: {
-            type: "object",
-            properties: {
-              rsaEncryptedKey: {
-                type: "string",
-              },
-              rawKey: {
-                type: "string",
-              },
-              kmsKeyServiceAccount: {
-                type: "string",
-              },
-              sha256: {
-                type: "string",
-              },
-              kmsKeyName: {
-                type: "string",
-              },
-            },
-            additionalProperties: true,
+            description: "Disk asynchronously replicated into this disk.",
           },
           required: false,
         },
         description: {
           name: "Description",
-          description: "An optional description of this resource.",
-          type: "string",
-          required: false,
-        },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "[Output Only] Reserved for future use.",
-          type: "boolean",
-          required: false,
-        },
-        replicaZones: {
-          name: "Replica Zones",
           description:
-            "URLs of the zones where the disk should be replicated to.",
+            "An optional description of this resource. Provide this property when you create the resource.",
           type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
           },
           required: false,
         },
-        sourceSnapshotEncryptionKey: {
-          name: "Source Snapshot Encryption Key",
+        diskEncryptionKey: {
+          name: "Disk Encryption Key",
           description:
-            "Thecustomer-supplied encryption key of the source snapshot.",
+            'Encrypts the disk using a customer-supplied encryption key or a customer-managed encryption key.  Encryption keys do not protect access to metadata of the disk.  After you encrypt a disk with a customer-supplied key, you must provide the same key if you use the disk later. For example, to create a disk snapshot, to create a disk image, to create a machine image, or to attach the disk to a virtual machine.  After you encrypt a disk with a customer-managed key, thediskEncryptionKey.kmsKeyName is set to a key *version* name once the disk is created. The disk is encrypted with this version of the key. In the response, diskEncryptionKey.kmsKeyName appears in the following format:  "diskEncryptionKey.kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeysVersions/version  If you do not provide an encryption key when creating the disk, then the disk is encrypted using an automatically generated key and you don\'t need to provide a key to use the disk later.',
           type: {
             type: "object",
             properties: {
-              rsaEncryptedKey: {
+              kmsKeyName: {
                 type: "string",
-              },
-              rawKey: {
-                type: "string",
+                description:
+                  'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
               },
               kmsKeyServiceAccount: {
                 type: "string",
+                description:
+                  'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
               },
-              sha256: {
+              rawKey: {
                 type: "string",
+                description:
+                  'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
               },
-              kmsKeyName: {
+              rsaEncryptedKey: {
                 type: "string",
+                description:
+                  'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
             },
             additionalProperties: true,
-          },
-          required: false,
-        },
-        accessMode: {
-          name: "Access Mode",
-          description: "The access mode of the disk.",
-          type: "string",
-          required: false,
-        },
-        sourceSnapshot: {
-          name: "Source Snapshot",
-          description: "The source snapshot used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        sourceInstantSnapshot: {
-          name: "Source Instant Snapshot",
-          description: "The source instant snapshot used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        resourcePolicies: {
-          name: "Resource Policies",
-          description:
-            "Resource policies applied to this disk for automatic snapshot creations.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          required: false,
-        },
-        users: {
-          name: "Users",
-          description:
-            "[Output Only] Links to the users of the disk (attached instances) in form:projects/project/zones/zon...",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
+            description:
+              'Encrypts the disk using a customer-supplied encryption key or a customer-managed encryption key.  Encryption keys do not protect access to metadata of the disk.  After you encrypt a disk with a customer-supplied key, you must provide the same key if you use the disk later. For example, to create a disk snapshot, to create a disk image, to create a machine image, or to attach the disk to a virtual machine.  After you encrypt a disk with a customer-managed key, thediskEncryptionKey.kmsKeyName is set to a key *version* name once the disk is created. The disk is encrypted with this version of the key. In the response, diskEncryptionKey.kmsKeyName appears in the following format:  "diskEncryptionKey.kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeysVersions/version  If you do not provide an encryption key when creating the disk, then the disk is encrypted using an automatically generated key and you don\'t need to provide a key to use the disk later.',
           },
           required: false,
         },
         enableConfidentialCompute: {
           name: "Enable Confidential Compute",
           description: "Whether this disk is using confidential compute mode.",
-          type: "boolean",
-          required: false,
-        },
-        asyncSecondaryDisks: {
-          name: "Async Secondary Disks",
-          description:
-            "[Output Only] A list of disks this disk is asynchronously replicated to.",
           type: {
-            type: "object",
-            additionalProperties: true,
+            type: "boolean",
+            description:
+              "Whether this disk is using confidential compute mode.",
           },
-          required: false,
-        },
-        architecture: {
-          name: "Architecture",
-          description: "The architecture of the disk.",
-          type: "string",
-          required: false,
-        },
-        params: {
-          name: "Params",
-          description: "Input only.",
-          type: {
-            type: "object",
-            properties: {
-              resourceManagerTags: {
-                type: "object",
-                additionalProperties: true,
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        labels: {
-          name: "Labels",
-          description: "Labels to apply to this disk.",
-          type: {
-            type: "object",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        provisionedIops: {
-          name: "Provisioned Iops",
-          description: "Indicates how many IOPS to provision for the disk.",
-          type: "string",
-          required: false,
-        },
-        sourceConsistencyGroupPolicyId: {
-          name: "Source Consistency Group Policy ID",
-          description:
-            "[Output Only] ID of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
-          type: "string",
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Name of the resource.",
-          type: "string",
-          required: false,
-        },
-        sourceImage: {
-          name: "Source Image",
-          description: "The source image used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        locationHint: {
-          name: "Location Hint",
-          description:
-            "An opaque location hint used to place the disk close to other resources.",
-          type: "string",
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description: "[Output Only] The status of disk creation.",
-          type: "string",
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "[Output Only] Creation timestamp inRFC3339 text format.",
-          type: "string",
-          required: false,
-        },
-        sourceDiskId: {
-          name: "Source Disk ID",
-          description:
-            "[Output Only] The unique ID of the disk used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        zone: {
-          name: "Zone",
-          description: "[Output Only] URL of the zone where the disk resides.",
-          type: "string",
-          required: false,
-        },
-        sourceInstantSnapshotId: {
-          name: "Source Instant Snapshot ID",
-          description:
-            "[Output Only] The unique ID of the instant snapshot used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        satisfiesPzi: {
-          name: "Satisfies Pzi",
-          description: "Output only.",
-          type: "boolean",
-          required: false,
-        },
-        sourceStorageObject: {
-          name: "Source Storage Object",
-          description:
-            "The full Google Cloud Storage URI where the disk image is stored.",
-          type: "string",
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "[Output Only] Server-defined fully-qualified URL for this resource.",
-          type: "string",
-          required: false,
-        },
-        sourceImageId: {
-          name: "Source Image ID",
-          description:
-            "[Output Only] The ID value of the image used to create this disk.",
-          type: "string",
-          required: false,
-        },
-        sourceImageEncryptionKey: {
-          name: "Source Image Encryption Key",
-          description:
-            "Thecustomer-supplied encryption key of the source image.",
-          type: {
-            type: "object",
-            properties: {
-              rsaEncryptedKey: {
-                type: "string",
-              },
-              rawKey: {
-                type: "string",
-              },
-              kmsKeyServiceAccount: {
-                type: "string",
-              },
-              sha256: {
-                type: "string",
-              },
-              kmsKeyName: {
-                type: "string",
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        sourceDisk: {
-          name: "Source Disk",
-          description: "The source disk used to create this disk.",
-          type: "string",
           required: false,
         },
         guestOsFeatures: {
           name: "Guest Os Features",
           description:
-            "A list of features to enable on the guest operating system.",
+            "A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
           type: {
             type: "array",
             items: {
@@ -501,6 +144,7 @@ const regionDisksUpdate: AppBlock = {
                 type: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_TYPE",
                     "BARE_METAL_LINUX_COMPATIBLE",
                     "FEATURE_TYPE_UNSPECIFIED",
                     "GVNIC",
@@ -517,201 +161,521 @@ const regionDisksUpdate: AppBlock = {
                     "VIRTIO_SCSI_MULTIQUEUE",
                     "WINDOWS",
                   ],
+                  description:
+                    "The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values:     - VIRTIO_SCSI_MULTIQUEUE    - WINDOWS    - MULTI_IP_SUBNET    - UEFI_COMPATIBLE    - GVNIC    - SEV_CAPABLE    - SUSPEND_RESUME_COMPATIBLE    - SEV_LIVE_MIGRATABLE_V2    - SEV_SNP_CAPABLE    - TDX_CAPABLE    - IDPF    - SNP_SVSM_CAPABLE   For more information, see Enabling guest operating system features. Check the Type enum for the list of possible values.",
                 },
               },
+              description: "Guest OS features.",
               additionalProperties: true,
             },
+            description:
+              "A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
+          },
+          required: false,
+        },
+        labelFingerprint: {
+          name: "Label Fingerprint",
+          description:
+            "A fingerprint for the labels being applied to this disk, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a disk.",
+          type: {
+            type: "string",
+            description:
+              "A fingerprint for the labels being applied to this disk, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a disk.",
+          },
+          required: false,
+        },
+        labels: {
+          name: "Labels",
+          description:
+            "Labels to apply to this disk. These can be later modified by the setLabels method.",
+          type: {
+            type: "object",
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Labels to apply to this disk. These can be later modified by the setLabels method.",
+          },
+          required: false,
+        },
+        licenseCodes: {
+          name: "License Codes",
+          description:
+            "Integer license codes indicating which licenses are attached to this disk.",
+          type: {
+            type: "array",
+            items: {
+              type: "string",
+              description: "64-bit integer as string",
+            },
+            description:
+              "Integer license codes indicating which licenses are attached to this disk.",
+          },
+          required: false,
+        },
+        licenses: {
+          name: "Licenses",
+          description:
+            "A list of publicly visible licenses. Reserved for Google's use.",
+          type: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "A list of publicly visible licenses. Reserved for Google's use.",
+          },
+          required: false,
+        },
+        locationHint: {
+          name: "Location Hint",
+          description:
+            "An opaque location hint used to place the disk close to other resources. This field is for use by internal tools that use the public API.",
+          type: {
+            type: "string",
+            description:
+              "An opaque location hint used to place the disk close to other resources. This field is for use by internal tools that use the public API.",
+          },
+          required: false,
+        },
+        name: {
+          name: "Name",
+          description:
+            "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          type: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          required: false,
+        },
+        options: {
+          name: "Options",
+          description: "Internal use only.",
+          type: {
+            type: "string",
+            description: "Internal use only.",
+          },
+          required: false,
+        },
+        params: {
+          name: "Params",
+          description:
+            "Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.",
+          type: {
+            type: "object",
+            properties: {
+              resourceManagerTags: {
+                type: "object",
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "Resource manager tags to be bound to the disk. Tag keys and values have the same definition as resource manager tags. Keys and values can be either in numeric format, such as `tagKeys/{tag_key_id}` and `tagValues/456` or in namespaced format such as `{org_id|project_id}/{tag_key_short_name}` and `{tag_value_short_name}`. The field is ignored (both PUT & PATCH) when empty.",
+              },
+            },
+            description: "Additional disk params.",
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        physicalBlockSizeBytes: {
+          name: "Physical Block Size Bytes",
+          description:
+            "Physical block size of the persistent disk, in bytes. If not present in a request, a default value is used. The currently supported size is 4096, other sizes may be added in the future. If an unsupported value is requested, the error message will list the supported values for the caller's project.",
+          type: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          required: false,
+        },
+        provisionedIops: {
+          name: "Provisioned Iops",
+          description:
+            "Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. Values must be between 10,000 and 120,000. For more details, see theExtreme persistent disk documentation.",
+          type: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          required: false,
+        },
+        provisionedThroughput: {
+          name: "Provisioned Throughput",
+          description:
+            "Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1.",
+          type: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          required: false,
+        },
+        replicaZones: {
+          name: "Replica Zones",
+          description:
+            "URLs of the zones where the disk should be replicated to. Only applicable for regional resources.",
+          type: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "URLs of the zones where the disk should be replicated to. Only applicable for regional resources.",
+          },
+          required: false,
+        },
+        resourcePolicies: {
+          name: "Resource Policies",
+          description:
+            "Resource policies applied to this disk for automatic snapshot creations.",
+          type: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "Resource policies applied to this disk for automatic snapshot creations.",
+          },
+          required: false,
+        },
+        satisfiesPzi: {
+          name: "Satisfies Pzi",
+          description: "Output only. Reserved for future use.",
+          type: {
+            type: "boolean",
+            description: "Output only. Reserved for future use.",
+          },
+          required: false,
+        },
+        sizeGb: {
+          name: "Size Gb",
+          description:
+            "Size, in GB, of the persistent disk. You can specify this field when creating a persistent disk using thesourceImage, sourceSnapshot, orsourceDisk parameter, or specify it alone to create an empty persistent disk.  If you specify this field along with a source, the value ofsizeGb must not be less than the size of the source. Acceptable values are greater than 0.",
+          type: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          required: false,
+        },
+        sourceDisk: {
+          name: "Source Disk",
+          description:
+            "The source disk used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        -        https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk       -        https://www.googleapis.com/compute/v1/projects/project/regions/region/disks/disk       -        projects/project/zones/zone/disks/disk       -        projects/project/regions/region/disks/disk       -        zones/zone/disks/disk       -        regions/region/disks/disk",
+          type: {
+            type: "string",
+            description:
+              "The source disk used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        -        https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk       -        https://www.googleapis.com/compute/v1/projects/project/regions/region/disks/disk       -        projects/project/zones/zone/disks/disk       -        projects/project/regions/region/disks/disk       -        zones/zone/disks/disk       -        regions/region/disks/disk",
+          },
+          required: false,
+        },
+        sourceImage: {
+          name: "Source Image",
+          description:
+            "The source image used to create this disk. If the source image is deleted, this field will not be set.  To create a disk with one of the public operating system images, specify the image by its family name. For example, specifyfamily/debian-9 to use the latest Debian 9 image:  projects/debian-cloud/global/images/family/debian-9   Alternatively, use a specific version of a public operating system image:  projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD   To create a disk with a custom image that you created, specify the image name in the following format:  global/images/my-custom-image   You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name:  global/images/family/my-image-family",
+          type: {
+            type: "string",
+            description:
+              "The source image used to create this disk. If the source image is deleted, this field will not be set.  To create a disk with one of the public operating system images, specify the image by its family name. For example, specifyfamily/debian-9 to use the latest Debian 9 image:  projects/debian-cloud/global/images/family/debian-9   Alternatively, use a specific version of a public operating system image:  projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD   To create a disk with a custom image that you created, specify the image name in the following format:  global/images/my-custom-image   You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name:  global/images/family/my-image-family",
+          },
+          required: false,
+        },
+        sourceImageEncryptionKey: {
+          name: "Source Image Encryption Key",
+          description:
+            "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.",
+          type: {
+            type: "object",
+            properties: {
+              kmsKeyName: {
+                type: "string",
+                description:
+                  'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
+              },
+              kmsKeyServiceAccount: {
+                type: "string",
+                description:
+                  'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
+              },
+              rawKey: {
+                type: "string",
+                description:
+                  'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
+              },
+              rsaEncryptedKey: {
+                type: "string",
+                description:
+                  'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
+              },
+            },
+            additionalProperties: true,
+            description:
+              "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.",
+          },
+          required: false,
+        },
+        sourceInstantSnapshot: {
+          name: "Source Instant Snapshot",
+          description:
+            "The source instant snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/instantSnapshots/instantSnapshot      - projects/project/zones/zone/instantSnapshots/instantSnapshot    - zones/zone/instantSnapshots/instantSnapshot",
+          type: {
+            type: "string",
+            description:
+              "The source instant snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/instantSnapshots/instantSnapshot      - projects/project/zones/zone/instantSnapshots/instantSnapshot    - zones/zone/instantSnapshots/instantSnapshot",
+          },
+          required: false,
+        },
+        sourceSnapshot: {
+          name: "Source Snapshot",
+          description:
+            "The source snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/global/snapshots/snapshot    - projects/project/global/snapshots/snapshot      - global/snapshots/snapshot",
+          type: {
+            type: "string",
+            description:
+              "The source snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/global/snapshots/snapshot    - projects/project/global/snapshots/snapshot      - global/snapshots/snapshot",
+          },
+          required: false,
+        },
+        sourceSnapshotEncryptionKey: {
+          name: "Source Snapshot Encryption Key",
+          description:
+            "Thecustomer-supplied encryption key of the source snapshot. Required if the source snapshot is protected by a customer-supplied encryption key.",
+          type: {
+            type: "object",
+            properties: {
+              kmsKeyName: {
+                type: "string",
+                description:
+                  'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
+              },
+              kmsKeyServiceAccount: {
+                type: "string",
+                description:
+                  'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
+              },
+              rawKey: {
+                type: "string",
+                description:
+                  'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
+              },
+              rsaEncryptedKey: {
+                type: "string",
+                description:
+                  'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
+              },
+            },
+            additionalProperties: true,
+            description:
+              "Thecustomer-supplied encryption key of the source snapshot. Required if the source snapshot is protected by a customer-supplied encryption key.",
+          },
+          required: false,
+        },
+        sourceStorageObject: {
+          name: "Source Storage Object",
+          description:
+            "The full Google Cloud Storage URI where the disk image is stored. This file must be a gzip-compressed tarball whose name ends in .tar.gz or virtual machine disk whose name ends in vmdk. Valid URIs may start with gs:// or https://storage.googleapis.com/. This flag is not optimized for creating multiple disks from a source storage object. To create many disks from a source storage object, use gcloud compute images import instead.",
+          type: {
+            type: "string",
+            description:
+              "The full Google Cloud Storage URI where the disk image is stored. This file must be a gzip-compressed tarball whose name ends in .tar.gz or virtual machine disk whose name ends in vmdk. Valid URIs may start with gs:// or https://storage.googleapis.com/. This flag is not optimized for creating multiple disks from a source storage object. To create many disks from a source storage object, use gcloud compute images import instead.",
+          },
+          required: false,
+        },
+        storagePool: {
+          name: "Storage Pool",
+          description:
+            "The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/storagePools/storagePool      - projects/project/zones/zone/storagePools/storagePool    - zones/zone/storagePools/storagePool",
+          type: {
+            type: "string",
+            description:
+              "The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/storagePools/storagePool      - projects/project/zones/zone/storagePools/storagePool    - zones/zone/storagePools/storagePool",
+          },
+          required: false,
+        },
+        type: {
+          name: "Type",
+          description:
+            "URL of the disk type resource describing which disk type to use to create the disk. Provide this when creating the disk. For example:projects/project/zones/zone/diskTypes/pd-ssd. See Persistent disk types.",
+          type: {
+            type: "string",
+            description:
+              "URL of the disk type resource describing which disk type to use to create the disk. Provide this when creating the disk. For example:projects/project/zones/zone/diskTypes/pd-ssd. See Persistent disk types.",
+          },
+          required: false,
+        },
+        paths: {
+          name: "Paths",
+          description: "Paths parameter.",
+          type: {
+            type: "string",
+          },
+          required: false,
+        },
+        requestId: {
+          name: "Request Id",
+          description:
+            "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+          type: {
+            type: "string",
+            description:
+              "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+          },
+          required: false,
+        },
+        updateMask: {
+          name: "Update Mask",
+          description:
+            "update_mask indicates fields to be updated as part of this request.",
+          type: {
+            type: "string",
+            description:
+              "update_mask indicates fields to be updated as part of this request.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/disks/{disk}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
-        if (input.event.inputConfig.provisionedThroughput !== undefined)
-          requestBody.provisionedThroughput =
-            input.event.inputConfig.provisionedThroughput;
-        if (input.event.inputConfig.labelFingerprint !== undefined)
-          requestBody.labelFingerprint =
-            input.event.inputConfig.labelFingerprint;
-        if (input.event.inputConfig.lastAttachTimestamp !== undefined)
-          requestBody.lastAttachTimestamp =
-            input.event.inputConfig.lastAttachTimestamp;
-        if (input.event.inputConfig.storagePool !== undefined)
-          requestBody.storagePool = input.event.inputConfig.storagePool;
-        if (input.event.inputConfig.sizeGb !== undefined)
-          requestBody.sizeGb = input.event.inputConfig.sizeGb;
-        if (input.event.inputConfig.options !== undefined)
-          requestBody.options = input.event.inputConfig.options;
-        if (input.event.inputConfig.asyncPrimaryDisk !== undefined)
-          requestBody.asyncPrimaryDisk =
-            input.event.inputConfig.asyncPrimaryDisk;
-        if (input.event.inputConfig.licenses !== undefined)
-          requestBody.licenses = input.event.inputConfig.licenses;
-        if (input.event.inputConfig.sourceSnapshotId !== undefined)
-          requestBody.sourceSnapshotId =
-            input.event.inputConfig.sourceSnapshotId;
-        if (input.event.inputConfig.licenseCodes !== undefined)
-          requestBody.licenseCodes = input.event.inputConfig.licenseCodes;
-        if (input.event.inputConfig.sourceConsistencyGroupPolicy !== undefined)
-          requestBody.sourceConsistencyGroupPolicy =
-            input.event.inputConfig.sourceConsistencyGroupPolicy;
-        if (input.event.inputConfig.lastDetachTimestamp !== undefined)
-          requestBody.lastDetachTimestamp =
-            input.event.inputConfig.lastDetachTimestamp;
-        if (input.event.inputConfig.kind !== undefined)
-          requestBody.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.type !== undefined)
-          requestBody.type = input.event.inputConfig.type;
-        if (input.event.inputConfig.resourceStatus !== undefined)
-          requestBody.resourceStatus = input.event.inputConfig.resourceStatus;
-        if (input.event.inputConfig.physicalBlockSizeBytes !== undefined)
-          requestBody.physicalBlockSizeBytes =
-            input.event.inputConfig.physicalBlockSizeBytes;
-        if (input.event.inputConfig.id !== undefined)
-          requestBody.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.diskEncryptionKey !== undefined)
-          requestBody.diskEncryptionKey =
-            input.event.inputConfig.diskEncryptionKey;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
-          requestBody.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.description !== undefined)
-          requestBody.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.satisfiesPzs !== undefined)
-          requestBody.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
-        if (input.event.inputConfig.replicaZones !== undefined)
-          requestBody.replicaZones = input.event.inputConfig.replicaZones;
-        if (input.event.inputConfig.sourceSnapshotEncryptionKey !== undefined)
-          requestBody.sourceSnapshotEncryptionKey =
-            input.event.inputConfig.sourceSnapshotEncryptionKey;
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.disk !== undefined)
+          pathParams["disk"] = String(input.event.inputConfig.disk);
+
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.paths !== undefined)
+          queryParams["paths"] = String(input.event.inputConfig.paths);
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
+        if (input.event.inputConfig.updateMask !== undefined)
+          queryParams["updateMask"] = String(
+            input.event.inputConfig.updateMask,
+          );
+        const body: Record<string, any> = {};
         if (input.event.inputConfig.accessMode !== undefined)
-          requestBody.accessMode = input.event.inputConfig.accessMode;
-        if (input.event.inputConfig.sourceSnapshot !== undefined)
-          requestBody.sourceSnapshot = input.event.inputConfig.sourceSnapshot;
-        if (input.event.inputConfig.sourceInstantSnapshot !== undefined)
-          requestBody.sourceInstantSnapshot =
-            input.event.inputConfig.sourceInstantSnapshot;
-        if (input.event.inputConfig.resourcePolicies !== undefined)
-          requestBody.resourcePolicies =
-            input.event.inputConfig.resourcePolicies;
-        if (input.event.inputConfig.users !== undefined)
-          requestBody.users = input.event.inputConfig.users;
-        if (input.event.inputConfig.enableConfidentialCompute !== undefined)
-          requestBody.enableConfidentialCompute =
-            input.event.inputConfig.enableConfidentialCompute;
-        if (input.event.inputConfig.asyncSecondaryDisks !== undefined)
-          requestBody.asyncSecondaryDisks =
-            input.event.inputConfig.asyncSecondaryDisks;
+          body.accessMode = input.event.inputConfig.accessMode;
         if (input.event.inputConfig.architecture !== undefined)
-          requestBody.architecture = input.event.inputConfig.architecture;
-        if (input.event.inputConfig.params !== undefined)
-          requestBody.params = input.event.inputConfig.params;
+          body.architecture = input.event.inputConfig.architecture;
+        if (input.event.inputConfig.asyncPrimaryDisk !== undefined)
+          body.asyncPrimaryDisk = input.event.inputConfig.asyncPrimaryDisk;
+        if (input.event.inputConfig.asyncSecondaryDisks !== undefined)
+          body.asyncSecondaryDisks =
+            input.event.inputConfig.asyncSecondaryDisks;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.description !== undefined)
+          body.description = input.event.inputConfig.description;
+        if (input.event.inputConfig.diskEncryptionKey !== undefined)
+          body.diskEncryptionKey = input.event.inputConfig.diskEncryptionKey;
+        if (input.event.inputConfig.enableConfidentialCompute !== undefined)
+          body.enableConfidentialCompute =
+            input.event.inputConfig.enableConfidentialCompute;
+        if (input.event.inputConfig.guestOsFeatures !== undefined)
+          body.guestOsFeatures = input.event.inputConfig.guestOsFeatures;
+        if (input.event.inputConfig.id !== undefined)
+          body.id = input.event.inputConfig.id;
+        if (input.event.inputConfig.kind !== undefined)
+          body.kind = input.event.inputConfig.kind;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
         if (input.event.inputConfig.labels !== undefined)
-          requestBody.labels = input.event.inputConfig.labels;
+          body.labels = input.event.inputConfig.labels;
+        if (input.event.inputConfig.lastAttachTimestamp !== undefined)
+          body.lastAttachTimestamp =
+            input.event.inputConfig.lastAttachTimestamp;
+        if (input.event.inputConfig.lastDetachTimestamp !== undefined)
+          body.lastDetachTimestamp =
+            input.event.inputConfig.lastDetachTimestamp;
+        if (input.event.inputConfig.licenseCodes !== undefined)
+          body.licenseCodes = input.event.inputConfig.licenseCodes;
+        if (input.event.inputConfig.licenses !== undefined)
+          body.licenses = input.event.inputConfig.licenses;
+        if (input.event.inputConfig.locationHint !== undefined)
+          body.locationHint = input.event.inputConfig.locationHint;
+        if (input.event.inputConfig.name !== undefined)
+          body.name = input.event.inputConfig.name;
+        if (input.event.inputConfig.options !== undefined)
+          body.options = input.event.inputConfig.options;
+        if (input.event.inputConfig.params !== undefined)
+          body.params = input.event.inputConfig.params;
+        if (input.event.inputConfig.physicalBlockSizeBytes !== undefined)
+          body.physicalBlockSizeBytes =
+            input.event.inputConfig.physicalBlockSizeBytes;
         if (input.event.inputConfig.provisionedIops !== undefined)
-          requestBody.provisionedIops = input.event.inputConfig.provisionedIops;
+          body.provisionedIops = input.event.inputConfig.provisionedIops;
+        if (input.event.inputConfig.provisionedThroughput !== undefined)
+          body.provisionedThroughput =
+            input.event.inputConfig.provisionedThroughput;
+        if (input.event.inputConfig.region !== undefined)
+          body.region = input.event.inputConfig.region;
+        if (input.event.inputConfig.replicaZones !== undefined)
+          body.replicaZones = input.event.inputConfig.replicaZones;
+        if (input.event.inputConfig.resourcePolicies !== undefined)
+          body.resourcePolicies = input.event.inputConfig.resourcePolicies;
+        if (input.event.inputConfig.resourceStatus !== undefined)
+          body.resourceStatus = input.event.inputConfig.resourceStatus;
+        if (input.event.inputConfig.satisfiesPzi !== undefined)
+          body.satisfiesPzi = input.event.inputConfig.satisfiesPzi;
+        if (input.event.inputConfig.satisfiesPzs !== undefined)
+          body.satisfiesPzs = input.event.inputConfig.satisfiesPzs;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.sizeGb !== undefined)
+          body.sizeGb = input.event.inputConfig.sizeGb;
+        if (input.event.inputConfig.sourceConsistencyGroupPolicy !== undefined)
+          body.sourceConsistencyGroupPolicy =
+            input.event.inputConfig.sourceConsistencyGroupPolicy;
         if (
           input.event.inputConfig.sourceConsistencyGroupPolicyId !== undefined
         )
-          requestBody.sourceConsistencyGroupPolicyId =
+          body.sourceConsistencyGroupPolicyId =
             input.event.inputConfig.sourceConsistencyGroupPolicyId;
-        if (input.event.inputConfig.name !== undefined)
-          requestBody.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.sourceImage !== undefined)
-          requestBody.sourceImage = input.event.inputConfig.sourceImage;
-        if (input.event.inputConfig.locationHint !== undefined)
-          requestBody.locationHint = input.event.inputConfig.locationHint;
-        if (input.event.inputConfig.status !== undefined)
-          requestBody.status = input.event.inputConfig.status;
-        if (input.event.inputConfig.creationTimestamp !== undefined)
-          requestBody.creationTimestamp =
-            input.event.inputConfig.creationTimestamp;
-        if (input.event.inputConfig.sourceDiskId !== undefined)
-          requestBody.sourceDiskId = input.event.inputConfig.sourceDiskId;
-        if (input.event.inputConfig.zone !== undefined)
-          requestBody.zone = input.event.inputConfig.zone;
-        if (input.event.inputConfig.sourceInstantSnapshotId !== undefined)
-          requestBody.sourceInstantSnapshotId =
-            input.event.inputConfig.sourceInstantSnapshotId;
-        if (input.event.inputConfig.satisfiesPzi !== undefined)
-          requestBody.satisfiesPzi = input.event.inputConfig.satisfiesPzi;
-        if (input.event.inputConfig.sourceStorageObject !== undefined)
-          requestBody.sourceStorageObject =
-            input.event.inputConfig.sourceStorageObject;
-        if (input.event.inputConfig.selfLink !== undefined)
-          requestBody.selfLink = input.event.inputConfig.selfLink;
-        if (input.event.inputConfig.sourceImageId !== undefined)
-          requestBody.sourceImageId = input.event.inputConfig.sourceImageId;
-        if (input.event.inputConfig.sourceImageEncryptionKey !== undefined)
-          requestBody.sourceImageEncryptionKey =
-            input.event.inputConfig.sourceImageEncryptionKey;
         if (input.event.inputConfig.sourceDisk !== undefined)
-          requestBody.sourceDisk = input.event.inputConfig.sourceDisk;
-        if (input.event.inputConfig.guestOsFeatures !== undefined)
-          requestBody.guestOsFeatures = input.event.inputConfig.guestOsFeatures;
+          body.sourceDisk = input.event.inputConfig.sourceDisk;
+        if (input.event.inputConfig.sourceDiskId !== undefined)
+          body.sourceDiskId = input.event.inputConfig.sourceDiskId;
+        if (input.event.inputConfig.sourceImage !== undefined)
+          body.sourceImage = input.event.inputConfig.sourceImage;
+        if (input.event.inputConfig.sourceImageEncryptionKey !== undefined)
+          body.sourceImageEncryptionKey =
+            input.event.inputConfig.sourceImageEncryptionKey;
+        if (input.event.inputConfig.sourceImageId !== undefined)
+          body.sourceImageId = input.event.inputConfig.sourceImageId;
+        if (input.event.inputConfig.sourceInstantSnapshot !== undefined)
+          body.sourceInstantSnapshot =
+            input.event.inputConfig.sourceInstantSnapshot;
+        if (input.event.inputConfig.sourceInstantSnapshotId !== undefined)
+          body.sourceInstantSnapshotId =
+            input.event.inputConfig.sourceInstantSnapshotId;
+        if (input.event.inputConfig.sourceSnapshot !== undefined)
+          body.sourceSnapshot = input.event.inputConfig.sourceSnapshot;
+        if (input.event.inputConfig.sourceSnapshotEncryptionKey !== undefined)
+          body.sourceSnapshotEncryptionKey =
+            input.event.inputConfig.sourceSnapshotEncryptionKey;
+        if (input.event.inputConfig.sourceSnapshotId !== undefined)
+          body.sourceSnapshotId = input.event.inputConfig.sourceSnapshotId;
+        if (input.event.inputConfig.sourceStorageObject !== undefined)
+          body.sourceStorageObject =
+            input.event.inputConfig.sourceStorageObject;
+        if (input.event.inputConfig.status !== undefined)
+          body.status = input.event.inputConfig.status;
+        if (input.event.inputConfig.storagePool !== undefined)
+          body.storagePool = input.event.inputConfig.storagePool;
+        if (input.event.inputConfig.type !== undefined)
+          body.type = input.event.inputConfig.type;
+        if (input.event.inputConfig.users !== undefined)
+          body.users = input.event.inputConfig.users;
+        if (input.event.inputConfig.zone !== undefined)
+          body.zone = input.event.inputConfig.zone;
 
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
+        const result = await computeFetch({
+          config: input.app.config,
+          method: "PATCH",
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/disks/{disk}",
+          pathParams,
+          queryParams,
+          body: Object.keys(body).length > 0 ? body : undefined,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -722,67 +686,313 @@ const regionDisksUpdate: AppBlock = {
       type: {
         type: "object",
         properties: {
-          targetId: {
+          clientOperationId: {
             type: "string",
+            description:
+              "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
           creationTimestamp: {
             type: "string",
+            description: "[Deprecated] This field is deprecated.",
+          },
+          description: {
+            type: "string",
+            description:
+              "[Output Only] A textual description of the operation, which is set when the operation is created.",
+          },
+          endTime: {
+            type: "string",
+            description:
+              "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
+          },
+          error: {
+            type: "object",
+            properties: {
+              errors: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    code: {
+                      type: "string",
+                      description:
+                        "[Output Only] The error type identifier for this error.",
+                    },
+                    errorDetails: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          errorInfo: {
+                            type: "object",
+                            properties: {
+                              domain: {
+                                type: "string",
+                                description:
+                                  'The logical grouping to which the "reason" belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: "pubsub.googleapis.com". If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is "googleapis.com".',
+                              },
+                              metadatas: {
+                                type: "object",
+                                additionalProperties: {
+                                  type: "string",
+                                },
+                                description:
+                                  'Additional structured details about this error.  Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value.  For example, rather than `{"instanceLimit": "100/request"}`, should be returned as, `{"instanceLimitPerRequest": "100"}`, if the client exceeds the number of instances that can be created in a single (batch) request.',
+                              },
+                              reason: {
+                                type: "string",
+                                description:
+                                  "The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.",
+                              },
+                            },
+                            description:
+                              'Describes the cause of the error with structured details.  Example of an error when contacting the "pubsub.googleapis.com" API when it is not enabled:      { "reason": "API_DISABLED"       "domain": "googleapis.com"       "metadata": {         "resource": "projects/123",         "service": "pubsub.googleapis.com"       }     }  This response indicates that the pubsub.googleapis.com API is not enabled.  Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock:      { "reason": "STOCKOUT"       "domain": "spanner.googleapis.com",       "metadata": {         "availableRegions": "us-central1,us-east2"       }     }',
+                            additionalProperties: true,
+                          },
+                          help: {
+                            type: "object",
+                            properties: {
+                              links: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    description: {
+                                      type: "string",
+                                      description:
+                                        "Describes what the link offers.",
+                                    },
+                                    url: {
+                                      type: "string",
+                                      description: "The URL of the link.",
+                                    },
+                                  },
+                                  description: "Describes a URL link.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "URL(s) pointing to additional information on handling the current error.",
+                              },
+                            },
+                            description:
+                              "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
+                            additionalProperties: true,
+                          },
+                          localizedMessage: {
+                            type: "object",
+                            properties: {
+                              locale: {
+                                type: "string",
+                                description:
+                                  'The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: "en-US", "fr-CH", "es-MX"',
+                              },
+                              message: {
+                                type: "string",
+                                description:
+                                  "The localized error message in the above locale.",
+                              },
+                            },
+                            description:
+                              "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
+                            additionalProperties: true,
+                          },
+                          quotaInfo: {
+                            type: "object",
+                            properties: {
+                              dimensions: {
+                                type: "object",
+                                additionalProperties: {
+                                  type: "string",
+                                },
+                                description:
+                                  "The map holding related quota dimensions.",
+                              },
+                              futureLimit: {
+                                type: "number",
+                                description:
+                                  "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
+                              },
+                              limit: {
+                                type: "number",
+                                description:
+                                  "Current effective quota limit. The limit's unit depends on the quota type or metric.",
+                              },
+                              limitName: {
+                                type: "string",
+                                description: "The name of the quota limit.",
+                              },
+                              metricName: {
+                                type: "string",
+                                description:
+                                  "The Compute Engine quota metric name.",
+                              },
+                              rolloutStatus: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_ROLLOUT_STATUS",
+                                  "IN_PROGRESS",
+                                  "ROLLOUT_STATUS_UNSPECIFIED",
+                                ],
+                                description:
+                                  "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
+                              },
+                            },
+                            description:
+                              "Additional details for quota exceeded error for resource quota.",
+                            additionalProperties: true,
+                          },
+                        },
+                        additionalProperties: true,
+                      },
+                      description:
+                        "[Output Only] An optional list of messages that contain the error details. There is a set of defined message types to use for providing details.The syntax depends on the error code. For example, QuotaExceededInfo will have details when the error code is QUOTA_EXCEEDED.",
+                    },
+                    location: {
+                      type: "string",
+                      description:
+                        "[Output Only] Indicates the field in the request that caused the error. This property is optional.",
+                    },
+                    message: {
+                      type: "string",
+                      description:
+                        "[Output Only] An optional, human-readable error message.",
+                    },
+                  },
+                  additionalProperties: true,
+                },
+                description:
+                  "[Output Only] The array of errors encountered while processing this operation.",
+              },
+            },
+            description:
+              "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
+            additionalProperties: true,
           },
           httpErrorMessage: {
             type: "string",
+            description:
+              "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          kind: {
+          httpErrorStatusCode: {
+            type: "integer",
+            description:
+              "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
+          },
+          id: {
             type: "string",
+            description: "64-bit integer as string",
           },
-          setCommonInstanceMetadataOperationMetadata: {
+          insertTime: {
+            type: "string",
+            description:
+              "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
+          },
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              perLocationOperations: {
+              perLocationStatus: {
                 type: "object",
-                additionalProperties: true,
-              },
-              clientOperationId: {
-                type: "string",
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "Status information per location (location name is key). Example key: zones/us-central1-a",
               },
             },
             additionalProperties: true,
           },
-          id: {
+          kind: {
             type: "string",
+            description:
+              "Output only. [Output Only] Type of the resource. Always `compute#operation` for Operation resources.",
+          },
+          name: {
+            type: "string",
+            description: "[Output Only] Name of the operation.",
+          },
+          operationGroupId: {
+            type: "string",
+            description:
+              "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
+          },
+          operationType: {
+            type: "string",
+            description:
+              "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
+          },
+          progress: {
+            type: "integer",
+            description:
+              "[Output Only] An optional progress indicator that ranges from 0 to 100. There is no requirement that this be linear or support any granularity of operations. This should not be used to guess when the operation will be complete. This number should monotonically increase as the operation progresses.",
           },
           region: {
             type: "string",
+            description:
+              "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
+          },
+          selfLink: {
+            type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
+          },
+          setCommonInstanceMetadataOperationMetadata: {
+            type: "object",
+            properties: {
+              clientOperationId: {
+                type: "string",
+                description: "[Output Only] The client operation id.",
+              },
+              perLocationOperations: {
+                type: "object",
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "[Output Only] Status information per location (location name is key). Example key: zones/us-central1-a",
+              },
+            },
+            additionalProperties: true,
+            description:
+              "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
           startTime: {
             type: "string",
+            description:
+              "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
           },
-          zone: {
+          status: {
             type: "string",
+            enum: ["UNDEFINED_STATUS", "DONE", "PENDING", "RUNNING"],
+            description:
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           statusMessage: {
             type: "string",
+            description:
+              "[Output Only] An optional textual description of the current status of the operation.",
+          },
+          targetId: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          targetLink: {
+            type: "string",
+            description:
+              "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",
           },
           user: {
             type: "string",
+            description:
+              "[Output Only] User who requested the operation, for example: `user@example.com` or `alice_smith_identifier (global/workforcePools/example-com-us-employees)`.",
           },
           warnings: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                message: {
-                  type: "string",
-                },
-                data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    additionalProperties: true,
-                  },
-                },
                 code: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_CODE",
                     "CLEANUP_FAILED",
                     "DEPRECATED_RESOURCE_USED",
                     "DEPRECATED_TYPE_USED",
@@ -813,90 +1023,49 @@ const regionDisksUpdate: AppBlock = {
                     "UNDECLARED_PROPERTIES",
                     "UNREACHABLE",
                   ],
+                  description:
+                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
+                },
+                data: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      key: {
+                        type: "string",
+                        description:
+                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                      },
+                      value: {
+                        type: "string",
+                        description:
+                          "[Output Only] A warning data value corresponding to the key.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  description:
+                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+                },
+                message: {
+                  type: "string",
+                  description:
+                    "[Output Only] A human-readable description of the warning code.",
                 },
               },
               additionalProperties: true,
             },
+            description:
+              "[Output Only] If warning messages are generated during processing of the operation, this field will be populated.",
           },
-          operationType: {
+          zone: {
             type: "string",
-          },
-          targetLink: {
-            type: "string",
-          },
-          instancesBulkInsertOperationMetadata: {
-            type: "object",
-            properties: {
-              perLocationStatus: {
-                type: "object",
-                additionalProperties: true,
-              },
-            },
-            additionalProperties: true,
-          },
-          error: {
-            type: "object",
-            properties: {
-              errors: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    code: {
-                      type: "object",
-                      additionalProperties: true,
-                    },
-                    message: {
-                      type: "object",
-                      additionalProperties: true,
-                    },
-                    errorDetails: {
-                      type: "object",
-                      additionalProperties: true,
-                    },
-                    location: {
-                      type: "object",
-                      additionalProperties: true,
-                    },
-                  },
-                  additionalProperties: true,
-                },
-              },
-            },
-            additionalProperties: true,
-          },
-          endTime: {
-            type: "string",
-          },
-          httpErrorStatusCode: {
-            type: "number",
-          },
-          operationGroupId: {
-            type: "string",
-          },
-          description: {
-            type: "string",
-          },
-          name: {
-            type: "string",
-          },
-          selfLink: {
-            type: "string",
-          },
-          clientOperationId: {
-            type: "string",
-          },
-          insertTime: {
-            type: "string",
-          },
-          status: {
-            type: "string",
-            enum: ["DONE", "PENDING", "RUNNING"],
-          },
-          progress: {
-            type: "number",
+            description:
+              "[Output Only] The URL of the zone where the operation resides. Only applicable when performing per-zone operations.",
           },
         },
+        description:
+          "Represents an Operation resource.  Google Compute Engine has three Operation resources:  * [Global](/compute/docs/reference/rest/v1/globalOperations) * [Regional](/compute/docs/reference/rest/v1/regionOperations) * [Zonal](/compute/docs/reference/rest/v1/zoneOperations)  You can use an operation resource to manage asynchronous API requests. For more information, readHandling API responses.  Operations can be global, regional or zonal.     - For global operations, use the `globalOperations`    resource.    - For regional operations, use the    `regionOperations` resource.    - For zonal operations, use    the `zoneOperations` resource.    For more information, read Global, Regional, and Zonal Resources.  Note that completed Operation resources have a limited retention period.",
         additionalProperties: true,
       },
     },

@@ -1,85 +1,48 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const diskTypesGet: AppBlock = {
   name: "Disk Types - Get",
-  description: `Returns the specified disk type.`,
+  description: `Returns the specified Zone resource.`,
   category: "Disk Types",
   inputs: {
     default: {
       config: {
-        diskType: {
-          name: "Disk Type",
-          description: "Name of the disk type to return.",
-          type: "string",
-          required: true,
-        },
         zone: {
           name: "Zone",
           description: "The name of the zone for this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "The name of the zone for this request.",
+          },
+          required: true,
+        },
+        diskType: {
+          name: "Disk Type",
+          description: "Name of the disk type to return.",
+          type: {
+            type: "string",
+            description: "Name of the disk type to return.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.zone !== undefined)
+          pathParams["zone"] = String(input.event.inputConfig.zone);
+        if (input.event.inputConfig.diskType !== undefined)
+          pathParams["disk_type"] = String(input.event.inputConfig.diskType);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/zones/{zone}/diskTypes/{diskType}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/zones/{zone}/diskTypes/{disk_type}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -90,59 +53,94 @@ const diskTypesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          zone: {
+          creationTimestamp: {
             type: "string",
+            description:
+              "[Output Only] Creation timestamp inRFC3339 text format.",
           },
           defaultDiskSizeGb: {
             type: "string",
-          },
-          region: {
-            type: "string",
-          },
-          validDiskSize: {
-            type: "string",
-          },
-          kind: {
-            type: "string",
+            description: "64-bit integer as string",
           },
           deprecated: {
             type: "object",
             properties: {
-              state: {
+              deleted: {
                 type: "string",
-                enum: ["ACTIVE", "DELETED", "DEPRECATED", "OBSOLETE"],
+                description:
+                  "An optional RFC3339 timestamp on or after which the state of this resource is intended to change to DELETED. This is only informational and the status will not change unless the client explicitly changes it.",
               },
               deprecated: {
                 type: "string",
-              },
-              replacement: {
-                type: "string",
+                description:
+                  "An optional RFC3339 timestamp on or after which the state of this resource is intended to change to DEPRECATED. This is only informational and the status will not change unless the client explicitly changes it.",
               },
               obsolete: {
                 type: "string",
+                description:
+                  "An optional RFC3339 timestamp on or after which the state of this resource is intended to change to OBSOLETE. This is only informational and the status will not change unless the client explicitly changes it.",
               },
-              deleted: {
+              replacement: {
                 type: "string",
+                description:
+                  "The URL of the suggested replacement for a deprecated resource. The suggested replacement resource must be the same kind of resource as the deprecated resource.",
+              },
+              state: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_STATE",
+                  "ACTIVE",
+                  "DELETED",
+                  "DEPRECATED",
+                  "OBSOLETE",
+                ],
+                description:
+                  "The deprecation state of this resource. This can be ACTIVE,DEPRECATED, OBSOLETE, or DELETED. Operations which communicate the end of life date for an image, can useACTIVE. Operations which create a new resource using aDEPRECATED resource will return successfully, but with a warning indicating the deprecated resource and recommending its replacement. Operations which use OBSOLETE orDELETED resources will be rejected and result in an error. Check the State enum for the list of possible values.",
               },
             },
+            description: "Deprecation status for a public resource.",
             additionalProperties: true,
-          },
-          creationTimestamp: {
-            type: "string",
-          },
-          name: {
-            type: "string",
           },
           description: {
             type: "string",
-          },
-          selfLink: {
-            type: "string",
+            description:
+              "[Output Only] An optional description of this resource.",
           },
           id: {
             type: "string",
+            description: "64-bit integer as string",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of the resource. Always compute#diskType for disk types.",
+          },
+          name: {
+            type: "string",
+            description: "[Output Only] Name of the resource.",
+          },
+          region: {
+            type: "string",
+            description:
+              "[Output Only] URL of the region where the disk type resides. Only applicable for regional resources. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          },
+          selfLink: {
+            type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
+          },
+          validDiskSize: {
+            type: "string",
+            description:
+              '[Output Only] An optional textual description of the valid disk size, such as "10GB-10TB".',
+          },
+          zone: {
+            type: "string",
+            description:
+              "[Output Only] URL of the zone where the disk type resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
         },
+        description:
+          "Represents a Disk Type resource.  Google Compute Engine has two Disk Type resources:  * [Regional](/compute/docs/reference/rest/v1/regionDiskTypes) * [Zonal](/compute/docs/reference/rest/v1/diskTypes)  You can choose from a variety of disk types based on your needs. For more information, readStorage options.  The diskTypes resource represents disk types for a zonal persistent disk. For more information, readZonal persistent disks.  The regionDiskTypes resource represents disk types for a regional persistent disk. For more information, read Regional persistent disks.",
         additionalProperties: true,
       },
     },

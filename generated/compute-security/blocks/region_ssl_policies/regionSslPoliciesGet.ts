@@ -1,86 +1,50 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const regionSslPoliciesGet: AppBlock = {
-  name: "Region SSL Policies - Get",
-  description: `Lists all of the ordered rules present in a single specified policy.`,
-  category: "Region SSL Policies",
+  name: "Region Ssl Policies - Get",
+  description: `Returns the specified Zone resource.`,
+  category: "Region Ssl Policies",
   inputs: {
     default: {
       config: {
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
-          type: "string",
+          type: {
+            type: "string",
+            description: "Name of the region scoping this request.",
+          },
           required: true,
         },
         sslPolicy: {
-          name: "SSL Policy",
+          name: "Ssl Policy",
           description:
-            "Name of the SSL policy to update. The name must be 1-63 characters long,\nand comply with RFC1035.",
-          type: "string",
+            "Name of the SSL policy to update. The name must be 1-63 characters long, and comply with RFC1035.",
+          type: {
+            type: "string",
+            description:
+              "Name of the SSL policy to update. The name must be 1-63 characters long, and comply with RFC1035.",
+          },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.sslPolicy !== undefined)
+          pathParams["ssl_policy"] = String(input.event.inputConfig.sslPolicy);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/sslPolicies/{sslPolicy}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/sslPolicies/{ssl_policy}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -91,32 +55,95 @@ const regionSslPoliciesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
+          creationTimestamp: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
           customFeatures: {
             type: "array",
             items: {
               type: "string",
             },
-          },
-          creationTimestamp: {
-            type: "string",
-          },
-          name: {
-            type: "string",
+            description:
+              "A list of features enabled when the selected profile is CUSTOM. The  method returns the set of features that can be specified in this list. This field must be empty if the profile is notCUSTOM.",
           },
           description: {
             type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
+          },
+          enabledFeatures: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "Output only. [Output Only] The list of features enabled in the SSL policy.",
+          },
+          fingerprint: {
+            type: "string",
+            description:
+              "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a SslPolicy. An up-to-date fingerprint must be provided in order to update the SslPolicy, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an SslPolicy.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output only] Type of the resource. Alwayscompute#sslPolicyfor SSL policies.",
+          },
+          minTlsVersion: {
+            type: "string",
+            enum: [
+              "UNDEFINED_MIN_TLS_VERSION",
+              "TLS_1_0",
+              "TLS_1_1",
+              "TLS_1_2",
+              "TLS_1_3",
+            ],
+            description:
+              "The minimum version of SSL protocol that can be used by the clients to establish a connection with the load balancer. This can be one ofTLS_1_0, TLS_1_1, TLS_1_2,TLS_1_3. When set to TLS_1_3, the profile field must be set to RESTRICTED. Check the MinTlsVersion enum for the list of possible values.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          profile: {
+            type: "string",
+            enum: [
+              "UNDEFINED_PROFILE",
+              "COMPATIBLE",
+              "CUSTOM",
+              "FIPS_202205",
+              "MODERN",
+              "RESTRICTED",
+            ],
+            description:
+              "Profile specifies the set of SSL features that can be used by the load balancer when negotiating SSL with clients. This can be one ofCOMPATIBLE, MODERN, RESTRICTED, orCUSTOM. If using CUSTOM, the set of SSL features to enable must be specified in the customFeatures field. Check the Profile enum for the list of possible values.",
+          },
+          region: {
+            type: "string",
+            description:
+              "Output only. [Output Only] URL of the region where the regional SSL policy resides. This field is not applicable to global SSL policies.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           warnings: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                message: {
-                  type: "string",
-                },
                 code: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_CODE",
                     "CLEANUP_FAILED",
                     "DEPRECATED_RESOURCE_USED",
                     "DEPRECATED_TYPE_USED",
@@ -147,54 +174,44 @@ const regionSslPoliciesGet: AppBlock = {
                     "UNDECLARED_PROPERTIES",
                     "UNREACHABLE",
                   ],
+                  description:
+                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
                 },
                 data: {
                   type: "array",
                   items: {
                     type: "object",
+                    properties: {
+                      key: {
+                        type: "string",
+                        description:
+                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                      },
+                      value: {
+                        type: "string",
+                        description:
+                          "[Output Only] A warning data value corresponding to the key.",
+                      },
+                    },
                     additionalProperties: true,
                   },
+                  description:
+                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+                },
+                message: {
+                  type: "string",
+                  description:
+                    "[Output Only] A human-readable description of the warning code.",
                 },
               },
               additionalProperties: true,
             },
-          },
-          kind: {
-            type: "string",
-          },
-          selfLink: {
-            type: "string",
-          },
-          region: {
-            type: "string",
-          },
-          minTlsVersion: {
-            type: "string",
-            enum: ["TLS_1_0", "TLS_1_1", "TLS_1_2", "TLS_1_3"],
-          },
-          fingerprint: {
-            type: "string",
-          },
-          enabledFeatures: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-          },
-          profile: {
-            type: "string",
-            enum: [
-              "COMPATIBLE",
-              "CUSTOM",
-              "FIPS_202205",
-              "MODERN",
-              "RESTRICTED",
-            ],
-          },
-          id: {
-            type: "string",
+            description:
+              "Output only. [Output Only] If potential misconfigurations are detected for this SSL policy, this field will be populated with warning messages.",
           },
         },
+        description:
+          "Represents an SSL Policy resource.  Use SSL policies to control SSL features, such as versions and cipher suites, that are offered by Application Load Balancers and proxy Network Load Balancers. For more information, read SSL policies overview.",
         additionalProperties: true,
       },
     },
