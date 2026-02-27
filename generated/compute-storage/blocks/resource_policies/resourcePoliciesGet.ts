@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const resourcePoliciesGet: AppBlock = {
   name: "Resource Policies - Get",
-  description: `Retrieves all information of the specified resource policy.`,
+  description: `Returns the specified Zone resource.`,
   category: "Resource Policies",
   inputs: {
     default: {
@@ -13,6 +13,7 @@ const resourcePoliciesGet: AppBlock = {
           description: "Name of the region for this request.",
           type: {
             type: "string",
+            description: "Name of the region for this request.",
           },
           required: true,
         },
@@ -21,70 +22,29 @@ const resourcePoliciesGet: AppBlock = {
           description: "Name of the resource policy to retrieve.",
           type: {
             type: "string",
+            description: "Name of the resource policy to retrieve.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.resourcePolicy !== undefined)
+          pathParams["resource_policy"] = String(
+            input.event.inputConfig.resourcePolicy,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/resourcePolicies/{resourcePolicy}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/resourcePolicies/{resource_policy}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -95,101 +55,169 @@ const resourcePoliciesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          groupPlacementPolicy: {
-            type: "object",
-            properties: {
-              vmCount: {
-                type: "integer",
-                description:
-                  "Number of VMs in this placement group. Google does not recommend that you\nuse this field unless you use a compact policy and you want your policy\nto work only if it contains this exact number of VMs. (Format: int32)",
-              },
-              collocation: {
-                type: "string",
-                enum: ["COLLOCATED", "UNSPECIFIED_COLLOCATION"],
-                description: "Specifies network collocation",
-              },
-              availabilityDomainCount: {
-                type: "integer",
-                description:
-                  "The number of availability domains to spread instances across. If two\ninstances are in different availability domain, they are not in the same\nlow latency network. (Format: int32)",
-              },
-              gpuTopology: {
-                type: "string",
-                description:
-                  "Specifies the shape of the GPU slice, in slice based GPU families eg.\nA4X.",
-              },
-            },
+          creationTimestamp: {
+            type: "string",
             description:
-              "A GroupPlacementPolicy specifies resource placement configuration.\nIt specifies the failure bucket separation",
-            additionalProperties: true,
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           description: {
             type: "string",
           },
+          diskConsistencyGroupPolicy: {
+            type: "object",
+            properties: {},
+            description: "Resource policy for disk consistency groups.",
+            additionalProperties: true,
+          },
+          groupPlacementPolicy: {
+            type: "object",
+            properties: {
+              availabilityDomainCount: {
+                type: "integer",
+                description:
+                  "The number of availability domains to spread instances across. If two instances are in different availability domain, they are not in the same low latency network.",
+              },
+              collocation: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_COLLOCATION",
+                  "COLLOCATED",
+                  "UNSPECIFIED_COLLOCATION",
+                ],
+                description:
+                  "Specifies network collocation Check the Collocation enum for the list of possible values.",
+              },
+              gpuTopology: {
+                type: "string",
+                description:
+                  "Specifies the shape of the GPU slice, in slice based GPU families eg. A4X.",
+              },
+              vmCount: {
+                type: "integer",
+                description:
+                  "Number of VMs in this placement group. Google does not recommend that you use this field unless you use a compact policy and you want your policy to work only if it contains this exact number of VMs.",
+              },
+            },
+            description:
+              "A GroupPlacementPolicy specifies resource placement configuration. It specifies the failure bucket separation",
+            additionalProperties: true,
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          instanceSchedulePolicy: {
+            type: "object",
+            properties: {
+              expirationTime: {
+                type: "string",
+                description:
+                  "The expiration time of the schedule. The timestamp is an RFC3339 string.",
+              },
+              startTime: {
+                type: "string",
+                description:
+                  "The start time of the schedule. The timestamp is an RFC3339 string.",
+              },
+              timeZone: {
+                type: "string",
+                description:
+                  "Specifies the time zone to be used in interpreting Schedule.schedule. The value of this field must be a time zone name from the tz database: https://wikipedia.org/wiki/Tz_database.",
+              },
+              vmStartSchedule: {
+                type: "object",
+                properties: {
+                  schedule: {
+                    type: "string",
+                    description:
+                      "Specifies the frequency for the operation, using the unix-cron format.",
+                  },
+                },
+                description: "Schedule for an instance operation.",
+                additionalProperties: true,
+              },
+              vmStopSchedule: {
+                type: "object",
+                properties: {
+                  schedule: {
+                    type: "string",
+                    description:
+                      "Specifies the frequency for the operation, using the unix-cron format.",
+                  },
+                },
+                description: "Schedule for an instance operation.",
+                additionalProperties: true,
+              },
+            },
+            description:
+              "An InstanceSchedulePolicy specifies when and how frequent certain operations are performed on the instance.",
+            additionalProperties: true,
+          },
           kind: {
             type: "string",
             description:
-              "[Output Only] Type of the resource. Alwayscompute#resource_policies for resource policies.",
+              "Output only. [Output Only] Type of the resource. Alwayscompute#resource_policies for resource policies.",
           },
-          status: {
+          name: {
             type: "string",
-            enum: ["CREATING", "DELETING", "EXPIRED", "INVALID", "READY"],
             description:
-              "[Output Only] The status of resource policy creation.",
+              "The name of the resource, provided by the client when initially creating the resource. The resource name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          region: {
+            type: "string",
+          },
+          resourceStatus: {
+            type: "object",
+            properties: {
+              instanceSchedulePolicy: {
+                type: "object",
+                properties: {
+                  lastRunStartTime: {
+                    type: "string",
+                    description:
+                      "Output only. [Output Only] The last time the schedule successfully ran. The timestamp is an RFC3339 string.",
+                  },
+                  nextRunStartTime: {
+                    type: "string",
+                    description:
+                      "Output only. [Output Only] The next time the schedule is planned to run. The actual time might be slightly different. The timestamp is an RFC3339 string.",
+                  },
+                },
+                additionalProperties: true,
+                description:
+                  "Output only. [Output Only] Specifies a set of output values reffering to the instance_schedule_policy system status. This field should have the same name as corresponding policy field.",
+              },
+            },
+            description:
+              'Contains output only fields. Use this sub-message for all output fields set on ResourcePolicy. The internal structure of this "status" field should mimic the structure of ResourcePolicy proto specification.',
+            additionalProperties: true,
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
           },
           snapshotSchedulePolicy: {
             type: "object",
             properties: {
-              snapshotProperties: {
-                type: "object",
-                properties: {
-                  labels: {
-                    type: "object",
-                    additionalProperties: {
-                      type: "string",
-                    },
-                    description:
-                      "Labels to apply to scheduled snapshots. These can be later modified\nby the setLabels method. Label values may be empty.",
-                  },
-                  chainName: {
-                    type: "string",
-                    description: "Chain name that the snapshot is created in.",
-                  },
-                  guestFlush: {
-                    type: "boolean",
-                    description:
-                      "Indication to perform a 'guest aware' snapshot.",
-                  },
-                  storageLocations: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                    description:
-                      "Cloud Storage bucket storage location of the auto snapshot (regional or\nmulti-regional).",
-                  },
-                },
-                description:
-                  "Specified snapshot properties for scheduled snapshots created by this\npolicy.",
-                additionalProperties: true,
-              },
               retentionPolicy: {
                 type: "object",
                 properties: {
                   maxRetentionDays: {
                     type: "integer",
                     description:
-                      "Maximum age of the snapshot that is allowed to be kept. (Format: int32)",
+                      "Maximum age of the snapshot that is allowed to be kept.",
                   },
                   onSourceDiskDelete: {
                     type: "string",
                     enum: [
+                      "UNDEFINED_ON_SOURCE_DISK_DELETE",
                       "APPLY_RETENTION_POLICY",
                       "KEEP_AUTO_SNAPSHOTS",
                       "UNSPECIFIED_ON_SOURCE_DISK_DELETE",
                     ],
                     description:
-                      "Specifies the behavior to apply to scheduled snapshots when\nthe source disk is deleted.",
+                      "Specifies the behavior to apply to scheduled snapshots when the source disk is deleted. Check the OnSourceDiskDelete enum for the list of possible values.",
                   },
                 },
                 description: "Policy for retention of scheduled snapshots.",
@@ -204,20 +232,42 @@ const resourcePoliciesGet: AppBlock = {
                       daysInCycle: {
                         type: "integer",
                         description:
-                          "Defines a schedule with units measured in days. The value determines\nhow many days pass between the start of each cycle. (Format: int32)",
-                      },
-                      startTime: {
-                        type: "string",
-                        description:
-                          "Start time of the window. This must be in UTC format that resolves to one\nof 00:00, 04:00, 08:00,12:00, 16:00, or 20:00. For\nexample, both 13:00-5 and 08:00 are valid.",
+                          "Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle.",
                       },
                       duration: {
                         type: "string",
                         description:
-                          "[Output only] A predetermined duration for the window, automatically\nchosen to be the smallest possible in the given scenario.",
+                          "Output only. [Output only] A predetermined duration for the window, automatically chosen to be the smallest possible in the given scenario.",
+                      },
+                      startTime: {
+                        type: "string",
+                        description:
+                          "Start time of the window. This must be in UTC format that resolves to one of 00:00, 04:00, 08:00,12:00, 16:00, or 20:00. For example, both 13:00-5 and 08:00 are valid.",
                       },
                     },
                     description: "Time window specified for daily operations.",
+                    additionalProperties: true,
+                  },
+                  hourlySchedule: {
+                    type: "object",
+                    properties: {
+                      duration: {
+                        type: "string",
+                        description:
+                          "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
+                      },
+                      hoursInCycle: {
+                        type: "integer",
+                        description:
+                          "Defines a schedule with units measured in hours. The value determines how many hours pass between the start of each cycle.",
+                      },
+                      startTime: {
+                        type: "string",
+                        description:
+                          'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
+                      },
+                    },
+                    description: "Time window specified for hourly operations.",
                     additionalProperties: true,
                   },
                   weeklySchedule: {
@@ -228,19 +278,10 @@ const resourcePoliciesGet: AppBlock = {
                         items: {
                           type: "object",
                           properties: {
-                            duration: {
-                              type: "string",
-                              description:
-                                "[Output only] Duration of the time window, automatically chosen to be\nsmallest possible in the given scenario.",
-                            },
-                            startTime: {
-                              type: "string",
-                              description:
-                                'Time within the window to start the operations.\nIt must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
-                            },
                             day: {
                               type: "string",
                               enum: [
+                                "UNDEFINED_DAY",
                                 "FRIDAY",
                                 "INVALID",
                                 "MONDAY",
@@ -251,7 +292,17 @@ const resourcePoliciesGet: AppBlock = {
                                 "WEDNESDAY",
                               ],
                               description:
-                                "Defines a schedule that runs on specific days of the week. Specify\none or more days. The following options are available:\nMONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY.",
+                                "Defines a schedule that runs on specific days of the week. Specify one or more days. The following options are available: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY. Check the Day enum for the list of possible values.",
+                            },
+                            duration: {
+                              type: "string",
+                              description:
+                                "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
+                            },
+                            startTime: {
+                              type: "string",
+                              description:
+                                'Time within the window to start the operations. It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
                             },
                           },
                           additionalProperties: true,
@@ -263,108 +314,61 @@ const resourcePoliciesGet: AppBlock = {
                     description: "Time window specified for weekly operations.",
                     additionalProperties: true,
                   },
-                  hourlySchedule: {
-                    type: "object",
-                    properties: {
-                      startTime: {
-                        type: "string",
-                        description:
-                          'Time within the window to start the operations.\nIt must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.',
-                      },
-                      duration: {
-                        type: "string",
-                        description:
-                          "[Output only] Duration of the time window, automatically chosen to be\nsmallest possible in the given scenario.",
-                      },
-                      hoursInCycle: {
-                        type: "integer",
-                        description:
-                          "Defines a schedule with units measured in hours. The value determines\nhow many hours pass between the start of each cycle. (Format: int32)",
-                      },
-                    },
-                    description: "Time window specified for hourly operations.",
-                    additionalProperties: true,
-                  },
                 },
                 description:
                   "A schedule for disks where the schedueled operations are performed.",
                 additionalProperties: true,
               },
-            },
-            description:
-              "A snapshot schedule policy specifies when and how frequently snapshots are\nto be created for the target disk. Also specifies how many and how long\nthese scheduled snapshots should be retained.",
-            additionalProperties: true,
-          },
-          name: {
-            type: "string",
-            description:
-              "The name of the resource, provided by the client when initially creating\nthe resource. The resource name must be 1-63 characters long, and comply\nwithRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must be\na dash, lowercase letter, or digit, except the last character, which cannot\nbe a dash.",
-          },
-          region: {
-            type: "string",
-          },
-          id: {
-            type: "string",
-            description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
-          },
-          instanceSchedulePolicy: {
-            type: "object",
-            properties: {
-              timeZone: {
-                type: "string",
-                description:
-                  "Specifies the time zone to be used in interpreting Schedule.schedule.\nThe value of this field must be a time zone name from the tz database:\nhttps://wikipedia.org/wiki/Tz_database.",
-              },
-              expirationTime: {
-                type: "string",
-                description:
-                  "The expiration time of the schedule. The timestamp is an RFC3339 string.",
-              },
-              startTime: {
-                type: "string",
-                description:
-                  "The start time of the schedule. The timestamp is an RFC3339 string.",
-              },
-              vmStopSchedule: {
+              snapshotProperties: {
                 type: "object",
                 properties: {
-                  schedule: {
+                  chainName: {
                     type: "string",
+                    description: "Chain name that the snapshot is created in.",
+                  },
+                  guestFlush: {
+                    type: "boolean",
                     description:
-                      "Specifies the frequency for the operation, using the unix-cron format.",
+                      "Indication to perform a 'guest aware' snapshot.",
+                  },
+                  labels: {
+                    type: "object",
+                    additionalProperties: {
+                      type: "string",
+                    },
+                    description:
+                      "Labels to apply to scheduled snapshots. These can be later modified by the setLabels method. Label values may be empty.",
+                  },
+                  storageLocations: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                    description:
+                      "Cloud Storage bucket storage location of the auto snapshot (regional or multi-regional).",
                   },
                 },
-                description: "Schedule for an instance operation.",
-                additionalProperties: true,
-              },
-              vmStartSchedule: {
-                type: "object",
-                properties: {
-                  schedule: {
-                    type: "string",
-                    description:
-                      "Specifies the frequency for the operation, using the unix-cron format.",
-                  },
-                },
-                description: "Schedule for an instance operation.",
+                description:
+                  "Specified snapshot properties for scheduled snapshots created by this policy.",
                 additionalProperties: true,
               },
             },
             description:
-              "An InstanceSchedulePolicy specifies when and how frequent certain\noperations are performed on the instance.",
+              "A snapshot schedule policy specifies when and how frequently snapshots are to be created for the target disk. Also specifies how many and how long these scheduled snapshots should be retained.",
             additionalProperties: true,
           },
-          creationTimestamp: {
+          status: {
             type: "string",
+            enum: [
+              "UNDEFINED_STATUS",
+              "CREATING",
+              "DELETING",
+              "EXPIRED",
+              "INVALID",
+              "READY",
+            ],
             description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
-          },
-          diskConsistencyGroupPolicy: {
-            type: "object",
-            properties: {},
-            description: "Resource policy for disk consistency groups.",
-            additionalProperties: true,
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           workloadPolicy: {
             type: "object",
@@ -372,56 +376,36 @@ const resourcePoliciesGet: AppBlock = {
               acceleratorTopology: {
                 type: "string",
                 description:
-                  "Specifies the topology required to create a partition for VMs that have\ninterconnected GPUs.",
-              },
-              type: {
-                type: "string",
-                enum: ["HIGH_AVAILABILITY", "HIGH_THROUGHPUT"],
-                description:
-                  "Specifies the intent of the instance placement in the MIG.",
+                  "Specifies the topology required to create a partition for VMs that have interconnected GPUs.",
               },
               maxTopologyDistance: {
                 type: "string",
-                enum: ["BLOCK", "CLUSTER", "SUBBLOCK"],
+                enum: [
+                  "UNDEFINED_MAX_TOPOLOGY_DISTANCE",
+                  "BLOCK",
+                  "CLUSTER",
+                  "SUBBLOCK",
+                ],
                 description:
-                  "Specifies the maximum distance between instances.",
+                  "Specifies the maximum distance between instances. Check the MaxTopologyDistance enum for the list of possible values.",
+              },
+              type: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_TYPE",
+                  "HIGH_AVAILABILITY",
+                  "HIGH_THROUGHPUT",
+                ],
+                description:
+                  "Specifies the intent of the instance placement in the MIG. Check the Type enum for the list of possible values.",
               },
             },
             description: "Represents the workload policy.",
             additionalProperties: true,
           },
-          resourceStatus: {
-            type: "object",
-            properties: {
-              instanceSchedulePolicy: {
-                type: "object",
-                properties: {
-                  nextRunStartTime: {
-                    type: "string",
-                    description:
-                      "[Output Only] The next time the schedule is planned to run.\nThe actual time might be slightly different.\nThe timestamp is an RFC3339 string.",
-                  },
-                  lastRunStartTime: {
-                    type: "string",
-                    description:
-                      "[Output Only] The last time the schedule successfully ran.\nThe timestamp is an RFC3339 string.",
-                  },
-                },
-                additionalProperties: true,
-              },
-            },
-            description:
-              'Contains output only fields.\nUse this sub-message for all output fields set on ResourcePolicy.\nThe internal structure of this "status" field should mimic the structure\nof ResourcePolicy proto specification.',
-            additionalProperties: true,
-          },
-          selfLink: {
-            type: "string",
-            description:
-              "[Output Only] Server-defined fully-qualified URL for this resource.",
-          },
         },
         description:
-          "Represents a Resource Policy resource. You can use resource policies to\nschedule actions for some Compute Engine resources. For example, you can\nuse them toschedule persistent disk\nsnapshots.",
+          "Represents a Resource Policy resource. You can use resource policies to schedule actions for some Compute Engine resources. For example, you can use them toschedule persistent disk snapshots.",
         additionalProperties: true,
       },
     },

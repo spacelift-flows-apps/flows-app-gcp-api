@@ -1,82 +1,39 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const targetTcpProxiesGet: AppBlock = {
-  name: "Target TCP Proxies - Get",
-  description: `Returns the specified TargetTcpProxy resource.`,
-  category: "Target TCP Proxies",
+  name: "Target Tcp Proxies - Get",
+  description: `Returns the specified Zone resource.`,
+  category: "Target Tcp Proxies",
   inputs: {
     default: {
       config: {
         targetTcpProxy: {
-          name: "Target TCP Proxy",
+          name: "Target Tcp Proxy",
           description: "Name of the TargetTcpProxy resource to return.",
           type: {
             type: "string",
+            description: "Name of the TargetTcpProxy resource to return.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.targetTcpProxy !== undefined)
+          pathParams["target_tcp_proxy"] = String(
+            input.event.inputConfig.targetTcpProxy,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/global/targetTcpProxies/{targetTcpProxy}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/global/targetTcpProxies/{target_tcp_proxy}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -87,58 +44,57 @@ const targetTcpProxiesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          name: {
+          creationTimestamp: {
             type: "string",
             description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
           },
           id: {
             type: "string",
+            description: "64-bit integer as string",
+          },
+          kind: {
+            type: "string",
             description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
+              "Output only. [Output Only] Type of the resource. Alwayscompute#targetTcpProxy for target TCP proxies.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          proxyBind: {
+            type: "boolean",
+            description:
+              "This field only applies when the forwarding rule that references this target proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.  When this field is set to true, Envoy proxies set up inbound traffic interception and bind to the IP address and port specified in the forwarding rule. This is generally useful when using Traffic Director to configure Envoy as a gateway or middle proxy (in other words, not a sidecar proxy). The Envoy proxy listens for inbound requests and handles requests when it receives them.  The default is false.",
+          },
+          proxyHeader: {
+            type: "string",
+            enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
+            description:
+              "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
+          },
+          region: {
+            type: "string",
+            description:
+              "Output only. [Output Only] URL of the region where the regional TCP proxy resides. This field is not applicable to global TCP proxy.",
           },
           selfLink: {
             type: "string",
             description: "[Output Only] Server-defined URL for the resource.",
           },
-          description: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this property when you\ncreate the resource.",
-          },
-          region: {
-            type: "string",
-            description:
-              "[Output Only] URL of the region where the regional TCP proxy resides.\nThis field is not applicable to global TCP proxy.",
-          },
-          proxyHeader: {
-            type: "string",
-            enum: ["NONE", "PROXY_V1"],
-            description:
-              "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
-          },
-          creationTimestamp: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
-          },
-          kind: {
-            type: "string",
-            description:
-              "[Output Only] Type of the resource. Alwayscompute#targetTcpProxy for target TCP proxies.",
-          },
           service: {
             type: "string",
             description: "URL to the BackendService resource.",
           },
-          proxyBind: {
-            type: "boolean",
-            description:
-              "This field only applies when the forwarding rule that references this\ntarget proxy has a loadBalancingScheme set toINTERNAL_SELF_MANAGED.\n\nWhen this field is set to true, Envoy proxies set up inbound\ntraffic interception and bind to the IP address and port specified in the\nforwarding rule. This is generally useful when using Traffic Director to\nconfigure Envoy as a gateway or middle proxy (in other words, not a\nsidecar proxy). The Envoy proxy listens for inbound requests and handles\nrequests when it receives them.\n\nThe default is false.",
-          },
         },
         description:
-          "Represents a Target TCP Proxy resource.\n\nA target TCP proxy is a component of a Proxy Network Load Balancer.\nThe forwarding rule references the target TCP proxy, and the target proxy\nthen references a backend service. For more information, readProxy Network\nLoad Balancer overview.",
+          "Represents a Target TCP Proxy resource.  A target TCP proxy is a component of a Proxy Network Load Balancer. The forwarding rule references the target TCP proxy, and the target proxy then references a backend service. For more information, readProxy Network Load Balancer overview.",
         additionalProperties: true,
       },
     },

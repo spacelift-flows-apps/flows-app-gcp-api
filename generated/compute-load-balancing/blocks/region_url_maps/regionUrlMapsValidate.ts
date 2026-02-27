@@ -1,26 +1,28 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const regionUrlMapsValidate: AppBlock = {
-  name: "Region URL Maps - Validate",
-  description: `Runs static validation for the UrlMap.`,
-  category: "Region URL Maps",
+  name: "Region Url Maps - Validate",
+  description: `Runs static validation for the UrlMap. In particular, the tests of the provided UrlMap will be run. Calling this method does NOT create the UrlMap.`,
+  category: "Region Url Maps",
   inputs: {
     default: {
       config: {
-        urlMap: {
-          name: "URL Map",
-          description: "Name of the UrlMap resource to be validated as.",
-          type: {
-            type: "string",
-          },
-          required: true,
-        },
         region: {
           name: "Region",
           description: "Name of the region scoping this request.",
           type: {
             type: "string",
+            description: "Name of the region scoping this request.",
+          },
+          required: true,
+        },
+        urlMap: {
+          name: "Url Map",
+          description: "Name of the UrlMap resource to be validated as.",
+          type: {
+            type: "string",
+            description: "Name of the UrlMap resource to be validated as.",
           },
           required: true,
         },
@@ -30,127 +32,6 @@ const regionUrlMapsValidate: AppBlock = {
           type: {
             type: "object",
             properties: {
-              region: {
-                type: "string",
-                description:
-                  "[Output Only] URL of the region where the regional URL map resides.\nThis field is not applicable to global URL maps.\nYou must specify this field as part of the HTTP request URL. It is\nnot settable as a field in the request body.",
-              },
-              fingerprint: {
-                type: "string",
-                description:
-                  "Fingerprint of this resource. A hash of the contents stored in this object.\nThis field is used in optimistic locking. This field is ignored when\ninserting a UrlMap. An up-to-date fingerprint must be provided\nin order to update the UrlMap, otherwise the request will\nfail with error 412 conditionNotMet.\n\nTo see the latest fingerprint, make a get() request to\nretrieve a UrlMap. (Format: byte)",
-              },
-              hostRules: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    hosts: {
-                      type: "array",
-                      items: {
-                        type: "string",
-                      },
-                      description:
-                        "The list of host patterns to match. They must be valid hostnames with\noptional port numbers in the format host:port.* matches any string of ([a-z0-9-.]*). In\nthat case, * must be the first character, and if followed by\nanything, the immediate following character must be either -\nor ..\n\n* based matching is not supported when the URL map is bound\nto a target gRPC proxy that has the validateForProxyless field\nset to true.",
-                    },
-                    description: {
-                      type: "string",
-                      description:
-                        "An optional description of this resource. Provide this property when you\ncreate the resource.",
-                    },
-                    pathMatcher: {
-                      type: "string",
-                      description:
-                        "The name of the PathMatcher to use to match the path portion\nof the URL if the hostRule matches the URL's host portion.",
-                    },
-                  },
-                  description:
-                    "UrlMaps\nA host-matching rule for a URL. If matched, will use the namedPathMatcher to select the BackendService.",
-                  additionalProperties: true,
-                },
-                description: "The list of host rules to use against the URL.",
-              },
-              headerAction: {
-                type: "object",
-                properties: {
-                  requestHeadersToAdd: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        replace: {
-                          type: "boolean",
-                          description:
-                            "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
-                        },
-                        headerValue: {
-                          type: "string",
-                          description: "The value of the header to add.",
-                        },
-                        headerName: {
-                          type: "string",
-                          description: "The name of the header.",
-                        },
-                      },
-                      description:
-                        "Specification determining how headers are added to requests or responses.",
-                      additionalProperties: true,
-                    },
-                    description:
-                      "Headers to add to a matching request before forwarding the request to thebackendService.",
-                  },
-                  responseHeadersToRemove: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                    description:
-                      "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                  },
-                  requestHeadersToRemove: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                    description:
-                      "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
-                  },
-                  responseHeadersToAdd: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        replace: {
-                          type: "boolean",
-                          description:
-                            "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
-                        },
-                        headerValue: {
-                          type: "string",
-                          description: "The value of the header to add.",
-                        },
-                        headerName: {
-                          type: "string",
-                          description: "The name of the header.",
-                        },
-                      },
-                      description:
-                        "Specification determining how headers are added to requests or responses.",
-                      additionalProperties: true,
-                    },
-                    description:
-                      "Headers to add the response before sending the response back to the\nclient.",
-                  },
-                },
-                description:
-                  "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
-                additionalProperties: true,
-              },
-              creationTimestamp: {
-                type: "string",
-                description:
-                  "[Output Only] Creation timestamp inRFC3339\ntext format.",
-              },
               defaultCustomErrorResponsePolicy: {
                 type: "object",
                 properties: {
@@ -165,65 +46,547 @@ const regionUrlMapsValidate: AppBlock = {
                             type: "string",
                           },
                           description:
-                            "Valid values include:\n   \n   \n     - A number between 400 and 599: For example\n     401 or 503, in which case the load balancer\n     applies the policy if the error code exactly matches this value.\n     - 5xx: Load Balancer will apply the policy if the\n     backend service responds with any response code in the range of\n     500 to 599. \n   - 4xx: Load\n     Balancer will apply the policy if the backend service responds with any\n     response code in the range of 400 to\n     499.\n\nValues must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
-                        },
-                        path: {
-                          type: "string",
-                          description:
-                            "The full path to a file within backendBucket . For example:/errors/defaultError.html \n\npath must start\nwith a leading slash. path cannot have trailing slashes.\n\nIf the file is not available in backendBucket  or the\nload balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client. \n\nThe value must\nbe from 1 to 1024 characters",
+                            "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
                         },
                         overrideResponseCode: {
                           type: "integer",
                           description:
-                            "The HTTP status code returned with the response containing the custom\nerror content. If overrideResponseCode is not supplied, the\nsame response code returned by the original backend bucket or backend\nservice is returned to the client. (Format: int32)",
+                            "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
+                        },
+                        path: {
+                          type: "string",
+                          description:
+                            "The full path to a file within backendBucket . For example:/errors/defaultError.html  path must start with a leading slash. path cannot have trailing slashes.  If the file is not available in backendBucket  or the load balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client.  The value must be from 1 to 1024 characters",
                         },
                       },
                       description:
-                        "Specifies the mapping between the response code that will be returned along\nwith the custom error content and the response code returned by the backend\nservice.",
+                        "Specifies the mapping between the response code that will be returned along with the custom error content and the response code returned by the backend service.",
                       additionalProperties: true,
                     },
                     description:
-                      "Specifies rules for returning error responses.\n\nIn a given policy, if you specify rules for both a range of error codes\nas well as rules for specific error codes then rules with specific error\ncodes have a higher priority. For example, assume that you configure a rule\nfor 401 (Un-authorized) code, and another for all 4 series\nerror codes (4XX). If the backend service returns a401, then the rule for 401 will be applied.\nHowever if the backend service returns a 403, the rule for4xx takes effect.",
+                      "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
                   },
                   errorService: {
                     type: "string",
                     description:
-                      "The full or partial URL to the BackendBucket resource that\ncontains the custom error content. Examples are:\n   \n   \n     - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - global/backendBuckets/myBackendBucket\n\nIf errorService is not specified at lower levels likepathMatcher, pathRule and routeRule,\nan errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService. \n\nIf load balancer cannot reach\nthe backendBucket, a simple Not Found Error will\nbe returned, with the original response code (oroverrideResponseCode if configured).\n\nerrorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
+                      "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
                   },
                 },
                 description:
-                  "Specifies the custom error response policy that must be applied when the\nbackend service or backend bucket responds with an error.",
+                  "Specifies the custom error response policy that must be applied when the backend service or backend bucket responds with an error.",
                 additionalProperties: true,
+              },
+              defaultRouteAction: {
+                type: "object",
+                properties: {
+                  corsPolicy: {
+                    type: "object",
+                    properties: {
+                      allowCredentials: {
+                        type: "boolean",
+                        description:
+                          "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
+                      },
+                      allowHeaders: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Specifies the content for the Access-Control-Allow-Headers header.",
+                      },
+                      allowMethods: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Specifies the content for the Access-Control-Allow-Methods header.",
+                      },
+                      allowOriginRegexes: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
+                      },
+                      allowOrigins: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Specifies the list of origins that is allowed to do CORS requests.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
+                      },
+                      disabled: {
+                        type: "boolean",
+                        description:
+                          "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
+                      },
+                      exposeHeaders: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Specifies the content for the Access-Control-Expose-Headers header.",
+                      },
+                      maxAge: {
+                        type: "integer",
+                        description:
+                          "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
+                      },
+                    },
+                    description:
+                      "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
+                    additionalProperties: true,
+                  },
+                  faultInjectionPolicy: {
+                    type: "object",
+                    properties: {
+                      abort: {
+                        type: "object",
+                        properties: {
+                          httpStatus: {
+                            type: "integer",
+                            description:
+                              "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
+                          },
+                          percentage: {
+                            type: "number",
+                            description:
+                              "The percentage of traffic for connections, operations, or requests that is aborted as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                          },
+                        },
+                        description:
+                          "Specification for how requests are aborted as part of fault injection.",
+                        additionalProperties: true,
+                      },
+                      delay: {
+                        type: "object",
+                        properties: {
+                          fixedDelay: {
+                            type: "object",
+                            properties: {
+                              nanos: {
+                                type: "integer",
+                                description:
+                                  "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                              },
+                              seconds: {
+                                type: "string",
+                                description: "64-bit integer as string",
+                              },
+                            },
+                            description:
+                              'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                            additionalProperties: true,
+                          },
+                          percentage: {
+                            type: "number",
+                            description:
+                              "The percentage of traffic for connections, operations, or requests for which a delay is introduced as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                          },
+                        },
+                        description:
+                          "Specifies the delay introduced by the load balancer before forwarding the request to the backend service as part of fault injection.",
+                        additionalProperties: true,
+                      },
+                    },
+                    description:
+                      "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
+                    additionalProperties: true,
+                  },
+                  maxStreamDuration: {
+                    type: "object",
+                    properties: {
+                      nanos: {
+                        type: "integer",
+                        description:
+                          "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                      },
+                      seconds: {
+                        type: "string",
+                        description: "64-bit integer as string",
+                      },
+                    },
+                    description:
+                      'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                    additionalProperties: true,
+                  },
+                  requestMirrorPolicy: {
+                    type: "object",
+                    properties: {
+                      backendService: {
+                        type: "string",
+                        description:
+                          "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
+                      },
+                      mirrorPercent: {
+                        type: "number",
+                        description:
+                          "The percentage of requests to be mirrored to `backend_service`.",
+                      },
+                    },
+                    description:
+                      "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
+                    additionalProperties: true,
+                  },
+                  retryPolicy: {
+                    type: "object",
+                    properties: {
+                      numRetries: {
+                        type: "integer",
+                        description:
+                          "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
+                      },
+                      perTryTimeout: {
+                        type: "object",
+                        properties: {
+                          nanos: {
+                            type: "integer",
+                            description:
+                              "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                          },
+                          seconds: {
+                            type: "string",
+                            description: "64-bit integer as string",
+                          },
+                        },
+                        description:
+                          'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                        additionalProperties: true,
+                      },
+                      retryConditions: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        description:
+                          "Specifies one or more conditions when this retry policy applies. Valid values are:     - 5xx: retry is attempted if the instance or endpoint    responds with any 5xx response code, or if the instance or    endpoint does not respond at all. For example, disconnects, reset, read    timeout, connection failure, and refused streams.    - gateway-error: Similar to 5xx, but only    applies to response codes 502, 503 or504.    - connect-failure: a retry is attempted on failures    connecting to the instance or endpoint. For example, connection    timeouts.    - retriable-4xx: a retry is attempted if the instance    or endpoint responds with a 4xx response code.    The only error that you can retry is error code 409.    - refused-stream: a retry is attempted if the instance    or endpoint resets the stream with a REFUSED_STREAM error    code. This reset type indicates that it is safe to retry.    - cancelled: a retry is attempted if the gRPC status    code in the response header is set to cancelled.    - deadline-exceeded: a retry is attempted if the gRPC    status code in the response header is set todeadline-exceeded.    - internal: a retry is attempted if the gRPC    status code in the response header is set tointernal.    - resource-exhausted: a retry is attempted if the gRPC    status code in the response header is set toresource-exhausted.    - unavailable: a retry is attempted if the gRPC    status code in the response header is set tounavailable.  Only the following codes are supported when the URL map is bound to target gRPC proxy that has validateForProxyless field set to true.     - cancelled    - deadline-exceeded    - internal    - resource-exhausted    - unavailable",
+                      },
+                    },
+                    description:
+                      "The retry policy associates with HttpRouteRule",
+                    additionalProperties: true,
+                  },
+                  timeout: {
+                    type: "object",
+                    properties: {
+                      nanos: {
+                        type: "integer",
+                        description:
+                          "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                      },
+                      seconds: {
+                        type: "string",
+                        description: "64-bit integer as string",
+                      },
+                    },
+                    description:
+                      'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                    additionalProperties: true,
+                  },
+                  urlRewrite: {
+                    type: "object",
+                    properties: {
+                      hostRewrite: {
+                        type: "string",
+                        description:
+                          "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
+                      },
+                      pathPrefixRewrite: {
+                        type: "string",
+                        description:
+                          "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
+                      },
+                      pathTemplateRewrite: {
+                        type: "string",
+                        description:
+                          "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
+                      },
+                    },
+                    description:
+                      "The spec for modifying the path before sending the request to the matched backend service.",
+                    additionalProperties: true,
+                  },
+                  weightedBackendServices: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        backendService: {
+                          type: "string",
+                          description:
+                            "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
+                        },
+                        headerAction: {
+                          type: "object",
+                          properties: {
+                            requestHeadersToAdd: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  headerName: {
+                                    type: "string",
+                                    description: "The name of the header.",
+                                  },
+                                  headerValue: {
+                                    type: "string",
+                                    description:
+                                      "The value of the header to add.",
+                                  },
+                                  replace: {
+                                    type: "boolean",
+                                    description:
+                                      "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                  },
+                                },
+                                description:
+                                  "Specification determining how headers are added to requests or responses.",
+                                additionalProperties: true,
+                              },
+                              description:
+                                "Headers to add to a matching request before forwarding the request to thebackendService.",
+                            },
+                            requestHeadersToRemove: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
+                            },
+                            responseHeadersToAdd: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  headerName: {
+                                    type: "string",
+                                    description: "The name of the header.",
+                                  },
+                                  headerValue: {
+                                    type: "string",
+                                    description:
+                                      "The value of the header to add.",
+                                  },
+                                  replace: {
+                                    type: "boolean",
+                                    description:
+                                      "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                  },
+                                },
+                                description:
+                                  "Specification determining how headers are added to requests or responses.",
+                                additionalProperties: true,
+                              },
+                              description:
+                                "Headers to add the response before sending the response back to the client.",
+                            },
+                            responseHeadersToRemove: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
+                            },
+                          },
+                          description:
+                            "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
+                          additionalProperties: true,
+                        },
+                        weight: {
+                          type: "integer",
+                          description:
+                            "Specifies the fraction of traffic sent to a backend service, computed asweight / (sum of all weightedBackendService weights in routeAction).  The selection of a backend service is determined only for new traffic. Once a user's request has been directed to a backend service, subsequent requests are sent to the same backend service as determined by the backend service's session affinity policy. Don't configure session affinity if you're using weighted traffic splitting. If you do, the weighted traffic splitting configuration takes precedence.  The value must be from 0 to 1000.",
+                        },
+                      },
+                      description:
+                        "In contrast to a single BackendService in HttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across multiple backend services. The volume of traffic for each backend service is proportional to the weight specified in each WeightedBackendService",
+                      additionalProperties: true,
+                    },
+                    description:
+                      "A list of weighted backend services to send traffic to when a route match occurs. The weights determine the fraction of traffic that flows to their corresponding backend service. If all traffic needs to go to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.  After a backend service is identified and before forwarding the request to the backend service, advanced routing actions such as URL rewrites and header transformations are applied depending on additional settings specified in this HttpRouteAction.",
+                  },
+                },
+                additionalProperties: true,
+                description:
+                  "defaultRouteAction takes effect when none of the hostRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.    URL maps for classic Application Load Balancers only support the urlRewrite action within defaultRouteAction.   defaultRouteAction has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
               },
               defaultService: {
                 type: "string",
                 description:
-                  "The full or partial URL of the defaultService resource to\nwhich traffic is directed if none of the hostRules match.\nIf defaultRouteAction is also specified, advanced\nrouting actions, such as URL rewrites, take effect before sending the\nrequest to the backend.\n\n\nOnly one of defaultUrlRedirect, defaultService\nor defaultRouteAction.weightedBackendService can be set.\n\n\ndefaultService has no effect when the URL map is bound\nto a target gRPC proxy that has the validateForProxyless field\nset to true.",
+                  "The full or partial URL of the defaultService resource to which traffic is directed if none of the hostRules match. If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.   defaultService has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
+              },
+              defaultUrlRedirect: {
+                type: "object",
+                properties: {
+                  hostRedirect: {
+                    type: "string",
+                    description:
+                      "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
+                  },
+                  httpsRedirect: {
+                    type: "boolean",
+                    description:
+                      "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
+                  },
+                  pathRedirect: {
+                    type: "string",
+                    description:
+                      "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                  },
+                  prefixRedirect: {
+                    type: "string",
+                    description:
+                      "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                  },
+                  redirectResponseCode: {
+                    type: "string",
+                    enum: [
+                      "UNDEFINED_REDIRECT_RESPONSE_CODE",
+                      "FOUND",
+                      "MOVED_PERMANENTLY_DEFAULT",
+                      "PERMANENT_REDIRECT",
+                      "SEE_OTHER",
+                      "TEMPORARY_REDIRECT",
+                    ],
+                    description:
+                      "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
+                  },
+                  stripQuery: {
+                    type: "boolean",
+                    description:
+                      "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
+                  },
+                },
+                description: "Specifies settings for an HTTP redirect.",
+                additionalProperties: true,
               },
               description: {
                 type: "string",
                 description:
-                  "An optional description of this resource. Provide this property when you\ncreate the resource.",
+                  "An optional description of this resource. Provide this property when you create the resource.",
               },
-              selfLink: {
+              fingerprint: {
                 type: "string",
                 description:
-                  "[Output Only] Server-defined URL for the resource.",
+                  "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field is ignored when inserting a UrlMap. An up-to-date fingerprint must be provided in order to update the UrlMap, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a UrlMap.",
               },
-              kind: {
-                type: "string",
+              headerAction: {
+                type: "object",
+                properties: {
+                  requestHeadersToAdd: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        headerName: {
+                          type: "string",
+                          description: "The name of the header.",
+                        },
+                        headerValue: {
+                          type: "string",
+                          description: "The value of the header to add.",
+                        },
+                        replace: {
+                          type: "boolean",
+                          description:
+                            "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                        },
+                      },
+                      description:
+                        "Specification determining how headers are added to requests or responses.",
+                      additionalProperties: true,
+                    },
+                    description:
+                      "Headers to add to a matching request before forwarding the request to thebackendService.",
+                  },
+                  requestHeadersToRemove: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                    description:
+                      "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
+                  },
+                  responseHeadersToAdd: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        headerName: {
+                          type: "string",
+                          description: "The name of the header.",
+                        },
+                        headerValue: {
+                          type: "string",
+                          description: "The value of the header to add.",
+                        },
+                        replace: {
+                          type: "boolean",
+                          description:
+                            "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                        },
+                      },
+                      description:
+                        "Specification determining how headers are added to requests or responses.",
+                      additionalProperties: true,
+                    },
+                    description:
+                      "Headers to add the response before sending the response back to the client.",
+                  },
+                  responseHeadersToRemove: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                    description:
+                      "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
+                  },
+                },
                 description:
-                  "[Output Only] Type of the resource. Always compute#urlMaps for\nurl maps.",
+                  "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
+                additionalProperties: true,
               },
-              id: {
-                type: "string",
-                description:
-                  "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
+              hostRules: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    description: {
+                      type: "string",
+                      description:
+                        "An optional description of this resource. Provide this property when you create the resource.",
+                    },
+                    hosts: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                      description:
+                        "The list of host patterns to match. They must be valid hostnames with optional port numbers in the format host:port.* matches any string of ([a-z0-9-.]*). In that case, * must be the first character, and if followed by anything, the immediate following character must be either - or ..  * based matching is not supported when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
+                    },
+                    pathMatcher: {
+                      type: "string",
+                      description:
+                        "The name of the PathMatcher to use to match the path portion of the URL if the hostRule matches the URL's host portion.",
+                    },
+                  },
+                  description:
+                    "UrlMaps A host-matching rule for a URL. If matched, will use the namedPathMatcher to select the BackendService.",
+                  additionalProperties: true,
+                },
+                description: "The list of host rules to use against the URL.",
               },
               name: {
                 type: "string",
                 description:
-                  "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
+                  "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
               },
               pathMatchers: {
                 type: "array",
@@ -244,118 +607,217 @@ const regionUrlMapsValidate: AppBlock = {
                                   type: "string",
                                 },
                                 description:
-                                  "Valid values include:\n   \n   \n     - A number between 400 and 599: For example\n     401 or 503, in which case the load balancer\n     applies the policy if the error code exactly matches this value.\n     - 5xx: Load Balancer will apply the policy if the\n     backend service responds with any response code in the range of\n     500 to 599. \n   - 4xx: Load\n     Balancer will apply the policy if the backend service responds with any\n     response code in the range of 400 to\n     499.\n\nValues must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
-                              },
-                              path: {
-                                type: "string",
-                                description:
-                                  "The full path to a file within backendBucket . For example:/errors/defaultError.html \n\npath must start\nwith a leading slash. path cannot have trailing slashes.\n\nIf the file is not available in backendBucket  or the\nload balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client. \n\nThe value must\nbe from 1 to 1024 characters",
+                                  "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
                               },
                               overrideResponseCode: {
                                 type: "integer",
                                 description:
-                                  "The HTTP status code returned with the response containing the custom\nerror content. If overrideResponseCode is not supplied, the\nsame response code returned by the original backend bucket or backend\nservice is returned to the client. (Format: int32)",
+                                  "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
+                              },
+                              path: {
+                                type: "string",
+                                description:
+                                  "The full path to a file within backendBucket . For example:/errors/defaultError.html  path must start with a leading slash. path cannot have trailing slashes.  If the file is not available in backendBucket  or the load balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client.  The value must be from 1 to 1024 characters",
                               },
                             },
                             description:
-                              "Specifies the mapping between the response code that will be returned along\nwith the custom error content and the response code returned by the backend\nservice.",
+                              "Specifies the mapping between the response code that will be returned along with the custom error content and the response code returned by the backend service.",
                             additionalProperties: true,
                           },
                           description:
-                            "Specifies rules for returning error responses.\n\nIn a given policy, if you specify rules for both a range of error codes\nas well as rules for specific error codes then rules with specific error\ncodes have a higher priority. For example, assume that you configure a rule\nfor 401 (Un-authorized) code, and another for all 4 series\nerror codes (4XX). If the backend service returns a401, then the rule for 401 will be applied.\nHowever if the backend service returns a 403, the rule for4xx takes effect.",
+                            "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
                         },
                         errorService: {
                           type: "string",
                           description:
-                            "The full or partial URL to the BackendBucket resource that\ncontains the custom error content. Examples are:\n   \n   \n     - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - global/backendBuckets/myBackendBucket\n\nIf errorService is not specified at lower levels likepathMatcher, pathRule and routeRule,\nan errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService. \n\nIf load balancer cannot reach\nthe backendBucket, a simple Not Found Error will\nbe returned, with the original response code (oroverrideResponseCode if configured).\n\nerrorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
+                            "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
                         },
                       },
                       description:
-                        "Specifies the custom error response policy that must be applied when the\nbackend service or backend bucket responds with an error.",
-                      additionalProperties: true,
-                    },
-                    name: {
-                      type: "string",
-                      description:
-                        "The name to which this PathMatcher is referred by theHostRule.",
-                    },
-                    description: {
-                      type: "string",
-                      description:
-                        "An optional description of this resource. Provide this property when you\ncreate the resource.",
-                    },
-                    defaultUrlRedirect: {
-                      type: "object",
-                      properties: {
-                        stripQuery: {
-                          type: "boolean",
-                          description:
-                            "If set to true, any accompanying query portion of the original\nURL is\nremoved before redirecting the request. If set to false, the\nquery portion of the original URL is retained.\n\nThe default is set to false.",
-                        },
-                        pathRedirect: {
-                          type: "string",
-                          description:
-                            "The path that is used in the redirect response instead of the one\nthat was supplied in the request.\n\npathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                        },
-                        redirectResponseCode: {
-                          type: "string",
-                          enum: [
-                            "FOUND",
-                            "MOVED_PERMANENTLY_DEFAULT",
-                            "PERMANENT_REDIRECT",
-                            "SEE_OTHER",
-                            "TEMPORARY_REDIRECT",
-                          ],
-                          description:
-                            "The HTTP Status code to use for this RedirectAction.\n\nSupported values are:\n   \n   - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds\n   to 301.\n   - FOUND, which corresponds to 302.\n   - SEE_OTHER which corresponds to 303.\n   - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request\n   method is retained.\n   - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request\n   method is retained.",
-                        },
-                        hostRedirect: {
-                          type: "string",
-                          description:
-                            "The host that is used in the redirect response instead of the one that\nwas supplied in the request.\n\nThe value must be from 1 to 255\ncharacters.",
-                        },
-                        prefixRedirect: {
-                          type: "string",
-                          description:
-                            "The prefix that replaces the prefixMatch specified in\nthe HttpRouteRuleMatch, retaining the remaining portion\nof the URL before redirecting the request.\n\nprefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                        },
-                        httpsRedirect: {
-                          type: "boolean",
-                          description:
-                            "If set to true, the URL scheme in the redirected request is\nset to HTTPS.\nIf set to false, the URL scheme of the redirected request\nremains the same as that of the request.\n\nThis must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.\n\nThe default is set to false.",
-                        },
-                      },
-                      description: "Specifies settings for an HTTP redirect.",
+                        "Specifies the custom error response policy that must be applied when the backend service or backend bucket responds with an error.",
                       additionalProperties: true,
                     },
                     defaultRouteAction: {
                       type: "object",
                       properties: {
+                        corsPolicy: {
+                          type: "object",
+                          properties: {
+                            allowCredentials: {
+                              type: "boolean",
+                              description:
+                                "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
+                            },
+                            allowHeaders: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Specifies the content for the Access-Control-Allow-Headers header.",
+                            },
+                            allowMethods: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Specifies the content for the Access-Control-Allow-Methods header.",
+                            },
+                            allowOriginRegexes: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
+                            },
+                            allowOrigins: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Specifies the list of origins that is allowed to do CORS requests.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
+                            },
+                            disabled: {
+                              type: "boolean",
+                              description:
+                                "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
+                            },
+                            exposeHeaders: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "Specifies the content for the Access-Control-Expose-Headers header.",
+                            },
+                            maxAge: {
+                              type: "integer",
+                              description:
+                                "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
+                            },
+                          },
+                          description:
+                            "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
+                          additionalProperties: true,
+                        },
+                        faultInjectionPolicy: {
+                          type: "object",
+                          properties: {
+                            abort: {
+                              type: "object",
+                              properties: {
+                                httpStatus: {
+                                  type: "integer",
+                                  description:
+                                    "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
+                                },
+                                percentage: {
+                                  type: "number",
+                                  description:
+                                    "The percentage of traffic for connections, operations, or requests that is aborted as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                                },
+                              },
+                              description:
+                                "Specification for how requests are aborted as part of fault injection.",
+                              additionalProperties: true,
+                            },
+                            delay: {
+                              type: "object",
+                              properties: {
+                                fixedDelay: {
+                                  type: "object",
+                                  properties: {
+                                    nanos: {
+                                      type: "integer",
+                                      description:
+                                        "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                    },
+                                    seconds: {
+                                      type: "string",
+                                      description: "64-bit integer as string",
+                                    },
+                                  },
+                                  description:
+                                    'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                  additionalProperties: true,
+                                },
+                                percentage: {
+                                  type: "number",
+                                  description:
+                                    "The percentage of traffic for connections, operations, or requests for which a delay is introduced as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                                },
+                              },
+                              description:
+                                "Specifies the delay introduced by the load balancer before forwarding the request to the backend service as part of fault injection.",
+                              additionalProperties: true,
+                            },
+                          },
+                          description:
+                            "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
+                          additionalProperties: true,
+                        },
+                        maxStreamDuration: {
+                          type: "object",
+                          properties: {
+                            nanos: {
+                              type: "integer",
+                              description:
+                                "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                            },
+                            seconds: {
+                              type: "string",
+                              description: "64-bit integer as string",
+                            },
+                          },
+                          description:
+                            'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                          additionalProperties: true,
+                        },
+                        requestMirrorPolicy: {
+                          type: "object",
+                          properties: {
+                            backendService: {
+                              type: "string",
+                              description:
+                                "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
+                            },
+                            mirrorPercent: {
+                              type: "number",
+                              description:
+                                "The percentage of requests to be mirrored to `backend_service`.",
+                            },
+                          },
+                          description:
+                            "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
+                          additionalProperties: true,
+                        },
                         retryPolicy: {
                           type: "object",
                           properties: {
+                            numRetries: {
+                              type: "integer",
+                              description:
+                                "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
+                            },
                             perTryTimeout: {
                               type: "object",
                               properties: {
                                 nanos: {
                                   type: "integer",
                                   description:
-                                    "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
+                                    "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
                                 },
                                 seconds: {
                                   type: "string",
-                                  description:
-                                    "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
+                                  description: "64-bit integer as string",
                                 },
                               },
                               description:
-                                'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
+                                'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                               additionalProperties: true,
-                            },
-                            numRetries: {
-                              type: "integer",
-                              description:
-                                "Specifies the allowed number retries. This number must be > 0.\nIf not specified, defaults to 1. (Format: uint32)",
                             },
                             retryConditions: {
                               type: "array",
@@ -363,7 +825,7 @@ const regionUrlMapsValidate: AppBlock = {
                                 type: "string",
                               },
                               description:
-                                "Specifies one or more conditions when this retry policy applies. Valid\nvalues are:\n   \n   - 5xx: retry is attempted if the instance or endpoint\n   responds with any 5xx response code, or if the instance or\n   endpoint does not respond at all. For example, disconnects, reset, read\n   timeout, connection failure, and refused streams.\n   - gateway-error: Similar to 5xx, but only\n   applies to response codes 502, 503 or504.\n   - connect-failure: a retry is attempted on failures\n   connecting to the instance or endpoint. For example, connection\n   timeouts.\n   - retriable-4xx: a retry is attempted if the instance\n   or endpoint responds with a 4xx response code.\n   The only error that you can retry is error code 409.\n   - refused-stream: a retry is attempted if the instance\n   or endpoint resets the stream with a REFUSED_STREAM error\n   code. This reset type indicates that it is safe to retry.\n   - cancelled: a retry is attempted if the gRPC status\n   code in the response header is set to cancelled.\n   - deadline-exceeded: a retry is attempted if the gRPC\n   status code in the response header is set todeadline-exceeded.\n   - internal: a retry is attempted if the gRPC\n   status code in the response header is set tointernal.\n   - resource-exhausted: a retry is attempted if the gRPC\n   status code in the response header is set toresource-exhausted.\n   - unavailable: a retry is attempted if the gRPC\n   status code in the response header is set tounavailable.\n\nOnly the following codes are supported when the URL map is bound to\ntarget gRPC proxy that has validateForProxyless field set to true.\n   \n   - cancelled\n   - deadline-exceeded\n   - internal\n   - resource-exhausted\n   - unavailable",
+                                "Specifies one or more conditions when this retry policy applies. Valid values are:     - 5xx: retry is attempted if the instance or endpoint    responds with any 5xx response code, or if the instance or    endpoint does not respond at all. For example, disconnects, reset, read    timeout, connection failure, and refused streams.    - gateway-error: Similar to 5xx, but only    applies to response codes 502, 503 or504.    - connect-failure: a retry is attempted on failures    connecting to the instance or endpoint. For example, connection    timeouts.    - retriable-4xx: a retry is attempted if the instance    or endpoint responds with a 4xx response code.    The only error that you can retry is error code 409.    - refused-stream: a retry is attempted if the instance    or endpoint resets the stream with a REFUSED_STREAM error    code. This reset type indicates that it is safe to retry.    - cancelled: a retry is attempted if the gRPC status    code in the response header is set to cancelled.    - deadline-exceeded: a retry is attempted if the gRPC    status code in the response header is set todeadline-exceeded.    - internal: a retry is attempted if the gRPC    status code in the response header is set tointernal.    - resource-exhausted: a retry is attempted if the gRPC    status code in the response header is set toresource-exhausted.    - unavailable: a retry is attempted if the gRPC    status code in the response header is set tounavailable.  Only the following codes are supported when the URL map is bound to target gRPC proxy that has validateForProxyless field set to true.     - cancelled    - deadline-exceeded    - internal    - resource-exhausted    - unavailable",
                             },
                           },
                           description:
@@ -376,195 +838,38 @@ const regionUrlMapsValidate: AppBlock = {
                             nanos: {
                               type: "integer",
                               description:
-                                "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
+                                "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
                             },
                             seconds: {
                               type: "string",
-                              description:
-                                "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
+                              description: "64-bit integer as string",
                             },
                           },
                           description:
-                            'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
+                            'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
                           additionalProperties: true,
                         },
                         urlRewrite: {
                           type: "object",
                           properties: {
-                            pathTemplateRewrite: {
-                              type: "string",
-                              description:
-                                "If specified, the pattern rewrites the URL path (based on the :path\nheader) using the HTTP template syntax. \n\nA corresponding\npath_template_match must be specified. Any template variables must exist in\nthe path_template_match field. \n   \n   \n      - -At least one variable must be specified in the path_template_match\n      field \n   - You can omit variables from the rewritten URL\n      - The * and ** operators cannot be matched\n      unless they have a corresponding variable name - e.g.\n      {format=*} or {var=**}.\n\nFor example, a path_template_match of /static/{format=**}\ncould be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a\nrewrite, so that /{country}/{format}/{suffix=**} can be\nrewritten as /content/{format}/{country}/{suffix}. \n\nAt least\none non-empty routeRules[].matchRules[].path_template_match is\nrequired. \n\nOnly one of path_prefix_rewrite orpath_template_rewrite may be specified.",
-                            },
                             hostRewrite: {
                               type: "string",
                               description:
-                                "Before forwarding the request to the selected service, the request's\nhost header is replaced with contents of hostRewrite.\n\nThe value must be from 1 to 255 characters.",
+                                "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
                             },
                             pathPrefixRewrite: {
                               type: "string",
                               description:
-                                "Before forwarding the request to the selected backend service, the\nmatching portion of the request's path is replaced bypathPrefixRewrite.\n\nThe value must be from 1 to 1024 characters.",
+                                "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
                             },
-                          },
-                          description:
-                            "The spec for modifying the path before sending the request to the matched\nbackend service.",
-                          additionalProperties: true,
-                        },
-                        requestMirrorPolicy: {
-                          type: "object",
-                          properties: {
-                            backendService: {
+                            pathTemplateRewrite: {
                               type: "string",
                               description:
-                                "The full or partial URL to the BackendService resource being\nmirrored to.\n\nThe backend service configured for a mirroring\npolicy must reference backends that are of the same type as the original\nbackend service matched in the URL map.\n\nServerless NEG backends are not currently supported as a mirrored\nbackend service.",
-                            },
-                            mirrorPercent: {
-                              type: "number",
-                              description:
-                                "The percentage of requests to be mirrored to `backend_service`. (Format: double)",
+                                "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
                             },
                           },
                           description:
-                            "A policy that specifies how requests intended for the route's backends\nare shadowed to a separate mirrored backend service. The load balancer\ndoesn't wait for responses from the shadow service. Before sending traffic\nto the shadow service, the host or authority header is suffixed with-shadow.",
-                          additionalProperties: true,
-                        },
-                        maxStreamDuration: {
-                          type: "object",
-                          properties: {
-                            nanos: {
-                              type: "integer",
-                              description:
-                                "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                            },
-                            seconds: {
-                              type: "string",
-                              description:
-                                "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                            },
-                          },
-                          description:
-                            'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                          additionalProperties: true,
-                        },
-                        corsPolicy: {
-                          type: "object",
-                          properties: {
-                            allowHeaders: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "Specifies the content for the Access-Control-Allow-Headers\nheader.",
-                            },
-                            disabled: {
-                              type: "boolean",
-                              description:
-                                "If true, disables the CORS policy.\nThe default value is false, which indicates that the CORS\npolicy is in effect.",
-                            },
-                            allowCredentials: {
-                              type: "boolean",
-                              description:
-                                "In response to a preflight request, setting this to true\nindicates that\nthe actual request can include user credentials. This field translates to\nthe Access-Control-Allow-Credentials header.\n\nDefault is false.",
-                            },
-                            allowOrigins: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "Specifies the list of origins that is allowed to do CORS requests.\n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
-                            },
-                            maxAge: {
-                              type: "integer",
-                              description:
-                                "Specifies how long results of a preflight request can be cached in\nseconds. This field translates to the Access-Control-Max-Age\nheader. (Format: int32)",
-                            },
-                            allowOriginRegexes: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "Specifies a regular expression that matches allowed origins. For\nmore information, see regular expression syntax. \n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED.",
-                            },
-                            allowMethods: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "Specifies the content for the Access-Control-Allow-Methods\nheader.",
-                            },
-                            exposeHeaders: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "Specifies the content for the Access-Control-Expose-Headers\nheader.",
-                            },
-                          },
-                          description:
-                            "The specification for allowing client-side cross-origin requests. For more\ninformation about the W3C recommendation for cross-origin resource sharing\n(CORS), see Fetch API Living\nStandard.",
-                          additionalProperties: true,
-                        },
-                        faultInjectionPolicy: {
-                          type: "object",
-                          properties: {
-                            abort: {
-                              type: "object",
-                              properties: {
-                                httpStatus: {
-                                  type: "integer",
-                                  description:
-                                    "The HTTP status code used to abort the request.\n\nThe value must be from 200 to 599 inclusive.\n\nFor gRPC protocol, the gRPC status code is mapped to HTTP status code\naccording to this \nmapping table. HTTP status 200 is mapped to gRPC status\nUNKNOWN. Injecting an OK status is currently not supported by\nTraffic Director. (Format: uint32)",
-                                },
-                                percentage: {
-                                  type: "number",
-                                  description:
-                                    "The percentage of traffic for connections, operations, or requests\nthat is aborted as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                                },
-                              },
-                              description:
-                                "Specification for how requests are aborted as part of fault injection.",
-                              additionalProperties: true,
-                            },
-                            delay: {
-                              type: "object",
-                              properties: {
-                                percentage: {
-                                  type: "number",
-                                  description:
-                                    "The percentage of traffic for connections, operations, or requests for\nwhich a delay is introduced as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                                },
-                                fixedDelay: {
-                                  type: "object",
-                                  properties: {
-                                    nanos: {
-                                      type: "integer",
-                                      description:
-                                        "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                    },
-                                    seconds: {
-                                      type: "string",
-                                      description:
-                                        "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                    },
-                                  },
-                                  description:
-                                    'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                  additionalProperties: true,
-                                },
-                              },
-                              description:
-                                "Specifies the delay introduced by the load balancer before forwarding the\nrequest to the backend service as part of fault injection.",
-                              additionalProperties: true,
-                            },
-                          },
-                          description:
-                            "The specification for fault injection introduced into traffic to test\nthe resiliency of clients to backend service failure. As part of fault\ninjection, when clients send requests to a backend service, delays can be\nintroduced by the load balancer on a percentage of requests before sending\nthose request to the backend service. Similarly requests from clients can be\naborted by the load balancer for a percentage of requests.",
+                            "The spec for modifying the path before sending the request to the matched backend service.",
                           additionalProperties: true,
                         },
                         weightedBackendServices: {
@@ -575,7 +880,7 @@ const regionUrlMapsValidate: AppBlock = {
                               backendService: {
                                 type: "string",
                                 description:
-                                  "The full or partial URL to the default BackendService\nresource. Before\nforwarding the request to backendService, the load balancer\napplies any relevant headerActions specified as part of thisbackendServiceWeight.",
+                                  "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
                               },
                               headerAction: {
                                 type: "object",
@@ -585,20 +890,20 @@ const regionUrlMapsValidate: AppBlock = {
                                     items: {
                                       type: "object",
                                       properties: {
-                                        replace: {
-                                          type: "boolean",
+                                        headerName: {
+                                          type: "string",
                                           description:
-                                            "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
+                                            "The name of the header.",
                                         },
                                         headerValue: {
                                           type: "string",
                                           description:
                                             "The value of the header to add.",
                                         },
-                                        headerName: {
-                                          type: "string",
+                                        replace: {
+                                          type: "boolean",
                                           description:
-                                            "The name of the header.",
+                                            "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
                                         },
                                       },
                                       description:
@@ -608,41 +913,33 @@ const regionUrlMapsValidate: AppBlock = {
                                     description:
                                       "Headers to add to a matching request before forwarding the request to thebackendService.",
                                   },
-                                  responseHeadersToRemove: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                                  },
                                   requestHeadersToRemove: {
                                     type: "array",
                                     items: {
                                       type: "string",
                                     },
                                     description:
-                                      "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
+                                      "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                                   },
                                   responseHeadersToAdd: {
                                     type: "array",
                                     items: {
                                       type: "object",
                                       properties: {
-                                        replace: {
-                                          type: "boolean",
+                                        headerName: {
+                                          type: "string",
                                           description:
-                                            "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
+                                            "The name of the header.",
                                         },
                                         headerValue: {
                                           type: "string",
                                           description:
                                             "The value of the header to add.",
                                         },
-                                        headerName: {
-                                          type: "string",
+                                        replace: {
+                                          type: "boolean",
                                           description:
-                                            "The name of the header.",
+                                            "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
                                         },
                                       },
                                       description:
@@ -650,1202 +947,93 @@ const regionUrlMapsValidate: AppBlock = {
                                       additionalProperties: true,
                                     },
                                     description:
-                                      "Headers to add the response before sending the response back to the\nclient.",
+                                      "Headers to add the response before sending the response back to the client.",
+                                  },
+                                  responseHeadersToRemove: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
                                   },
                                 },
                                 description:
-                                  "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
+                                  "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
                                 additionalProperties: true,
                               },
                               weight: {
                                 type: "integer",
                                 description:
-                                  "Specifies the fraction of traffic sent to a backend service,\ncomputed asweight / (sum of all weightedBackendService weights in routeAction).\n\nThe selection of a backend service is determined only for new traffic.\nOnce a user's request has been directed to a backend service,\nsubsequent requests are sent to the same backend service as\ndetermined by the backend service's session affinity policy.\nDon't configure session affinity if you're using weighted traffic\nsplitting. If you do, the weighted traffic splitting configuration takes\nprecedence.\n\nThe value must be from 0 to 1000. (Format: uint32)",
+                                  "Specifies the fraction of traffic sent to a backend service, computed asweight / (sum of all weightedBackendService weights in routeAction).  The selection of a backend service is determined only for new traffic. Once a user's request has been directed to a backend service, subsequent requests are sent to the same backend service as determined by the backend service's session affinity policy. Don't configure session affinity if you're using weighted traffic splitting. If you do, the weighted traffic splitting configuration takes precedence.  The value must be from 0 to 1000.",
                               },
                             },
                             description:
-                              "In contrast to a single BackendService in \nHttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across\nmultiple backend services. The volume of traffic for each\nbackend service is proportional to the weight specified\nin each WeightedBackendService",
+                              "In contrast to a single BackendService in HttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across multiple backend services. The volume of traffic for each backend service is proportional to the weight specified in each WeightedBackendService",
                             additionalProperties: true,
                           },
                           description:
-                            "A list of weighted backend services to send traffic to when a route match\noccurs. The weights determine the fraction of traffic that flows to\ntheir corresponding backend service. If all traffic needs to\ngo to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.\n\nAfter a backend service is identified and before forwarding\nthe request to\nthe backend service, advanced routing actions such as URL rewrites and\nheader transformations are applied depending on additional settings\nspecified in this HttpRouteAction.",
+                            "A list of weighted backend services to send traffic to when a route match occurs. The weights determine the fraction of traffic that flows to their corresponding backend service. If all traffic needs to go to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.  After a backend service is identified and before forwarding the request to the backend service, advanced routing actions such as URL rewrites and header transformations are applied depending on additional settings specified in this HttpRouteAction.",
                         },
                       },
                       additionalProperties: true,
-                    },
-                    routeRules: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          service: {
-                            type: "string",
-                            description:
-                              "The full or partial URL of the backend service resource to which traffic\nis directed if this rule is matched. If routeAction is\nalso specified, advanced routing actions, such as URL rewrites,\ntake effect before sending the request to the backend.\n\n\nOnly one of urlRedirect, service orrouteAction.weightedBackendService can be set.",
-                          },
-                          headerAction: {
-                            type: "object",
-                            properties: {
-                              requestHeadersToAdd: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    replace: {
-                                      type: "boolean",
-                                      description:
-                                        "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
-                                    },
-                                    headerValue: {
-                                      type: "string",
-                                      description:
-                                        "The value of the header to add.",
-                                    },
-                                    headerName: {
-                                      type: "string",
-                                      description: "The name of the header.",
-                                    },
-                                  },
-                                  description:
-                                    "Specification determining how headers are added to requests or responses.",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "Headers to add to a matching request before forwarding the request to thebackendService.",
-                              },
-                              responseHeadersToRemove: {
-                                type: "array",
-                                items: {
-                                  type: "string",
-                                },
-                                description:
-                                  "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                              },
-                              requestHeadersToRemove: {
-                                type: "array",
-                                items: {
-                                  type: "string",
-                                },
-                                description:
-                                  "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
-                              },
-                              responseHeadersToAdd: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    replace: {
-                                      type: "boolean",
-                                      description:
-                                        "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
-                                    },
-                                    headerValue: {
-                                      type: "string",
-                                      description:
-                                        "The value of the header to add.",
-                                    },
-                                    headerName: {
-                                      type: "string",
-                                      description: "The name of the header.",
-                                    },
-                                  },
-                                  description:
-                                    "Specification determining how headers are added to requests or responses.",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "Headers to add the response before sending the response back to the\nclient.",
-                              },
-                            },
-                            description:
-                              "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
-                            additionalProperties: true,
-                          },
-                          urlRedirect: {
-                            type: "object",
-                            properties: {
-                              stripQuery: {
-                                type: "boolean",
-                                description:
-                                  "If set to true, any accompanying query portion of the original\nURL is\nremoved before redirecting the request. If set to false, the\nquery portion of the original URL is retained.\n\nThe default is set to false.",
-                              },
-                              pathRedirect: {
-                                type: "string",
-                                description:
-                                  "The path that is used in the redirect response instead of the one\nthat was supplied in the request.\n\npathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                              },
-                              redirectResponseCode: {
-                                type: "string",
-                                enum: [
-                                  "FOUND",
-                                  "MOVED_PERMANENTLY_DEFAULT",
-                                  "PERMANENT_REDIRECT",
-                                  "SEE_OTHER",
-                                  "TEMPORARY_REDIRECT",
-                                ],
-                                description:
-                                  "The HTTP Status code to use for this RedirectAction.\n\nSupported values are:\n   \n   - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds\n   to 301.\n   - FOUND, which corresponds to 302.\n   - SEE_OTHER which corresponds to 303.\n   - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request\n   method is retained.\n   - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request\n   method is retained.",
-                              },
-                              hostRedirect: {
-                                type: "string",
-                                description:
-                                  "The host that is used in the redirect response instead of the one that\nwas supplied in the request.\n\nThe value must be from 1 to 255\ncharacters.",
-                              },
-                              prefixRedirect: {
-                                type: "string",
-                                description:
-                                  "The prefix that replaces the prefixMatch specified in\nthe HttpRouteRuleMatch, retaining the remaining portion\nof the URL before redirecting the request.\n\nprefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                              },
-                              httpsRedirect: {
-                                type: "boolean",
-                                description:
-                                  "If set to true, the URL scheme in the redirected request is\nset to HTTPS.\nIf set to false, the URL scheme of the redirected request\nremains the same as that of the request.\n\nThis must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.\n\nThe default is set to false.",
-                              },
-                            },
-                            description:
-                              "Specifies settings for an HTTP redirect.",
-                            additionalProperties: true,
-                          },
-                          customErrorResponsePolicy: {
-                            type: "object",
-                            properties: {
-                              errorResponseRules: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    matchResponseCodes: {
-                                      type: "array",
-                                      items: {
-                                        type: "string",
-                                      },
-                                      description:
-                                        "Valid values include:\n   \n   \n     - A number between 400 and 599: For example\n     401 or 503, in which case the load balancer\n     applies the policy if the error code exactly matches this value.\n     - 5xx: Load Balancer will apply the policy if the\n     backend service responds with any response code in the range of\n     500 to 599. \n   - 4xx: Load\n     Balancer will apply the policy if the backend service responds with any\n     response code in the range of 400 to\n     499.\n\nValues must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
-                                    },
-                                    path: {
-                                      type: "string",
-                                      description:
-                                        "The full path to a file within backendBucket . For example:/errors/defaultError.html \n\npath must start\nwith a leading slash. path cannot have trailing slashes.\n\nIf the file is not available in backendBucket  or the\nload balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client. \n\nThe value must\nbe from 1 to 1024 characters",
-                                    },
-                                    overrideResponseCode: {
-                                      type: "integer",
-                                      description:
-                                        "The HTTP status code returned with the response containing the custom\nerror content. If overrideResponseCode is not supplied, the\nsame response code returned by the original backend bucket or backend\nservice is returned to the client. (Format: int32)",
-                                    },
-                                  },
-                                  description:
-                                    "Specifies the mapping between the response code that will be returned along\nwith the custom error content and the response code returned by the backend\nservice.",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "Specifies rules for returning error responses.\n\nIn a given policy, if you specify rules for both a range of error codes\nas well as rules for specific error codes then rules with specific error\ncodes have a higher priority. For example, assume that you configure a rule\nfor 401 (Un-authorized) code, and another for all 4 series\nerror codes (4XX). If the backend service returns a401, then the rule for 401 will be applied.\nHowever if the backend service returns a 403, the rule for4xx takes effect.",
-                              },
-                              errorService: {
-                                type: "string",
-                                description:
-                                  "The full or partial URL to the BackendBucket resource that\ncontains the custom error content. Examples are:\n   \n   \n     - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - global/backendBuckets/myBackendBucket\n\nIf errorService is not specified at lower levels likepathMatcher, pathRule and routeRule,\nan errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService. \n\nIf load balancer cannot reach\nthe backendBucket, a simple Not Found Error will\nbe returned, with the original response code (oroverrideResponseCode if configured).\n\nerrorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
-                              },
-                            },
-                            description:
-                              "Specifies the custom error response policy that must be applied when the\nbackend service or backend bucket responds with an error.",
-                            additionalProperties: true,
-                          },
-                          matchRules: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                pathTemplateMatch: {
-                                  type: "string",
-                                  description:
-                                    'If specified, the route is a pattern match expression that must match the\n:path header once the query string is removed.\n\n A pattern match allows you to match\n   \n   \n      - The value must be between 1 and 1024 characters\n      - The pattern must start with a leading slash ("/")\n      - There may be no more than 5 operators in pattern\n\n Precisely one ofprefix_match, full_path_match,regex_match or path_template_match must be set.',
-                                },
-                                ignoreCase: {
-                                  type: "boolean",
-                                  description:
-                                    "Specifies that prefixMatch and fullPathMatch\nmatches are case sensitive.\n\nThe default value is false.\n\nignoreCase must not be used with regexMatch.\n\nNot supported when the URL map is bound to a target gRPC proxy.",
-                                },
-                                prefixMatch: {
-                                  type: "string",
-                                  description:
-                                    "For satisfying the matchRule condition, the request's\npath must begin with the specified prefixMatch.prefixMatch must begin with a /.\n\nThe value must be from 1 to 1024 characters.\n\nOnly one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be\nspecified.\nspecified.",
-                                },
-                                headerMatches: {
-                                  type: "array",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      exactMatch: {
-                                        type: "string",
-                                        description:
-                                          "The value should exactly match contents of exactMatch.\n\nOnly one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
-                                      },
-                                      invertMatch: {
-                                        type: "boolean",
-                                        description:
-                                          "If set to false, the headerMatch is considered a\nmatch if the preceding match criteria are met. If set to true,\nthe headerMatch is considered a match if the preceding\nmatch criteria are NOT met.\n\nThe default setting is false.",
-                                      },
-                                      regexMatch: {
-                                        type: "string",
-                                        description:
-                                          "The value of the header must match the regular expression specified inregexMatch.\nFor more information about regular expression syntax, see Syntax.\n\nFor matching against a port specified in the HTTP request, use a\nheaderMatch with headerName set to PORT and a regular expression that\nsatisfies the RFC2616 Host header's port specifier.\n\nOnly one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED orINTERNAL_MANAGED.",
-                                      },
-                                      prefixMatch: {
-                                        type: "string",
-                                        description:
-                                          "The value of the header must start with the contents ofprefixMatch.\n\nOnly one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
-                                      },
-                                      suffixMatch: {
-                                        type: "string",
-                                        description:
-                                          "The value of the header must end with the contents ofsuffixMatch.\n\nOnly one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
-                                      },
-                                      headerName: {
-                                        type: "string",
-                                        description:
-                                          'The name of the HTTP header to match.\n\nFor matching against the HTTP request\'s authority, use a headerMatch\nwith the header name ":authority".\n\nFor matching a request\'s method, use the headerName ":method".\n\nWhen the URL map is bound to a target gRPC proxy that has\nthe validateForProxyless field set to true, only\nnon-binary\nuser-specified custom metadata and the `content-type` header are supported.\nThe following transport-level headers cannot be used in header matching\nrules:\n`:authority`, `:method`, `:path`, `:scheme`, `user-agent`,\n`accept-encoding`, `content-encoding`, `grpc-accept-encoding`,\n`grpc-encoding`, `grpc-previous-rpc-attempts`, `grpc-tags-bin`,\n`grpc-timeout` and `grpc-trace-bin`.',
-                                      },
-                                      presentMatch: {
-                                        type: "boolean",
-                                        description:
-                                          "A header with the contents of headerName must exist. The\nmatch takes place whether or not the request's header has a value.\n\nOnly one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
-                                      },
-                                      rangeMatch: {
-                                        type: "object",
-                                        properties: {
-                                          rangeEnd: {
-                                            type: "string",
-                                            description:
-                                              "The end of the range (exclusive) in signed long integer format. (Format: int64)",
-                                          },
-                                          rangeStart: {
-                                            type: "string",
-                                            description:
-                                              "The start of the range (inclusive) in signed long integer format. (Format: int64)",
-                                          },
-                                        },
-                                        description:
-                                          "HttpRouteRuleMatch criteria for field values that must stay\nwithin the specified integer range.",
-                                        additionalProperties: true,
-                                      },
-                                    },
-                                    description:
-                                      "matchRule criteria for request header matches.",
-                                    additionalProperties: true,
-                                  },
-                                  description:
-                                    "Specifies a list of header match criteria, all of which must match\ncorresponding headers in the request.",
-                                },
-                                regexMatch: {
-                                  type: "string",
-                                  description:
-                                    "For satisfying the matchRule condition, the path of the\nrequest must satisfy the regular expression specified inregexMatch after removing any query parameters and anchor\nsupplied with the original URL. For\nmore information about regular expression syntax, see Syntax.\n\nOnly one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be\nspecified.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED orINTERNAL_MANAGED.",
-                                },
-                                queryParameterMatches: {
-                                  type: "array",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      regexMatch: {
-                                        type: "string",
-                                        description:
-                                          "The queryParameterMatch matches if the value of the\nparameter matches the regular expression specified byregexMatch. For\nmore information about regular expression syntax, see Syntax.\n\nOnly one of presentMatch, exactMatch, orregexMatch must be set.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED orINTERNAL_MANAGED.",
-                                      },
-                                      exactMatch: {
-                                        type: "string",
-                                        description:
-                                          "The queryParameterMatch matches if the value of the\nparameter exactly matches the contents of exactMatch.\n\nOnly one of presentMatch, exactMatch, orregexMatch must be set.",
-                                      },
-                                      presentMatch: {
-                                        type: "boolean",
-                                        description:
-                                          "Specifies that the queryParameterMatch matches if the\nrequest contains the query parameter, irrespective of whether the\nparameter has a value or not.\n\nOnly one of presentMatch, exactMatch, orregexMatch must be set.",
-                                      },
-                                      name: {
-                                        type: "string",
-                                        description:
-                                          "The name of the query parameter to match. The query parameter must exist in\nthe request, in the absence of which the request match fails.",
-                                      },
-                                    },
-                                    description:
-                                      "HttpRouteRuleMatch criteria for a request's query parameter.",
-                                    additionalProperties: true,
-                                  },
-                                  description:
-                                    "Specifies a list of query parameter match criteria, all of which must\nmatch corresponding query parameters in the request.\n\nNot supported when the URL map is bound to a target gRPC proxy.",
-                                },
-                                fullPathMatch: {
-                                  type: "string",
-                                  description:
-                                    "For satisfying the matchRule condition, the path of the\nrequest must exactly match the value specified infullPathMatch after removing any query parameters and anchor\nthat may be part of the original URL.\n\nfullPathMatch must be from 1 to 1024 characters.\n\nOnly one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be\nspecified.",
-                                },
-                                metadataFilters: {
-                                  type: "array",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      filterMatchCriteria: {
-                                        type: "string",
-                                        enum: [
-                                          "MATCH_ALL",
-                                          "MATCH_ANY",
-                                          "NOT_SET",
-                                        ],
-                                        description:
-                                          "Specifies how individual filter label matches\nwithin the list of filterLabels and contributes toward the\noverall metadataFilter match.\n\n Supported values are:\n   \n   - MATCH_ANY: at least one of the filterLabels\n   must have a matching label in the provided metadata.\n   - MATCH_ALL: all filterLabels must have\n   matching labels in the provided metadata.",
-                                      },
-                                      filterLabels: {
-                                        type: "array",
-                                        items: {
-                                          type: "object",
-                                          properties: {
-                                            value: {
-                                              type: "object",
-                                              additionalProperties: true,
-                                            },
-                                            name: {
-                                              type: "object",
-                                              additionalProperties: true,
-                                            },
-                                          },
-                                          description:
-                                            "MetadataFilter label name value pairs that are expected\nto match corresponding labels presented as metadata to the load balancer.",
-                                          additionalProperties: true,
-                                        },
-                                        description:
-                                          "The list of label value pairs that must match labels in the provided\nmetadata based on filterMatchCriteria\n\nThis list must not be empty and can have at the most 64 entries.",
-                                      },
-                                    },
-                                    description:
-                                      "Opaque filter criteria used by load balancers to restrict routing\nconfiguration to a limited set of load balancing proxies. Proxies and\nsidecars involved in load balancing would typically present metadata to the\nload balancers that need to match criteria specified here. If a match takes\nplace, the relevant configuration is made available to those\nproxies.\n\nFor each metadataFilter in this list, if itsfilterMatchCriteria is set to MATCH_ANY, at least\none of thefilterLabels must match the corresponding label provided in\nthe metadata. If its filterMatchCriteria is set to\nMATCH_ALL, then all of its filterLabels must match with\ncorresponding labels provided in the metadata.\n\nAn example for using metadataFilters would be: if\nload balancing involves\nEnvoys, they receive routing configuration when values inmetadataFilters match values supplied in  of their XDS requests to loadbalancers.",
-                                    additionalProperties: true,
-                                  },
-                                  description:
-                                    "Opaque filter criteria used by the load balancer to restrict routing\nconfiguration to a limited set of xDS\ncompliant clients. In their xDS requests to the load balancer, xDS clients\npresent node\nmetadata. When there is a match, the relevant routing configuration\nis made available to those proxies.\n\nFor each metadataFilter in this list, if itsfilterMatchCriteria is set to MATCH_ANY, at least one of thefilterLabels must match the corresponding label provided in\nthe metadata. If its filterMatchCriteria is set to\nMATCH_ALL, then all of its filterLabels must match with\ncorresponding labels provided in the metadata. If multiple\nmetadata filters are specified, all of them need to be\nsatisfied in order to be considered a match.\n\nmetadataFilters specified here is applied after those\nspecified in ForwardingRule that refers to theUrlMap this HttpRouteRuleMatch belongs to.\n\nmetadataFilters only applies to load balancers that haveloadBalancingScheme set toINTERNAL_SELF_MANAGED.\n\nNot supported when the URL map is bound to a target gRPC proxy that\nhas validateForProxyless field set to true.",
-                                },
-                              },
-                              description:
-                                "HttpRouteRuleMatch specifies a set of criteria for matching\nrequests to an HttpRouteRule. All specified criteria must\nbe satisfied for a match to occur.",
-                              additionalProperties: true,
-                            },
-                            description:
-                              "The list of criteria for matching attributes of a request to thisrouteRule. This list has OR semantics: the request matches\nthis routeRule when any of thematchRules are satisfied. However predicates within\na given matchRule have AND semantics. All predicates\nwithin a matchRule must match for the request to\nmatch the rule.",
-                          },
-                          priority: {
-                            type: "integer",
-                            description:
-                              "For routeRules within a given pathMatcher,\npriority determines the order in which a load balancer interpretsrouteRules. RouteRules are evaluated in order\nof priority, from the lowest to highest number. The priority of a\nrule decreases as its number increases (1, 2, 3, N+1). The first rule\nthat matches the request is applied.\n\n\nYou cannot configure two or more routeRules with the same priority.\nPriority for each rule must be set to a number from 0 to 2147483647\ninclusive.\n\n\nPriority numbers can have gaps, which enable you to add or remove rules\nin the future without affecting the rest of the rules. For example, 1, 2,\n3, 4, 5, 9, 12, 16 is a valid series of priority numbers to which you\ncould add rules numbered from 6 to 8, 10 to 11, and 13 to 15 in the future\nwithout any impact on existing rules. (Format: int32)",
-                          },
-                          description: {
-                            type: "string",
-                            description:
-                              "The short description conveying the intent of this routeRule.\n\n\nThe description can have a maximum length of 1024 characters.",
-                          },
-                          routeAction: {
-                            type: "object",
-                            properties: {
-                              retryPolicy: {
-                                type: "object",
-                                properties: {
-                                  perTryTimeout: {
-                                    type: "object",
-                                    properties: {
-                                      nanos: {
-                                        type: "integer",
-                                        description:
-                                          "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                      },
-                                      seconds: {
-                                        type: "string",
-                                        description:
-                                          "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                      },
-                                    },
-                                    description:
-                                      'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                    additionalProperties: true,
-                                  },
-                                  numRetries: {
-                                    type: "integer",
-                                    description:
-                                      "Specifies the allowed number retries. This number must be > 0.\nIf not specified, defaults to 1. (Format: uint32)",
-                                  },
-                                  retryConditions: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies one or more conditions when this retry policy applies. Valid\nvalues are:\n   \n   - 5xx: retry is attempted if the instance or endpoint\n   responds with any 5xx response code, or if the instance or\n   endpoint does not respond at all. For example, disconnects, reset, read\n   timeout, connection failure, and refused streams.\n   - gateway-error: Similar to 5xx, but only\n   applies to response codes 502, 503 or504.\n   - connect-failure: a retry is attempted on failures\n   connecting to the instance or endpoint. For example, connection\n   timeouts.\n   - retriable-4xx: a retry is attempted if the instance\n   or endpoint responds with a 4xx response code.\n   The only error that you can retry is error code 409.\n   - refused-stream: a retry is attempted if the instance\n   or endpoint resets the stream with a REFUSED_STREAM error\n   code. This reset type indicates that it is safe to retry.\n   - cancelled: a retry is attempted if the gRPC status\n   code in the response header is set to cancelled.\n   - deadline-exceeded: a retry is attempted if the gRPC\n   status code in the response header is set todeadline-exceeded.\n   - internal: a retry is attempted if the gRPC\n   status code in the response header is set tointernal.\n   - resource-exhausted: a retry is attempted if the gRPC\n   status code in the response header is set toresource-exhausted.\n   - unavailable: a retry is attempted if the gRPC\n   status code in the response header is set tounavailable.\n\nOnly the following codes are supported when the URL map is bound to\ntarget gRPC proxy that has validateForProxyless field set to true.\n   \n   - cancelled\n   - deadline-exceeded\n   - internal\n   - resource-exhausted\n   - unavailable",
-                                  },
-                                },
-                                description:
-                                  "The retry policy associates with HttpRouteRule",
-                                additionalProperties: true,
-                              },
-                              timeout: {
-                                type: "object",
-                                properties: {
-                                  nanos: {
-                                    type: "integer",
-                                    description:
-                                      "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                  },
-                                  seconds: {
-                                    type: "string",
-                                    description:
-                                      "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                  },
-                                },
-                                description:
-                                  'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                additionalProperties: true,
-                              },
-                              urlRewrite: {
-                                type: "object",
-                                properties: {
-                                  pathTemplateRewrite: {
-                                    type: "string",
-                                    description:
-                                      "If specified, the pattern rewrites the URL path (based on the :path\nheader) using the HTTP template syntax. \n\nA corresponding\npath_template_match must be specified. Any template variables must exist in\nthe path_template_match field. \n   \n   \n      - -At least one variable must be specified in the path_template_match\n      field \n   - You can omit variables from the rewritten URL\n      - The * and ** operators cannot be matched\n      unless they have a corresponding variable name - e.g.\n      {format=*} or {var=**}.\n\nFor example, a path_template_match of /static/{format=**}\ncould be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a\nrewrite, so that /{country}/{format}/{suffix=**} can be\nrewritten as /content/{format}/{country}/{suffix}. \n\nAt least\none non-empty routeRules[].matchRules[].path_template_match is\nrequired. \n\nOnly one of path_prefix_rewrite orpath_template_rewrite may be specified.",
-                                  },
-                                  hostRewrite: {
-                                    type: "string",
-                                    description:
-                                      "Before forwarding the request to the selected service, the request's\nhost header is replaced with contents of hostRewrite.\n\nThe value must be from 1 to 255 characters.",
-                                  },
-                                  pathPrefixRewrite: {
-                                    type: "string",
-                                    description:
-                                      "Before forwarding the request to the selected backend service, the\nmatching portion of the request's path is replaced bypathPrefixRewrite.\n\nThe value must be from 1 to 1024 characters.",
-                                  },
-                                },
-                                description:
-                                  "The spec for modifying the path before sending the request to the matched\nbackend service.",
-                                additionalProperties: true,
-                              },
-                              requestMirrorPolicy: {
-                                type: "object",
-                                properties: {
-                                  backendService: {
-                                    type: "string",
-                                    description:
-                                      "The full or partial URL to the BackendService resource being\nmirrored to.\n\nThe backend service configured for a mirroring\npolicy must reference backends that are of the same type as the original\nbackend service matched in the URL map.\n\nServerless NEG backends are not currently supported as a mirrored\nbackend service.",
-                                  },
-                                  mirrorPercent: {
-                                    type: "number",
-                                    description:
-                                      "The percentage of requests to be mirrored to `backend_service`. (Format: double)",
-                                  },
-                                },
-                                description:
-                                  "A policy that specifies how requests intended for the route's backends\nare shadowed to a separate mirrored backend service. The load balancer\ndoesn't wait for responses from the shadow service. Before sending traffic\nto the shadow service, the host or authority header is suffixed with-shadow.",
-                                additionalProperties: true,
-                              },
-                              maxStreamDuration: {
-                                type: "object",
-                                properties: {
-                                  nanos: {
-                                    type: "integer",
-                                    description:
-                                      "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                  },
-                                  seconds: {
-                                    type: "string",
-                                    description:
-                                      "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                  },
-                                },
-                                description:
-                                  'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                additionalProperties: true,
-                              },
-                              corsPolicy: {
-                                type: "object",
-                                properties: {
-                                  allowHeaders: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the content for the Access-Control-Allow-Headers\nheader.",
-                                  },
-                                  disabled: {
-                                    type: "boolean",
-                                    description:
-                                      "If true, disables the CORS policy.\nThe default value is false, which indicates that the CORS\npolicy is in effect.",
-                                  },
-                                  allowCredentials: {
-                                    type: "boolean",
-                                    description:
-                                      "In response to a preflight request, setting this to true\nindicates that\nthe actual request can include user credentials. This field translates to\nthe Access-Control-Allow-Credentials header.\n\nDefault is false.",
-                                  },
-                                  allowOrigins: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the list of origins that is allowed to do CORS requests.\n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
-                                  },
-                                  maxAge: {
-                                    type: "integer",
-                                    description:
-                                      "Specifies how long results of a preflight request can be cached in\nseconds. This field translates to the Access-Control-Max-Age\nheader. (Format: int32)",
-                                  },
-                                  allowOriginRegexes: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies a regular expression that matches allowed origins. For\nmore information, see regular expression syntax. \n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED.",
-                                  },
-                                  allowMethods: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the content for the Access-Control-Allow-Methods\nheader.",
-                                  },
-                                  exposeHeaders: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the content for the Access-Control-Expose-Headers\nheader.",
-                                  },
-                                },
-                                description:
-                                  "The specification for allowing client-side cross-origin requests. For more\ninformation about the W3C recommendation for cross-origin resource sharing\n(CORS), see Fetch API Living\nStandard.",
-                                additionalProperties: true,
-                              },
-                              faultInjectionPolicy: {
-                                type: "object",
-                                properties: {
-                                  abort: {
-                                    type: "object",
-                                    properties: {
-                                      httpStatus: {
-                                        type: "integer",
-                                        description:
-                                          "The HTTP status code used to abort the request.\n\nThe value must be from 200 to 599 inclusive.\n\nFor gRPC protocol, the gRPC status code is mapped to HTTP status code\naccording to this \nmapping table. HTTP status 200 is mapped to gRPC status\nUNKNOWN. Injecting an OK status is currently not supported by\nTraffic Director. (Format: uint32)",
-                                      },
-                                      percentage: {
-                                        type: "number",
-                                        description:
-                                          "The percentage of traffic for connections, operations, or requests\nthat is aborted as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                                      },
-                                    },
-                                    description:
-                                      "Specification for how requests are aborted as part of fault injection.",
-                                    additionalProperties: true,
-                                  },
-                                  delay: {
-                                    type: "object",
-                                    properties: {
-                                      percentage: {
-                                        type: "number",
-                                        description:
-                                          "The percentage of traffic for connections, operations, or requests for\nwhich a delay is introduced as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                                      },
-                                      fixedDelay: {
-                                        type: "object",
-                                        properties: {
-                                          nanos: {
-                                            type: "integer",
-                                            description:
-                                              "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                          },
-                                          seconds: {
-                                            type: "string",
-                                            description:
-                                              "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                          },
-                                        },
-                                        description:
-                                          'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                        additionalProperties: true,
-                                      },
-                                    },
-                                    description:
-                                      "Specifies the delay introduced by the load balancer before forwarding the\nrequest to the backend service as part of fault injection.",
-                                    additionalProperties: true,
-                                  },
-                                },
-                                description:
-                                  "The specification for fault injection introduced into traffic to test\nthe resiliency of clients to backend service failure. As part of fault\ninjection, when clients send requests to a backend service, delays can be\nintroduced by the load balancer on a percentage of requests before sending\nthose request to the backend service. Similarly requests from clients can be\naborted by the load balancer for a percentage of requests.",
-                                additionalProperties: true,
-                              },
-                              weightedBackendServices: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    backendService: {
-                                      type: "string",
-                                      description:
-                                        "The full or partial URL to the default BackendService\nresource. Before\nforwarding the request to backendService, the load balancer\napplies any relevant headerActions specified as part of thisbackendServiceWeight.",
-                                    },
-                                    headerAction: {
-                                      type: "object",
-                                      properties: {
-                                        requestHeadersToAdd: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              replace: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerValue: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerName: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                            },
-                                            description:
-                                              "Specification determining how headers are added to requests or responses.",
-                                            additionalProperties: true,
-                                          },
-                                          description:
-                                            "Headers to add to a matching request before forwarding the request to thebackendService.",
-                                        },
-                                        responseHeadersToRemove: {
-                                          type: "array",
-                                          items: {
-                                            type: "string",
-                                          },
-                                          description:
-                                            "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                                        },
-                                        requestHeadersToRemove: {
-                                          type: "array",
-                                          items: {
-                                            type: "string",
-                                          },
-                                          description:
-                                            "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
-                                        },
-                                        responseHeadersToAdd: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              replace: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerValue: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerName: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                            },
-                                            description:
-                                              "Specification determining how headers are added to requests or responses.",
-                                            additionalProperties: true,
-                                          },
-                                          description:
-                                            "Headers to add the response before sending the response back to the\nclient.",
-                                        },
-                                      },
-                                      description:
-                                        "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
-                                      additionalProperties: true,
-                                    },
-                                    weight: {
-                                      type: "integer",
-                                      description:
-                                        "Specifies the fraction of traffic sent to a backend service,\ncomputed asweight / (sum of all weightedBackendService weights in routeAction).\n\nThe selection of a backend service is determined only for new traffic.\nOnce a user's request has been directed to a backend service,\nsubsequent requests are sent to the same backend service as\ndetermined by the backend service's session affinity policy.\nDon't configure session affinity if you're using weighted traffic\nsplitting. If you do, the weighted traffic splitting configuration takes\nprecedence.\n\nThe value must be from 0 to 1000. (Format: uint32)",
-                                    },
-                                  },
-                                  description:
-                                    "In contrast to a single BackendService in \nHttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across\nmultiple backend services. The volume of traffic for each\nbackend service is proportional to the weight specified\nin each WeightedBackendService",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "A list of weighted backend services to send traffic to when a route match\noccurs. The weights determine the fraction of traffic that flows to\ntheir corresponding backend service. If all traffic needs to\ngo to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.\n\nAfter a backend service is identified and before forwarding\nthe request to\nthe backend service, advanced routing actions such as URL rewrites and\nheader transformations are applied depending on additional settings\nspecified in this HttpRouteAction.",
-                              },
-                            },
-                            additionalProperties: true,
-                          },
-                        },
-                        description:
-                          "The HttpRouteRule setting specifies how to match an HTTP request\nand the corresponding routing action that load balancing proxies perform.",
-                        additionalProperties: true,
-                      },
                       description:
-                        "The list of HTTP route rules. Use this list instead ofpathRules when advanced route matching and routing actions are\ndesired. routeRules are evaluated in order of priority, from\nthe lowest to highest number.\n\nWithin a given pathMatcher, you can set only one ofpathRules or routeRules.",
+                        "defaultRouteAction takes effect when none of the pathRules or routeRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.   URL maps for classic Application Load Balancers only support the urlRewrite action within a path matcher'sdefaultRouteAction.",
                     },
                     defaultService: {
                       type: "string",
                       description:
-                        "The full or partial URL to the BackendService resource. This\nURL is used if none of the pathRules orrouteRules defined by this PathMatcher are\nmatched. For example, the\nfollowing are all valid URLs to a BackendService resource:\n   \n   \n     - https://www.googleapis.com/compute/v1/projects/project/global/backendServices/backendService\n     - compute/v1/projects/project/global/backendServices/backendService\n     - global/backendServices/backendService\n\n\nIf defaultRouteAction is also specified, advanced\nrouting actions, such as URL rewrites, take effect before sending the\nrequest to the backend.\n\n\nOnly one of defaultUrlRedirect, defaultService\nor defaultRouteAction.weightedBackendService can be set.\n\n\nAuthorization requires one or more of the following Google IAM permissions on the\nspecified resource default_service: \n   \n   \n      - compute.backendBuckets.use\n      - compute.backendServices.use",
+                        "The full or partial URL to the BackendService resource. This URL is used if none of the pathRules orrouteRules defined by this PathMatcher are matched. For example, the following are all valid URLs to a BackendService resource:        - https://www.googleapis.com/compute/v1/projects/project/global/backendServices/backendService      - compute/v1/projects/project/global/backendServices/backendService      - global/backendServices/backendService   If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of defaultUrlRedirect, defaultService or defaultRouteAction.weightedBackendService can be set.   Authorization requires one or more of the following Google IAM permissions on the specified resource default_service:         - compute.backendBuckets.use       - compute.backendServices.use",
                     },
-                    pathRules: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          urlRedirect: {
-                            type: "object",
-                            properties: {
-                              stripQuery: {
-                                type: "boolean",
-                                description:
-                                  "If set to true, any accompanying query portion of the original\nURL is\nremoved before redirecting the request. If set to false, the\nquery portion of the original URL is retained.\n\nThe default is set to false.",
-                              },
-                              pathRedirect: {
-                                type: "string",
-                                description:
-                                  "The path that is used in the redirect response instead of the one\nthat was supplied in the request.\n\npathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                              },
-                              redirectResponseCode: {
-                                type: "string",
-                                enum: [
-                                  "FOUND",
-                                  "MOVED_PERMANENTLY_DEFAULT",
-                                  "PERMANENT_REDIRECT",
-                                  "SEE_OTHER",
-                                  "TEMPORARY_REDIRECT",
-                                ],
-                                description:
-                                  "The HTTP Status code to use for this RedirectAction.\n\nSupported values are:\n   \n   - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds\n   to 301.\n   - FOUND, which corresponds to 302.\n   - SEE_OTHER which corresponds to 303.\n   - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request\n   method is retained.\n   - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request\n   method is retained.",
-                              },
-                              hostRedirect: {
-                                type: "string",
-                                description:
-                                  "The host that is used in the redirect response instead of the one that\nwas supplied in the request.\n\nThe value must be from 1 to 255\ncharacters.",
-                              },
-                              prefixRedirect: {
-                                type: "string",
-                                description:
-                                  "The prefix that replaces the prefixMatch specified in\nthe HttpRouteRuleMatch, retaining the remaining portion\nof the URL before redirecting the request.\n\nprefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                              },
-                              httpsRedirect: {
-                                type: "boolean",
-                                description:
-                                  "If set to true, the URL scheme in the redirected request is\nset to HTTPS.\nIf set to false, the URL scheme of the redirected request\nremains the same as that of the request.\n\nThis must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.\n\nThe default is set to false.",
-                              },
-                            },
-                            description:
-                              "Specifies settings for an HTTP redirect.",
-                            additionalProperties: true,
-                          },
-                          service: {
-                            type: "string",
-                            description:
-                              "The full or partial URL of the backend service resource to which traffic\nis directed if this rule is matched. If routeAction is\nalso specified, advanced routing actions, such as URL rewrites,\ntake effect before sending the request to the backend.\n\n\nOnly one of urlRedirect, service orrouteAction.weightedBackendService can be set.",
-                          },
-                          customErrorResponsePolicy: {
-                            type: "object",
-                            properties: {
-                              errorResponseRules: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    matchResponseCodes: {
-                                      type: "array",
-                                      items: {
-                                        type: "string",
-                                      },
-                                      description:
-                                        "Valid values include:\n   \n   \n     - A number between 400 and 599: For example\n     401 or 503, in which case the load balancer\n     applies the policy if the error code exactly matches this value.\n     - 5xx: Load Balancer will apply the policy if the\n     backend service responds with any response code in the range of\n     500 to 599. \n   - 4xx: Load\n     Balancer will apply the policy if the backend service responds with any\n     response code in the range of 400 to\n     499.\n\nValues must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
-                                    },
-                                    path: {
-                                      type: "string",
-                                      description:
-                                        "The full path to a file within backendBucket . For example:/errors/defaultError.html \n\npath must start\nwith a leading slash. path cannot have trailing slashes.\n\nIf the file is not available in backendBucket  or the\nload balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client. \n\nThe value must\nbe from 1 to 1024 characters",
-                                    },
-                                    overrideResponseCode: {
-                                      type: "integer",
-                                      description:
-                                        "The HTTP status code returned with the response containing the custom\nerror content. If overrideResponseCode is not supplied, the\nsame response code returned by the original backend bucket or backend\nservice is returned to the client. (Format: int32)",
-                                    },
-                                  },
-                                  description:
-                                    "Specifies the mapping between the response code that will be returned along\nwith the custom error content and the response code returned by the backend\nservice.",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "Specifies rules for returning error responses.\n\nIn a given policy, if you specify rules for both a range of error codes\nas well as rules for specific error codes then rules with specific error\ncodes have a higher priority. For example, assume that you configure a rule\nfor 401 (Un-authorized) code, and another for all 4 series\nerror codes (4XX). If the backend service returns a401, then the rule for 401 will be applied.\nHowever if the backend service returns a 403, the rule for4xx takes effect.",
-                              },
-                              errorService: {
-                                type: "string",
-                                description:
-                                  "The full or partial URL to the BackendBucket resource that\ncontains the custom error content. Examples are:\n   \n   \n     - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - compute/v1/projects/project/global/backendBuckets/myBackendBucket\n     - global/backendBuckets/myBackendBucket\n\nIf errorService is not specified at lower levels likepathMatcher, pathRule and routeRule,\nan errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService. \n\nIf load balancer cannot reach\nthe backendBucket, a simple Not Found Error will\nbe returned, with the original response code (oroverrideResponseCode if configured).\n\nerrorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
-                              },
-                            },
-                            description:
-                              "Specifies the custom error response policy that must be applied when the\nbackend service or backend bucket responds with an error.",
-                            additionalProperties: true,
-                          },
-                          routeAction: {
-                            type: "object",
-                            properties: {
-                              retryPolicy: {
-                                type: "object",
-                                properties: {
-                                  perTryTimeout: {
-                                    type: "object",
-                                    properties: {
-                                      nanos: {
-                                        type: "integer",
-                                        description:
-                                          "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                      },
-                                      seconds: {
-                                        type: "string",
-                                        description:
-                                          "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                      },
-                                    },
-                                    description:
-                                      'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                    additionalProperties: true,
-                                  },
-                                  numRetries: {
-                                    type: "integer",
-                                    description:
-                                      "Specifies the allowed number retries. This number must be > 0.\nIf not specified, defaults to 1. (Format: uint32)",
-                                  },
-                                  retryConditions: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies one or more conditions when this retry policy applies. Valid\nvalues are:\n   \n   - 5xx: retry is attempted if the instance or endpoint\n   responds with any 5xx response code, or if the instance or\n   endpoint does not respond at all. For example, disconnects, reset, read\n   timeout, connection failure, and refused streams.\n   - gateway-error: Similar to 5xx, but only\n   applies to response codes 502, 503 or504.\n   - connect-failure: a retry is attempted on failures\n   connecting to the instance or endpoint. For example, connection\n   timeouts.\n   - retriable-4xx: a retry is attempted if the instance\n   or endpoint responds with a 4xx response code.\n   The only error that you can retry is error code 409.\n   - refused-stream: a retry is attempted if the instance\n   or endpoint resets the stream with a REFUSED_STREAM error\n   code. This reset type indicates that it is safe to retry.\n   - cancelled: a retry is attempted if the gRPC status\n   code in the response header is set to cancelled.\n   - deadline-exceeded: a retry is attempted if the gRPC\n   status code in the response header is set todeadline-exceeded.\n   - internal: a retry is attempted if the gRPC\n   status code in the response header is set tointernal.\n   - resource-exhausted: a retry is attempted if the gRPC\n   status code in the response header is set toresource-exhausted.\n   - unavailable: a retry is attempted if the gRPC\n   status code in the response header is set tounavailable.\n\nOnly the following codes are supported when the URL map is bound to\ntarget gRPC proxy that has validateForProxyless field set to true.\n   \n   - cancelled\n   - deadline-exceeded\n   - internal\n   - resource-exhausted\n   - unavailable",
-                                  },
-                                },
-                                description:
-                                  "The retry policy associates with HttpRouteRule",
-                                additionalProperties: true,
-                              },
-                              timeout: {
-                                type: "object",
-                                properties: {
-                                  nanos: {
-                                    type: "integer",
-                                    description:
-                                      "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                  },
-                                  seconds: {
-                                    type: "string",
-                                    description:
-                                      "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                  },
-                                },
-                                description:
-                                  'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                additionalProperties: true,
-                              },
-                              urlRewrite: {
-                                type: "object",
-                                properties: {
-                                  pathTemplateRewrite: {
-                                    type: "string",
-                                    description:
-                                      "If specified, the pattern rewrites the URL path (based on the :path\nheader) using the HTTP template syntax. \n\nA corresponding\npath_template_match must be specified. Any template variables must exist in\nthe path_template_match field. \n   \n   \n      - -At least one variable must be specified in the path_template_match\n      field \n   - You can omit variables from the rewritten URL\n      - The * and ** operators cannot be matched\n      unless they have a corresponding variable name - e.g.\n      {format=*} or {var=**}.\n\nFor example, a path_template_match of /static/{format=**}\ncould be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a\nrewrite, so that /{country}/{format}/{suffix=**} can be\nrewritten as /content/{format}/{country}/{suffix}. \n\nAt least\none non-empty routeRules[].matchRules[].path_template_match is\nrequired. \n\nOnly one of path_prefix_rewrite orpath_template_rewrite may be specified.",
-                                  },
-                                  hostRewrite: {
-                                    type: "string",
-                                    description:
-                                      "Before forwarding the request to the selected service, the request's\nhost header is replaced with contents of hostRewrite.\n\nThe value must be from 1 to 255 characters.",
-                                  },
-                                  pathPrefixRewrite: {
-                                    type: "string",
-                                    description:
-                                      "Before forwarding the request to the selected backend service, the\nmatching portion of the request's path is replaced bypathPrefixRewrite.\n\nThe value must be from 1 to 1024 characters.",
-                                  },
-                                },
-                                description:
-                                  "The spec for modifying the path before sending the request to the matched\nbackend service.",
-                                additionalProperties: true,
-                              },
-                              requestMirrorPolicy: {
-                                type: "object",
-                                properties: {
-                                  backendService: {
-                                    type: "string",
-                                    description:
-                                      "The full or partial URL to the BackendService resource being\nmirrored to.\n\nThe backend service configured for a mirroring\npolicy must reference backends that are of the same type as the original\nbackend service matched in the URL map.\n\nServerless NEG backends are not currently supported as a mirrored\nbackend service.",
-                                  },
-                                  mirrorPercent: {
-                                    type: "number",
-                                    description:
-                                      "The percentage of requests to be mirrored to `backend_service`. (Format: double)",
-                                  },
-                                },
-                                description:
-                                  "A policy that specifies how requests intended for the route's backends\nare shadowed to a separate mirrored backend service. The load balancer\ndoesn't wait for responses from the shadow service. Before sending traffic\nto the shadow service, the host or authority header is suffixed with-shadow.",
-                                additionalProperties: true,
-                              },
-                              maxStreamDuration: {
-                                type: "object",
-                                properties: {
-                                  nanos: {
-                                    type: "integer",
-                                    description:
-                                      "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                  },
-                                  seconds: {
-                                    type: "string",
-                                    description:
-                                      "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                  },
-                                },
-                                description:
-                                  'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                additionalProperties: true,
-                              },
-                              corsPolicy: {
-                                type: "object",
-                                properties: {
-                                  allowHeaders: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the content for the Access-Control-Allow-Headers\nheader.",
-                                  },
-                                  disabled: {
-                                    type: "boolean",
-                                    description:
-                                      "If true, disables the CORS policy.\nThe default value is false, which indicates that the CORS\npolicy is in effect.",
-                                  },
-                                  allowCredentials: {
-                                    type: "boolean",
-                                    description:
-                                      "In response to a preflight request, setting this to true\nindicates that\nthe actual request can include user credentials. This field translates to\nthe Access-Control-Allow-Credentials header.\n\nDefault is false.",
-                                  },
-                                  allowOrigins: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the list of origins that is allowed to do CORS requests.\n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
-                                  },
-                                  maxAge: {
-                                    type: "integer",
-                                    description:
-                                      "Specifies how long results of a preflight request can be cached in\nseconds. This field translates to the Access-Control-Max-Age\nheader. (Format: int32)",
-                                  },
-                                  allowOriginRegexes: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies a regular expression that matches allowed origins. For\nmore information, see regular expression syntax. \n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED.",
-                                  },
-                                  allowMethods: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the content for the Access-Control-Allow-Methods\nheader.",
-                                  },
-                                  exposeHeaders: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                    description:
-                                      "Specifies the content for the Access-Control-Expose-Headers\nheader.",
-                                  },
-                                },
-                                description:
-                                  "The specification for allowing client-side cross-origin requests. For more\ninformation about the W3C recommendation for cross-origin resource sharing\n(CORS), see Fetch API Living\nStandard.",
-                                additionalProperties: true,
-                              },
-                              faultInjectionPolicy: {
-                                type: "object",
-                                properties: {
-                                  abort: {
-                                    type: "object",
-                                    properties: {
-                                      httpStatus: {
-                                        type: "integer",
-                                        description:
-                                          "The HTTP status code used to abort the request.\n\nThe value must be from 200 to 599 inclusive.\n\nFor gRPC protocol, the gRPC status code is mapped to HTTP status code\naccording to this \nmapping table. HTTP status 200 is mapped to gRPC status\nUNKNOWN. Injecting an OK status is currently not supported by\nTraffic Director. (Format: uint32)",
-                                      },
-                                      percentage: {
-                                        type: "number",
-                                        description:
-                                          "The percentage of traffic for connections, operations, or requests\nthat is aborted as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                                      },
-                                    },
-                                    description:
-                                      "Specification for how requests are aborted as part of fault injection.",
-                                    additionalProperties: true,
-                                  },
-                                  delay: {
-                                    type: "object",
-                                    properties: {
-                                      percentage: {
-                                        type: "number",
-                                        description:
-                                          "The percentage of traffic for connections, operations, or requests for\nwhich a delay is introduced as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                                      },
-                                      fixedDelay: {
-                                        type: "object",
-                                        properties: {
-                                          nanos: {
-                                            type: "integer",
-                                            description:
-                                              "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                                          },
-                                          seconds: {
-                                            type: "string",
-                                            description:
-                                              "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                                          },
-                                        },
-                                        description:
-                                          'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                                        additionalProperties: true,
-                                      },
-                                    },
-                                    description:
-                                      "Specifies the delay introduced by the load balancer before forwarding the\nrequest to the backend service as part of fault injection.",
-                                    additionalProperties: true,
-                                  },
-                                },
-                                description:
-                                  "The specification for fault injection introduced into traffic to test\nthe resiliency of clients to backend service failure. As part of fault\ninjection, when clients send requests to a backend service, delays can be\nintroduced by the load balancer on a percentage of requests before sending\nthose request to the backend service. Similarly requests from clients can be\naborted by the load balancer for a percentage of requests.",
-                                additionalProperties: true,
-                              },
-                              weightedBackendServices: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    backendService: {
-                                      type: "string",
-                                      description:
-                                        "The full or partial URL to the default BackendService\nresource. Before\nforwarding the request to backendService, the load balancer\napplies any relevant headerActions specified as part of thisbackendServiceWeight.",
-                                    },
-                                    headerAction: {
-                                      type: "object",
-                                      properties: {
-                                        requestHeadersToAdd: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              replace: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerValue: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerName: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                            },
-                                            description:
-                                              "Specification determining how headers are added to requests or responses.",
-                                            additionalProperties: true,
-                                          },
-                                          description:
-                                            "Headers to add to a matching request before forwarding the request to thebackendService.",
-                                        },
-                                        responseHeadersToRemove: {
-                                          type: "array",
-                                          items: {
-                                            type: "string",
-                                          },
-                                          description:
-                                            "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                                        },
-                                        requestHeadersToRemove: {
-                                          type: "array",
-                                          items: {
-                                            type: "string",
-                                          },
-                                          description:
-                                            "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
-                                        },
-                                        responseHeadersToAdd: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              replace: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerValue: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                              headerName: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                              },
-                                            },
-                                            description:
-                                              "Specification determining how headers are added to requests or responses.",
-                                            additionalProperties: true,
-                                          },
-                                          description:
-                                            "Headers to add the response before sending the response back to the\nclient.",
-                                        },
-                                      },
-                                      description:
-                                        "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
-                                      additionalProperties: true,
-                                    },
-                                    weight: {
-                                      type: "integer",
-                                      description:
-                                        "Specifies the fraction of traffic sent to a backend service,\ncomputed asweight / (sum of all weightedBackendService weights in routeAction).\n\nThe selection of a backend service is determined only for new traffic.\nOnce a user's request has been directed to a backend service,\nsubsequent requests are sent to the same backend service as\ndetermined by the backend service's session affinity policy.\nDon't configure session affinity if you're using weighted traffic\nsplitting. If you do, the weighted traffic splitting configuration takes\nprecedence.\n\nThe value must be from 0 to 1000. (Format: uint32)",
-                                    },
-                                  },
-                                  description:
-                                    "In contrast to a single BackendService in \nHttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across\nmultiple backend services. The volume of traffic for each\nbackend service is proportional to the weight specified\nin each WeightedBackendService",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "A list of weighted backend services to send traffic to when a route match\noccurs. The weights determine the fraction of traffic that flows to\ntheir corresponding backend service. If all traffic needs to\ngo to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.\n\nAfter a backend service is identified and before forwarding\nthe request to\nthe backend service, advanced routing actions such as URL rewrites and\nheader transformations are applied depending on additional settings\nspecified in this HttpRouteAction.",
-                              },
-                            },
-                            additionalProperties: true,
-                          },
-                          paths: {
-                            type: "array",
-                            items: {
-                              type: "string",
-                            },
-                            description:
-                              "The list of path patterns to match. Each must start with /\nand the only place a * is allowed is at the end following\na /.  The string fed to the path matcher does not include\nany text after the first ? or #, and\nthose chars are not allowed here.",
-                          },
+                    defaultUrlRedirect: {
+                      type: "object",
+                      properties: {
+                        hostRedirect: {
+                          type: "string",
+                          description:
+                            "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
                         },
-                        description:
-                          "A path-matching rule for a URL. If matched, will use the specifiedBackendService to handle the traffic arriving at this URL.",
-                        additionalProperties: true,
+                        httpsRedirect: {
+                          type: "boolean",
+                          description:
+                            "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
+                        },
+                        pathRedirect: {
+                          type: "string",
+                          description:
+                            "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                        },
+                        prefixRedirect: {
+                          type: "string",
+                          description:
+                            "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                        },
+                        redirectResponseCode: {
+                          type: "string",
+                          enum: [
+                            "UNDEFINED_REDIRECT_RESPONSE_CODE",
+                            "FOUND",
+                            "MOVED_PERMANENTLY_DEFAULT",
+                            "PERMANENT_REDIRECT",
+                            "SEE_OTHER",
+                            "TEMPORARY_REDIRECT",
+                          ],
+                          description:
+                            "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
+                        },
+                        stripQuery: {
+                          type: "boolean",
+                          description:
+                            "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
+                        },
                       },
+                      description: "Specifies settings for an HTTP redirect.",
+                      additionalProperties: true,
+                    },
+                    description: {
+                      type: "string",
                       description:
-                        "The list of path rules. Use this list instead of routeRules\nwhen routing based on simple path matching is all that's required. The\norder by which path rules are specified does not matter. Matches are always\ndone on the longest-path-first basis.\n\nFor example: a pathRule with a path /a/b/c/* will match\nbefore /a/b/* irrespective of the order in which those paths appear in this\nlist.\n\nWithin a given pathMatcher, only one ofpathRules or routeRules must be set.",
+                        "An optional description of this resource. Provide this property when you create the resource.",
                     },
                     headerAction: {
                       type: "object",
@@ -1855,18 +1043,18 @@ const regionUrlMapsValidate: AppBlock = {
                           items: {
                             type: "object",
                             properties: {
-                              replace: {
-                                type: "boolean",
-                                description:
-                                  "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
+                              headerName: {
+                                type: "string",
+                                description: "The name of the header.",
                               },
                               headerValue: {
                                 type: "string",
                                 description: "The value of the header to add.",
                               },
-                              headerName: {
-                                type: "string",
-                                description: "The name of the header.",
+                              replace: {
+                                type: "boolean",
+                                description:
+                                  "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
                               },
                             },
                             description:
@@ -1876,39 +1064,31 @@ const regionUrlMapsValidate: AppBlock = {
                           description:
                             "Headers to add to a matching request before forwarding the request to thebackendService.",
                         },
-                        responseHeadersToRemove: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                        },
                         requestHeadersToRemove: {
                           type: "array",
                           items: {
                             type: "string",
                           },
                           description:
-                            "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
+                            "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
                         },
                         responseHeadersToAdd: {
                           type: "array",
                           items: {
                             type: "object",
                             properties: {
-                              replace: {
-                                type: "boolean",
-                                description:
-                                  "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
+                              headerName: {
+                                type: "string",
+                                description: "The name of the header.",
                               },
                               headerValue: {
                                 type: "string",
                                 description: "The value of the header to add.",
                               },
-                              headerName: {
-                                type: "string",
-                                description: "The name of the header.",
+                              replace: {
+                                type: "boolean",
+                                description:
+                                  "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
                               },
                             },
                             description:
@@ -1916,16 +1096,1213 @@ const regionUrlMapsValidate: AppBlock = {
                             additionalProperties: true,
                           },
                           description:
-                            "Headers to add the response before sending the response back to the\nclient.",
+                            "Headers to add the response before sending the response back to the client.",
+                        },
+                        responseHeadersToRemove: {
+                          type: "array",
+                          items: {
+                            type: "string",
+                          },
+                          description:
+                            "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
                         },
                       },
                       description:
-                        "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
+                        "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
                       additionalProperties: true,
+                    },
+                    name: {
+                      type: "string",
+                      description:
+                        "The name to which this PathMatcher is referred by theHostRule.",
+                    },
+                    pathRules: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          customErrorResponsePolicy: {
+                            type: "object",
+                            properties: {
+                              errorResponseRules: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    matchResponseCodes: {
+                                      type: "array",
+                                      items: {
+                                        type: "string",
+                                      },
+                                      description:
+                                        "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
+                                    },
+                                    overrideResponseCode: {
+                                      type: "integer",
+                                      description:
+                                        "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
+                                    },
+                                    path: {
+                                      type: "string",
+                                      description:
+                                        "The full path to a file within backendBucket . For example:/errors/defaultError.html  path must start with a leading slash. path cannot have trailing slashes.  If the file is not available in backendBucket  or the load balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client.  The value must be from 1 to 1024 characters",
+                                    },
+                                  },
+                                  description:
+                                    "Specifies the mapping between the response code that will be returned along with the custom error content and the response code returned by the backend service.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
+                              },
+                              errorService: {
+                                type: "string",
+                                description:
+                                  "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
+                              },
+                            },
+                            description:
+                              "Specifies the custom error response policy that must be applied when the backend service or backend bucket responds with an error.",
+                            additionalProperties: true,
+                          },
+                          paths: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                            description:
+                              "The list of path patterns to match. Each must start with / and the only place a * is allowed is at the end following a /.  The string fed to the path matcher does not include any text after the first ? or #, and those chars are not allowed here.",
+                          },
+                          routeAction: {
+                            type: "object",
+                            properties: {
+                              corsPolicy: {
+                                type: "object",
+                                properties: {
+                                  allowCredentials: {
+                                    type: "boolean",
+                                    description:
+                                      "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
+                                  },
+                                  allowHeaders: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the content for the Access-Control-Allow-Headers header.",
+                                  },
+                                  allowMethods: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the content for the Access-Control-Allow-Methods header.",
+                                  },
+                                  allowOriginRegexes: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
+                                  },
+                                  allowOrigins: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the list of origins that is allowed to do CORS requests.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
+                                  },
+                                  disabled: {
+                                    type: "boolean",
+                                    description:
+                                      "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
+                                  },
+                                  exposeHeaders: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the content for the Access-Control-Expose-Headers header.",
+                                  },
+                                  maxAge: {
+                                    type: "integer",
+                                    description:
+                                      "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
+                                  },
+                                },
+                                description:
+                                  "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
+                                additionalProperties: true,
+                              },
+                              faultInjectionPolicy: {
+                                type: "object",
+                                properties: {
+                                  abort: {
+                                    type: "object",
+                                    properties: {
+                                      httpStatus: {
+                                        type: "integer",
+                                        description:
+                                          "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
+                                      },
+                                      percentage: {
+                                        type: "number",
+                                        description:
+                                          "The percentage of traffic for connections, operations, or requests that is aborted as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                                      },
+                                    },
+                                    description:
+                                      "Specification for how requests are aborted as part of fault injection.",
+                                    additionalProperties: true,
+                                  },
+                                  delay: {
+                                    type: "object",
+                                    properties: {
+                                      fixedDelay: {
+                                        type: "object",
+                                        properties: {
+                                          nanos: {
+                                            type: "integer",
+                                            description:
+                                              "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                          },
+                                          seconds: {
+                                            type: "string",
+                                            description:
+                                              "64-bit integer as string",
+                                          },
+                                        },
+                                        description:
+                                          'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                        additionalProperties: true,
+                                      },
+                                      percentage: {
+                                        type: "number",
+                                        description:
+                                          "The percentage of traffic for connections, operations, or requests for which a delay is introduced as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                                      },
+                                    },
+                                    description:
+                                      "Specifies the delay introduced by the load balancer before forwarding the request to the backend service as part of fault injection.",
+                                    additionalProperties: true,
+                                  },
+                                },
+                                description:
+                                  "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
+                                additionalProperties: true,
+                              },
+                              maxStreamDuration: {
+                                type: "object",
+                                properties: {
+                                  nanos: {
+                                    type: "integer",
+                                    description:
+                                      "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                  },
+                                  seconds: {
+                                    type: "string",
+                                    description: "64-bit integer as string",
+                                  },
+                                },
+                                description:
+                                  'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                additionalProperties: true,
+                              },
+                              requestMirrorPolicy: {
+                                type: "object",
+                                properties: {
+                                  backendService: {
+                                    type: "string",
+                                    description:
+                                      "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
+                                  },
+                                  mirrorPercent: {
+                                    type: "number",
+                                    description:
+                                      "The percentage of requests to be mirrored to `backend_service`.",
+                                  },
+                                },
+                                description:
+                                  "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
+                                additionalProperties: true,
+                              },
+                              retryPolicy: {
+                                type: "object",
+                                properties: {
+                                  numRetries: {
+                                    type: "integer",
+                                    description:
+                                      "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
+                                  },
+                                  perTryTimeout: {
+                                    type: "object",
+                                    properties: {
+                                      nanos: {
+                                        type: "integer",
+                                        description:
+                                          "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                      },
+                                      seconds: {
+                                        type: "string",
+                                        description: "64-bit integer as string",
+                                      },
+                                    },
+                                    description:
+                                      'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                    additionalProperties: true,
+                                  },
+                                  retryConditions: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies one or more conditions when this retry policy applies. Valid values are:     - 5xx: retry is attempted if the instance or endpoint    responds with any 5xx response code, or if the instance or    endpoint does not respond at all. For example, disconnects, reset, read    timeout, connection failure, and refused streams.    - gateway-error: Similar to 5xx, but only    applies to response codes 502, 503 or504.    - connect-failure: a retry is attempted on failures    connecting to the instance or endpoint. For example, connection    timeouts.    - retriable-4xx: a retry is attempted if the instance    or endpoint responds with a 4xx response code.    The only error that you can retry is error code 409.    - refused-stream: a retry is attempted if the instance    or endpoint resets the stream with a REFUSED_STREAM error    code. This reset type indicates that it is safe to retry.    - cancelled: a retry is attempted if the gRPC status    code in the response header is set to cancelled.    - deadline-exceeded: a retry is attempted if the gRPC    status code in the response header is set todeadline-exceeded.    - internal: a retry is attempted if the gRPC    status code in the response header is set tointernal.    - resource-exhausted: a retry is attempted if the gRPC    status code in the response header is set toresource-exhausted.    - unavailable: a retry is attempted if the gRPC    status code in the response header is set tounavailable.  Only the following codes are supported when the URL map is bound to target gRPC proxy that has validateForProxyless field set to true.     - cancelled    - deadline-exceeded    - internal    - resource-exhausted    - unavailable",
+                                  },
+                                },
+                                description:
+                                  "The retry policy associates with HttpRouteRule",
+                                additionalProperties: true,
+                              },
+                              timeout: {
+                                type: "object",
+                                properties: {
+                                  nanos: {
+                                    type: "integer",
+                                    description:
+                                      "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                  },
+                                  seconds: {
+                                    type: "string",
+                                    description: "64-bit integer as string",
+                                  },
+                                },
+                                description:
+                                  'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                additionalProperties: true,
+                              },
+                              urlRewrite: {
+                                type: "object",
+                                properties: {
+                                  hostRewrite: {
+                                    type: "string",
+                                    description:
+                                      "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
+                                  },
+                                  pathPrefixRewrite: {
+                                    type: "string",
+                                    description:
+                                      "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
+                                  },
+                                  pathTemplateRewrite: {
+                                    type: "string",
+                                    description:
+                                      "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
+                                  },
+                                },
+                                description:
+                                  "The spec for modifying the path before sending the request to the matched backend service.",
+                                additionalProperties: true,
+                              },
+                              weightedBackendServices: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    backendService: {
+                                      type: "string",
+                                      description:
+                                        "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
+                                    },
+                                    headerAction: {
+                                      type: "object",
+                                      properties: {
+                                        requestHeadersToAdd: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              headerName: {
+                                                type: "string",
+                                                description:
+                                                  "The name of the header.",
+                                              },
+                                              headerValue: {
+                                                type: "string",
+                                                description:
+                                                  "The value of the header to add.",
+                                              },
+                                              replace: {
+                                                type: "boolean",
+                                                description:
+                                                  "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                              },
+                                            },
+                                            description:
+                                              "Specification determining how headers are added to requests or responses.",
+                                            additionalProperties: true,
+                                          },
+                                          description:
+                                            "Headers to add to a matching request before forwarding the request to thebackendService.",
+                                        },
+                                        requestHeadersToRemove: {
+                                          type: "array",
+                                          items: {
+                                            type: "string",
+                                          },
+                                          description:
+                                            "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
+                                        },
+                                        responseHeadersToAdd: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              headerName: {
+                                                type: "string",
+                                                description:
+                                                  "The name of the header.",
+                                              },
+                                              headerValue: {
+                                                type: "string",
+                                                description:
+                                                  "The value of the header to add.",
+                                              },
+                                              replace: {
+                                                type: "boolean",
+                                                description:
+                                                  "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                              },
+                                            },
+                                            description:
+                                              "Specification determining how headers are added to requests or responses.",
+                                            additionalProperties: true,
+                                          },
+                                          description:
+                                            "Headers to add the response before sending the response back to the client.",
+                                        },
+                                        responseHeadersToRemove: {
+                                          type: "array",
+                                          items: {
+                                            type: "string",
+                                          },
+                                          description:
+                                            "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
+                                        },
+                                      },
+                                      description:
+                                        "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
+                                      additionalProperties: true,
+                                    },
+                                    weight: {
+                                      type: "integer",
+                                      description:
+                                        "Specifies the fraction of traffic sent to a backend service, computed asweight / (sum of all weightedBackendService weights in routeAction).  The selection of a backend service is determined only for new traffic. Once a user's request has been directed to a backend service, subsequent requests are sent to the same backend service as determined by the backend service's session affinity policy. Don't configure session affinity if you're using weighted traffic splitting. If you do, the weighted traffic splitting configuration takes precedence.  The value must be from 0 to 1000.",
+                                    },
+                                  },
+                                  description:
+                                    "In contrast to a single BackendService in HttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across multiple backend services. The volume of traffic for each backend service is proportional to the weight specified in each WeightedBackendService",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "A list of weighted backend services to send traffic to when a route match occurs. The weights determine the fraction of traffic that flows to their corresponding backend service. If all traffic needs to go to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.  After a backend service is identified and before forwarding the request to the backend service, advanced routing actions such as URL rewrites and header transformations are applied depending on additional settings specified in this HttpRouteAction.",
+                              },
+                            },
+                            additionalProperties: true,
+                            description:
+                              "In response to a matching path, the load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend.   Only one of urlRedirect, service orrouteAction.weightedBackendService can be set.   URL maps for classic Application Load Balancers only support the urlRewrite action within a path rule'srouteAction.",
+                          },
+                          service: {
+                            type: "string",
+                            description:
+                              "The full or partial URL of the backend service resource to which traffic is directed if this rule is matched. If routeAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of urlRedirect, service orrouteAction.weightedBackendService can be set.",
+                          },
+                          urlRedirect: {
+                            type: "object",
+                            properties: {
+                              hostRedirect: {
+                                type: "string",
+                                description:
+                                  "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
+                              },
+                              httpsRedirect: {
+                                type: "boolean",
+                                description:
+                                  "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
+                              },
+                              pathRedirect: {
+                                type: "string",
+                                description:
+                                  "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                              },
+                              prefixRedirect: {
+                                type: "string",
+                                description:
+                                  "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                              },
+                              redirectResponseCode: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_REDIRECT_RESPONSE_CODE",
+                                  "FOUND",
+                                  "MOVED_PERMANENTLY_DEFAULT",
+                                  "PERMANENT_REDIRECT",
+                                  "SEE_OTHER",
+                                  "TEMPORARY_REDIRECT",
+                                ],
+                                description:
+                                  "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
+                              },
+                              stripQuery: {
+                                type: "boolean",
+                                description:
+                                  "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
+                              },
+                            },
+                            description:
+                              "Specifies settings for an HTTP redirect.",
+                            additionalProperties: true,
+                          },
+                        },
+                        description:
+                          "A path-matching rule for a URL. If matched, will use the specifiedBackendService to handle the traffic arriving at this URL.",
+                        additionalProperties: true,
+                      },
+                      description:
+                        'The list of path rules. Use this list instead of routeRules when routing based on simple path matching is all that\'s required. A path rule can only include a wildcard character (*) after a forward slash character ("/").  The order by which path rules are specified does not matter. Matches are always done on the longest-path-first basis.  For example: a pathRule with a path /a/b/c/* will match before /a/b/* irrespective of the order in which those paths appear in this list.  Within a given pathMatcher, only one ofpathRules or routeRules must be set.',
+                    },
+                    routeRules: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          customErrorResponsePolicy: {
+                            type: "object",
+                            properties: {
+                              errorResponseRules: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    matchResponseCodes: {
+                                      type: "array",
+                                      items: {
+                                        type: "string",
+                                      },
+                                      description:
+                                        "Valid values include:        - A number between 400 and 599: For example      401 or 503, in which case the load balancer      applies the policy if the error code exactly matches this value.      - 5xx: Load Balancer will apply the policy if the      backend service responds with any response code in the range of      500 to 599.    - 4xx: Load      Balancer will apply the policy if the backend service responds with any      response code in the range of 400 to      499.  Values must be unique within matchResponseCodes and across allerrorResponseRules ofCustomErrorResponsePolicy.",
+                                    },
+                                    overrideResponseCode: {
+                                      type: "integer",
+                                      description:
+                                        "The HTTP status code returned with the response containing the custom error content. If overrideResponseCode is not supplied, the same response code returned by the original backend bucket or backend service is returned to the client.",
+                                    },
+                                    path: {
+                                      type: "string",
+                                      description:
+                                        "The full path to a file within backendBucket . For example:/errors/defaultError.html  path must start with a leading slash. path cannot have trailing slashes.  If the file is not available in backendBucket  or the load balancer cannot reach the BackendBucket, a simpleNot Found Error is returned to the client.  The value must be from 1 to 1024 characters",
+                                    },
+                                  },
+                                  description:
+                                    "Specifies the mapping between the response code that will be returned along with the custom error content and the response code returned by the backend service.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "Specifies rules for returning error responses.  In a given policy, if you specify rules for both a range of error codes as well as rules for specific error codes then rules with specific error codes have a higher priority. For example, assume that you configure a rule for 401 (Un-authorized) code, and another for all 4 series error codes (4XX). If the backend service returns a401, then the rule for 401 will be applied. However if the backend service returns a 403, the rule for4xx takes effect.",
+                              },
+                              errorService: {
+                                type: "string",
+                                description:
+                                  "The full or partial URL to the BackendBucket resource that contains the custom error content. Examples are:        - https://www.googleapis.com/compute/v1/projects/project/global/backendBuckets/myBackendBucket      - compute/v1/projects/project/global/backendBuckets/myBackendBucket      - global/backendBuckets/myBackendBucket  If errorService is not specified at lower levels likepathMatcher, pathRule and routeRule, an errorService specified at a higher level in theUrlMap will be used. IfUrlMap.defaultCustomErrorResponsePolicy contains one or moreerrorResponseRules[], it must specifyerrorService.  If load balancer cannot reach the backendBucket, a simple Not Found Error will be returned, with the original response code (oroverrideResponseCode if configured).  errorService is not supported for internal or regionalHTTP/HTTPS load balancers.",
+                              },
+                            },
+                            description:
+                              "Specifies the custom error response policy that must be applied when the backend service or backend bucket responds with an error.",
+                            additionalProperties: true,
+                          },
+                          description: {
+                            type: "string",
+                            description:
+                              "The short description conveying the intent of this routeRule.   The description can have a maximum length of 1024 characters.",
+                          },
+                          headerAction: {
+                            type: "object",
+                            properties: {
+                              requestHeadersToAdd: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    headerName: {
+                                      type: "string",
+                                      description: "The name of the header.",
+                                    },
+                                    headerValue: {
+                                      type: "string",
+                                      description:
+                                        "The value of the header to add.",
+                                    },
+                                    replace: {
+                                      type: "boolean",
+                                      description:
+                                        "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                    },
+                                  },
+                                  description:
+                                    "Specification determining how headers are added to requests or responses.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "Headers to add to a matching request before forwarding the request to thebackendService.",
+                              },
+                              requestHeadersToRemove: {
+                                type: "array",
+                                items: {
+                                  type: "string",
+                                },
+                                description:
+                                  "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
+                              },
+                              responseHeadersToAdd: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    headerName: {
+                                      type: "string",
+                                      description: "The name of the header.",
+                                    },
+                                    headerValue: {
+                                      type: "string",
+                                      description:
+                                        "The value of the header to add.",
+                                    },
+                                    replace: {
+                                      type: "boolean",
+                                      description:
+                                        "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                    },
+                                  },
+                                  description:
+                                    "Specification determining how headers are added to requests or responses.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "Headers to add the response before sending the response back to the client.",
+                              },
+                              responseHeadersToRemove: {
+                                type: "array",
+                                items: {
+                                  type: "string",
+                                },
+                                description:
+                                  "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
+                              },
+                            },
+                            description:
+                              "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
+                            additionalProperties: true,
+                          },
+                          matchRules: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                fullPathMatch: {
+                                  type: "string",
+                                  description:
+                                    "For satisfying the matchRule condition, the path of the request must exactly match the value specified infullPathMatch after removing any query parameters and anchor that may be part of the original URL.  fullPathMatch must be from 1 to 1024 characters.  Only one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be specified.",
+                                },
+                                headerMatches: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      exactMatch: {
+                                        type: "string",
+                                        description:
+                                          "The value should exactly match contents of exactMatch.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
+                                      },
+                                      headerName: {
+                                        type: "string",
+                                        description:
+                                          'The name of the HTTP header to match.  For matching against the HTTP request\'s authority, use a headerMatch with the header name ":authority".  For matching a request\'s method, use the headerName ":method".  When the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true, only non-binary user-specified custom metadata and the `content-type` header are supported. The following transport-level headers cannot be used in header matching rules: `:authority`, `:method`, `:path`, `:scheme`, `user-agent`, `accept-encoding`, `content-encoding`, `grpc-accept-encoding`, `grpc-encoding`, `grpc-previous-rpc-attempts`, `grpc-tags-bin`, `grpc-timeout` and `grpc-trace-bin`.',
+                                      },
+                                      invertMatch: {
+                                        type: "boolean",
+                                        description:
+                                          "If set to false, the headerMatch is considered a match if the preceding match criteria are met. If set to true, the headerMatch is considered a match if the preceding match criteria are NOT met.  The default setting is false.",
+                                      },
+                                      prefixMatch: {
+                                        type: "string",
+                                        description:
+                                          "The value of the header must start with the contents ofprefixMatch.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
+                                      },
+                                      presentMatch: {
+                                        type: "boolean",
+                                        description:
+                                          "A header with the contents of headerName must exist. The match takes place whether or not the request's header has a value.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
+                                      },
+                                      rangeMatch: {
+                                        type: "object",
+                                        properties: {
+                                          rangeEnd: {
+                                            type: "string",
+                                            description:
+                                              "64-bit integer as string",
+                                          },
+                                          rangeStart: {
+                                            type: "string",
+                                            description:
+                                              "64-bit integer as string",
+                                          },
+                                        },
+                                        description:
+                                          "HttpRouteRuleMatch criteria for field values that must stay within the specified integer range.",
+                                        additionalProperties: true,
+                                      },
+                                      regexMatch: {
+                                        type: "string",
+                                        description:
+                                          "The value of the header must match the regular expression specified inregexMatch. For more information about regular expression syntax, see Syntax.  For matching against a port specified in the HTTP request, use a headerMatch with headerName set to PORT and a regular expression that satisfies the RFC2616 Host header's port specifier.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED (regional scope) or INTERNAL_MANAGED.",
+                                      },
+                                      suffixMatch: {
+                                        type: "string",
+                                        description:
+                                          "The value of the header must end with the contents ofsuffixMatch.  Only one of exactMatch, prefixMatch,suffixMatch, regexMatch,presentMatch or rangeMatch must be set.",
+                                      },
+                                    },
+                                    description:
+                                      "matchRule criteria for request header matches.",
+                                    additionalProperties: true,
+                                  },
+                                  description:
+                                    "Specifies a list of header match criteria, all of which must match corresponding headers in the request.",
+                                },
+                                ignoreCase: {
+                                  type: "boolean",
+                                  description:
+                                    "Specifies that prefixMatch and fullPathMatch matches are case sensitive.  The default value is false.  ignoreCase must not be used with regexMatch.  Not supported when the URL map is bound to a target gRPC proxy.",
+                                },
+                                metadataFilters: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      filterLabels: {
+                                        type: "array",
+                                        items: {
+                                          type: "object",
+                                          properties: {
+                                            name: {
+                                              type: "string",
+                                              description:
+                                                "Name of metadata label.   The name can have a maximum length of 1024 characters and must be at least 1 character long.",
+                                            },
+                                            value: {
+                                              type: "string",
+                                              description:
+                                                "The value of the label must match the specified value.  value can have a maximum length of 1024 characters.",
+                                            },
+                                          },
+                                          description:
+                                            "MetadataFilter label name value pairs that are expected to match corresponding labels presented as metadata to the load balancer.",
+                                          additionalProperties: true,
+                                        },
+                                        description:
+                                          "The list of label value pairs that must match labels in the provided metadata based on filterMatchCriteria  This list must not be empty and can have at the most 64 entries.",
+                                      },
+                                      filterMatchCriteria: {
+                                        type: "string",
+                                        enum: [
+                                          "UNDEFINED_FILTER_MATCH_CRITERIA",
+                                          "MATCH_ALL",
+                                          "MATCH_ANY",
+                                          "NOT_SET",
+                                        ],
+                                        description:
+                                          "Specifies how individual filter label matches within the list of filterLabels and contributes toward the overall metadataFilter match.   Supported values are:     - MATCH_ANY: at least one of the filterLabels    must have a matching label in the provided metadata.    - MATCH_ALL: all filterLabels must have    matching labels in the provided metadata. Check the FilterMatchCriteria enum for the list of possible values.",
+                                      },
+                                    },
+                                    description:
+                                      "Opaque filter criteria used by load balancers to restrict routing configuration to a limited set of load balancing proxies. Proxies and sidecars involved in load balancing would typically present metadata to the load balancers that need to match criteria specified here. If a match takes place, the relevant configuration is made available to those proxies.  For each metadataFilter in this list, if itsfilterMatchCriteria is set to MATCH_ANY, at least one of thefilterLabels must match the corresponding label provided in the metadata. If its filterMatchCriteria is set to MATCH_ALL, then all of its filterLabels must match with corresponding labels provided in the metadata.  An example for using metadataFilters would be: if load balancing involves Envoys, they receive routing configuration when values inmetadataFilters match values supplied in  of their XDS requests to loadbalancers.",
+                                    additionalProperties: true,
+                                  },
+                                  description:
+                                    "Opaque filter criteria used by the load balancer to restrict routing configuration to a limited set of xDS compliant clients. In their xDS requests to the load balancer, xDS clients present node metadata. When there is a match, the relevant routing configuration is made available to those proxies.  For each metadataFilter in this list, if itsfilterMatchCriteria is set to MATCH_ANY, at least one of thefilterLabels must match the corresponding label provided in the metadata. If its filterMatchCriteria is set to MATCH_ALL, then all of its filterLabels must match with corresponding labels provided in the metadata. If multiple metadata filters are specified, all of them need to be satisfied in order to be considered a match.  metadataFilters specified here is applied after those specified in ForwardingRule that refers to theUrlMap this HttpRouteRuleMatch belongs to.  metadataFilters only applies to load balancers that haveloadBalancingScheme set toINTERNAL_SELF_MANAGED.  Not supported when the URL map is bound to a target gRPC proxy that has validateForProxyless field set to true.",
+                                },
+                                pathTemplateMatch: {
+                                  type: "string",
+                                  description:
+                                    'If specified, this field defines a path template pattern that must match the :path header after the query string is removed.  A path template pattern can include variables and wildcards. Variables are enclosed in curly braces, for example{variable_name}. Wildcards include * that matches a single path segment, and ** that matches zero or more path segments. The pattern must follow these rules:         - The value must be between 1 and 1024 characters.       - The pattern must start with a leading slash ("/").       - No more than 5 operators (variables or wildcards) may appear in       the pattern.  Precisely one ofprefixMatch, fullPathMatch,regexMatch, or pathTemplateMatch must be set.',
+                                },
+                                prefixMatch: {
+                                  type: "string",
+                                  description:
+                                    "For satisfying the matchRule condition, the request's path must begin with the specified prefixMatch.prefixMatch must begin with a /.  The value must be from 1 to 1024 characters.  The * character inside a prefix match is treated as a literal character, not as a wildcard.  Only one of prefixMatch, fullPathMatch,regexMatch or path_template_match can be used within a matchRule.",
+                                },
+                                queryParameterMatches: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      exactMatch: {
+                                        type: "string",
+                                        description:
+                                          "The queryParameterMatch matches if the value of the parameter exactly matches the contents of exactMatch.  Only one of presentMatch, exactMatch, orregexMatch must be set.",
+                                      },
+                                      name: {
+                                        type: "string",
+                                        description:
+                                          "The name of the query parameter to match. The query parameter must exist in the request, in the absence of which the request match fails.",
+                                      },
+                                      presentMatch: {
+                                        type: "boolean",
+                                        description:
+                                          "Specifies that the queryParameterMatch matches if the request contains the query parameter, irrespective of whether the parameter has a value or not.  Only one of presentMatch, exactMatch, orregexMatch must be set.",
+                                      },
+                                      regexMatch: {
+                                        type: "string",
+                                        description:
+                                          "The queryParameterMatch matches if the value of the parameter matches the regular expression specified byregexMatch. For more information about regular expression syntax, see Syntax.  Only one of presentMatch, exactMatch, orregexMatch must be set.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED (regional scope) or INTERNAL_MANAGED.",
+                                      },
+                                    },
+                                    description:
+                                      "HttpRouteRuleMatch criteria for a request's query parameter.",
+                                    additionalProperties: true,
+                                  },
+                                  description:
+                                    "Specifies a list of query parameter match criteria, all of which must match corresponding query parameters in the request.  Not supported when the URL map is bound to a target gRPC proxy.",
+                                },
+                                regexMatch: {
+                                  type: "string",
+                                  description:
+                                    "For satisfying the matchRule condition, the path of the request must satisfy the regular expression specified inregexMatch after removing any query parameters and anchor supplied with the original URL. For more information about regular expression syntax, see Syntax.  Only one of prefixMatch, fullPathMatch,regexMatch or path_template_match must be specified.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED, EXTERNAL_MANAGED (regional scope) or INTERNAL_MANAGED.",
+                                },
+                              },
+                              description:
+                                "HttpRouteRuleMatch specifies a set of criteria for matching requests to an HttpRouteRule. All specified criteria must be satisfied for a match to occur.",
+                              additionalProperties: true,
+                            },
+                            description:
+                              "The list of criteria for matching attributes of a request to thisrouteRule. This list has OR semantics: the request matches this routeRule when any of thematchRules are satisfied. However predicates within a given matchRule have AND semantics. All predicates within a matchRule must match for the request to match the rule.",
+                          },
+                          priority: {
+                            type: "integer",
+                            description:
+                              "For routeRules within a given pathMatcher, priority determines the order in which a load balancer interpretsrouteRules. RouteRules are evaluated in order of priority, from the lowest to highest number. The priority of a rule decreases as its number increases (1, 2, 3, N+1). The first rule that matches the request is applied.   You cannot configure two or more routeRules with the same priority. Priority for each rule must be set to a number from 0 to 2147483647 inclusive.   Priority numbers can have gaps, which enable you to add or remove rules in the future without affecting the rest of the rules. For example, 1, 2, 3, 4, 5, 9, 12, 16 is a valid series of priority numbers to which you could add rules numbered from 6 to 8, 10 to 11, and 13 to 15 in the future without any impact on existing rules.",
+                          },
+                          routeAction: {
+                            type: "object",
+                            properties: {
+                              corsPolicy: {
+                                type: "object",
+                                properties: {
+                                  allowCredentials: {
+                                    type: "boolean",
+                                    description:
+                                      "In response to a preflight request, setting this to true indicates that the actual request can include user credentials. This field translates to the Access-Control-Allow-Credentials header.  Default is false.",
+                                  },
+                                  allowHeaders: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the content for the Access-Control-Allow-Headers header.",
+                                  },
+                                  allowMethods: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the content for the Access-Control-Allow-Methods header.",
+                                  },
+                                  allowOriginRegexes: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.  Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
+                                  },
+                                  allowOrigins: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the list of origins that is allowed to do CORS requests.  An origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
+                                  },
+                                  disabled: {
+                                    type: "boolean",
+                                    description:
+                                      "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
+                                  },
+                                  exposeHeaders: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies the content for the Access-Control-Expose-Headers header.",
+                                  },
+                                  maxAge: {
+                                    type: "integer",
+                                    description:
+                                      "Specifies how long results of a preflight request can be cached in seconds. This field translates to the Access-Control-Max-Age header.",
+                                  },
+                                },
+                                description:
+                                  "The specification for allowing client-side cross-origin requests. For more information about the W3C recommendation for cross-origin resource sharing (CORS), see Fetch API Living Standard.",
+                                additionalProperties: true,
+                              },
+                              faultInjectionPolicy: {
+                                type: "object",
+                                properties: {
+                                  abort: {
+                                    type: "object",
+                                    properties: {
+                                      httpStatus: {
+                                        type: "integer",
+                                        description:
+                                          "The HTTP status code used to abort the request.  The value must be from 200 to 599 inclusive.  For gRPC protocol, the gRPC status code is mapped to HTTP status code according to this mapping table. HTTP status 200 is mapped to gRPC status UNKNOWN. Injecting an OK status is currently not supported by Traffic Director.",
+                                      },
+                                      percentage: {
+                                        type: "number",
+                                        description:
+                                          "The percentage of traffic for connections, operations, or requests that is aborted as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                                      },
+                                    },
+                                    description:
+                                      "Specification for how requests are aborted as part of fault injection.",
+                                    additionalProperties: true,
+                                  },
+                                  delay: {
+                                    type: "object",
+                                    properties: {
+                                      fixedDelay: {
+                                        type: "object",
+                                        properties: {
+                                          nanos: {
+                                            type: "integer",
+                                            description:
+                                              "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                          },
+                                          seconds: {
+                                            type: "string",
+                                            description:
+                                              "64-bit integer as string",
+                                          },
+                                        },
+                                        description:
+                                          'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                        additionalProperties: true,
+                                      },
+                                      percentage: {
+                                        type: "number",
+                                        description:
+                                          "The percentage of traffic for connections, operations, or requests for which a delay is introduced as part of fault injection.  The value must be from 0.0 to 100.0 inclusive.",
+                                      },
+                                    },
+                                    description:
+                                      "Specifies the delay introduced by the load balancer before forwarding the request to the backend service as part of fault injection.",
+                                    additionalProperties: true,
+                                  },
+                                },
+                                description:
+                                  "The specification for fault injection introduced into traffic to test the resiliency of clients to backend service failure. As part of fault injection, when clients send requests to a backend service, delays can be introduced by the load balancer on a percentage of requests before sending those request to the backend service. Similarly requests from clients can be aborted by the load balancer for a percentage of requests.",
+                                additionalProperties: true,
+                              },
+                              maxStreamDuration: {
+                                type: "object",
+                                properties: {
+                                  nanos: {
+                                    type: "integer",
+                                    description:
+                                      "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                  },
+                                  seconds: {
+                                    type: "string",
+                                    description: "64-bit integer as string",
+                                  },
+                                },
+                                description:
+                                  'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                additionalProperties: true,
+                              },
+                              requestMirrorPolicy: {
+                                type: "object",
+                                properties: {
+                                  backendService: {
+                                    type: "string",
+                                    description:
+                                      "The full or partial URL to the BackendService resource being mirrored to.  The backend service configured for a mirroring policy must reference backends that are of the same type as the original backend service matched in the URL map.  Serverless NEG backends are not currently supported as a mirrored backend service.",
+                                  },
+                                  mirrorPercent: {
+                                    type: "number",
+                                    description:
+                                      "The percentage of requests to be mirrored to `backend_service`.",
+                                  },
+                                },
+                                description:
+                                  "A policy that specifies how requests intended for the route's backends are shadowed to a separate mirrored backend service. The load balancer doesn't wait for responses from the shadow service. Before sending traffic to the shadow service, the host or authority header is suffixed with-shadow.",
+                                additionalProperties: true,
+                              },
+                              retryPolicy: {
+                                type: "object",
+                                properties: {
+                                  numRetries: {
+                                    type: "integer",
+                                    description:
+                                      "Specifies the allowed number retries. This number must be > 0. If not specified, defaults to 1.",
+                                  },
+                                  perTryTimeout: {
+                                    type: "object",
+                                    properties: {
+                                      nanos: {
+                                        type: "integer",
+                                        description:
+                                          "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                      },
+                                      seconds: {
+                                        type: "string",
+                                        description: "64-bit integer as string",
+                                      },
+                                    },
+                                    description:
+                                      'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                    additionalProperties: true,
+                                  },
+                                  retryConditions: {
+                                    type: "array",
+                                    items: {
+                                      type: "string",
+                                    },
+                                    description:
+                                      "Specifies one or more conditions when this retry policy applies. Valid values are:     - 5xx: retry is attempted if the instance or endpoint    responds with any 5xx response code, or if the instance or    endpoint does not respond at all. For example, disconnects, reset, read    timeout, connection failure, and refused streams.    - gateway-error: Similar to 5xx, but only    applies to response codes 502, 503 or504.    - connect-failure: a retry is attempted on failures    connecting to the instance or endpoint. For example, connection    timeouts.    - retriable-4xx: a retry is attempted if the instance    or endpoint responds with a 4xx response code.    The only error that you can retry is error code 409.    - refused-stream: a retry is attempted if the instance    or endpoint resets the stream with a REFUSED_STREAM error    code. This reset type indicates that it is safe to retry.    - cancelled: a retry is attempted if the gRPC status    code in the response header is set to cancelled.    - deadline-exceeded: a retry is attempted if the gRPC    status code in the response header is set todeadline-exceeded.    - internal: a retry is attempted if the gRPC    status code in the response header is set tointernal.    - resource-exhausted: a retry is attempted if the gRPC    status code in the response header is set toresource-exhausted.    - unavailable: a retry is attempted if the gRPC    status code in the response header is set tounavailable.  Only the following codes are supported when the URL map is bound to target gRPC proxy that has validateForProxyless field set to true.     - cancelled    - deadline-exceeded    - internal    - resource-exhausted    - unavailable",
+                                  },
+                                },
+                                description:
+                                  "The retry policy associates with HttpRouteRule",
+                                additionalProperties: true,
+                              },
+                              timeout: {
+                                type: "object",
+                                properties: {
+                                  nanos: {
+                                    type: "integer",
+                                    description:
+                                      "Span of time that's a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.",
+                                  },
+                                  seconds: {
+                                    type: "string",
+                                    description: "64-bit integer as string",
+                                  },
+                                },
+                                description:
+                                  'A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like "day" or "month". Range is approximately 10,000 years.',
+                                additionalProperties: true,
+                              },
+                              urlRewrite: {
+                                type: "object",
+                                properties: {
+                                  hostRewrite: {
+                                    type: "string",
+                                    description:
+                                      "Before forwarding the request to the selected service, the request's host header is replaced with contents of hostRewrite.  The value must be from 1 to 255 characters.",
+                                  },
+                                  pathPrefixRewrite: {
+                                    type: "string",
+                                    description:
+                                      "Before forwarding the request to the selected backend service, the matching portion of the request's path is replaced bypathPrefixRewrite.  The value must be from 1 to 1024 characters.",
+                                  },
+                                  pathTemplateRewrite: {
+                                    type: "string",
+                                    description:
+                                      "If specified, the pattern rewrites the URL path (based on the :path header) using the HTTP template syntax.  A corresponding path_template_match must be specified. Any template variables must exist in the path_template_match field.         - -At least one variable must be specified in the path_template_match       field    - You can omit variables from the rewritten URL       - The * and ** operators cannot be matched       unless they have a corresponding variable name - e.g.       {format=*} or {var=**}.  For example, a path_template_match of /static/{format=**} could be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a rewrite, so that /{country}/{format}/{suffix=**} can be rewritten as /content/{format}/{country}/{suffix}.  At least one non-empty routeRules[].matchRules[].path_template_match is required.  Only one of path_prefix_rewrite orpath_template_rewrite may be specified.",
+                                  },
+                                },
+                                description:
+                                  "The spec for modifying the path before sending the request to the matched backend service.",
+                                additionalProperties: true,
+                              },
+                              weightedBackendServices: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    backendService: {
+                                      type: "string",
+                                      description:
+                                        "The full or partial URL to the default BackendService resource. Before forwarding the request to backendService, the load balancer applies any relevant headerActions specified as part of thisbackendServiceWeight.",
+                                    },
+                                    headerAction: {
+                                      type: "object",
+                                      properties: {
+                                        requestHeadersToAdd: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              headerName: {
+                                                type: "string",
+                                                description:
+                                                  "The name of the header.",
+                                              },
+                                              headerValue: {
+                                                type: "string",
+                                                description:
+                                                  "The value of the header to add.",
+                                              },
+                                              replace: {
+                                                type: "boolean",
+                                                description:
+                                                  "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                              },
+                                            },
+                                            description:
+                                              "Specification determining how headers are added to requests or responses.",
+                                            additionalProperties: true,
+                                          },
+                                          description:
+                                            "Headers to add to a matching request before forwarding the request to thebackendService.",
+                                        },
+                                        requestHeadersToRemove: {
+                                          type: "array",
+                                          items: {
+                                            type: "string",
+                                          },
+                                          description:
+                                            "A list of header names for headers that need to be removed from the request before forwarding the request to the backendService.",
+                                        },
+                                        responseHeadersToAdd: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              headerName: {
+                                                type: "string",
+                                                description:
+                                                  "The name of the header.",
+                                              },
+                                              headerValue: {
+                                                type: "string",
+                                                description:
+                                                  "The value of the header to add.",
+                                              },
+                                              replace: {
+                                                type: "boolean",
+                                                description:
+                                                  "If false, headerValue is appended to any values that already exist for the header. If true, headerValue is set for the header, discarding any values that were set for that header.  The default value is true, unless a variable is present in headerValue, in which case the default value is false. .",
+                                              },
+                                            },
+                                            description:
+                                              "Specification determining how headers are added to requests or responses.",
+                                            additionalProperties: true,
+                                          },
+                                          description:
+                                            "Headers to add the response before sending the response back to the client.",
+                                        },
+                                        responseHeadersToRemove: {
+                                          type: "array",
+                                          items: {
+                                            type: "string",
+                                          },
+                                          description:
+                                            "A list of header names for headers that need to be removed from the response before sending the response back to the client.",
+                                        },
+                                      },
+                                      description:
+                                        "The request and response header transformations that take effect before the request is passed along to the selected backendService.",
+                                      additionalProperties: true,
+                                    },
+                                    weight: {
+                                      type: "integer",
+                                      description:
+                                        "Specifies the fraction of traffic sent to a backend service, computed asweight / (sum of all weightedBackendService weights in routeAction).  The selection of a backend service is determined only for new traffic. Once a user's request has been directed to a backend service, subsequent requests are sent to the same backend service as determined by the backend service's session affinity policy. Don't configure session affinity if you're using weighted traffic splitting. If you do, the weighted traffic splitting configuration takes precedence.  The value must be from 0 to 1000.",
+                                    },
+                                  },
+                                  description:
+                                    "In contrast to a single BackendService in HttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across multiple backend services. The volume of traffic for each backend service is proportional to the weight specified in each WeightedBackendService",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "A list of weighted backend services to send traffic to when a route match occurs. The weights determine the fraction of traffic that flows to their corresponding backend service. If all traffic needs to go to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.  After a backend service is identified and before forwarding the request to the backend service, advanced routing actions such as URL rewrites and header transformations are applied depending on additional settings specified in this HttpRouteAction.",
+                              },
+                            },
+                            additionalProperties: true,
+                            description:
+                              "In response to a matching matchRule, the load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend.   Only one of urlRedirect, service orrouteAction.weightedBackendService can be set.   URL maps for classic Application Load Balancers only support the urlRewrite action within a route rule'srouteAction.",
+                          },
+                          service: {
+                            type: "string",
+                            description:
+                              "The full or partial URL of the backend service resource to which traffic is directed if this rule is matched. If routeAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend.   Only one of urlRedirect, service orrouteAction.weightedBackendService can be set.",
+                          },
+                          urlRedirect: {
+                            type: "object",
+                            properties: {
+                              hostRedirect: {
+                                type: "string",
+                                description:
+                                  "The host that is used in the redirect response instead of the one that was supplied in the request.  The value must be from 1 to 255 characters.",
+                              },
+                              httpsRedirect: {
+                                type: "boolean",
+                                description:
+                                  "If set to true, the URL scheme in the redirected request is set to HTTPS. If set to false, the URL scheme of the redirected request remains the same as that of the request.  This must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.  The default is set to false.",
+                              },
+                              pathRedirect: {
+                                type: "string",
+                                description:
+                                  "The path that is used in the redirect response instead of the one that was supplied in the request.  pathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                              },
+                              prefixRedirect: {
+                                type: "string",
+                                description:
+                                  "The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.  prefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request is used for the redirect.  The value must be from 1 to 1024 characters.",
+                              },
+                              redirectResponseCode: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_REDIRECT_RESPONSE_CODE",
+                                  "FOUND",
+                                  "MOVED_PERMANENTLY_DEFAULT",
+                                  "PERMANENT_REDIRECT",
+                                  "SEE_OTHER",
+                                  "TEMPORARY_REDIRECT",
+                                ],
+                                description:
+                                  "The HTTP Status code to use for this RedirectAction.  Supported values are:     - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds    to 301.    - FOUND, which corresponds to 302.    - SEE_OTHER which corresponds to 303.    - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request    method is retained.    - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request    method is retained. Check the RedirectResponseCode enum for the list of possible values.",
+                              },
+                              stripQuery: {
+                                type: "boolean",
+                                description:
+                                  "If set to true, any accompanying query portion of the original URL is removed before redirecting the request. If set to false, the query portion of the original URL is retained.  The default is set to false.",
+                              },
+                            },
+                            description:
+                              "Specifies settings for an HTTP redirect.",
+                            additionalProperties: true,
+                          },
+                        },
+                        description:
+                          "The HttpRouteRule setting specifies how to match an HTTP request and the corresponding routing action that load balancing proxies perform.",
+                        additionalProperties: true,
+                      },
+                      description:
+                        "The list of HTTP route rules. Use this list instead ofpathRules when advanced route matching and routing actions are desired. routeRules are evaluated in order of priority, from the lowest to highest number.  Within a given pathMatcher, you can set only one ofpathRules or routeRules.",
                     },
                   },
                   description:
-                    "A matcher for the path portion of the URL. The BackendService\nfrom the longest-matched rule will serve the URL. If no rule was matched, the\ndefault service is used.",
+                    "A matcher for the path portion of the URL. The BackendService from the longest-matched rule will serve the URL. If no rule was matched, the default service is used.",
                   additionalProperties: true,
                 },
                 description:
@@ -1936,36 +2313,6 @@ const regionUrlMapsValidate: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    headers: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          value: {
-                            type: "string",
-                            description: "Header value.",
-                          },
-                          name: {
-                            type: "string",
-                            description: "Header name.",
-                          },
-                        },
-                        description: "HTTP headers used in UrlMapTests.",
-                        additionalProperties: true,
-                      },
-                      description:
-                        "HTTP headers for this request. If headers contains\na host header, then host must also match the header value.",
-                    },
-                    host: {
-                      type: "string",
-                      description:
-                        "Host portion of the URL. If headers contains a host header,\nthen host must also match the header value.",
-                    },
-                    expectedRedirectResponseCode: {
-                      type: "integer",
-                      description:
-                        "For rules with urlRedirect, the test passes only ifexpectedRedirectResponseCode matches the HTTP status code in\nload balancer's redirect response.\n\nexpectedRedirectResponseCode cannot be set whenservice is set. (Format: int32)",
-                    },
                     description: {
                       type: "string",
                       description: "Description of this test case.",
@@ -1973,7 +2320,37 @@ const regionUrlMapsValidate: AppBlock = {
                     expectedOutputUrl: {
                       type: "string",
                       description:
-                        "The expected output URL evaluated by the load balancer\ncontaining the scheme, host, path and query parameters.\n\nFor rules that forward requests to backends, the test passes only whenexpectedOutputUrl matches the request forwarded by\nthe load balancer to backends. For rules with urlRewrite,\nthe test verifies that the forwarded request matcheshostRewrite and pathPrefixRewrite in theurlRewrite action. When service is specified,expectedOutputUrl`s scheme is ignored.\n\nFor rules with urlRedirect, the test passes only ifexpectedOutputUrl matches the URL in the load balancer's\nredirect response. If urlRedirect specifieshttps_redirect, the test passes only if the scheme inexpectedOutputUrl is also set to HTTPS.\nIf urlRedirect specifies strip_query, the test\npasses only if expectedOutputUrl does not contain any query\nparameters. \n\nexpectedOutputUrl is optional whenservice is specified.",
+                        "The expected output URL evaluated by the load balancer containing the scheme, host, path and query parameters.  For rules that forward requests to backends, the test passes only whenexpectedOutputUrl matches the request forwarded by the load balancer to backends. For rules with urlRewrite, the test verifies that the forwarded request matcheshostRewrite and pathPrefixRewrite in theurlRewrite action. When service is specified,expectedOutputUrl`s scheme is ignored.  For rules with urlRedirect, the test passes only ifexpectedOutputUrl matches the URL in the load balancer's redirect response. If urlRedirect specifieshttps_redirect, the test passes only if the scheme inexpectedOutputUrl is also set to HTTPS. If urlRedirect specifies strip_query, the test passes only if expectedOutputUrl does not contain any query parameters.  expectedOutputUrl is optional whenservice is specified.",
+                    },
+                    expectedRedirectResponseCode: {
+                      type: "integer",
+                      description:
+                        "For rules with urlRedirect, the test passes only ifexpectedRedirectResponseCode matches the HTTP status code in load balancer's redirect response.  expectedRedirectResponseCode cannot be set whenservice is set.",
+                    },
+                    headers: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          name: {
+                            type: "string",
+                            description: "Header name.",
+                          },
+                          value: {
+                            type: "string",
+                            description: "Header value.",
+                          },
+                        },
+                        description: "HTTP headers used in UrlMapTests.",
+                        additionalProperties: true,
+                      },
+                      description:
+                        "HTTP headers for this request. If headers contains a host header, then host must also match the header value.",
+                    },
+                    host: {
+                      type: "string",
+                      description:
+                        "Host portion of the URL. If headers contains a host header, then host must also match the header value.",
                     },
                     path: {
                       type: "string",
@@ -1982,479 +2359,44 @@ const regionUrlMapsValidate: AppBlock = {
                     service: {
                       type: "string",
                       description:
-                        "Expected BackendService or BackendBucket resource\nthe given URL should be mapped to. \n\nThe service field cannot\nbe set if expectedRedirectResponseCode is set.",
+                        "Expected BackendService or BackendBucket resource the given URL should be mapped to.  The service field cannot be set if expectedRedirectResponseCode is set.",
                     },
                   },
                   description: "Message for the expected URL mappings.",
                   additionalProperties: true,
                 },
                 description:
-                  "The list of expected URL mapping tests. Request to update theUrlMap succeeds only if all test cases pass. You can specify a\nmaximum of 100 tests per UrlMap.\n\nNot supported when the URL map is bound to a target gRPC proxy that\nhas validateForProxyless field set to true.",
-              },
-              defaultUrlRedirect: {
-                type: "object",
-                properties: {
-                  stripQuery: {
-                    type: "boolean",
-                    description:
-                      "If set to true, any accompanying query portion of the original\nURL is\nremoved before redirecting the request. If set to false, the\nquery portion of the original URL is retained.\n\nThe default is set to false.",
-                  },
-                  pathRedirect: {
-                    type: "string",
-                    description:
-                      "The path that is used in the redirect response instead of the one\nthat was supplied in the request.\n\npathRedirect cannot be supplied together withprefixRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                  },
-                  redirectResponseCode: {
-                    type: "string",
-                    enum: [
-                      "FOUND",
-                      "MOVED_PERMANENTLY_DEFAULT",
-                      "PERMANENT_REDIRECT",
-                      "SEE_OTHER",
-                      "TEMPORARY_REDIRECT",
-                    ],
-                    description:
-                      "The HTTP Status code to use for this RedirectAction.\n\nSupported values are:\n   \n   - MOVED_PERMANENTLY_DEFAULT, which is the default value and corresponds\n   to 301.\n   - FOUND, which corresponds to 302.\n   - SEE_OTHER which corresponds to 303.\n   - TEMPORARY_REDIRECT, which corresponds to 307. In this case, the request\n   method is retained.\n   - PERMANENT_REDIRECT, which corresponds to 308. In this case, the request\n   method is retained.",
-                  },
-                  hostRedirect: {
-                    type: "string",
-                    description:
-                      "The host that is used in the redirect response instead of the one that\nwas supplied in the request.\n\nThe value must be from 1 to 255\ncharacters.",
-                  },
-                  prefixRedirect: {
-                    type: "string",
-                    description:
-                      "The prefix that replaces the prefixMatch specified in\nthe HttpRouteRuleMatch, retaining the remaining portion\nof the URL before redirecting the request.\n\nprefixRedirect cannot be supplied together withpathRedirect. Supply one alone or neither. If neither is\nsupplied, the path of the original request is used for the redirect.\n\nThe value must be from 1 to 1024 characters.",
-                  },
-                  httpsRedirect: {
-                    type: "boolean",
-                    description:
-                      "If set to true, the URL scheme in the redirected request is\nset to HTTPS.\nIf set to false, the URL scheme of the redirected request\nremains the same as that of the request.\n\nThis must only be set for URL maps used inTargetHttpProxys. Setting this true forTargetHttpsProxy is not permitted.\n\nThe default is set to false.",
-                  },
-                },
-                description: "Specifies settings for an HTTP redirect.",
-                additionalProperties: true,
-              },
-              defaultRouteAction: {
-                type: "object",
-                properties: {
-                  retryPolicy: {
-                    type: "object",
-                    properties: {
-                      perTryTimeout: {
-                        type: "object",
-                        properties: {
-                          nanos: {
-                            type: "integer",
-                            description:
-                              "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                          },
-                          seconds: {
-                            type: "string",
-                            description:
-                              "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                          },
-                        },
-                        description:
-                          'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                        additionalProperties: true,
-                      },
-                      numRetries: {
-                        type: "integer",
-                        description:
-                          "Specifies the allowed number retries. This number must be > 0.\nIf not specified, defaults to 1. (Format: uint32)",
-                      },
-                      retryConditions: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                        description:
-                          "Specifies one or more conditions when this retry policy applies. Valid\nvalues are:\n   \n   - 5xx: retry is attempted if the instance or endpoint\n   responds with any 5xx response code, or if the instance or\n   endpoint does not respond at all. For example, disconnects, reset, read\n   timeout, connection failure, and refused streams.\n   - gateway-error: Similar to 5xx, but only\n   applies to response codes 502, 503 or504.\n   - connect-failure: a retry is attempted on failures\n   connecting to the instance or endpoint. For example, connection\n   timeouts.\n   - retriable-4xx: a retry is attempted if the instance\n   or endpoint responds with a 4xx response code.\n   The only error that you can retry is error code 409.\n   - refused-stream: a retry is attempted if the instance\n   or endpoint resets the stream with a REFUSED_STREAM error\n   code. This reset type indicates that it is safe to retry.\n   - cancelled: a retry is attempted if the gRPC status\n   code in the response header is set to cancelled.\n   - deadline-exceeded: a retry is attempted if the gRPC\n   status code in the response header is set todeadline-exceeded.\n   - internal: a retry is attempted if the gRPC\n   status code in the response header is set tointernal.\n   - resource-exhausted: a retry is attempted if the gRPC\n   status code in the response header is set toresource-exhausted.\n   - unavailable: a retry is attempted if the gRPC\n   status code in the response header is set tounavailable.\n\nOnly the following codes are supported when the URL map is bound to\ntarget gRPC proxy that has validateForProxyless field set to true.\n   \n   - cancelled\n   - deadline-exceeded\n   - internal\n   - resource-exhausted\n   - unavailable",
-                      },
-                    },
-                    description:
-                      "The retry policy associates with HttpRouteRule",
-                    additionalProperties: true,
-                  },
-                  timeout: {
-                    type: "object",
-                    properties: {
-                      nanos: {
-                        type: "integer",
-                        description:
-                          "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                      },
-                      seconds: {
-                        type: "string",
-                        description:
-                          "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                      },
-                    },
-                    description:
-                      'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                    additionalProperties: true,
-                  },
-                  urlRewrite: {
-                    type: "object",
-                    properties: {
-                      pathTemplateRewrite: {
-                        type: "string",
-                        description:
-                          "If specified, the pattern rewrites the URL path (based on the :path\nheader) using the HTTP template syntax. \n\nA corresponding\npath_template_match must be specified. Any template variables must exist in\nthe path_template_match field. \n   \n   \n      - -At least one variable must be specified in the path_template_match\n      field \n   - You can omit variables from the rewritten URL\n      - The * and ** operators cannot be matched\n      unless they have a corresponding variable name - e.g.\n      {format=*} or {var=**}.\n\nFor example, a path_template_match of /static/{format=**}\ncould be rewritten as /static/content/{format} to prefix/content to the URL. Variables can also be re-ordered in a\nrewrite, so that /{country}/{format}/{suffix=**} can be\nrewritten as /content/{format}/{country}/{suffix}. \n\nAt least\none non-empty routeRules[].matchRules[].path_template_match is\nrequired. \n\nOnly one of path_prefix_rewrite orpath_template_rewrite may be specified.",
-                      },
-                      hostRewrite: {
-                        type: "string",
-                        description:
-                          "Before forwarding the request to the selected service, the request's\nhost header is replaced with contents of hostRewrite.\n\nThe value must be from 1 to 255 characters.",
-                      },
-                      pathPrefixRewrite: {
-                        type: "string",
-                        description:
-                          "Before forwarding the request to the selected backend service, the\nmatching portion of the request's path is replaced bypathPrefixRewrite.\n\nThe value must be from 1 to 1024 characters.",
-                      },
-                    },
-                    description:
-                      "The spec for modifying the path before sending the request to the matched\nbackend service.",
-                    additionalProperties: true,
-                  },
-                  requestMirrorPolicy: {
-                    type: "object",
-                    properties: {
-                      backendService: {
-                        type: "string",
-                        description:
-                          "The full or partial URL to the BackendService resource being\nmirrored to.\n\nThe backend service configured for a mirroring\npolicy must reference backends that are of the same type as the original\nbackend service matched in the URL map.\n\nServerless NEG backends are not currently supported as a mirrored\nbackend service.",
-                      },
-                      mirrorPercent: {
-                        type: "number",
-                        description:
-                          "The percentage of requests to be mirrored to `backend_service`. (Format: double)",
-                      },
-                    },
-                    description:
-                      "A policy that specifies how requests intended for the route's backends\nare shadowed to a separate mirrored backend service. The load balancer\ndoesn't wait for responses from the shadow service. Before sending traffic\nto the shadow service, the host or authority header is suffixed with-shadow.",
-                    additionalProperties: true,
-                  },
-                  maxStreamDuration: {
-                    type: "object",
-                    properties: {
-                      nanos: {
-                        type: "integer",
-                        description:
-                          "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                      },
-                      seconds: {
-                        type: "string",
-                        description:
-                          "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                      },
-                    },
-                    description:
-                      'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                    additionalProperties: true,
-                  },
-                  corsPolicy: {
-                    type: "object",
-                    properties: {
-                      allowHeaders: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                        description:
-                          "Specifies the content for the Access-Control-Allow-Headers\nheader.",
-                      },
-                      disabled: {
-                        type: "boolean",
-                        description:
-                          "If true, disables the CORS policy.\nThe default value is false, which indicates that the CORS\npolicy is in effect.",
-                      },
-                      allowCredentials: {
-                        type: "boolean",
-                        description:
-                          "In response to a preflight request, setting this to true\nindicates that\nthe actual request can include user credentials. This field translates to\nthe Access-Control-Allow-Credentials header.\n\nDefault is false.",
-                      },
-                      allowOrigins: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                        description:
-                          "Specifies the list of origins that is allowed to do CORS requests.\n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.",
-                      },
-                      maxAge: {
-                        type: "integer",
-                        description:
-                          "Specifies how long results of a preflight request can be cached in\nseconds. This field translates to the Access-Control-Max-Age\nheader. (Format: int32)",
-                      },
-                      allowOriginRegexes: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                        description:
-                          "Specifies a regular expression that matches allowed origins. For\nmore information, see regular expression syntax. \n\nAn origin is allowed if it matches either an item inallowOrigins or an item inallowOriginRegexes.\n\nRegular expressions can only be used when the loadBalancingScheme is\nset to INTERNAL_SELF_MANAGED.",
-                      },
-                      allowMethods: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                        description:
-                          "Specifies the content for the Access-Control-Allow-Methods\nheader.",
-                      },
-                      exposeHeaders: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                        description:
-                          "Specifies the content for the Access-Control-Expose-Headers\nheader.",
-                      },
-                    },
-                    description:
-                      "The specification for allowing client-side cross-origin requests. For more\ninformation about the W3C recommendation for cross-origin resource sharing\n(CORS), see Fetch API Living\nStandard.",
-                    additionalProperties: true,
-                  },
-                  faultInjectionPolicy: {
-                    type: "object",
-                    properties: {
-                      abort: {
-                        type: "object",
-                        properties: {
-                          httpStatus: {
-                            type: "integer",
-                            description:
-                              "The HTTP status code used to abort the request.\n\nThe value must be from 200 to 599 inclusive.\n\nFor gRPC protocol, the gRPC status code is mapped to HTTP status code\naccording to this \nmapping table. HTTP status 200 is mapped to gRPC status\nUNKNOWN. Injecting an OK status is currently not supported by\nTraffic Director. (Format: uint32)",
-                          },
-                          percentage: {
-                            type: "number",
-                            description:
-                              "The percentage of traffic for connections, operations, or requests\nthat is aborted as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                          },
-                        },
-                        description:
-                          "Specification for how requests are aborted as part of fault injection.",
-                        additionalProperties: true,
-                      },
-                      delay: {
-                        type: "object",
-                        properties: {
-                          percentage: {
-                            type: "number",
-                            description:
-                              "The percentage of traffic for connections, operations, or requests for\nwhich a delay is introduced as part of fault injection.\n\nThe value must be from 0.0 to 100.0 inclusive. (Format: double)",
-                          },
-                          fixedDelay: {
-                            type: "object",
-                            properties: {
-                              nanos: {
-                                type: "integer",
-                                description:
-                                  "Span of time that's a fraction of a second at nanosecond resolution.\nDurations less than one second are represented with a 0\n`seconds` field and a positive `nanos` field. Must be from 0\nto 999,999,999 inclusive. (Format: int32)",
-                              },
-                              seconds: {
-                                type: "string",
-                                description:
-                                  "Span of time at a resolution of a second. Must be from 0\nto 315,576,000,000 inclusive. Note: these bounds are computed from:\n60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years (Format: int64)",
-                              },
-                            },
-                            description:
-                              'A Duration represents a fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like "day"\nor "month". Range is approximately 10,000 years.',
-                            additionalProperties: true,
-                          },
-                        },
-                        description:
-                          "Specifies the delay introduced by the load balancer before forwarding the\nrequest to the backend service as part of fault injection.",
-                        additionalProperties: true,
-                      },
-                    },
-                    description:
-                      "The specification for fault injection introduced into traffic to test\nthe resiliency of clients to backend service failure. As part of fault\ninjection, when clients send requests to a backend service, delays can be\nintroduced by the load balancer on a percentage of requests before sending\nthose request to the backend service. Similarly requests from clients can be\naborted by the load balancer for a percentage of requests.",
-                    additionalProperties: true,
-                  },
-                  weightedBackendServices: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        backendService: {
-                          type: "string",
-                          description:
-                            "The full or partial URL to the default BackendService\nresource. Before\nforwarding the request to backendService, the load balancer\napplies any relevant headerActions specified as part of thisbackendServiceWeight.",
-                        },
-                        headerAction: {
-                          type: "object",
-                          properties: {
-                            requestHeadersToAdd: {
-                              type: "array",
-                              items: {
-                                type: "object",
-                                properties: {
-                                  replace: {
-                                    type: "boolean",
-                                    description:
-                                      "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
-                                  },
-                                  headerValue: {
-                                    type: "string",
-                                    description:
-                                      "The value of the header to add.",
-                                  },
-                                  headerName: {
-                                    type: "string",
-                                    description: "The name of the header.",
-                                  },
-                                },
-                                description:
-                                  "Specification determining how headers are added to requests or responses.",
-                                additionalProperties: true,
-                              },
-                              description:
-                                "Headers to add to a matching request before forwarding the request to thebackendService.",
-                            },
-                            responseHeadersToRemove: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "A list of header names for headers that need to be removed from the\nresponse before sending the response back to the client.",
-                            },
-                            requestHeadersToRemove: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "A list of header names for headers that need to be removed from the\nrequest before forwarding the request to the backendService.",
-                            },
-                            responseHeadersToAdd: {
-                              type: "array",
-                              items: {
-                                type: "object",
-                                properties: {
-                                  replace: {
-                                    type: "boolean",
-                                    description:
-                                      "If false, headerValue is appended to any values\nthat already\nexist for the header. If true, headerValue is set for the\nheader, discarding any values that were set for that header.\n\nThe default value is true,\nunless a variable is present in headerValue,\nin which case the default value is false.\n.",
-                                  },
-                                  headerValue: {
-                                    type: "string",
-                                    description:
-                                      "The value of the header to add.",
-                                  },
-                                  headerName: {
-                                    type: "string",
-                                    description: "The name of the header.",
-                                  },
-                                },
-                                description:
-                                  "Specification determining how headers are added to requests or responses.",
-                                additionalProperties: true,
-                              },
-                              description:
-                                "Headers to add the response before sending the response back to the\nclient.",
-                            },
-                          },
-                          description:
-                            "The request and response header transformations that take effect before\nthe request is passed along to the selected backendService.",
-                          additionalProperties: true,
-                        },
-                        weight: {
-                          type: "integer",
-                          description:
-                            "Specifies the fraction of traffic sent to a backend service,\ncomputed asweight / (sum of all weightedBackendService weights in routeAction).\n\nThe selection of a backend service is determined only for new traffic.\nOnce a user's request has been directed to a backend service,\nsubsequent requests are sent to the same backend service as\ndetermined by the backend service's session affinity policy.\nDon't configure session affinity if you're using weighted traffic\nsplitting. If you do, the weighted traffic splitting configuration takes\nprecedence.\n\nThe value must be from 0 to 1000. (Format: uint32)",
-                        },
-                      },
-                      description:
-                        "In contrast to a single BackendService in \nHttpRouteAction to which all matching traffic is directed to,WeightedBackendService allows traffic to be split across\nmultiple backend services. The volume of traffic for each\nbackend service is proportional to the weight specified\nin each WeightedBackendService",
-                      additionalProperties: true,
-                    },
-                    description:
-                      "A list of weighted backend services to send traffic to when a route match\noccurs. The weights determine the fraction of traffic that flows to\ntheir corresponding backend service. If all traffic needs to\ngo to a single backend service, there must be oneweightedBackendService with weight set to a non-zero number.\n\nAfter a backend service is identified and before forwarding\nthe request to\nthe backend service, advanced routing actions such as URL rewrites and\nheader transformations are applied depending on additional settings\nspecified in this HttpRouteAction.",
-                  },
-                },
-                additionalProperties: true,
+                  "The list of expected URL mapping tests. Request to update theUrlMap succeeds only if all test cases pass. You can specify a maximum of 100 tests per UrlMap.  Not supported when the URL map is bound to a target gRPC proxy that has validateForProxyless field set to true.",
               },
             },
             description:
-              "Represents a URL Map resource.\n\nCompute Engine has two URL Map resources:\n\n* [Global](/compute/docs/reference/rest/v1/urlMaps)\n* [Regional](/compute/docs/reference/rest/v1/regionUrlMaps)\n\nA URL map resource is a component of certain types of cloud load balancers\nand Traffic Director:\n\n* urlMaps are used by global external Application Load\nBalancers, classic Application Load Balancers, and cross-region internal\nApplication Load Balancers.\n* regionUrlMaps are used by internal Application Load Balancers,\nregional external Application Load Balancers and regional internal\nApplication Load Balancers.\n\nFor a list of supported URL map features by the load balancer type, see the\nLoad balancing features: Routing and traffic management table.\n\nFor a list of supported URL map features for Traffic Director, see the\nTraffic Director features: Routing and traffic management table.\n\nThis resource defines mappings from hostnames and URL paths to either a\nbackend service or a backend bucket.\n\nTo use the global urlMaps resource, the backend service must\nhave a loadBalancingScheme of either EXTERNAL,EXTERNAL_MANAGED, or INTERNAL_SELF_MANAGED. To use\nthe regionUrlMaps resource, the backend service must have aloadBalancingScheme of INTERNAL_MANAGED. For more\ninformation, read URL\nMap Concepts.",
+              "Represents a URL Map resource.  Compute Engine has two URL Map resources:  * [Global](/compute/docs/reference/rest/v1/urlMaps) * [Regional](/compute/docs/reference/rest/v1/regionUrlMaps)  A URL map resource is a component of certain types of cloud load balancers and Traffic Director:  * urlMaps are used by global external Application Load Balancers, classic Application Load Balancers, and cross-region internal Application Load Balancers. * regionUrlMaps are used by internal Application Load Balancers, regional external Application Load Balancers and regional internal Application Load Balancers.  For a list of supported URL map features by the load balancer type, see the Load balancing features: Routing and traffic management table.  For a list of supported URL map features for Traffic Director, see the Traffic Director features: Routing and traffic management table.  This resource defines mappings from hostnames and URL paths to either a backend service or a backend bucket.  To use the global urlMaps resource, the backend service must have a loadBalancingScheme of either EXTERNAL,EXTERNAL_MANAGED, or INTERNAL_SELF_MANAGED. To use the regionUrlMaps resource, the backend service must have aloadBalancingScheme of INTERNAL_MANAGED. For more information, read URL Map Concepts.",
             additionalProperties: true,
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.urlMap !== undefined)
+          pathParams["url_map"] = String(input.event.inputConfig.urlMap);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/urlMaps/{urlMap}/validate`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
+        const body: Record<string, any> = {};
         if (input.event.inputConfig.resource !== undefined)
-          requestBody.resource = input.event.inputConfig.resource;
+          body.resource = input.event.inputConfig.resource;
 
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
+        const result = await computeFetch({
+          config: input.app.config,
+          method: "POST",
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/urlMaps/{url_map}/validate",
+          pathParams,
+          body: Object.keys(body).length > 0 ? body : undefined,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -2474,47 +2416,58 @@ const regionUrlMapsValidate: AppBlock = {
                   type: "string",
                 },
               },
+              loadSucceeded: {
+                type: "boolean",
+                description:
+                  "Whether the given UrlMap can be successfully loaded. If false, 'loadErrors' indicates the reasons.",
+              },
               testFailures: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    path: {
-                      type: "string",
-                      description:
-                        "Path portion including query parameters in the URL.",
-                    },
-                    expectedOutputUrl: {
-                      type: "string",
-                      description:
-                        "The expected output URL evaluated by a load balancer containing the scheme,\nhost, path and query parameters.",
-                    },
                     actualOutputUrl: {
                       type: "string",
                       description:
-                        "The actual output URL evaluated by a load balancer containing the scheme,\nhost, path and query parameters.",
-                    },
-                    host: {
-                      type: "string",
-                      description: "Host portion of the URL.",
+                        "The actual output URL evaluated by a load balancer containing the scheme, host, path and query parameters.",
                     },
                     actualRedirectResponseCode: {
                       type: "integer",
                       description:
-                        "Actual HTTP status code for rule with `urlRedirect`\ncalculated by load balancer (Format: int32)",
+                        "Actual HTTP status code for rule with `urlRedirect` calculated by load balancer",
+                    },
+                    actualService: {
+                      type: "string",
+                      description:
+                        "BackendService or BackendBucket returned by load balancer.",
+                    },
+                    expectedOutputUrl: {
+                      type: "string",
+                      description:
+                        "The expected output URL evaluated by a load balancer containing the scheme, host, path and query parameters.",
+                    },
+                    expectedRedirectResponseCode: {
+                      type: "integer",
+                      description:
+                        "Expected HTTP status code for rule with `urlRedirect` calculated by load balancer",
+                    },
+                    expectedService: {
+                      type: "string",
+                      description:
+                        "Expected BackendService or BackendBucket resource the given URL should be mapped to.",
                     },
                     headers: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          value: {
-                            type: "string",
-                            description: "Header value.",
-                          },
                           name: {
                             type: "string",
                             description: "Header name.",
+                          },
+                          value: {
+                            type: "string",
+                            description: "Header value.",
                           },
                         },
                         description: "HTTP headers used in UrlMapTests.",
@@ -2522,34 +2475,23 @@ const regionUrlMapsValidate: AppBlock = {
                       },
                       description: "HTTP headers of the request.",
                     },
-                    actualService: {
+                    host: {
+                      type: "string",
+                      description: "Host portion of the URL.",
+                    },
+                    path: {
                       type: "string",
                       description:
-                        "BackendService or BackendBucket returned by load\nbalancer.",
-                    },
-                    expectedService: {
-                      type: "string",
-                      description:
-                        "Expected BackendService or BackendBucket resource\nthe given URL should be mapped to.",
-                    },
-                    expectedRedirectResponseCode: {
-                      type: "integer",
-                      description:
-                        "Expected HTTP status code for rule with `urlRedirect`\ncalculated by load balancer (Format: int32)",
+                        "Path portion including query parameters in the URL.",
                     },
                   },
                   additionalProperties: true,
                 },
               },
-              loadSucceeded: {
-                type: "boolean",
-                description:
-                  "Whether the given UrlMap can be successfully loaded.\nIf false, 'loadErrors' indicates the reasons.",
-              },
               testPassed: {
                 type: "boolean",
                 description:
-                  "If successfully loaded, this field indicates whether the test passed.\nIf false, 'testFailures's indicate the reason of failure.",
+                  "If successfully loaded, this field indicates whether the test passed. If false, 'testFailures's indicate the reason of failure.",
               },
             },
             description:

@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "typecheck": "npx tsc --noEmit",
     "format": "npx prettier --write .",
@@ -6,8 +7,9 @@
   },
   "dependencies": {
     "@slflows/sdk": "^0.9.0",
-    "google-auth-library": "^9.0.0",
-    "@google-cloud/container": "^3.0.0"
+    "@grpc/grpc-js": "^1.12.0",
+    "@grpc/proto-loader": "^0.7.0",
+    "google-auth-library": "^9.0.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
@@ -17,8 +19,5 @@
   },
   "peerDependencies": {
     "@slflows/sdk": "^0.9.0"
-  },
-  "overrides": {
-    "protobufjs": ">=7.2.5"
   }
 }

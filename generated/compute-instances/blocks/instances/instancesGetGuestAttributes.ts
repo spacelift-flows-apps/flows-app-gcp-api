@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const instancesGetGuestAttributes: AppBlock = {
   name: "Instances - Get Guest Attributes",
@@ -13,6 +13,7 @@ const instancesGetGuestAttributes: AppBlock = {
           description: "The name of the zone for this request.",
           type: {
             type: "string",
+            description: "The name of the zone for this request.",
           },
           required: true,
         },
@@ -21,86 +22,54 @@ const instancesGetGuestAttributes: AppBlock = {
           description: "Name of the instance scoping this request.",
           type: {
             type: "string",
+            description: "Name of the instance scoping this request.",
           },
           required: true,
-        },
-        variableKey: {
-          name: "Variable Key",
-          description: "Specifies the key for the guest attributes entry.",
-          type: {
-            type: "string",
-          },
-          required: false,
         },
         queryPath: {
           name: "Query Path",
           description: "Specifies the guest attributes path to be queried.",
           type: {
             type: "string",
+            description: "Specifies the guest attributes path to be queried.",
+          },
+          required: false,
+        },
+        variableKey: {
+          name: "Variable Key",
+          description: "Specifies the key for the guest attributes entry.",
+          type: {
+            type: "string",
+            description: "Specifies the key for the guest attributes entry.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.zone !== undefined)
+          pathParams["zone"] = String(input.event.inputConfig.zone);
+        if (input.event.inputConfig.instance !== undefined)
+          pathParams["instance"] = String(input.event.inputConfig.instance);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.queryPath !== undefined)
+          queryParams["queryPath"] = String(input.event.inputConfig.queryPath);
+        if (input.event.inputConfig.variableKey !== undefined)
+          queryParams["variableKey"] = String(
+            input.event.inputConfig.variableKey,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/zones/{zone}/instances/{instance}/getGuestAttributes`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/zones/{zone}/instances/{instance}/getGuestAttributes",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -114,7 +83,12 @@ const instancesGetGuestAttributes: AppBlock = {
           kind: {
             type: "string",
             description:
-              "[Output Only] Type of the resource. Alwayscompute#guestAttributes for guest attributes entry.",
+              "Output only. [Output Only] Type of the resource. Alwayscompute#guestAttributes for guest attributes entry.",
+          },
+          queryPath: {
+            type: "string",
+            description:
+              "The path to be queried. This can be the default namespace ('') or a nested namespace ('\\/') or a specified key ('\\/\\').",
           },
           queryValue: {
             type: "object",
@@ -147,20 +121,17 @@ const instancesGetGuestAttributes: AppBlock = {
           },
           selfLink: {
             type: "string",
-            description: "[Output Only] Server-defined URL for this resource.",
-          },
-          queryPath: {
-            type: "string",
             description:
-              "The path to be queried. This can be the default namespace ('') or a\nnested namespace ('\\/') or a specified key\n('\\/\\').",
-          },
-          variableValue: {
-            type: "string",
-            description: "[Output Only] The value found for the requested key.",
+              "Output only. [Output Only] Server-defined URL for this resource.",
           },
           variableKey: {
             type: "string",
             description: "The key to search for.",
+          },
+          variableValue: {
+            type: "string",
+            description:
+              "Output only. [Output Only] The value found for the requested key.",
           },
         },
         description: "A guest attributes entry.",

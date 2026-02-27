@@ -1,85 +1,104 @@
-import changesList_0 from "./changes/changesList";
-import changesCreate_1 from "./changes/changesCreate";
-import changesGet_2 from "./changes/changesGet";
-import managedZonesCreate_3 from "./managed_zones/managedZonesCreate";
-import managedZonesPatch_4 from "./managed_zones/managedZonesPatch";
-import managedZonesTestIamPermissions_5 from "./managed_zones/managedZonesTestIamPermissions";
-import managedZonesGetIamPolicy_6 from "./managed_zones/managedZonesGetIamPolicy";
-import managedZonesUpdate_7 from "./managed_zones/managedZonesUpdate";
-import managedZonesDelete_8 from "./managed_zones/managedZonesDelete";
-import managedZonesGet_9 from "./managed_zones/managedZonesGet";
-import managedZonesList_10 from "./managed_zones/managedZonesList";
-import managedZonesSetIamPolicy_11 from "./managed_zones/managedZonesSetIamPolicy";
-import get_12 from "./operations/get";
-import policiesDelete_13 from "./policies/policiesDelete";
-import policiesCreate_14 from "./policies/policiesCreate";
-import policiesUpdate_15 from "./policies/policiesUpdate";
-import policiesPatch_16 from "./policies/policiesPatch";
-import policiesGet_17 from "./policies/policiesGet";
-import policiesList_18 from "./policies/policiesList";
-import responsePolicyRulesGet_19 from "./response_policy_rules/responsePolicyRulesGet";
-import responsePolicyRulesPatch_20 from "./response_policy_rules/responsePolicyRulesPatch";
-import responsePolicyRulesList_21 from "./response_policy_rules/responsePolicyRulesList";
-import responsePolicyRulesCreate_22 from "./response_policy_rules/responsePolicyRulesCreate";
-import responsePolicyRulesDelete_23 from "./response_policy_rules/responsePolicyRulesDelete";
-import responsePolicyRulesUpdate_24 from "./response_policy_rules/responsePolicyRulesUpdate";
-import resourceRecordSetsPatch_25 from "./resource_record_sets/resourceRecordSetsPatch";
-import resourceRecordSetsGet_26 from "./resource_record_sets/resourceRecordSetsGet";
-import resourceRecordSetsDelete_27 from "./resource_record_sets/resourceRecordSetsDelete";
-import resourceRecordSetsList_28 from "./resource_record_sets/resourceRecordSetsList";
-import resourceRecordSetsCreate_29 from "./resource_record_sets/resourceRecordSetsCreate";
-import responsePoliciesList_30 from "./response_policies/responsePoliciesList";
-import responsePoliciesGet_31 from "./response_policies/responsePoliciesGet";
-import responsePoliciesCreate_32 from "./response_policies/responsePoliciesCreate";
-import responsePoliciesUpdate_33 from "./response_policies/responsePoliciesUpdate";
-import responsePoliciesDelete_34 from "./response_policies/responsePoliciesDelete";
-import responsePoliciesPatch_35 from "./response_policies/responsePoliciesPatch";
-import managedZoneOperationsGet_36 from "./managed_zone_operations/managedZoneOperationsGet";
-import managedZoneOperationsList_37 from "./managed_zone_operations/managedZoneOperationsList";
-import dnsKeysList_38 from "./dns_keys/dnsKeysList";
-import dnsKeysGet_39 from "./dns_keys/dnsKeysGet";
+import changes_changesCreate from "./changes/changesCreate.ts";
+import changes_changesGet from "./changes/changesGet.ts";
+import changes_changesList from "./changes/changesList.ts";
+import dns_keys_dnsKeysGet from "./dns_keys/dnsKeysGet.ts";
+import dns_keys_dnsKeysList from "./dns_keys/dnsKeysList.ts";
+import managed_zone_operations_managedZoneOperationsGet from "./managed_zone_operations/managedZoneOperationsGet.ts";
+import managed_zone_operations_managedZoneOperationsList from "./managed_zone_operations/managedZoneOperationsList.ts";
+import managed_zones_managedZonesCreate from "./managed_zones/managedZonesCreate.ts";
+import managed_zones_managedZonesDelete from "./managed_zones/managedZonesDelete.ts";
+import managed_zones_managedZonesGet from "./managed_zones/managedZonesGet.ts";
+import managed_zones_managedZonesGetIamPolicy from "./managed_zones/managedZonesGetIamPolicy.ts";
+import managed_zones_managedZonesList from "./managed_zones/managedZonesList.ts";
+import managed_zones_managedZonesPatch from "./managed_zones/managedZonesPatch.ts";
+import managed_zones_managedZonesSetIamPolicy from "./managed_zones/managedZonesSetIamPolicy.ts";
+import managed_zones_managedZonesTestIamPermissions from "./managed_zones/managedZonesTestIamPermissions.ts";
+import managed_zones_managedZonesUpdate from "./managed_zones/managedZonesUpdate.ts";
+import policies_policiesCreate from "./policies/policiesCreate.ts";
+import policies_policiesDelete from "./policies/policiesDelete.ts";
+import policies_policiesGet from "./policies/policiesGet.ts";
+import policies_policiesList from "./policies/policiesList.ts";
+import policies_policiesPatch from "./policies/policiesPatch.ts";
+import policies_policiesUpdate from "./policies/policiesUpdate.ts";
+import projects_projectsGet from "./projects/projectsGet.ts";
+import resource_record_sets_resourceRecordSetsCreate from "./resource_record_sets/resourceRecordSetsCreate.ts";
+import resource_record_sets_resourceRecordSetsDelete from "./resource_record_sets/resourceRecordSetsDelete.ts";
+import resource_record_sets_resourceRecordSetsGet from "./resource_record_sets/resourceRecordSetsGet.ts";
+import resource_record_sets_resourceRecordSetsList from "./resource_record_sets/resourceRecordSetsList.ts";
+import resource_record_sets_resourceRecordSetsPatch from "./resource_record_sets/resourceRecordSetsPatch.ts";
+import response_policies_responsePoliciesCreate from "./response_policies/responsePoliciesCreate.ts";
+import response_policies_responsePoliciesDelete from "./response_policies/responsePoliciesDelete.ts";
+import response_policies_responsePoliciesGet from "./response_policies/responsePoliciesGet.ts";
+import response_policies_responsePoliciesList from "./response_policies/responsePoliciesList.ts";
+import response_policies_responsePoliciesPatch from "./response_policies/responsePoliciesPatch.ts";
+import response_policies_responsePoliciesUpdate from "./response_policies/responsePoliciesUpdate.ts";
+import response_policy_rules_responsePolicyRulesCreate from "./response_policy_rules/responsePolicyRulesCreate.ts";
+import response_policy_rules_responsePolicyRulesDelete from "./response_policy_rules/responsePolicyRulesDelete.ts";
+import response_policy_rules_responsePolicyRulesGet from "./response_policy_rules/responsePolicyRulesGet.ts";
+import response_policy_rules_responsePolicyRulesList from "./response_policy_rules/responsePolicyRulesList.ts";
+import response_policy_rules_responsePolicyRulesPatch from "./response_policy_rules/responsePolicyRulesPatch.ts";
+import response_policy_rules_responsePolicyRulesUpdate from "./response_policy_rules/responsePolicyRulesUpdate.ts";
 
 export const blocks = {
-  changes_changesList: changesList_0,
-  changes_changesCreate: changesCreate_1,
-  changes_changesGet: changesGet_2,
-  managed_zones_managedZonesCreate: managedZonesCreate_3,
-  managed_zones_managedZonesPatch: managedZonesPatch_4,
-  managed_zones_managedZonesTestIamPermissions:
-    managedZonesTestIamPermissions_5,
-  managed_zones_managedZonesGetIamPolicy: managedZonesGetIamPolicy_6,
-  managed_zones_managedZonesUpdate: managedZonesUpdate_7,
-  managed_zones_managedZonesDelete: managedZonesDelete_8,
-  managed_zones_managedZonesGet: managedZonesGet_9,
-  managed_zones_managedZonesList: managedZonesList_10,
-  managed_zones_managedZonesSetIamPolicy: managedZonesSetIamPolicy_11,
-  operations_get: get_12,
-  policies_policiesDelete: policiesDelete_13,
-  policies_policiesCreate: policiesCreate_14,
-  policies_policiesUpdate: policiesUpdate_15,
-  policies_policiesPatch: policiesPatch_16,
-  policies_policiesGet: policiesGet_17,
-  policies_policiesList: policiesList_18,
-  response_policy_rules_responsePolicyRulesGet: responsePolicyRulesGet_19,
-  response_policy_rules_responsePolicyRulesPatch: responsePolicyRulesPatch_20,
-  response_policy_rules_responsePolicyRulesList: responsePolicyRulesList_21,
-  response_policy_rules_responsePolicyRulesCreate: responsePolicyRulesCreate_22,
-  response_policy_rules_responsePolicyRulesDelete: responsePolicyRulesDelete_23,
-  response_policy_rules_responsePolicyRulesUpdate: responsePolicyRulesUpdate_24,
-  resource_record_sets_resourceRecordSetsPatch: resourceRecordSetsPatch_25,
-  resource_record_sets_resourceRecordSetsGet: resourceRecordSetsGet_26,
-  resource_record_sets_resourceRecordSetsDelete: resourceRecordSetsDelete_27,
-  resource_record_sets_resourceRecordSetsList: resourceRecordSetsList_28,
-  resource_record_sets_resourceRecordSetsCreate: resourceRecordSetsCreate_29,
-  response_policies_responsePoliciesList: responsePoliciesList_30,
-  response_policies_responsePoliciesGet: responsePoliciesGet_31,
-  response_policies_responsePoliciesCreate: responsePoliciesCreate_32,
-  response_policies_responsePoliciesUpdate: responsePoliciesUpdate_33,
-  response_policies_responsePoliciesDelete: responsePoliciesDelete_34,
-  response_policies_responsePoliciesPatch: responsePoliciesPatch_35,
-  managed_zone_operations_managedZoneOperationsGet: managedZoneOperationsGet_36,
+  changes_changesCreate: changes_changesCreate,
+  changes_changesGet: changes_changesGet,
+  changes_changesList: changes_changesList,
+  dns_keys_dnsKeysGet: dns_keys_dnsKeysGet,
+  dns_keys_dnsKeysList: dns_keys_dnsKeysList,
+  managed_zone_operations_managedZoneOperationsGet:
+    managed_zone_operations_managedZoneOperationsGet,
   managed_zone_operations_managedZoneOperationsList:
-    managedZoneOperationsList_37,
-  dns_keys_dnsKeysList: dnsKeysList_38,
-  dns_keys_dnsKeysGet: dnsKeysGet_39,
+    managed_zone_operations_managedZoneOperationsList,
+  managed_zones_managedZonesCreate: managed_zones_managedZonesCreate,
+  managed_zones_managedZonesDelete: managed_zones_managedZonesDelete,
+  managed_zones_managedZonesGet: managed_zones_managedZonesGet,
+  managed_zones_managedZonesGetIamPolicy:
+    managed_zones_managedZonesGetIamPolicy,
+  managed_zones_managedZonesList: managed_zones_managedZonesList,
+  managed_zones_managedZonesPatch: managed_zones_managedZonesPatch,
+  managed_zones_managedZonesSetIamPolicy:
+    managed_zones_managedZonesSetIamPolicy,
+  managed_zones_managedZonesTestIamPermissions:
+    managed_zones_managedZonesTestIamPermissions,
+  managed_zones_managedZonesUpdate: managed_zones_managedZonesUpdate,
+  policies_policiesCreate: policies_policiesCreate,
+  policies_policiesDelete: policies_policiesDelete,
+  policies_policiesGet: policies_policiesGet,
+  policies_policiesList: policies_policiesList,
+  policies_policiesPatch: policies_policiesPatch,
+  policies_policiesUpdate: policies_policiesUpdate,
+  projects_projectsGet: projects_projectsGet,
+  resource_record_sets_resourceRecordSetsCreate:
+    resource_record_sets_resourceRecordSetsCreate,
+  resource_record_sets_resourceRecordSetsDelete:
+    resource_record_sets_resourceRecordSetsDelete,
+  resource_record_sets_resourceRecordSetsGet:
+    resource_record_sets_resourceRecordSetsGet,
+  resource_record_sets_resourceRecordSetsList:
+    resource_record_sets_resourceRecordSetsList,
+  resource_record_sets_resourceRecordSetsPatch:
+    resource_record_sets_resourceRecordSetsPatch,
+  response_policies_responsePoliciesCreate:
+    response_policies_responsePoliciesCreate,
+  response_policies_responsePoliciesDelete:
+    response_policies_responsePoliciesDelete,
+  response_policies_responsePoliciesGet: response_policies_responsePoliciesGet,
+  response_policies_responsePoliciesList:
+    response_policies_responsePoliciesList,
+  response_policies_responsePoliciesPatch:
+    response_policies_responsePoliciesPatch,
+  response_policies_responsePoliciesUpdate:
+    response_policies_responsePoliciesUpdate,
+  response_policy_rules_responsePolicyRulesCreate:
+    response_policy_rules_responsePolicyRulesCreate,
+  response_policy_rules_responsePolicyRulesDelete:
+    response_policy_rules_responsePolicyRulesDelete,
+  response_policy_rules_responsePolicyRulesGet:
+    response_policy_rules_responsePolicyRulesGet,
+  response_policy_rules_responsePolicyRulesList:
+    response_policy_rules_responsePolicyRulesList,
+  response_policy_rules_responsePolicyRulesPatch:
+    response_policy_rules_responsePolicyRulesPatch,
+  response_policy_rules_responsePolicyRulesUpdate:
+    response_policy_rules_responsePolicyRulesUpdate,
 };

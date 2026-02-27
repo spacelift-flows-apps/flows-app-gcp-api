@@ -1,58 +1,188 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const regionSecurityPoliciesPatch: AppBlock = {
   name: "Region Security Policies - Patch",
-  description: `Patches the specified policy with the data included in the request.`,
+  description: `Updates the specified wire group resource with the data included in the request. This method supportsPATCH semantics and usesJSON merge patch format and processing rules.`,
   category: "Region Security Policies",
   inputs: {
     default: {
       config: {
+        region: {
+          name: "Region",
+          description: "Name of the region scoping this request.",
+          type: {
+            type: "string",
+            description: "Name of the region scoping this request.",
+          },
+          required: true,
+        },
         securityPolicy: {
           name: "Security Policy",
           description: "Name of the security policy to update.",
           type: {
             type: "string",
+            description: "Name of the security policy to update.",
           },
           required: true,
         },
-        region: {
-          name: "Region",
-          description:
-            "[Output Only] URL of the region where the regional security policy resides.",
+        adaptiveProtectionConfig: {
+          name: "Adaptive Protection Config",
+          description: "Adaptive Protection Config field",
           type: {
-            type: "string",
+            type: "object",
+            properties: {
+              layer7DdosDefenseConfig: {
+                type: "object",
+                properties: {
+                  enable: {
+                    type: "boolean",
+                    description:
+                      "If set to true, enables CAAP for L7 DDoS detection. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
+                  },
+                  ruleVisibility: {
+                    type: "string",
+                    enum: ["UNDEFINED_RULE_VISIBILITY", "PREMIUM", "STANDARD"],
+                    description:
+                      "Rule visibility can be one of the following: STANDARD - opaque rules. (default) PREMIUM - transparent rules. This field is only supported in Global Security Policies of type CLOUD_ARMOR. Check the RuleVisibility enum for the list of possible values.",
+                  },
+                  thresholdConfigs: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        autoDeployConfidenceThreshold: {
+                          type: "number",
+                        },
+                        autoDeployExpirationSec: {
+                          type: "integer",
+                        },
+                        autoDeployImpactedBaselineThreshold: {
+                          type: "number",
+                        },
+                        autoDeployLoadThreshold: {
+                          type: "number",
+                        },
+                        detectionAbsoluteQps: {
+                          type: "number",
+                        },
+                        detectionLoadThreshold: {
+                          type: "number",
+                        },
+                        detectionRelativeToBaselineQps: {
+                          type: "number",
+                        },
+                        name: {
+                          type: "string",
+                          description:
+                            "The name must be 1-63 characters long, and comply withRFC1035. The name must be unique within the security policy.",
+                        },
+                        trafficGranularityConfigs: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              enableEachUniqueValue: {
+                                type: "boolean",
+                                description:
+                                  "If enabled, traffic matching each unique value for the specified type constitutes a separate traffic unit. It can only be set to true if `value` is empty.",
+                              },
+                              type: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_TYPE",
+                                  "HTTP_HEADER_HOST",
+                                  "HTTP_PATH",
+                                  "UNSPECIFIED_TYPE",
+                                ],
+                                description:
+                                  "Type of this configuration. Check the Type enum for the list of possible values.",
+                              },
+                              value: {
+                                type: "string",
+                                description:
+                                  "Requests that match this value constitute a granular traffic unit.",
+                              },
+                            },
+                            description:
+                              "Configurations to specifc granular traffic units processed by Adaptive Protection.",
+                            additionalProperties: true,
+                          },
+                          description:
+                            "Configuration options for enabling Adaptive Protection to operate on specified granular traffic units.",
+                        },
+                      },
+                      additionalProperties: true,
+                    },
+                    description:
+                      "Configuration options for layer7 adaptive protection for various customizable thresholds.",
+                  },
+                },
+                description:
+                  "Configuration options for L7 DDoS detection. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
+                additionalProperties: true,
+              },
+            },
             description:
-              "[Output Only] URL of the region where the regional security policy\nresides. This field is not applicable to global security policies.",
+              "Configuration options for Cloud Armor Adaptive Protection (CAAP).",
+            additionalProperties: true,
           },
           required: false,
         },
-        updateMask: {
-          name: "Update Mask",
-          description:
-            "Indicates fields to be cleared as part of this request.",
+        advancedOptionsConfig: {
+          name: "Advanced Options Config",
+          description: "Advanced Options Config field",
           type: {
-            type: "string",
-          },
-          required: false,
-        },
-        requestId: {
-          name: "Request ID",
-          description:
-            "An optional request ID to identify requests. Specify a unique request ID so\nthat if you must retry your request, the server will know to ignore the\nrequest if it has already been completed.\n\nFor example, consider a situation where you make an initial request and\nthe request times out. If you make the request again with the same\nrequest ID, the server can check if original operation with the same\nrequest ID was received, and if so, will ignore the second request. This\nprevents clients from accidentally creating duplicate commitments.\n\nThe request ID must be\na valid UUID with the exception that zero UUID is not supported\n(00000000-0000-0000-0000-000000000000).",
-          type: {
-            type: "string",
-          },
-          required: false,
-        },
-        labelFingerprint: {
-          name: "Label Fingerprint",
-          description:
-            "A fingerprint for the labels being applied to this security policy, which is essentially a hash of the labels set used for optimistic locking.",
-          type: {
-            type: "string",
-            description:
-              "A fingerprint for the labels being applied to this security policy, which\nis essentially a hash of the labels set used for optimistic locking. The\nfingerprint is initially generated by Compute Engine and changes after\nevery request to modify or update labels. You must always provide an\nup-to-date fingerprint hash in order to update or change labels.\n\nTo see the latest fingerprint, make get() request to the\nsecurity policy. (Format: byte)",
+            type: "object",
+            properties: {
+              jsonCustomConfig: {
+                type: "object",
+                properties: {
+                  contentTypes: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                    description:
+                      'A list of custom Content-Type header values to apply the JSON parsing.  As per RFC 1341, a Content-Type header value has the following format:  Content-Type := type "/" subtype *[";" parameter]  When configuring a custom Content-Type header value, only the type/subtype needs to be specified, and the parameters should be excluded.',
+                  },
+                },
+                additionalProperties: true,
+                description:
+                  "Custom configuration to apply the JSON parsing. Only applicable when json_parsing is set to STANDARD.",
+              },
+              jsonParsing: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_JSON_PARSING",
+                  "DISABLED",
+                  "STANDARD",
+                  "STANDARD_WITH_GRAPHQL",
+                ],
+                description:
+                  "Check the JsonParsing enum for the list of possible values.",
+              },
+              logLevel: {
+                type: "string",
+                enum: ["UNDEFINED_LOG_LEVEL", "NORMAL", "VERBOSE"],
+                description:
+                  "Check the LogLevel enum for the list of possible values.",
+              },
+              requestBodyInspectionSize: {
+                type: "string",
+                description:
+                  'The maximum request size chosen by the customer with Waf enabled. Values supported are "8KB", "16KB, "32KB", "48KB" and "64KB". Values are case insensitive.',
+              },
+              userIpRequestHeaders: {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+                description:
+                  "An optional list of case-insensitive request header names to use for resolving the callers client IP address.",
+              },
+            },
+            additionalProperties: true,
           },
           required: false,
         },
@@ -64,32 +194,10 @@ const regionSecurityPoliciesPatch: AppBlock = {
             items: {
               type: "object",
               properties: {
-                securityPolicyId: {
-                  type: "string",
-                  description:
-                    "[Output Only] The security policy ID of the association.",
-                },
-                name: {
-                  type: "string",
-                  description: "The name for an association.",
-                },
                 attachmentId: {
                   type: "string",
                   description:
                     "The resource that the security policy is attached to.",
-                },
-                shortName: {
-                  type: "string",
-                  description:
-                    "[Output Only] The short name of the security policy of the association.",
-                },
-                excludedProjects: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description:
-                    "A list of projects to exclude from the security policy.",
                 },
                 excludedFolders: {
                   type: "array",
@@ -99,10 +207,17 @@ const regionSecurityPoliciesPatch: AppBlock = {
                   description:
                     "A list of folders to exclude from the security policy.",
                 },
-                displayName: {
-                  type: "string",
+                excludedProjects: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
                   description:
-                    "[Output Only] The display name of the security policy of the association.",
+                    "A list of projects to exclude from the security policy.",
+                },
+                name: {
+                  type: "string",
+                  description: "The name for an association.",
                 },
               },
               additionalProperties: true,
@@ -111,349 +226,237 @@ const regionSecurityPoliciesPatch: AppBlock = {
           },
           required: false,
         },
+        ddosProtectionConfig: {
+          name: "Ddos Protection Config",
+          description: "Ddos Protection Config field",
+          type: {
+            type: "object",
+            properties: {
+              ddosProtection: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_DDOS_PROTECTION",
+                  "ADVANCED",
+                  "ADVANCED_PREVIEW",
+                  "STANDARD",
+                ],
+                description:
+                  "Check the DdosProtection enum for the list of possible values.",
+              },
+            },
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        description: {
+          name: "Description",
+          description:
+            "An optional description of this resource. Provide this property when you create the resource.",
+          type: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
+          },
+          required: false,
+        },
+        fingerprint: {
+          name: "Fingerprint",
+          description:
+            "Specifies a fingerprint for this resource, which is essentially a hash of the metadata's contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make get() request to the security policy.",
+          type: {
+            type: "string",
+            description:
+              "Specifies a fingerprint for this resource, which is essentially a hash of the metadata's contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make get() request to the security policy.",
+          },
+          required: false,
+        },
+        labelFingerprint: {
+          name: "Label Fingerprint",
+          description:
+            "A fingerprint for the labels being applied to this security policy, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels.  To see the latest fingerprint, make get() request to the security policy.",
+          type: {
+            type: "string",
+            description:
+              "A fingerprint for the labels being applied to this security policy, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels.  To see the latest fingerprint, make get() request to the security policy.",
+          },
+          required: false,
+        },
         labels: {
           name: "Labels",
-          description: "Labels for this resource.",
+          description:
+            "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
           type: {
             type: "object",
             additionalProperties: {
               type: "string",
             },
             description:
-              "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035.\nLabel values may be empty.",
+              "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
           },
           required: false,
         },
-        adaptiveProtectionConfig: {
-          name: "Adaptive Protection Config",
-          description: "Request body field: adaptiveProtectionConfig",
-          type: {
-            type: "object",
-            properties: {
-              layer7DdosDefenseConfig: {
-                type: "object",
-                properties: {
-                  enable: {
-                    type: "boolean",
-                    description:
-                      "If set to true, enables CAAP for L7 DDoS detection.\nThis field is only supported in Global Security Policies of type\nCLOUD_ARMOR.",
-                  },
-                  thresholdConfigs: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        autoDeployImpactedBaselineThreshold: {
-                          type: "number",
-                          description: "Format: float",
-                        },
-                        detectionAbsoluteQps: {
-                          type: "number",
-                          description: "Format: float",
-                        },
-                        detectionRelativeToBaselineQps: {
-                          type: "number",
-                          description: "Format: float",
-                        },
-                        trafficGranularityConfigs: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              enableEachUniqueValue: {
-                                type: "boolean",
-                                description:
-                                  "If enabled, traffic matching each unique value for the specified\ntype constitutes a separate traffic unit.\nIt can only be set to true if `value` is empty.",
-                              },
-                              type: {
-                                type: "string",
-                                enum: [
-                                  "HTTP_HEADER_HOST",
-                                  "HTTP_PATH",
-                                  "UNSPECIFIED_TYPE",
-                                ],
-                                description: "Type of this configuration.",
-                              },
-                              value: {
-                                type: "string",
-                                description:
-                                  "Requests that match this value constitute a granular traffic unit.",
-                              },
-                            },
-                            description:
-                              "Configurations to specifc granular traffic units processed by\nAdaptive Protection.",
-                            additionalProperties: true,
-                          },
-                          description:
-                            "Configuration options for enabling Adaptive Protection to operate\non specified granular traffic units.",
-                        },
-                        autoDeployConfidenceThreshold: {
-                          type: "number",
-                          description: "Format: float",
-                        },
-                        name: {
-                          type: "string",
-                          description:
-                            "The name must be 1-63 characters long, and comply withRFC1035.\nThe name must be unique within the security policy.",
-                        },
-                        detectionLoadThreshold: {
-                          type: "number",
-                          description: "Format: float",
-                        },
-                        autoDeployLoadThreshold: {
-                          type: "number",
-                          description: "Format: float",
-                        },
-                        autoDeployExpirationSec: {
-                          type: "integer",
-                          description: "Format: int32",
-                        },
-                      },
-                      additionalProperties: true,
-                    },
-                    description:
-                      "Configuration options for layer7 adaptive protection for various\ncustomizable thresholds.",
-                  },
-                  ruleVisibility: {
-                    type: "string",
-                    enum: ["PREMIUM", "STANDARD"],
-                    description:
-                      "Rule visibility can be one of the following:\nSTANDARD - opaque rules. (default)\nPREMIUM - transparent rules.\nThis field is only supported in Global Security Policies of type\nCLOUD_ARMOR.",
-                  },
-                },
-                description:
-                  "Configuration options for L7 DDoS detection.\nThis field is only supported in Global Security Policies of type\nCLOUD_ARMOR.",
-                additionalProperties: true,
-              },
-            },
-            description:
-              "Configuration options for Cloud Armor Adaptive Protection (CAAP).",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        parent: {
-          name: "Parent",
-          description: "[Output Only] The parent of the security policy.",
+        name: {
+          name: "Name",
+          description:
+            "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           type: {
             type: "string",
-            description: "[Output Only] The parent of the security policy.",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
           required: false,
         },
         recaptchaOptionsConfig: {
           name: "Recaptcha Options Config",
-          description: "Request body field: recaptchaOptionsConfig",
+          description: "Recaptcha Options Config field",
           type: {
             type: "object",
             properties: {
               redirectSiteKey: {
                 type: "string",
                 description:
-                  "An optional field to supply a reCAPTCHA site key to be used for all the\nrules using the redirect action with the type of GOOGLE_RECAPTCHA under\nthe security policy. The specified site key needs to be created from the\nreCAPTCHA API. The user is responsible for the validity of the specified\nsite key. If not specified, a Google-managed site key is used.\nThis field is only supported in Global Security Policies of type\nCLOUD_ARMOR.",
+                  "An optional field to supply a reCAPTCHA site key to be used for all the rules using the redirect action with the type of GOOGLE_RECAPTCHA under the security policy. The specified site key needs to be created from the reCAPTCHA API. The user is responsible for the validity of the specified site key. If not specified, a Google-managed site key is used. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
               },
             },
             additionalProperties: true,
-          },
-          required: false,
-        },
-        advancedOptionsConfig: {
-          name: "Advanced Options Config",
-          description: "Request body field: advancedOptionsConfig",
-          type: {
-            type: "object",
-            properties: {
-              userIpRequestHeaders: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
-                description:
-                  "An optional list of case-insensitive request header names to use for\nresolving the callers client IP address.",
-              },
-              logLevel: {
-                type: "string",
-                enum: ["NORMAL", "VERBOSE"],
-              },
-              jsonParsing: {
-                type: "string",
-                enum: ["DISABLED", "STANDARD", "STANDARD_WITH_GRAPHQL"],
-              },
-              jsonCustomConfig: {
-                type: "object",
-                properties: {
-                  contentTypes: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                    description:
-                      'A list of custom Content-Type header values to apply the JSON parsing.\n\nAs per RFC 1341, a Content-Type header value has the following format:\n\nContent-Type := type "/" subtype *[";" parameter]\n\nWhen configuring a custom Content-Type header value, only the\ntype/subtype needs to be specified, and the parameters should be\nexcluded.',
-                  },
-                },
-                additionalProperties: true,
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        type: {
-          name: "Type",
-          description:
-            "The type indicates the intended use of the security policy.",
-          type: {
-            type: "string",
-            enum: ["CLOUD_ARMOR", "CLOUD_ARMOR_EDGE", "CLOUD_ARMOR_NETWORK"],
-            description:
-              "The type indicates the intended use of the security policy.\n   \n   - CLOUD_ARMOR: Cloud Armor backend security policies can\n   be configured to filter incoming HTTP requests targeting backend services.\n   They filter requests before they hit the origin servers.\n   - CLOUD_ARMOR_EDGE: Cloud Armor edge security policies can\n   be configured to filter incoming HTTP requests targeting backend services\n   (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage).\n   They filter requests before the request is served from Google's cache.\n   - CLOUD_ARMOR_INTERNAL_SERVICE (preview only): Cloud Armor\n   internal service policies can be configured to filter HTTP requests\n   targeting services managed by Traffic Director in a service mesh. They\n   filter requests before the request is served from the application.\n\n- CLOUD_ARMOR_NETWORK: Cloud Armor network policies\ncan be configured to filter packets targeting network load balancing\nresources such as backend services, target pools, target instances, and\ninstances with external IPs. They filter requests before the request is\nserved from the application.\n\n\nThis field can be set only at resource creation time.",
           },
           required: false,
         },
         rules: {
           name: "Rules",
-          description: "A list of rules that belong to this policy.",
+          description:
+            'A list of rules that belong to this policy. There must always be a default rule which is a rule with priority 2147483647 and match all condition (for the match condition this means match  "*" for srcIpRanges and for the networkMatch condition every field must be either match "*" or not set). If no rules are provided when creating a security policy, a default rule with action "allow" will be added.',
           type: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                preconfiguredWafConfig: {
+                action: {
+                  type: "string",
+                  description:
+                    "The Action to perform when the rule is matched. The following are the valid actions:     - allow: allow access to target.    - deny(STATUS): deny access to target, returns the    HTTP response code specified. Valid values for `STATUS`    are 403, 404, and 502.    - rate_based_ban: limit client traffic to the configured    threshold and ban the client if the traffic exceeds the threshold.    Configure parameters for this action in RateLimitOptions. Requires    rate_limit_options to be set.    - redirect: redirect to a different target. This can    either be an internal reCAPTCHA redirect, or an external URL-based    redirect via a 302 response. Parameters for this action can be configured    via redirectOptions. This action is only supported in Global Security    Policies of type CLOUD_ARMOR.    - throttle: limit    client traffic to the configured threshold. Configure parameters for this    action in rateLimitOptions. Requires rate_limit_options to be set for    this.    - fairshare (preview only): when traffic reaches the    threshold limit, requests from the clients matching this rule begin to be    rate-limited using the Fair Share algorithm. This action is only allowed    in security policies of type `CLOUD_ARMOR_INTERNAL_SERVICE`.",
+                },
+                description: {
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this property when you create the resource.",
+                },
+                headerAction: {
                   type: "object",
                   properties: {
-                    exclusions: {
+                    requestHeadersToAdds: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          requestQueryParamsToExclude: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                val: {
-                                  type: "string",
-                                  description: "The value of the field.",
-                                },
-                                op: {
-                                  type: "string",
-                                  enum: [
-                                    "CONTAINS",
-                                    "ENDS_WITH",
-                                    "EQUALS",
-                                    "EQUALS_ANY",
-                                    "STARTS_WITH",
-                                  ],
-                                  description:
-                                    "The match operator for the field.",
-                                },
-                              },
-                              additionalProperties: true,
-                            },
-                            description:
-                              "A list of request query parameter names whose value will be excluded\nfrom inspection during preconfigured WAF evaluation. Note that the\nparameter can be in the query string or in the POST body.",
+                          headerName: {
+                            type: "string",
+                            description: "The name of the header to set.",
                           },
-                          requestHeadersToExclude: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                val: {
-                                  type: "string",
-                                  description: "The value of the field.",
-                                },
-                                op: {
-                                  type: "string",
-                                  enum: [
-                                    "CONTAINS",
-                                    "ENDS_WITH",
-                                    "EQUALS",
-                                    "EQUALS_ANY",
-                                    "STARTS_WITH",
-                                  ],
-                                  description:
-                                    "The match operator for the field.",
-                                },
-                              },
-                              additionalProperties: true,
-                            },
-                            description:
-                              "A list of request header names whose value will be excluded from\ninspection during preconfigured WAF evaluation.",
-                          },
-                          targetRuleSet: {
+                          headerValue: {
                             type: "string",
                             description:
-                              "Target WAF rule set to apply the preconfigured WAF exclusion.",
-                          },
-                          targetRuleIds: {
-                            type: "array",
-                            items: {
-                              type: "string",
-                            },
-                            description:
-                              "A list of target rule IDs under the WAF rule set to apply the\npreconfigured WAF exclusion. If omitted, it refers to all the rule\nIDs under the WAF rule set.",
-                          },
-                          requestUrisToExclude: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                val: {
-                                  type: "string",
-                                  description: "The value of the field.",
-                                },
-                                op: {
-                                  type: "string",
-                                  enum: [
-                                    "CONTAINS",
-                                    "ENDS_WITH",
-                                    "EQUALS",
-                                    "EQUALS_ANY",
-                                    "STARTS_WITH",
-                                  ],
-                                  description:
-                                    "The match operator for the field.",
-                                },
-                              },
-                              additionalProperties: true,
-                            },
-                            description:
-                              "A list of request URIs from the request line to be excluded from\ninspection during preconfigured WAF evaluation. When specifying this\nfield, the query or fragment part should be excluded.",
-                          },
-                          requestCookiesToExclude: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                val: {
-                                  type: "string",
-                                  description: "The value of the field.",
-                                },
-                                op: {
-                                  type: "string",
-                                  enum: [
-                                    "CONTAINS",
-                                    "ENDS_WITH",
-                                    "EQUALS",
-                                    "EQUALS_ANY",
-                                    "STARTS_WITH",
-                                  ],
-                                  description:
-                                    "The match operator for the field.",
-                                },
-                              },
-                              additionalProperties: true,
-                            },
-                            description:
-                              "A list of request cookie names whose value will be excluded from\ninspection during preconfigured WAF evaluation.",
+                              "The value to set the named header to.",
                           },
                         },
                         additionalProperties: true,
                       },
                       description:
-                        "A list of exclusions to apply during preconfigured WAF evaluation.",
+                        "The list of request headers to add or overwrite if they're already present.",
                     },
                   },
+                  additionalProperties: true,
+                  description:
+                    "Optional, additional actions that are performed on headers. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
+                },
+                match: {
+                  type: "object",
+                  properties: {
+                    config: {
+                      type: "object",
+                      properties: {
+                        srcIpRanges: {
+                          type: "array",
+                          items: {
+                            type: "string",
+                          },
+                          description:
+                            "CIDR IP address range. Maximum number of src_ip_ranges allowed is 10.",
+                        },
+                      },
+                      additionalProperties: true,
+                      description:
+                        "The configuration options available when specifying versioned_expr. This field must be specified if versioned_expr is specified and cannot be specified if versioned_expr is not specified.",
+                    },
+                    expr: {
+                      type: "object",
+                      properties: {
+                        description: {
+                          type: "string",
+                          description:
+                            "Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.",
+                        },
+                        expression: {
+                          type: "string",
+                          description:
+                            "Textual representation of an expression in Common Expression Language syntax.",
+                        },
+                        location: {
+                          type: "string",
+                          description:
+                            "Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.",
+                        },
+                        title: {
+                          type: "string",
+                          description:
+                            "Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.",
+                        },
+                      },
+                      description:
+                        'Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec.  Example (Comparison):      title: "Summary size limit"     description: "Determines if a summary is less than 100 chars"     expression: "document.summary.size() < 100"  Example (Equality):      title: "Requestor is owner"     description: "Determines if requestor is the document owner"     expression: "document.owner == request.auth.claims.email"  Example (Logic):      title: "Public documents"     description: "Determine whether the document should be publicly visible"     expression: "document.type != \'private\' && document.type != \'internal\'"  Example (Data Manipulation):      title: "Notification string"     description: "Create a notification string with a timestamp."     expression: "\'New message received at \' + string(document.create_time)"  The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.',
+                      additionalProperties: true,
+                    },
+                    exprOptions: {
+                      type: "object",
+                      properties: {
+                        recaptchaOptions: {
+                          type: "object",
+                          properties: {
+                            actionTokenSiteKeys: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "A list of site keys to be used during the validation of reCAPTCHA action-tokens. The provided site keys need to be created from reCAPTCHA API under the same project where the security policy is created.",
+                            },
+                            sessionTokenSiteKeys: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                              description:
+                                "A list of site keys to be used during the validation of reCAPTCHA session-tokens. The provided site keys need to be created from reCAPTCHA API under the same project where the security policy is created.",
+                            },
+                          },
+                          additionalProperties: true,
+                          description:
+                            "reCAPTCHA configuration options to be applied for the rule. If the rule does not evaluate reCAPTCHA tokens, this field has no effect.",
+                        },
+                      },
+                      additionalProperties: true,
+                      description:
+                        "The configuration options available when specifying a user defined CEVAL expression (i.e., 'expr').",
+                    },
+                    versionedExpr: {
+                      type: "string",
+                      enum: ["UNDEFINED_VERSIONED_EXPR", "SRC_IPS_V1"],
+                      description:
+                        "Preconfigured versioned expression. If this field is specified, config must also be specified. Available preconfigured expressions along with their requirements are: SRC_IPS_V1 - must specify the corresponding src_ip_range field in config. Check the VersionedExpr enum for the list of possible values.",
+                    },
+                  },
+                  description:
+                    "Represents a match condition that incoming traffic is evaluated against. Exactly one field must be specified.",
                   additionalProperties: true,
                 },
                 networkMatch: {
@@ -465,13 +468,28 @@ const regionSecurityPoliciesPatch: AppBlock = {
                         type: "string",
                       },
                       description:
-                        "Destination IPv4/IPv6 addresses or CIDR prefixes, in standard text\nformat.",
+                        "Destination IPv4/IPv6 addresses or CIDR prefixes, in standard text format.",
+                    },
+                    destPorts: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                      description:
+                        'Destination port numbers for TCP/UDP/SCTP. Each element can be a 16-bit unsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
+                    },
+                    ipProtocols: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                      description:
+                        'IPv4 protocol / IPv6 next header (after extension headers). Each element can be an 8-bit unsigned decimal number (e.g. "6"), range (e.g. "253-254"), or one of the following protocol names: "tcp", "udp", "icmp", "esp", "ah", "ipip", or "sctp".',
                     },
                     srcAsns: {
                       type: "array",
                       items: {
                         type: "integer",
-                        description: "Format: uint32",
                       },
                       description:
                         "BGP Autonomous System Number associated with the source IP address.",
@@ -484,13 +502,21 @@ const regionSecurityPoliciesPatch: AppBlock = {
                       description:
                         "Source IPv4/IPv6 addresses or CIDR prefixes, in standard text format.",
                     },
-                    ipProtocols: {
+                    srcPorts: {
                       type: "array",
                       items: {
                         type: "string",
                       },
                       description:
-                        'IPv4 protocol / IPv6 next header (after extension headers). Each\nelement can be an 8-bit unsigned decimal number (e.g. "6"), range (e.g.\n"253-254"), or one of the following protocol names: "tcp", "udp",\n"icmp", "esp", "ah", "ipip", or "sctp".',
+                        'Source port numbers for TCP/UDP/SCTP. Each element can be a 16-bit unsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
+                    },
+                    srcRegionCodes: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                      description:
+                        "Two-letter ISO 3166-1 alpha-2 country code associated with the source IP address.",
                     },
                     userDefinedFields: {
                       type: "array",
@@ -508,47 +534,172 @@ const regionSecurityPoliciesPatch: AppBlock = {
                               type: "string",
                             },
                             description:
-                              'Matching values of the field. Each element can be a 32-bit unsigned\ndecimal or hexadecimal (starting with "0x") number (e.g. "64") or\nrange (e.g.  "0x400-0x7ff").',
+                              'Matching values of the field. Each element can be a 32-bit unsigned decimal or hexadecimal (starting with "0x") number (e.g. "64") or range (e.g.  "0x400-0x7ff").',
                           },
                         },
                         additionalProperties: true,
                       },
                       description:
-                        "User-defined fields. Each element names a defined field and lists the\nmatching values for that field.",
-                    },
-                    destPorts: {
-                      type: "array",
-                      items: {
-                        type: "string",
-                      },
-                      description:
-                        'Destination port numbers for TCP/UDP/SCTP. Each element can be a 16-bit\nunsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
-                    },
-                    srcPorts: {
-                      type: "array",
-                      items: {
-                        type: "string",
-                      },
-                      description:
-                        'Source port numbers for TCP/UDP/SCTP. Each element can be a 16-bit\nunsigned decimal number (e.g. "80") or range (e.g. "0-1023").',
-                    },
-                    srcRegionCodes: {
-                      type: "array",
-                      items: {
-                        type: "string",
-                      },
-                      description:
-                        "Two-letter ISO 3166-1 alpha-2 country code associated with the source\nIP address.",
+                        "User-defined fields. Each element names a defined field and lists the matching values for that field.",
                     },
                   },
                   description:
-                    "Represents a match condition that incoming network traffic is evaluated\nagainst.",
+                    "Represents a match condition that incoming network traffic is evaluated against.",
                   additionalProperties: true,
                 },
-                kind: {
-                  type: "string",
+                preconfiguredWafConfig: {
+                  type: "object",
+                  properties: {
+                    exclusions: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          requestCookiesToExclude: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                op: {
+                                  type: "string",
+                                  enum: [
+                                    "UNDEFINED_OP",
+                                    "CONTAINS",
+                                    "ENDS_WITH",
+                                    "EQUALS",
+                                    "EQUALS_ANY",
+                                    "STARTS_WITH",
+                                  ],
+                                  description:
+                                    "The match operator for the field. Check the Op enum for the list of possible values.",
+                                },
+                                val: {
+                                  type: "string",
+                                  description: "The value of the field.",
+                                },
+                              },
+                              additionalProperties: true,
+                            },
+                            description:
+                              "A list of request cookie names whose value will be excluded from inspection during preconfigured WAF evaluation.",
+                          },
+                          requestHeadersToExclude: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                op: {
+                                  type: "string",
+                                  enum: [
+                                    "UNDEFINED_OP",
+                                    "CONTAINS",
+                                    "ENDS_WITH",
+                                    "EQUALS",
+                                    "EQUALS_ANY",
+                                    "STARTS_WITH",
+                                  ],
+                                  description:
+                                    "The match operator for the field. Check the Op enum for the list of possible values.",
+                                },
+                                val: {
+                                  type: "string",
+                                  description: "The value of the field.",
+                                },
+                              },
+                              additionalProperties: true,
+                            },
+                            description:
+                              "A list of request header names whose value will be excluded from inspection during preconfigured WAF evaluation.",
+                          },
+                          requestQueryParamsToExclude: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                op: {
+                                  type: "string",
+                                  enum: [
+                                    "UNDEFINED_OP",
+                                    "CONTAINS",
+                                    "ENDS_WITH",
+                                    "EQUALS",
+                                    "EQUALS_ANY",
+                                    "STARTS_WITH",
+                                  ],
+                                  description:
+                                    "The match operator for the field. Check the Op enum for the list of possible values.",
+                                },
+                                val: {
+                                  type: "string",
+                                  description: "The value of the field.",
+                                },
+                              },
+                              additionalProperties: true,
+                            },
+                            description:
+                              "A list of request query parameter names whose value will be excluded from inspection during preconfigured WAF evaluation. Note that the parameter can be in the query string or in the POST body.",
+                          },
+                          requestUrisToExclude: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                op: {
+                                  type: "string",
+                                  enum: [
+                                    "UNDEFINED_OP",
+                                    "CONTAINS",
+                                    "ENDS_WITH",
+                                    "EQUALS",
+                                    "EQUALS_ANY",
+                                    "STARTS_WITH",
+                                  ],
+                                  description:
+                                    "The match operator for the field. Check the Op enum for the list of possible values.",
+                                },
+                                val: {
+                                  type: "string",
+                                  description: "The value of the field.",
+                                },
+                              },
+                              additionalProperties: true,
+                            },
+                            description:
+                              "A list of request URIs from the request line to be excluded from inspection during preconfigured WAF evaluation. When specifying this field, the query or fragment part should be excluded.",
+                          },
+                          targetRuleIds: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                            description:
+                              "A list of target rule IDs under the WAF rule set to apply the preconfigured WAF exclusion. If omitted, it refers to all the rule IDs under the WAF rule set.",
+                          },
+                          targetRuleSet: {
+                            type: "string",
+                            description:
+                              "Target WAF rule set to apply the preconfigured WAF exclusion.",
+                          },
+                        },
+                        additionalProperties: true,
+                      },
+                      description:
+                        "A list of exclusions to apply during preconfigured WAF evaluation.",
+                    },
+                  },
+                  additionalProperties: true,
                   description:
-                    "[Output only] Type of the resource. Alwayscompute#securityPolicyRule for security policy rules",
+                    "Preconfigured WAF configuration to be applied for the rule. If the rule does not evaluate preconfigured WAF rules, i.e., if evaluatePreconfiguredWaf() is not used, this field will have no effect.",
+                },
+                preview: {
+                  type: "boolean",
+                  description:
+                    "If set to true, the specified action is not enforced.",
+                },
+                priority: {
+                  type: "integer",
+                  description:
+                    "An integer indicating the priority of a rule in the list. The priority must be a positive value between 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the highest priority and 2147483647 is the lowest priority.",
                 },
                 rateLimitOptions: {
                   type: "object",
@@ -556,21 +707,35 @@ const regionSecurityPoliciesPatch: AppBlock = {
                     banDurationSec: {
                       type: "integer",
                       description:
-                        'Can only be specified if the action for the rule is\n"rate_based_ban". If specified, determines the time (in seconds)\nthe traffic will continue to be banned by the rate limit after the\nrate falls below the threshold. (Format: int32)',
+                        'Can only be specified if the action for the rule is "rate_based_ban". If specified, determines the time (in seconds) the traffic will continue to be banned by the rate limit after the rate falls below the threshold.',
                     },
-                    exceedAction: {
+                    banThreshold: {
+                      type: "object",
+                      properties: {
+                        count: {
+                          type: "integer",
+                          description:
+                            "Number of HTTP(S) requests for calculating the threshold.",
+                        },
+                        intervalSec: {
+                          type: "integer",
+                          description:
+                            "Interval over which the threshold is computed.",
+                        },
+                      },
+                      additionalProperties: true,
+                      description:
+                        "Can only be specified if the action for the rule is \"rate_based_ban\". If specified, the key will be banned for the configured 'ban_duration_sec' when the number of requests that exceed the 'rate_limit_threshold' also exceed this 'ban_threshold'.",
+                    },
+                    conformAction: {
                       type: "string",
                       description:
-                        "Action to take for requests that are above the configured rate limit\nthreshold, to either deny with a specified HTTP response code, or\nredirect to a different endpoint.\nValid options are `deny(STATUS)`, where valid values for\n`STATUS` are 403, 404, 429, and 502, and\n`redirect`, where the redirect parameters come from\n`exceedRedirectOptions` below.\nThe `redirect` action is only supported in Global Security Policies of\ntype CLOUD_ARMOR.",
-                    },
-                    enforceOnKeyName: {
-                      type: "string",
-                      description:
-                        "Rate limit key name applicable only for the following key types:\nHTTP_HEADER -- Name of the HTTP header whose value is taken as the key\nvalue.\nHTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key\nvalue.",
+                        'Action to take for requests that are under the configured rate limit threshold. Valid option is "allow" only.',
                     },
                     enforceOnKey: {
                       type: "string",
                       enum: [
+                        "UNDEFINED_ENFORCE_ON_KEY",
                         "ALL",
                         "HTTP_COOKIE",
                         "HTTP_HEADER",
@@ -584,21 +749,22 @@ const regionSecurityPoliciesPatch: AppBlock = {
                         "XFF_IP",
                       ],
                       description:
-                        'Determines the key to enforce the rate_limit_threshold on. Possible\nvalues are:\n   \n   - ALL: A single rate limit threshold is applied to all\n   the requests matching this rule. This is the default value if\n   "enforceOnKey" is not configured.\n   - IP: The source IP address of\n   the request is the key. Each IP has this limit enforced\n   separately.\n   - HTTP_HEADER: The value of the HTTP\n   header whose name is configured under "enforceOnKeyName". The key\n   value is truncated to the first 128 bytes of the header value. If no\n   such header is present in the request, the key type defaults toALL.\n   - XFF_IP: The first IP address (i.e. the\n   originating client IP address) specified in the list of IPs under\n   X-Forwarded-For HTTP header. If no such header is present or the value\n   is not a valid IP, the key defaults to the source IP address of\n   the request i.e. key type IP.\n   - HTTP_COOKIE: The value of the HTTP\n   cookie whose name is configured under "enforceOnKeyName". The key\n   value is truncated to the first 128 bytes of the cookie value. If no\n   such cookie is present in the request, the key type defaults toALL.\n   - HTTP_PATH: The URL path of the HTTP request. The key\n   value is truncated to the first 128 bytes. \n   - SNI: Server name indication in the TLS session of the\n   HTTPS request. The key value is truncated to the first 128 bytes. The\n   key type defaults to ALL on a HTTP session. \n   - REGION_CODE: The country/region from which the request\n   originates. \n   - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the\n   client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the\n   key type defaults to ALL. \n   - USER_IP: The IP address of the originating client,\n   which is resolved based on "userIpRequestHeaders" configured with the\n   security policy. If there is no "userIpRequestHeaders" configuration or\n   an IP address cannot be resolved from it, the key type defaults toIP. \n\n- TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the\nclient connects using HTTPS, HTTP/2 or HTTP/3. If not available, the\nkey type defaults to ALL. \nFor "fairshare" action, this value is limited to ALL i.e. a single rate\nlimit threshold is enforced for all the requests matching the rule.',
-                    },
-                    conformAction: {
-                      type: "string",
-                      description:
-                        'Action to take for requests that are under the configured rate limit\nthreshold. Valid option is "allow" only.',
+                        'Determines the key to enforce the rate_limit_threshold on. Possible values are:     - ALL: A single rate limit threshold is applied to all    the requests matching this rule. This is the default value if    "enforceOnKey" is not configured.    - IP: The source IP address of    the request is the key. Each IP has this limit enforced    separately.    - HTTP_HEADER: The value of the HTTP    header whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the header value. If no    such header is present in the request, the key type defaults toALL.    - XFF_IP: The first IP address (i.e. the    originating client IP address) specified in the list of IPs under    X-Forwarded-For HTTP header. If no such header is present or the value    is not a valid IP, the key defaults to the source IP address of    the request i.e. key type IP.    - HTTP_COOKIE: The value of the HTTP    cookie whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the cookie value. If no    such cookie is present in the request, the key type defaults toALL.    - HTTP_PATH: The URL path of the HTTP request. The key    value is truncated to the first 128 bytes.    - SNI: Server name indication in the TLS session of the    HTTPS request. The key value is truncated to the first 128 bytes. The    key type defaults to ALL on a HTTP session.    - REGION_CODE: The country/region from which the request    originates.    - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the    client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the    key type defaults to ALL.    - USER_IP: The IP address of the originating client,    which is resolved based on "userIpRequestHeaders" configured with the    security policy. If there is no "userIpRequestHeaders" configuration or    an IP address cannot be resolved from it, the key type defaults toIP.  - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. For "fairshare" action, this value is limited to ALL i.e. a single rate limit threshold is enforced for all the requests matching the rule. Check the EnforceOnKey enum for the list of possible values.',
                     },
                     enforceOnKeyConfigs: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
+                          enforceOnKeyName: {
+                            type: "string",
+                            description:
+                              "Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.",
+                          },
                           enforceOnKeyType: {
                             type: "string",
                             enum: [
+                              "UNDEFINED_ENFORCE_ON_KEY_TYPE",
                               "ALL",
                               "HTTP_COOKIE",
                               "HTTP_HEADER",
@@ -612,483 +778,268 @@ const regionSecurityPoliciesPatch: AppBlock = {
                               "XFF_IP",
                             ],
                             description:
-                              'Determines the key to enforce the rate_limit_threshold on. Possible\nvalues are:\n   \n   - ALL: A single rate limit threshold is applied to all\n   the requests matching this rule. This is the default value if\n   "enforceOnKeyConfigs" is not configured.\n   - IP: The source IP address of\n   the request is the key. Each IP has this limit enforced\n   separately.\n   - HTTP_HEADER: The value of the HTTP\n   header whose name is configured under "enforceOnKeyName". The key\n   value is truncated to the first 128 bytes of the header value. If no\n   such header is present in the request, the key type defaults toALL.\n   - XFF_IP: The first IP address (i.e. the\n   originating client IP address) specified in the list of IPs under\n   X-Forwarded-For HTTP header. If no such header is present or the\n   value is not a valid IP, the key defaults to the source IP address of\n   the request i.e. key type IP.\n   - HTTP_COOKIE: The value of the HTTP\n   cookie whose name is configured under "enforceOnKeyName". The key\n   value is truncated to the first 128 bytes of the cookie value. If no\n   such cookie is present in the request, the key type defaults toALL.\n   - HTTP_PATH: The URL path of the HTTP request. The key\n   value is truncated to the first 128 bytes. \n   - SNI: Server name indication in the TLS session of\n   the HTTPS request. The key value is truncated to the first 128 bytes.\n   The key type defaults to ALL on a HTTP session. \n   - REGION_CODE: The country/region from which the\n   request originates. \n   - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the\n   client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the\n   key type defaults to ALL. \n   - USER_IP: The IP address of the originating client,\n   which is resolved based on "userIpRequestHeaders" configured with the\n   security policy. If there is no "userIpRequestHeaders" configuration\n   or an IP address cannot be resolved from it, the key type defaults toIP. \n\n- TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the\nclient connects using HTTPS, HTTP/2 or HTTP/3. If not available, the\nkey type defaults to ALL.',
-                          },
-                          enforceOnKeyName: {
-                            type: "string",
-                            description:
-                              "Rate limit key name applicable only for the following key types:\nHTTP_HEADER -- Name of the HTTP header whose value is taken as the\nkey value. HTTP_COOKIE -- Name of the HTTP cookie whose value is\ntaken as the key value.",
+                              'Determines the key to enforce the rate_limit_threshold on. Possible values are:     - ALL: A single rate limit threshold is applied to all    the requests matching this rule. This is the default value if    "enforceOnKeyConfigs" is not configured.    - IP: The source IP address of    the request is the key. Each IP has this limit enforced    separately.    - HTTP_HEADER: The value of the HTTP    header whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the header value. If no    such header is present in the request, the key type defaults toALL.    - XFF_IP: The first IP address (i.e. the    originating client IP address) specified in the list of IPs under    X-Forwarded-For HTTP header. If no such header is present or the    value is not a valid IP, the key defaults to the source IP address of    the request i.e. key type IP.    - HTTP_COOKIE: The value of the HTTP    cookie whose name is configured under "enforceOnKeyName". The key    value is truncated to the first 128 bytes of the cookie value. If no    such cookie is present in the request, the key type defaults toALL.    - HTTP_PATH: The URL path of the HTTP request. The key    value is truncated to the first 128 bytes.    - SNI: Server name indication in the TLS session of    the HTTPS request. The key value is truncated to the first 128 bytes.    The key type defaults to ALL on a HTTP session.    - REGION_CODE: The country/region from which the    request originates.    - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the    client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the    key type defaults to ALL.    - USER_IP: The IP address of the originating client,    which is resolved based on "userIpRequestHeaders" configured with the    security policy. If there is no "userIpRequestHeaders" configuration    or an IP address cannot be resolved from it, the key type defaults toIP.  - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. Check the EnforceOnKeyType enum for the list of possible values.',
                           },
                         },
                         additionalProperties: true,
                       },
                       description:
-                        "If specified, any combination of values of\nenforce_on_key_type/enforce_on_key_name is treated as the key on which\nratelimit threshold/action is enforced. You can specify up to 3\nenforce_on_key_configs. If enforce_on_key_configs is specified,\nenforce_on_key must not be specified.",
+                        "If specified, any combination of values of enforce_on_key_type/enforce_on_key_name is treated as the key on which ratelimit threshold/action is enforced. You can specify up to 3 enforce_on_key_configs. If enforce_on_key_configs is specified, enforce_on_key must not be specified.",
+                    },
+                    enforceOnKeyName: {
+                      type: "string",
+                      description:
+                        "Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.",
+                    },
+                    exceedAction: {
+                      type: "string",
+                      description:
+                        "Action to take for requests that are above the configured rate limit threshold, to either deny with a specified HTTP response code, or redirect to a different endpoint. Valid options are `deny(STATUS)`, where valid values for `STATUS` are 403, 404, 429, and 502, and `redirect`, where the redirect parameters come from `exceedRedirectOptions` below. The `redirect` action is only supported in Global Security Policies of type CLOUD_ARMOR.",
                     },
                     exceedRedirectOptions: {
                       type: "object",
                       properties: {
-                        type: {
-                          type: "string",
-                          enum: ["EXTERNAL_302", "GOOGLE_RECAPTCHA"],
-                          description:
-                            "Type of the redirect action. Possible values are:\n   \n   - GOOGLE_RECAPTCHA: redirect to reCAPTCHA for manual\n   challenge assessment.\n   - EXTERNAL_302: redirect to a different URL via a 302\n   response.",
-                        },
                         target: {
                           type: "string",
                           description:
-                            "Target for the redirect action. This is required if the type is\nEXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.",
+                            "Target for the redirect action. This is required if the type is EXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.",
+                        },
+                        type: {
+                          type: "string",
+                          enum: [
+                            "UNDEFINED_TYPE",
+                            "EXTERNAL_302",
+                            "GOOGLE_RECAPTCHA",
+                          ],
+                          description:
+                            "Type of the redirect action. Possible values are:     - GOOGLE_RECAPTCHA: redirect to reCAPTCHA for manual    challenge assessment.    - EXTERNAL_302: redirect to a different URL via a 302    response. Check the Type enum for the list of possible values.",
                         },
                       },
                       additionalProperties: true,
-                    },
-                    banThreshold: {
-                      type: "object",
-                      properties: {
-                        intervalSec: {
-                          type: "integer",
-                          description:
-                            "Interval over which the threshold is computed. (Format: int32)",
-                        },
-                        count: {
-                          type: "integer",
-                          description:
-                            "Number of HTTP(S) requests for calculating the threshold. (Format: int32)",
-                        },
-                      },
-                      additionalProperties: true,
+                      description:
+                        "Parameters defining the redirect action that is used as the exceed action. Cannot be specified if the exceed action is not redirect. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
                     },
                     rateLimitThreshold: {
                       type: "object",
                       properties: {
-                        intervalSec: {
-                          type: "integer",
-                          description:
-                            "Interval over which the threshold is computed. (Format: int32)",
-                        },
                         count: {
                           type: "integer",
                           description:
-                            "Number of HTTP(S) requests for calculating the threshold. (Format: int32)",
+                            "Number of HTTP(S) requests for calculating the threshold.",
+                        },
+                        intervalSec: {
+                          type: "integer",
+                          description:
+                            "Interval over which the threshold is computed.",
                         },
                       },
                       additionalProperties: true,
+                      description: "Threshold at which to begin ratelimiting.",
                     },
                   },
                   additionalProperties: true,
+                  description:
+                    'Must be specified if the action is "rate_based_ban" or "throttle" or "fairshare". Cannot be specified for any other actions.',
                 },
                 redirectOptions: {
                   type: "object",
                   properties: {
-                    type: {
-                      type: "string",
-                      enum: ["EXTERNAL_302", "GOOGLE_RECAPTCHA"],
-                      description:
-                        "Type of the redirect action. Possible values are:\n   \n   - GOOGLE_RECAPTCHA: redirect to reCAPTCHA for manual\n   challenge assessment.\n   - EXTERNAL_302: redirect to a different URL via a 302\n   response.",
-                    },
                     target: {
                       type: "string",
                       description:
-                        "Target for the redirect action. This is required if the type is\nEXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.",
+                        "Target for the redirect action. This is required if the type is EXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.",
                     },
-                  },
-                  additionalProperties: true,
-                },
-                action: {
-                  type: "string",
-                  description:
-                    "The Action to perform when the rule is matched.\nThe following are the valid actions:\n   \n   - allow: allow access to target.\n   - deny(STATUS): deny access to target, returns the\n   HTTP response code specified. Valid values for `STATUS`\n   are 403, 404, and 502.\n   - rate_based_ban: limit client traffic to the configured\n   threshold and ban the client if the traffic exceeds the threshold.\n   Configure parameters for this action in RateLimitOptions. Requires\n   rate_limit_options to be set.\n   - redirect: redirect to a different target. This can\n   either be an internal reCAPTCHA redirect, or an external URL-based\n   redirect via a 302 response. Parameters for this action can be configured\n   via redirectOptions. This action is only supported in Global Security\n   Policies of type CLOUD_ARMOR.\n   - throttle: limit\n   client traffic to the configured threshold. Configure parameters for this\n   action in rateLimitOptions. Requires rate_limit_options to be set for\n   this.\n   - fairshare (preview only): when traffic reaches the\n   threshold limit, requests from the clients matching this rule begin to be\n   rate-limited using the Fair Share algorithm. This action is only allowed\n   in security policies of type `CLOUD_ARMOR_INTERNAL_SERVICE`.",
-                },
-                headerAction: {
-                  type: "object",
-                  properties: {
-                    requestHeadersToAdds: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          headerValue: {
-                            type: "string",
-                            description:
-                              "The value to set the named header to.",
-                          },
-                          headerName: {
-                            type: "string",
-                            description: "The name of the header to set.",
-                          },
-                        },
-                        additionalProperties: true,
-                      },
-                      description:
-                        "The list of request headers to add or overwrite if they're already\npresent.",
-                    },
-                  },
-                  additionalProperties: true,
-                },
-                preview: {
-                  type: "boolean",
-                  description:
-                    "If set to true, the specified action is not enforced.",
-                },
-                match: {
-                  type: "object",
-                  properties: {
-                    versionedExpr: {
+                    type: {
                       type: "string",
-                      enum: ["SRC_IPS_V1"],
+                      enum: [
+                        "UNDEFINED_TYPE",
+                        "EXTERNAL_302",
+                        "GOOGLE_RECAPTCHA",
+                      ],
                       description:
-                        "Preconfigured versioned expression.\nIf this field is specified, config must also be specified.\nAvailable preconfigured expressions along with their requirements are:\nSRC_IPS_V1 - must specify the corresponding src_ip_range field in\nconfig.",
-                    },
-                    config: {
-                      type: "object",
-                      properties: {
-                        srcIpRanges: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "CIDR IP address range.\nMaximum number of src_ip_ranges allowed is 10.",
-                        },
-                      },
-                      additionalProperties: true,
-                    },
-                    exprOptions: {
-                      type: "object",
-                      properties: {
-                        recaptchaOptions: {
-                          type: "object",
-                          properties: {
-                            actionTokenSiteKeys: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "A list of site keys to be used during the validation of reCAPTCHA\naction-tokens. The provided site keys need to be created from\nreCAPTCHA API under the same project where the security policy is\ncreated.",
-                            },
-                            sessionTokenSiteKeys: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "A list of site keys to be used during the validation of reCAPTCHA\nsession-tokens. The provided site keys need to be created from\nreCAPTCHA API under the same project where the security policy is\ncreated.",
-                            },
-                          },
-                          additionalProperties: true,
-                        },
-                      },
-                      additionalProperties: true,
-                    },
-                    expr: {
-                      type: "object",
-                      properties: {
-                        title: {
-                          type: "string",
-                          description:
-                            "Optional. Title for the expression, i.e. a short string describing\nits purpose. This can be used e.g. in UIs which allow to enter the\nexpression.",
-                        },
-                        expression: {
-                          type: "string",
-                          description:
-                            "Textual representation of an expression in Common Expression Language\nsyntax.",
-                        },
-                        location: {
-                          type: "string",
-                          description:
-                            "Optional. String indicating the location of the expression for error\nreporting, e.g. a file name and a position in the file.",
-                        },
-                        description: {
-                          type: "string",
-                          description:
-                            "Optional. Description of the expression. This is a longer text which\ndescribes the expression, e.g. when hovered over it in a UI.",
-                        },
-                      },
-                      description:
-                        'Represents a textual expression in the Common Expression Language (CEL)\nsyntax. CEL is a C-like expression language. The syntax and semantics of CEL\nare documented at https://github.com/google/cel-spec.\n\nExample (Comparison):\n\n    title: "Summary size limit"\n    description: "Determines if a summary is less than 100 chars"\n    expression: "document.summary.size() < 100"\n\nExample (Equality):\n\n    title: "Requestor is owner"\n    description: "Determines if requestor is the document owner"\n    expression: "document.owner == request.auth.claims.email"\n\nExample (Logic):\n\n    title: "Public documents"\n    description: "Determine whether the document should be publicly visible"\n    expression: "document.type != \'private\' && document.type != \'internal\'"\n\nExample (Data Manipulation):\n\n    title: "Notification string"\n    description: "Create a notification string with a timestamp."\n    expression: "\'New message received at \' + string(document.create_time)"\n\nThe exact variables and functions that may be referenced within an expression\nare determined by the service that evaluates it. See the service\ndocumentation for additional information.',
-                      additionalProperties: true,
+                        "Type of the redirect action. Possible values are:     - GOOGLE_RECAPTCHA: redirect to reCAPTCHA for manual    challenge assessment.    - EXTERNAL_302: redirect to a different URL via a 302    response. Check the Type enum for the list of possible values.",
                     },
                   },
-                  description:
-                    "Represents a match condition that incoming traffic is evaluated against.\nExactly one field must be specified.",
                   additionalProperties: true,
-                },
-                description: {
-                  type: "string",
                   description:
-                    "An optional description of this resource. Provide this property when you\ncreate the resource.",
-                },
-                priority: {
-                  type: "integer",
-                  description:
-                    "An integer indicating the priority of a rule in the list. The priority\nmust be a positive value between 0 and 2147483647.\nRules are evaluated from highest to lowest priority where 0 is the\nhighest priority and 2147483647 is the lowest priority. (Format: int32)",
+                    "Parameters defining the redirect action. Cannot be specified for any other actions. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
                 },
               },
               description:
-                "Represents a rule that describes one or more match conditions along with\nthe action to be taken when traffic matches this condition (allow or deny).",
+                "Represents a rule that describes one or more match conditions along with the action to be taken when traffic matches this condition (allow or deny).",
               additionalProperties: true,
             },
             description:
-              'A list of rules that belong to this policy.\nThere must always be a default rule which is a rule with priority\n2147483647 and match all condition (for the match condition this means\nmatch  "*" for srcIpRanges and for the networkMatch condition every field\nmust be either match "*" or not set). If no rules are provided when\ncreating a security policy, a default rule with action "allow" will be\nadded.',
-          },
-          required: false,
-        },
-        name: {
-          name: "Name",
-          description: "Name of the resource.",
-          type: {
-            type: "string",
-            description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description: "[Output only] Type of the resource.",
-          type: {
-            type: "string",
-            description:
-              "[Output only] Type of the resource. Alwayscompute#securityPolicyfor security policies",
-          },
-          required: false,
-        },
-        description: {
-          name: "Description",
-          description: "An optional description of this resource.",
-          type: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this property when you\ncreate the resource.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        ddosProtectionConfig: {
-          name: "DDoS Protection Config",
-          description: "Request body field: ddosProtectionConfig",
-          type: {
-            type: "object",
-            properties: {
-              ddosProtection: {
-                type: "string",
-                enum: ["ADVANCED", "ADVANCED_PREVIEW", "STANDARD"],
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "[Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
-          },
-          required: false,
-        },
-        fingerprint: {
-          name: "Fingerprint",
-          description:
-            "Specifies a fingerprint for this resource, which is essentially a hash of the metadata's contents and used for optimistic locking.",
-          type: {
-            type: "string",
-            description:
-              "Specifies a fingerprint for this resource, which is essentially a hash of\nthe metadata's contents and used for optimistic locking. The\nfingerprint is initially generated by Compute Engine and changes after\nevery request to modify or update metadata. You must always provide an\nup-to-date fingerprint hash in order to update or change metadata,\notherwise the request will fail with error412 conditionNotMet.\n\nTo see the latest fingerprint, make get() request to the\nsecurity policy. (Format: byte)",
+              'A list of rules that belong to this policy. There must always be a default rule which is a rule with priority 2147483647 and match all condition (for the match condition this means match  "*" for srcIpRanges and for the networkMatch condition every field must be either match "*" or not set). If no rules are provided when creating a security policy, a default rule with action "allow" will be added.',
           },
           required: false,
         },
         shortName: {
           name: "Short Name",
           description:
-            "User-provided name of the organization security policy.",
+            "User-provided name of the organization security policy. The name should be unique in the organization in which the security policy is created. This should only be used when SecurityPolicyType is CLOUD_ARMOR. The name must be 1-63 characters long, and comply with https://www.ietf.org/rfc/rfc1035.txt. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           type: {
             type: "string",
             description:
-              "User-provided name of the organization security policy. The name should be\nunique in the organization in which the security policy is created. This\nshould only be used when SecurityPolicyType is CLOUD_ARMOR.\nThe name must be 1-63 characters long, and comply with\nhttps://www.ietf.org/rfc/rfc1035.txt. Specifically, the name must be 1-63\ncharacters long and match the regular expression\n`[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a\nlowercase letter, and all following characters must be a dash, lowercase\nletter, or digit, except the last character, which cannot be a dash.",
+              "User-provided name of the organization security policy. The name should be unique in the organization in which the security policy is created. This should only be used when SecurityPolicyType is CLOUD_ARMOR. The name must be 1-63 characters long, and comply with https://www.ietf.org/rfc/rfc1035.txt. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
           },
           required: false,
         },
-        id: {
-          name: "ID",
-          description: "[Output Only] The unique identifier for the resource.",
+        type: {
+          name: "Type",
+          description:
+            "The type indicates the intended use of the security policy.     - CLOUD_ARMOR: Cloud Armor backend security policies can    be configured to filter incoming HTTP requests targeting backend services.    They filter requests before they hit the origin servers.    - CLOUD_ARMOR_EDGE: Cloud Armor edge security policies can    be configured to filter incoming HTTP requests targeting backend services    (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage).    They filter requests before the request is served from Google's cache.    - CLOUD_ARMOR_INTERNAL_SERVICE (preview only): Cloud Armor    internal service policies can be configured to filter HTTP requests    targeting services managed by Traffic Director in a service mesh. They    filter requests before the request is served from the application.  - CLOUD_ARMOR_NETWORK: Cloud Armor network policies can be configured to filter packets targeting network load balancing resources such as backend services, target pools, target instances, and instances with external IPs. They filter requests before the request is served from the application.   This field can be set only at resource creation time. Check the Type enum for the list of possible values.",
           type: {
             type: "string",
+            enum: [
+              "UNDEFINED_TYPE",
+              "CLOUD_ARMOR",
+              "CLOUD_ARMOR_EDGE",
+              "CLOUD_ARMOR_NETWORK",
+            ],
             description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
+              "The type indicates the intended use of the security policy.     - CLOUD_ARMOR: Cloud Armor backend security policies can    be configured to filter incoming HTTP requests targeting backend services.    They filter requests before they hit the origin servers.    - CLOUD_ARMOR_EDGE: Cloud Armor edge security policies can    be configured to filter incoming HTTP requests targeting backend services    (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage).    They filter requests before the request is served from Google's cache.    - CLOUD_ARMOR_INTERNAL_SERVICE (preview only): Cloud Armor    internal service policies can be configured to filter HTTP requests    targeting services managed by Traffic Director in a service mesh. They    filter requests before the request is served from the application.  - CLOUD_ARMOR_NETWORK: Cloud Armor network policies can be configured to filter packets targeting network load balancing resources such as backend services, target pools, target instances, and instances with external IPs. They filter requests before the request is served from the application.   This field can be set only at resource creation time. Check the Type enum for the list of possible values.",
           },
           required: false,
         },
         userDefinedFields: {
           name: "User Defined Fields",
           description:
-            "Definitions of user-defined fields for CLOUD_ARMOR_NETWORK policies.",
+            'Definitions of user-defined fields for CLOUD_ARMOR_NETWORK policies. A user-defined field consists of up to 4 bytes extracted from a fixed offset in the packet, relative to the IPv4, IPv6, TCP, or UDP header, with an optional mask to select certain bits. Rules may then specify matching values for these fields.  Example:   userDefinedFields:  - name: "ipv4_fragment_offset"    base: IPV4    offset: 6    size: 2    mask: "0x1fff"',
           type: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                offset: {
-                  type: "integer",
+                base: {
+                  type: "string",
+                  enum: ["UNDEFINED_BASE", "IPV4", "IPV6", "TCP", "UDP"],
                   description:
-                    "Offset of the first byte of the field (in network byte order) relative to\n'base'. (Format: int32)",
+                    "The base relative to which 'offset' is measured. Possible values are:     - IPV4: Points to the beginning of the IPv4 header.    - IPV6: Points to the beginning of the IPv6 header.    - TCP: Points to the beginning of the TCP header, skipping    over any IPv4 options or IPv6 extension headers. Not present for    non-first fragments.    - UDP: Points to the beginning of the UDP header, skipping    over any IPv4 options or IPv6 extension headers. Not present for    non-first fragments.   required Check the Base enum for the list of possible values.",
                 },
                 mask: {
                   type: "string",
                   description:
-                    'If specified, apply this mask (bitwise AND) to the field to ignore bits\nbefore matching. Encoded as a hexadecimal number (starting with "0x").\nThe last byte of the field (in network byte order) corresponds to the\nleast significant byte of the mask.',
+                    'If specified, apply this mask (bitwise AND) to the field to ignore bits before matching. Encoded as a hexadecimal number (starting with "0x"). The last byte of the field (in network byte order) corresponds to the least significant byte of the mask.',
                 },
                 name: {
                   type: "string",
                   description:
                     "The name of this field. Must be unique within the policy.",
                 },
-                size: {
+                offset: {
                   type: "integer",
                   description:
-                    "Size of the field in bytes. Valid values: 1-4. (Format: int32)",
+                    "Offset of the first byte of the field (in network byte order) relative to 'base'.",
                 },
-                base: {
-                  type: "string",
-                  enum: ["IPV4", "IPV6", "TCP", "UDP"],
-                  description:
-                    "The base relative to which 'offset' is measured. Possible values are:\n   \n   - IPV4: Points to the beginning of the IPv4 header.\n   - IPV6: Points to the beginning of the IPv6 header.\n   - TCP: Points to the beginning of the TCP header, skipping\n   over any IPv4 options or IPv6 extension headers. Not present for\n   non-first fragments.\n   - UDP: Points to the beginning of the UDP header, skipping\n   over any IPv4 options or IPv6 extension headers. Not present for\n   non-first fragments.\n\n\nrequired",
+                size: {
+                  type: "integer",
+                  description: "Size of the field in bytes. Valid values: 1-4.",
                 },
               },
               additionalProperties: true,
             },
             description:
-              'Definitions of user-defined fields for CLOUD_ARMOR_NETWORK policies. A\nuser-defined field consists of up to 4 bytes extracted from a fixed offset\nin the packet, relative to the IPv4, IPv6, TCP, or UDP header, with an\noptional mask to select certain bits. Rules may then specify matching\nvalues for these fields.\n\nExample:\n\n userDefinedFields:\n - name: "ipv4_fragment_offset"\n   base: IPV4\n   offset: 6\n   size: 2\n   mask: "0x1fff"',
+              'Definitions of user-defined fields for CLOUD_ARMOR_NETWORK policies. A user-defined field consists of up to 4 bytes extracted from a fixed offset in the packet, relative to the IPv4, IPv6, TCP, or UDP header, with an optional mask to select certain bits. Rules may then specify matching values for these fields.  Example:   userDefinedFields:  - name: "ipv4_fragment_offset"    base: IPV4    offset: 6    size: 2    mask: "0x1fff"',
+          },
+          required: false,
+        },
+        requestId: {
+          name: "Request Id",
+          description:
+            "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+          type: {
+            type: "string",
+            description:
+              "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+          },
+          required: false,
+        },
+        updateMask: {
+          name: "Update Mask",
+          description:
+            "Indicates fields to be cleared as part of this request.",
+          type: {
+            type: "string",
+            description:
+              "Indicates fields to be cleared as part of this request.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.securityPolicy !== undefined)
+          pathParams["security_policy"] = String(
+            input.event.inputConfig.securityPolicy,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/securityPolicies/{securityPolicy}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
-        if (input.event.inputConfig.labelFingerprint !== undefined)
-          requestBody.labelFingerprint =
-            input.event.inputConfig.labelFingerprint;
-        if (input.event.inputConfig.associations !== undefined)
-          requestBody.associations = input.event.inputConfig.associations;
-        if (input.event.inputConfig.labels !== undefined)
-          requestBody.labels = input.event.inputConfig.labels;
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
+        if (input.event.inputConfig.updateMask !== undefined)
+          queryParams["updateMask"] = String(
+            input.event.inputConfig.updateMask,
+          );
+        const body: Record<string, any> = {};
         if (input.event.inputConfig.adaptiveProtectionConfig !== undefined)
-          requestBody.adaptiveProtectionConfig =
+          body.adaptiveProtectionConfig =
             input.event.inputConfig.adaptiveProtectionConfig;
+        if (input.event.inputConfig.advancedOptionsConfig !== undefined)
+          body.advancedOptionsConfig =
+            input.event.inputConfig.advancedOptionsConfig;
+        if (input.event.inputConfig.associations !== undefined)
+          body.associations = input.event.inputConfig.associations;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.ddosProtectionConfig !== undefined)
+          body.ddosProtectionConfig =
+            input.event.inputConfig.ddosProtectionConfig;
+        if (input.event.inputConfig.description !== undefined)
+          body.description = input.event.inputConfig.description;
+        if (input.event.inputConfig.fingerprint !== undefined)
+          body.fingerprint = input.event.inputConfig.fingerprint;
+        if (input.event.inputConfig.id !== undefined)
+          body.id = input.event.inputConfig.id;
+        if (input.event.inputConfig.kind !== undefined)
+          body.kind = input.event.inputConfig.kind;
+        if (input.event.inputConfig.labelFingerprint !== undefined)
+          body.labelFingerprint = input.event.inputConfig.labelFingerprint;
+        if (input.event.inputConfig.labels !== undefined)
+          body.labels = input.event.inputConfig.labels;
+        if (input.event.inputConfig.name !== undefined)
+          body.name = input.event.inputConfig.name;
         if (input.event.inputConfig.parent !== undefined)
-          requestBody.parent = input.event.inputConfig.parent;
+          body.parent = input.event.inputConfig.parent;
         if (input.event.inputConfig.recaptchaOptionsConfig !== undefined)
-          requestBody.recaptchaOptionsConfig =
+          body.recaptchaOptionsConfig =
             input.event.inputConfig.recaptchaOptionsConfig;
         if (input.event.inputConfig.region !== undefined)
-          requestBody.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.advancedOptionsConfig !== undefined)
-          requestBody.advancedOptionsConfig =
-            input.event.inputConfig.advancedOptionsConfig;
-        if (input.event.inputConfig.type !== undefined)
-          requestBody.type = input.event.inputConfig.type;
+          body.region = input.event.inputConfig.region;
         if (input.event.inputConfig.rules !== undefined)
-          requestBody.rules = input.event.inputConfig.rules;
-        if (input.event.inputConfig.name !== undefined)
-          requestBody.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.kind !== undefined)
-          requestBody.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.description !== undefined)
-          requestBody.description = input.event.inputConfig.description;
+          body.rules = input.event.inputConfig.rules;
         if (input.event.inputConfig.selfLink !== undefined)
-          requestBody.selfLink = input.event.inputConfig.selfLink;
-        if (input.event.inputConfig.ddosProtectionConfig !== undefined)
-          requestBody.ddosProtectionConfig =
-            input.event.inputConfig.ddosProtectionConfig;
-        if (input.event.inputConfig.creationTimestamp !== undefined)
-          requestBody.creationTimestamp =
-            input.event.inputConfig.creationTimestamp;
-        if (input.event.inputConfig.fingerprint !== undefined)
-          requestBody.fingerprint = input.event.inputConfig.fingerprint;
+          body.selfLink = input.event.inputConfig.selfLink;
         if (input.event.inputConfig.shortName !== undefined)
-          requestBody.shortName = input.event.inputConfig.shortName;
-        if (input.event.inputConfig.id !== undefined)
-          requestBody.id = input.event.inputConfig.id;
+          body.shortName = input.event.inputConfig.shortName;
+        if (input.event.inputConfig.type !== undefined)
+          body.type = input.event.inputConfig.type;
         if (input.event.inputConfig.userDefinedFields !== undefined)
-          requestBody.userDefinedFields =
-            input.event.inputConfig.userDefinedFields;
+          body.userDefinedFields = input.event.inputConfig.userDefinedFields;
 
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
+        const result = await computeFetch({
+          config: input.app.config,
+          method: "PATCH",
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/securityPolicies/{security_policy}",
+          pathParams,
+          queryParams,
+          body: Object.keys(body).length > 0 ? body : undefined,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -1099,107 +1050,313 @@ const regionSecurityPoliciesPatch: AppBlock = {
       type: {
         type: "object",
         properties: {
-          targetId: {
+          clientOperationId: {
             type: "string",
             description:
-              "[Output Only] The unique target ID, which identifies a specific incarnation\nof the target resource. (Format: uint64)",
+              "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
           creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
+          description: {
+            type: "string",
+            description:
+              "[Output Only] A textual description of the operation, which is set when the operation is created.",
+          },
+          endTime: {
+            type: "string",
+            description:
+              "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
+          },
+          error: {
+            type: "object",
+            properties: {
+              errors: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    code: {
+                      type: "string",
+                      description:
+                        "[Output Only] The error type identifier for this error.",
+                    },
+                    errorDetails: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          errorInfo: {
+                            type: "object",
+                            properties: {
+                              domain: {
+                                type: "string",
+                                description:
+                                  'The logical grouping to which the "reason" belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: "pubsub.googleapis.com". If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is "googleapis.com".',
+                              },
+                              metadatas: {
+                                type: "object",
+                                additionalProperties: {
+                                  type: "string",
+                                },
+                                description:
+                                  'Additional structured details about this error.  Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value.  For example, rather than `{"instanceLimit": "100/request"}`, should be returned as, `{"instanceLimitPerRequest": "100"}`, if the client exceeds the number of instances that can be created in a single (batch) request.',
+                              },
+                              reason: {
+                                type: "string",
+                                description:
+                                  "The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.",
+                              },
+                            },
+                            description:
+                              'Describes the cause of the error with structured details.  Example of an error when contacting the "pubsub.googleapis.com" API when it is not enabled:      { "reason": "API_DISABLED"       "domain": "googleapis.com"       "metadata": {         "resource": "projects/123",         "service": "pubsub.googleapis.com"       }     }  This response indicates that the pubsub.googleapis.com API is not enabled.  Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock:      { "reason": "STOCKOUT"       "domain": "spanner.googleapis.com",       "metadata": {         "availableRegions": "us-central1,us-east2"       }     }',
+                            additionalProperties: true,
+                          },
+                          help: {
+                            type: "object",
+                            properties: {
+                              links: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    description: {
+                                      type: "string",
+                                      description:
+                                        "Describes what the link offers.",
+                                    },
+                                    url: {
+                                      type: "string",
+                                      description: "The URL of the link.",
+                                    },
+                                  },
+                                  description: "Describes a URL link.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "URL(s) pointing to additional information on handling the current error.",
+                              },
+                            },
+                            description:
+                              "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
+                            additionalProperties: true,
+                          },
+                          localizedMessage: {
+                            type: "object",
+                            properties: {
+                              locale: {
+                                type: "string",
+                                description:
+                                  'The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: "en-US", "fr-CH", "es-MX"',
+                              },
+                              message: {
+                                type: "string",
+                                description:
+                                  "The localized error message in the above locale.",
+                              },
+                            },
+                            description:
+                              "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
+                            additionalProperties: true,
+                          },
+                          quotaInfo: {
+                            type: "object",
+                            properties: {
+                              dimensions: {
+                                type: "object",
+                                additionalProperties: {
+                                  type: "string",
+                                },
+                                description:
+                                  "The map holding related quota dimensions.",
+                              },
+                              futureLimit: {
+                                type: "number",
+                                description:
+                                  "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
+                              },
+                              limit: {
+                                type: "number",
+                                description:
+                                  "Current effective quota limit. The limit's unit depends on the quota type or metric.",
+                              },
+                              limitName: {
+                                type: "string",
+                                description: "The name of the quota limit.",
+                              },
+                              metricName: {
+                                type: "string",
+                                description:
+                                  "The Compute Engine quota metric name.",
+                              },
+                              rolloutStatus: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_ROLLOUT_STATUS",
+                                  "IN_PROGRESS",
+                                  "ROLLOUT_STATUS_UNSPECIFIED",
+                                ],
+                                description:
+                                  "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
+                              },
+                            },
+                            description:
+                              "Additional details for quota exceeded error for resource quota.",
+                            additionalProperties: true,
+                          },
+                        },
+                        additionalProperties: true,
+                      },
+                      description:
+                        "[Output Only] An optional list of messages that contain the error details. There is a set of defined message types to use for providing details.The syntax depends on the error code. For example, QuotaExceededInfo will have details when the error code is QUOTA_EXCEEDED.",
+                    },
+                    location: {
+                      type: "string",
+                      description:
+                        "[Output Only] Indicates the field in the request that caused the error. This property is optional.",
+                    },
+                    message: {
+                      type: "string",
+                      description:
+                        "[Output Only] An optional, human-readable error message.",
+                    },
+                  },
+                  additionalProperties: true,
+                },
+                description:
+                  "[Output Only] The array of errors encountered while processing this operation.",
+              },
+            },
+            description:
+              "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
+            additionalProperties: true,
+          },
           httpErrorMessage: {
             type: "string",
             description:
-              "[Output Only] If the operation fails, this field contains the HTTP error\nmessage that was returned, such as `NOT FOUND`.",
+              "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          kind: {
+          httpErrorStatusCode: {
+            type: "integer",
+            description:
+              "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          insertTime: {
             type: "string",
             description:
-              "[Output Only] Type of the resource. Always `compute#operation` for\nOperation resources.",
+              "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          setCommonInstanceMetadataOperationMetadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              perLocationOperations: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
-                  type: "object",
+                  type: "string",
                 },
                 description:
-                  "[Output Only] Status information per location (location name is key).\nExample key: zones/us-central1-a",
-              },
-              clientOperationId: {
-                type: "string",
-                description: "[Output Only] The client operation id.",
+                  "Status information per location (location name is key). Example key: zones/us-central1-a",
               },
             },
             additionalProperties: true,
           },
-          id: {
+          kind: {
             type: "string",
             description:
-              "[Output Only] The unique identifier for the operation. This identifier is\ndefined by the server. (Format: uint64)",
+              "Output only. [Output Only] Type of the resource. Always `compute#operation` for Operation resources.",
+          },
+          name: {
+            type: "string",
+            description: "[Output Only] Name of the operation.",
+          },
+          operationGroupId: {
+            type: "string",
+            description:
+              "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
+          },
+          operationType: {
+            type: "string",
+            description:
+              "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
+          },
+          progress: {
+            type: "integer",
+            description:
+              "[Output Only] An optional progress indicator that ranges from 0 to 100. There is no requirement that this be linear or support any granularity of operations. This should not be used to guess when the operation will be complete. This number should monotonically increase as the operation progresses.",
           },
           region: {
             type: "string",
             description:
-              "[Output Only] The URL of the region where the operation resides. Only\napplicable when performing regional operations.",
+              "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
+          },
+          selfLink: {
+            type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
+          },
+          setCommonInstanceMetadataOperationMetadata: {
+            type: "object",
+            properties: {
+              clientOperationId: {
+                type: "string",
+                description: "[Output Only] The client operation id.",
+              },
+              perLocationOperations: {
+                type: "object",
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "[Output Only] Status information per location (location name is key). Example key: zones/us-central1-a",
+              },
+            },
+            additionalProperties: true,
+            description:
+              "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
           startTime: {
             type: "string",
             description:
-              "[Output Only] The time that this operation was started by the server.\nThis value is inRFC3339\ntext format.",
+              "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
           },
-          zone: {
+          status: {
             type: "string",
+            enum: ["UNDEFINED_STATUS", "DONE", "PENDING", "RUNNING"],
             description:
-              "[Output Only] The URL of the zone where the operation resides. Only\napplicable when performing per-zone operations.",
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           statusMessage: {
             type: "string",
             description:
-              "[Output Only] An optional textual description of the current status of the\noperation.",
+              "[Output Only] An optional textual description of the current status of the operation.",
+          },
+          targetId: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          targetLink: {
+            type: "string",
+            description:
+              "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",
           },
           user: {
             type: "string",
             description:
-              "[Output Only] User who requested the operation, for example:\n`user@example.com` or\n`alice_smith_identifier (global/workforcePools/example-com-us-employees)`.",
+              "[Output Only] User who requested the operation, for example: `user@example.com` or `alice_smith_identifier (global/workforcePools/example-com-us-employees)`.",
           },
           warnings: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                message: {
-                  type: "string",
-                  description:
-                    "[Output Only] A human-readable description of the warning code.",
-                },
-                data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      key: {
-                        type: "string",
-                        description:
-                          "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
-                      },
-                      value: {
-                        type: "string",
-                        description:
-                          "[Output Only] A warning data value corresponding to the key.",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  description:
-                    '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
-                },
                 code: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_CODE",
                     "CLEANUP_FAILED",
                     "DEPRECATED_RESOURCE_USED",
                     "DEPRECATED_TYPE_USED",
@@ -1231,252 +1388,48 @@ const regionSecurityPoliciesPatch: AppBlock = {
                     "UNREACHABLE",
                   ],
                   description:
-                    "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
+                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
+                },
+                data: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      key: {
+                        type: "string",
+                        description:
+                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                      },
+                      value: {
+                        type: "string",
+                        description:
+                          "[Output Only] A warning data value corresponding to the key.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  description:
+                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+                },
+                message: {
+                  type: "string",
+                  description:
+                    "[Output Only] A human-readable description of the warning code.",
                 },
               },
               additionalProperties: true,
             },
             description:
-              "[Output Only] If warning messages are generated during processing of the\noperation, this field will be populated.",
+              "[Output Only] If warning messages are generated during processing of the operation, this field will be populated.",
           },
-          operationType: {
+          zone: {
             type: "string",
             description:
-              "[Output Only] The type of operation, such as `insert`,\n`update`, or `delete`, and so on.",
-          },
-          targetLink: {
-            type: "string",
-            description:
-              "[Output Only] The URL of the resource that the operation modifies. For\noperations related to creating a snapshot, this points to the disk\nthat the snapshot was created from.",
-          },
-          instancesBulkInsertOperationMetadata: {
-            type: "object",
-            properties: {
-              perLocationStatus: {
-                type: "object",
-                additionalProperties: {
-                  type: "object",
-                },
-                description:
-                  "Status information per location (location name is key).\nExample key: zones/us-central1-a",
-              },
-            },
-            additionalProperties: true,
-          },
-          error: {
-            type: "object",
-            properties: {
-              errors: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    code: {
-                      type: "string",
-                      description:
-                        "[Output Only] The error type identifier for this error.",
-                    },
-                    message: {
-                      type: "string",
-                      description:
-                        "[Output Only] An optional, human-readable error message.",
-                    },
-                    errorDetails: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          localizedMessage: {
-                            type: "object",
-                            properties: {
-                              message: {
-                                type: "string",
-                                description:
-                                  "The localized error message in the above locale.",
-                              },
-                              locale: {
-                                type: "string",
-                                description:
-                                  'The locale used following the specification defined at\nhttps://www.rfc-editor.org/rfc/bcp/bcp47.txt.\nExamples are: "en-US", "fr-CH", "es-MX"',
-                              },
-                            },
-                            description:
-                              "Provides a localized error message that is safe to return to the user\nwhich can be attached to an RPC error.",
-                            additionalProperties: true,
-                          },
-                          errorInfo: {
-                            type: "object",
-                            properties: {
-                              metadatas: {
-                                type: "object",
-                                additionalProperties: {
-                                  type: "string",
-                                },
-                                description:
-                                  'Additional structured details about this error.\n\nKeys must match a regular expression of `a-z+` but should\nideally be lowerCamelCase. Also, they must be limited to 64 characters in\nlength. When identifying the current value of an exceeded limit, the units\nshould be contained in the key, not the value.  For example, rather than\n`{"instanceLimit": "100/request"}`, should be returned as,\n`{"instanceLimitPerRequest": "100"}`, if the client exceeds the number of\ninstances that can be created in a single (batch) request.',
-                              },
-                              domain: {
-                                type: "string",
-                                description:
-                                  'The logical grouping to which the "reason" belongs. The error domain\nis typically the registered service name of the tool or product that\ngenerates the error. Example: "pubsub.googleapis.com". If the error is\ngenerated by some common infrastructure, the error domain must be a\nglobally unique value that identifies the infrastructure. For Google API\ninfrastructure, the error domain is "googleapis.com".',
-                              },
-                              reason: {
-                                type: "string",
-                                description:
-                                  "The reason of the error. This is a constant value that identifies the\nproximate cause of the error. Error reasons are unique within a particular\ndomain of errors. This should be at most 63 characters and match a\nregular expression of `A-Z+[A-Z0-9]`, which represents\nUPPER_SNAKE_CASE.",
-                              },
-                            },
-                            description:
-                              'Describes the cause of the error with structured details.\n\nExample of an error when contacting the "pubsub.googleapis.com" API when it\nis not enabled:\n\n    { "reason": "API_DISABLED"\n      "domain": "googleapis.com"\n      "metadata": {\n        "resource": "projects/123",\n        "service": "pubsub.googleapis.com"\n      }\n    }\n\nThis response indicates that the pubsub.googleapis.com API is not enabled.\n\nExample of an error that is returned when attempting to create a Spanner\ninstance in a region that is out of stock:\n\n    { "reason": "STOCKOUT"\n      "domain": "spanner.googleapis.com",\n      "metadata": {\n        "availableRegions": "us-central1,us-east2"\n      }\n    }',
-                            additionalProperties: true,
-                          },
-                          quotaInfo: {
-                            type: "object",
-                            properties: {
-                              limit: {
-                                type: "number",
-                                description:
-                                  "Current effective quota limit. The limit's unit depends on the quota type\nor metric. (Format: double)",
-                              },
-                              futureLimit: {
-                                type: "number",
-                                description:
-                                  "Future quota limit being rolled out. The limit's unit depends on the quota\n type or metric. (Format: double)",
-                              },
-                              metricName: {
-                                type: "string",
-                                description:
-                                  "The Compute Engine quota metric name.",
-                              },
-                              rolloutStatus: {
-                                type: "string",
-                                enum: [
-                                  "IN_PROGRESS",
-                                  "ROLLOUT_STATUS_UNSPECIFIED",
-                                ],
-                                description:
-                                  "Rollout status of the future quota limit.",
-                              },
-                              limitName: {
-                                type: "string",
-                                description: "The name of the quota limit.",
-                              },
-                              dimensions: {
-                                type: "object",
-                                additionalProperties: {
-                                  type: "string",
-                                },
-                                description:
-                                  "The map holding related quota dimensions.",
-                              },
-                            },
-                            description:
-                              "Additional details for quota exceeded error for resource quota.",
-                            additionalProperties: true,
-                          },
-                          help: {
-                            type: "object",
-                            properties: {
-                              links: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    url: {
-                                      type: "string",
-                                      description: "The URL of the link.",
-                                    },
-                                    description: {
-                                      type: "string",
-                                      description:
-                                        "Describes what the link offers.",
-                                    },
-                                  },
-                                  description: "Describes a URL link.",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "URL(s) pointing to additional information on handling the current error.",
-                              },
-                            },
-                            description:
-                              "Provides links to documentation or for performing an out of band action.\n\nFor example, if a quota check failed with an error indicating the calling\nproject hasn't enabled the accessed service, this can contain a URL pointing\ndirectly to the right place in the developer console to flip the bit.",
-                            additionalProperties: true,
-                          },
-                        },
-                        additionalProperties: true,
-                      },
-                      description:
-                        "[Output Only] An optional list of messages that contain the error\ndetails. There is a set of defined message types to use for providing\ndetails.The syntax depends on the error code. For example,\nQuotaExceededInfo will have details when the error code is\nQUOTA_EXCEEDED.",
-                    },
-                    location: {
-                      type: "string",
-                      description:
-                        "[Output Only] Indicates the field in the request that caused the error.\nThis property is optional.",
-                    },
-                  },
-                  additionalProperties: true,
-                },
-                description:
-                  "[Output Only] The array of errors encountered while processing this\noperation.",
-              },
-            },
-            description:
-              "[Output Only] If errors are generated during processing of the operation,\nthis field will be populated.",
-            additionalProperties: true,
-          },
-          endTime: {
-            type: "string",
-            description:
-              "[Output Only] The time that this operation was completed. This value is inRFC3339\ntext format.",
-          },
-          httpErrorStatusCode: {
-            type: "integer",
-            description:
-              "[Output Only] If the operation fails, this field contains the HTTP error\nstatus code that was returned. For example, a `404` means the\nresource was not found. (Format: int32)",
-          },
-          operationGroupId: {
-            type: "string",
-            description:
-              "[Output Only] An ID that represents a group of operations, such as when a\ngroup of operations results from a `bulkInsert` API request.",
-          },
-          description: {
-            type: "string",
-            description:
-              "[Output Only] A textual description of the operation, which is\nset when the operation is created.",
-          },
-          name: {
-            type: "string",
-            description: "[Output Only] Name of the operation.",
-          },
-          selfLink: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          clientOperationId: {
-            type: "string",
-            description:
-              "[Output Only] The value of `requestId` if you provided it in the request.\nNot present otherwise.",
-          },
-          insertTime: {
-            type: "string",
-            description:
-              "[Output Only] The time that this operation was requested.\nThis value is inRFC3339\ntext format.",
-          },
-          status: {
-            type: "string",
-            enum: ["DONE", "PENDING", "RUNNING"],
-            description:
-              "[Output Only] The status of the operation, which can be one of the\nfollowing:\n`PENDING`, `RUNNING`, or `DONE`.",
-          },
-          progress: {
-            type: "integer",
-            description:
-              "[Output Only] An optional progress indicator that ranges from 0 to 100.\nThere is no requirement that this be linear or support any granularity of\noperations. This should not be used to guess when the operation will be\ncomplete. This number should monotonically increase as the operation\nprogresses. (Format: int32)",
+              "[Output Only] The URL of the zone where the operation resides. Only applicable when performing per-zone operations.",
           },
         },
         description:
-          "Represents an Operation resource.\n\nGoogle Compute Engine has three Operation resources:\n\n* [Global](/compute/docs/reference/rest/v1/globalOperations)\n* [Regional](/compute/docs/reference/rest/v1/regionOperations)\n* [Zonal](/compute/docs/reference/rest/v1/zoneOperations)\n\nYou can use an operation resource to manage asynchronous API requests.\nFor more information, readHandling\nAPI responses.\n\nOperations can be global, regional or zonal.\n   \n   - For global operations, use the `globalOperations`\n   resource. \n   - For regional operations, use the\n   `regionOperations` resource. \n   - For zonal operations, use\n   the `zoneOperations` resource.\n\n\n\nFor more information, read\nGlobal, Regional, and Zonal Resources.\n\nNote that completed Operation resources have a limited \nretention period.",
+          "Represents an Operation resource.  Google Compute Engine has three Operation resources:  * [Global](/compute/docs/reference/rest/v1/globalOperations) * [Regional](/compute/docs/reference/rest/v1/regionOperations) * [Zonal](/compute/docs/reference/rest/v1/zoneOperations)  You can use an operation resource to manage asynchronous API requests. For more information, readHandling API responses.  Operations can be global, regional or zonal.     - For global operations, use the `globalOperations`    resource.    - For regional operations, use the    `regionOperations` resource.    - For zonal operations, use    the `zoneOperations` resource.    For more information, read Global, Regional, and Zonal Resources.  Note that completed Operation resources have a limited retention period.",
         additionalProperties: true,
       },
     },

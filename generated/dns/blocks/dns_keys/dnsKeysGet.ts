@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const dnsKeysGet: AppBlock = {
   name: "DNS Keys - Get",
@@ -9,7 +9,7 @@ const dnsKeysGet: AppBlock = {
     default: {
       config: {
         dnsKeyId: {
-          name: "DNS Key ID",
+          name: "Dns Key Id",
           description: "The identifier of the requested DnsKey.",
           type: {
             type: "string",
@@ -26,7 +26,7 @@ const dnsKeysGet: AppBlock = {
           required: true,
         },
         clientOperationId: {
-          name: "Client Operation ID",
+          name: "Client Operation Id",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
           type: {
@@ -45,66 +45,34 @@ const dnsKeysGet: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/cloud-platform.read-only",
-              "https://www.googleapis.com/auth/ndev.clouddns.readonly",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.dnsKeyId !== undefined)
+          pathParams["dnsKeyId"] = String(input.event.inputConfig.dnsKeyId);
+        if (input.event.inputConfig.managedZone !== undefined)
+          pathParams["managedZone"] = String(
+            input.event.inputConfig.managedZone,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/managedZones/{managedZone}/dnsKeys/{dnsKeyId}`;
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.clientOperationId !== undefined)
+          queryParams["clientOperationId"] = String(
+            input.event.inputConfig.clientOperationId,
+          );
+        if (input.event.inputConfig.digestType !== undefined)
+          queryParams["digestType"] = String(
+            input.event.inputConfig.digestType,
+          );
 
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await dnsFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "dns/v1/projects/{project}/managedZones/{managedZone}/dnsKeys/{dnsKeyId}",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -127,7 +95,7 @@ const dnsKeysGet: AppBlock = {
           keyLength: {
             type: "integer",
             description:
-              "Length of the key in bits. Specified at creation time, and then immutable. (Format: uint32)",
+              "Length of the key in bits. Specified at creation time, and then immutable.",
           },
           kind: {
             type: "string",
@@ -179,7 +147,7 @@ const dnsKeysGet: AppBlock = {
           keyTag: {
             type: "integer",
             description:
-              "The key tag is a non-cryptographic hash of the a DNSKEY resource record associated with this DnsKey. The key tag can be used to identify a DNSKEY more quickly (but it is not a unique identifier). In particular, the key tag is used in a parent zone's DS record to point at the DNSKEY in this child ManagedZone. The key tag is a number in the range [0, 65535] and the algorithm to calculate it is specified in RFC4034 Appendix B. Output only. (Format: int32)",
+              "The key tag is a non-cryptographic hash of the a DNSKEY resource record associated with this DnsKey. The key tag can be used to identify a DNSKEY more quickly (but it is not a unique identifier). In particular, the key tag is used in a parent zone's DS record to point at the DNSKEY in this child ManagedZone. The key tag is a number in the range [0, 65535] and the algorithm to calculate it is specified in RFC4034 Appendix B. Output only.",
           },
           isActive: {
             type: "boolean",
@@ -193,8 +161,8 @@ const dnsKeysGet: AppBlock = {
               'One of "KEY_SIGNING" or "ZONE_SIGNING". Keys of type KEY_SIGNING have the Secure Entry Point flag set and, when active, are used to sign only resource record sets of type DNSKEY. Otherwise, the Secure Entry Point flag is cleared, and this key is used to sign only resource record sets of other types. Immutable after creation time.',
           },
         },
-        description: "A DNSSEC key pair.",
         additionalProperties: true,
+        description: "A DNSSEC key pair.",
       },
     },
   },

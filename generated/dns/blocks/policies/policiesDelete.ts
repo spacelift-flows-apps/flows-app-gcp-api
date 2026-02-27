@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const policiesDelete: AppBlock = {
   name: "Policies - Delete",
-  description: `Deletes a previously created policy.`,
+  description: `Deletes a previously created policy. Fails if the policy is still being referenced by a network.`,
   category: "Policies",
   inputs: {
     default: {
@@ -18,7 +18,7 @@ const policiesDelete: AppBlock = {
           required: true,
         },
         clientOperationId: {
-          name: "Client Operation ID",
+          name: "Client Operation Id",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
           type: {
@@ -28,64 +28,25 @@ const policiesDelete: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.policy !== undefined)
+          pathParams["policy"] = String(input.event.inputConfig.policy);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.clientOperationId !== undefined)
+          queryParams["clientOperationId"] = String(
+            input.event.inputConfig.clientOperationId,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/policies/{policy}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await dnsFetch({
+          config: input.app.config,
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate: "dns/v1/projects/{project}/policies/{policy}",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -95,6 +56,7 @@ const policiesDelete: AppBlock = {
       possiblePrimaryParents: ["default"],
       type: {
         type: "object",
+        properties: {},
         additionalProperties: true,
       },
     },

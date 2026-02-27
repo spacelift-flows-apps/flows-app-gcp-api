@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const responsePoliciesCreate: AppBlock = {
   name: "Response Policies - Create",
@@ -8,15 +8,6 @@ const responsePoliciesCreate: AppBlock = {
   inputs: {
     default: {
       config: {
-        clientOperationId: {
-          name: "Client Operation ID",
-          description:
-            "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
-          type: {
-            type: "string",
-          },
-          required: false,
-        },
         gkeClusters: {
           name: "Gke Clusters",
           description:
@@ -26,19 +17,12 @@ const responsePoliciesCreate: AppBlock = {
             items: {
               type: "object",
               properties: {
-                kind: {
-                  type: "string",
-                },
                 gkeClusterName: {
                   type: "string",
-                  description:
-                    "The resource name of the cluster to bind this response policy to. This should be specified in the format like: projects/*/locations/*/clusters/*. This is referenced from GKE projects.locations.clusters.get API: https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/get",
                 },
               },
               additionalProperties: true,
             },
-            description:
-              "The list of Google Kubernetes Engine clusters to which this response policy is applied.",
           },
           required: false,
         },
@@ -47,24 +31,13 @@ const responsePoliciesCreate: AppBlock = {
           description: "User assigned name for this Response Policy.",
           type: {
             type: "string",
-            description: "User assigned name for this Response Policy.",
           },
           required: false,
         },
         id: {
-          name: "ID",
+          name: "Id",
           description:
             "Unique identifier for the resource; defined by the server (output only).",
-          type: {
-            type: "string",
-            description:
-              "Unique identifier for the resource; defined by the server (output only). (Format: int64)",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description: "Request body field: kind",
           type: {
             type: "string",
           },
@@ -78,7 +51,6 @@ const responsePoliciesCreate: AppBlock = {
             additionalProperties: {
               type: "string",
             },
-            description: "User labels.",
           },
           required: false,
         },
@@ -91,19 +63,12 @@ const responsePoliciesCreate: AppBlock = {
             items: {
               type: "object",
               properties: {
-                kind: {
-                  type: "string",
-                },
                 networkUrl: {
                   type: "string",
-                  description:
-                    "The fully qualified URL of the VPC network to bind to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`",
                 },
               },
               additionalProperties: true,
             },
-            description:
-              "List of network names specifying networks to which this policy is applied.",
           },
           required: false,
         },
@@ -112,93 +77,51 @@ const responsePoliciesCreate: AppBlock = {
           description: "User-provided description for this Response Policy.",
           type: {
             type: "string",
-            description: "User-provided description for this Response Policy.",
+          },
+          required: false,
+        },
+        clientOperationId: {
+          name: "Client Operation Id",
+          description:
+            "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
+          type: {
+            type: "string",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.clientOperationId !== undefined)
+          queryParams["clientOperationId"] = String(
+            input.event.inputConfig.clientOperationId,
           );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/responsePolicies`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
+        const body: Record<string, any> = {};
         if (input.event.inputConfig.gkeClusters !== undefined)
-          requestBody.gkeClusters = input.event.inputConfig.gkeClusters;
+          body.gkeClusters = input.event.inputConfig.gkeClusters;
         if (input.event.inputConfig.responsePolicyName !== undefined)
-          requestBody.responsePolicyName =
-            input.event.inputConfig.responsePolicyName;
+          body.responsePolicyName = input.event.inputConfig.responsePolicyName;
         if (input.event.inputConfig.id !== undefined)
-          requestBody.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.kind !== undefined)
-          requestBody.kind = input.event.inputConfig.kind;
+          body.id = input.event.inputConfig.id;
         if (input.event.inputConfig.labels !== undefined)
-          requestBody.labels = input.event.inputConfig.labels;
+          body.labels = input.event.inputConfig.labels;
         if (input.event.inputConfig.networks !== undefined)
-          requestBody.networks = input.event.inputConfig.networks;
+          body.networks = input.event.inputConfig.networks;
         if (input.event.inputConfig.description !== undefined)
-          requestBody.description = input.event.inputConfig.description;
+          body.description = input.event.inputConfig.description;
 
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
+        const result = await dnsFetch({
+          config: input.app.config,
+          method: "POST",
+          pathTemplate: "dns/v1/projects/{project}/responsePolicies",
+          pathParams,
+          queryParams,
+          body: Object.keys(body).length > 0 ? body : undefined,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -235,7 +158,7 @@ const responsePoliciesCreate: AppBlock = {
           id: {
             type: "string",
             description:
-              "Unique identifier for the resource; defined by the server (output only). (Format: int64)",
+              "Unique identifier for the resource; defined by the server (output only).",
           },
           kind: {
             type: "string",
@@ -271,9 +194,9 @@ const responsePoliciesCreate: AppBlock = {
             description: "User-provided description for this Response Policy.",
           },
         },
+        additionalProperties: true,
         description:
           "A Response Policy is a collection of selectors that apply to queries made against one or more Virtual Private Cloud networks.",
-        additionalProperties: true,
       },
     },
   },

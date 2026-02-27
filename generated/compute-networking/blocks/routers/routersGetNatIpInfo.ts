@@ -1,100 +1,66 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const routersGetNatIpInfo: AppBlock = {
-  name: "Routers - Get NAT IP Info",
+  name: "Routers - Get Nat Ip Info",
   description: `Retrieves runtime NAT IP information.`,
   category: "Routers",
   inputs: {
     default: {
       config: {
-        router: {
-          name: "Router",
-          description:
-            "Name of the Router resource to query for Nat IP information. The name\nshould conform to RFC1035.",
-          type: {
-            type: "string",
-          },
-          required: true,
-        },
         region: {
           name: "Region",
           description: "Name of the region for this request.",
           type: {
             type: "string",
+            description: "Name of the region for this request.",
+          },
+          required: true,
+        },
+        router: {
+          name: "Router",
+          description:
+            "Name of the Router resource to query for Nat IP information. The name should conform to RFC1035.",
+          type: {
+            type: "string",
+            description:
+              "Name of the Router resource to query for Nat IP information. The name should conform to RFC1035.",
           },
           required: true,
         },
         natName: {
-          name: "NAT Name",
+          name: "Nat Name",
           description:
-            "Name of the nat service to filter the NAT IP information.\nIf it is omitted, all nats for this router will be returned.\nName should conform to RFC1035.",
+            "Name of the nat service to filter the NAT IP information. If it is omitted, all nats for this router will be returned. Name should conform to RFC1035.",
           type: {
             type: "string",
+            description:
+              "Name of the nat service to filter the NAT IP information. If it is omitted, all nats for this router will be returned. Name should conform to RFC1035.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.router !== undefined)
+          pathParams["router"] = String(input.event.inputConfig.router);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.natName !== undefined)
+          queryParams["natName"] = String(input.event.inputConfig.natName);
 
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/routers/{router}/getNatIpInfo`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/routers/{router}/getNatIpInfo",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -110,39 +76,39 @@ const routersGetNatIpInfo: AppBlock = {
             items: {
               type: "object",
               properties: {
-                natName: {
-                  type: "string",
-                  description:
-                    "Name of the NAT config which the NAT IP belongs to.",
-                },
                 natIpInfoMappings: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
+                      mode: {
+                        type: "string",
+                        enum: ["UNDEFINED_MODE", "AUTO", "MANUAL"],
+                        description:
+                          "Output only. Specifies whether NAT IP is auto or manual. Check the Mode enum for the list of possible values.",
+                      },
                       natIp: {
                         type: "string",
                         description:
-                          "NAT IP address. For example: 203.0.113.11.",
+                          "Output only. NAT IP address. For example: 203.0.113.11.",
                       },
                       usage: {
                         type: "string",
-                        enum: ["IN_USE", "UNUSED"],
+                        enum: ["UNDEFINED_USAGE", "IN_USE", "UNUSED"],
                         description:
-                          "Specifies whether NAT IP is currently serving at least one endpoint or\nnot.",
-                      },
-                      mode: {
-                        type: "string",
-                        enum: ["AUTO", "MANUAL"],
-                        description:
-                          "Specifies whether NAT IP is auto or manual.",
+                          "Output only. Specifies whether NAT IP is currently serving at least one endpoint or not. Check the Usage enum for the list of possible values.",
                       },
                     },
                     description: "Contains information of a NAT IP.",
                     additionalProperties: true,
                   },
                   description:
-                    "A list of all NAT IPs assigned to this NAT config.",
+                    "Output only. A list of all NAT IPs assigned to this NAT config.",
+                },
+                natName: {
+                  type: "string",
+                  description:
+                    "Output only. Name of the NAT config which the NAT IP belongs to.",
                 },
               },
               description:

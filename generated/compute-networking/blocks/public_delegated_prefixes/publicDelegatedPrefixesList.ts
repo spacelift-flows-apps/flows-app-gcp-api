@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const publicDelegatedPrefixesList: AppBlock = {
   name: "Public Delegated Prefixes - List",
-  description: `Lists the PublicDelegatedPrefixes for a project in the given region.`,
+  description: `Retrieves the list of Zone resources available to the specified project.`,
   category: "Public Delegated Prefixes",
   inputs: {
     default: {
@@ -13,115 +13,97 @@ const publicDelegatedPrefixesList: AppBlock = {
           description: "Name of the region of this request.",
           type: {
             type: "string",
+            description: "Name of the region of this request.",
           },
           required: true,
-        },
-        returnPartialSuccess: {
-          name: "Return Partial Success",
-          description:
-            "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: {
-            type: "boolean",
-          },
-          required: false,
         },
         filter: {
           name: "Filter",
           description:
-            'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
+            'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
           type: {
             type: "string",
-          },
-          required: false,
-        },
-        orderBy: {
-          name: "Order By",
-          description:
-            'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: {
-            type: "string",
-          },
-          required: false,
-        },
-        pageToken: {
-          name: "Page Token",
-          description:
-            "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: {
-            type: "string",
+            description:
+              'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
           },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
-            "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
+            "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
           type: {
             type: "integer",
+            description:
+              "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+          },
+          required: false,
+        },
+        orderBy: {
+          name: "Order By",
+          description:
+            'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          type: {
+            type: "string",
+            description:
+              'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          },
+          required: false,
+        },
+        pageToken: {
+          name: "Page Token",
+          description:
+            "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          type: {
+            type: "string",
+            description:
+              "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          },
+          required: false,
+        },
+        returnPartialSuccess: {
+          name: "Return Partial Success",
+          description:
+            "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+          type: {
+            type: "boolean",
+            description:
+              "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.filter !== undefined)
+          queryParams["filter"] = String(input.event.inputConfig.filter);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
+          queryParams["returnPartialSuccess"] = String(
+            input.event.inputConfig.returnPartialSuccess,
+          );
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/publicDelegatedPrefixes`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/publicDelegatedPrefixes",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -132,124 +114,187 @@ const publicDelegatedPrefixesList: AppBlock = {
       type: {
         type: "object",
         properties: {
-          nextPageToken: {
-            type: "string",
-            description:
-              "[Output Only] This token allows you to get the next page of results for\nlist requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for\nthe query parameter pageToken in the next list request.\nSubsequent list requests will have their own nextPageToken to\ncontinue paging through the results.",
-          },
           id: {
             type: "string",
             description:
               "[Output Only] Unique identifier for the resource; defined by the server.",
-          },
-          kind: {
-            type: "string",
-            description:
-              "[Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefixList for public delegated\nprefixes.",
           },
           items: {
             type: "array",
             items: {
               type: "object",
               properties: {
+                allocatablePrefixLength: {
+                  type: "integer",
+                  description:
+                    "The allocatable prefix length supported by this public delegated prefix. This field is optional and cannot be set for prefixes in DELEGATION mode. It cannot be set for IPv4 prefixes either, and it always defaults to 32.",
+                },
+                byoipApiVersion: {
+                  type: "string",
+                  enum: ["UNDEFINED_BYOIP_API_VERSION", "V1", "V2"],
+                  description:
+                    "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
+                },
+                creationTimestamp: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+                },
+                description: {
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this property when you create the resource.",
+                },
+                enableEnhancedIpv4Allocation: {
+                  type: "boolean",
+                  description:
+                    "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
+                },
+                fingerprint: {
+                  type: "string",
+                  description:
+                    "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a new PublicDelegatedPrefix. An up-to-date fingerprint must be provided in order to update thePublicDelegatedPrefix, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a PublicDelegatedPrefix.",
+                },
+                id: {
+                  type: "string",
+                  description: "64-bit integer as string",
+                },
+                ipCidrRange: {
+                  type: "string",
+                  description:
+                    "The IP address range, in CIDR format, represented by this public delegated prefix.",
+                },
+                ipv6AccessType: {
+                  type: "string",
+                  enum: ["UNDEFINED_IPV6_ACCESS_TYPE", "EXTERNAL", "INTERNAL"],
+                  description:
+                    "Output only. [Output Only] The internet access type for IPv6 Public Delegated Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
+                },
                 isLiveMigration: {
                   type: "boolean",
                   description: "If true, the prefix will be live migrated.",
                 },
-                byoipApiVersion: {
+                kind: {
                   type: "string",
-                  enum: ["V1", "V2"],
-                  description: "[Output Only] The version of BYOIP API.",
+                  description:
+                    "Output only. [Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefix for public delegated prefixes.",
                 },
                 mode: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_MODE",
                     "DELEGATION",
                     "EXTERNAL_IPV6_FORWARDING_RULE_CREATION",
                     "EXTERNAL_IPV6_SUBNETWORK_CREATION",
                     "INTERNAL_IPV6_SUBNETWORK_CREATION",
                   ],
                   description:
-                    "The public delegated prefix mode for IPv6 only.",
+                    "The public delegated prefix mode for IPv6 only. Check the Mode enum for the list of possible values.",
                 },
-                selfLink: {
+                name: {
                   type: "string",
                   description:
-                    "[Output Only] Server-defined URL for the resource.",
+                    "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                },
+                parentPrefix: {
+                  type: "string",
+                  description:
+                    "The URL of parent prefix. Either PublicAdvertisedPrefix or PublicDelegatedPrefix.",
                 },
                 publicDelegatedSubPrefixs: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      name: {
-                        type: "string",
+                      allocatablePrefixLength: {
+                        type: "integer",
                         description:
-                          "The name of the sub public delegated prefix.",
+                          "The allocatable prefix length supported by this PublicDelegatedSubPrefix.",
                       },
                       delegateeProject: {
                         type: "string",
                         description:
                           "Name of the project scoping this PublicDelegatedSubPrefix.",
                       },
+                      description: {
+                        type: "string",
+                        description:
+                          "An optional description of this resource. Provide this property when you create the resource.",
+                      },
+                      enableEnhancedIpv4Allocation: {
+                        type: "boolean",
+                        description:
+                          "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
+                      },
                       ipCidrRange: {
                         type: "string",
                         description:
-                          "The IP address range, in CIDR format, represented by this sub public\ndelegated prefix.",
+                          "The IP address range, in CIDR format, represented by this sub public delegated prefix.",
                       },
-                      status: {
+                      ipv6AccessType: {
                         type: "string",
-                        enum: ["ACTIVE", "INACTIVE"],
+                        enum: [
+                          "UNDEFINED_IPV6_ACCESS_TYPE",
+                          "EXTERNAL",
+                          "INTERNAL",
+                        ],
                         description:
-                          "[Output Only] The status of the sub public delegated prefix.",
-                      },
-                      region: {
-                        type: "string",
-                        description:
-                          "[Output Only] The region of the sub public delegated prefix if it is\nregional. If absent, the sub prefix is global.",
-                      },
-                      allocatablePrefixLength: {
-                        type: "integer",
-                        description:
-                          "The allocatable prefix length supported by this PublicDelegatedSubPrefix. (Format: int32)",
+                          "Output only. [Output Only] The internet access type for IPv6 Public Delegated Sub Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
                       },
                       isAddress: {
                         type: "boolean",
                         description:
-                          "Whether the sub prefix is delegated to create Address resources in the\ndelegatee project.",
+                          "Whether the sub prefix is delegated to create Address resources in the delegatee project.",
                       },
                       mode: {
                         type: "string",
                         enum: [
+                          "UNDEFINED_MODE",
                           "DELEGATION",
                           "EXTERNAL_IPV6_FORWARDING_RULE_CREATION",
                           "EXTERNAL_IPV6_SUBNETWORK_CREATION",
                           "INTERNAL_IPV6_SUBNETWORK_CREATION",
                         ],
                         description:
-                          "The PublicDelegatedSubPrefix mode for IPv6 only.",
+                          "The PublicDelegatedSubPrefix mode for IPv6 only. Check the Mode enum for the list of possible values.",
                       },
-                      description: {
+                      name: {
                         type: "string",
                         description:
-                          "An optional description of this resource. Provide this property when you\ncreate the resource.",
+                          "The name of the sub public delegated prefix.",
                       },
-                      ipv6AccessType: {
+                      region: {
                         type: "string",
-                        enum: ["EXTERNAL", "INTERNAL"],
                         description:
-                          "[Output Only] The internet access type for IPv6 Public Delegated Sub\nPrefixes. Inherited from parent prefix.",
+                          "Output only. [Output Only] The region of the sub public delegated prefix if it is regional. If absent, the sub prefix is global.",
+                      },
+                      status: {
+                        type: "string",
+                        enum: ["UNDEFINED_STATUS", "ACTIVE", "INACTIVE"],
+                        description:
+                          "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
                       },
                     },
                     description: "Represents a sub PublicDelegatedPrefix.",
                     additionalProperties: true,
                   },
                   description:
-                    "The list of sub public delegated prefixes that exist for this public\ndelegated prefix.",
+                    "The list of sub public delegated prefixes that exist for this public delegated prefix.",
+                },
+                region: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] URL of the region where the public delegated prefix resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+                },
+                selfLink: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Server-defined URL for the resource.",
                 },
                 status: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_STATUS",
                     "ACTIVE",
                     "ANNOUNCED",
                     "ANNOUNCED_TO_GOOGLE",
@@ -259,70 +304,24 @@ const publicDelegatedPrefixesList: AppBlock = {
                     "READY_TO_ANNOUNCE",
                   ],
                   description:
-                    "[Output Only] The status of the public delegated prefix, which can be one\nof following values:\n   \n   \n     - `INITIALIZING` The public delegated prefix is being initialized and\n     addresses cannot be created yet.\n     - `READY_TO_ANNOUNCE` The public delegated prefix is a live migration\n     prefix and is active.\n     - `ANNOUNCED` The public delegated prefix is announced and ready to\n     use.\n     - `DELETING` The public delegated prefix is being deprovsioned.\n     - `ACTIVE` The public delegated prefix is ready to use.",
-                },
-                ipCidrRange: {
-                  type: "string",
-                  description:
-                    "The IP address range, in CIDR format, represented by this public\ndelegated prefix.",
-                },
-                kind: {
-                  type: "string",
-                  description:
-                    "[Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefix for public delegated prefixes.",
-                },
-                name: {
-                  type: "string",
-                  description:
-                    "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
-                },
-                fingerprint: {
-                  type: "string",
-                  description:
-                    "Fingerprint of this resource. A hash of the contents stored in this object.\nThis field is used in optimistic locking. This field will be ignored when\ninserting a new PublicDelegatedPrefix. An up-to-date\nfingerprint must be provided in order to update thePublicDelegatedPrefix, otherwise the request will fail with\nerror 412 conditionNotMet.\n\nTo see the latest fingerprint, make a get() request to\nretrieve a PublicDelegatedPrefix. (Format: byte)",
-                },
-                region: {
-                  type: "string",
-                  description:
-                    "[Output Only] URL of the region where the public delegated prefix resides.\nThis field applies only to the region resource. You must specify this\nfield as part of the HTTP request URL. It is not settable as a field in\nthe request body.",
-                },
-                description: {
-                  type: "string",
-                  description:
-                    "An optional description of this resource. Provide this property when you\ncreate the resource.",
-                },
-                parentPrefix: {
-                  type: "string",
-                  description:
-                    "The URL of parent prefix. Either PublicAdvertisedPrefix or\nPublicDelegatedPrefix.",
-                },
-                id: {
-                  type: "string",
-                  description:
-                    "[Output Only] The unique identifier for the resource type. The server\ngenerates this identifier. (Format: uint64)",
-                },
-                allocatablePrefixLength: {
-                  type: "integer",
-                  description:
-                    "The allocatable prefix length supported by this public delegated prefix.\nThis field is optional and cannot be set for prefixes in DELEGATION mode.\nIt cannot be set for IPv4 prefixes either, and it always defaults to 32. (Format: int32)",
-                },
-                ipv6AccessType: {
-                  type: "string",
-                  enum: ["EXTERNAL", "INTERNAL"],
-                  description:
-                    "[Output Only] The internet access type for IPv6 Public Delegated Prefixes.\nInherited from parent prefix.",
-                },
-                creationTimestamp: {
-                  type: "string",
-                  description:
-                    "[Output Only] Creation timestamp inRFC3339\ntext format.",
+                    "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
                 },
               },
               description:
-                "A PublicDelegatedPrefix resource represents an IP block within a\nPublicAdvertisedPrefix that is configured within a single cloud scope\n(global or region). IPs in the block can be allocated to resources within\nthat scope. Public delegated prefixes may be further broken up into\nsmaller IP blocks in the same scope as the parent block.",
+                "A PublicDelegatedPrefix resource represents an IP block within a PublicAdvertisedPrefix that is configured within a single cloud scope (global or region). IPs in the block can be allocated to resources within that scope. Public delegated prefixes may be further broken up into smaller IP blocks in the same scope as the parent block.",
               additionalProperties: true,
             },
             description: "A list of PublicDelegatedPrefix resources.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefixList for public delegated prefixes.",
+          },
+          nextPageToken: {
+            type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
           },
           selfLink: {
             type: "string",
@@ -334,6 +333,7 @@ const publicDelegatedPrefixesList: AppBlock = {
               code: {
                 type: "string",
                 enum: [
+                  "UNDEFINED_CODE",
                   "CLEANUP_FAILED",
                   "DEPRECATED_RESOURCE_USED",
                   "DEPRECATED_TYPE_USED",
@@ -365,7 +365,7 @@ const publicDelegatedPrefixesList: AppBlock = {
                   "UNREACHABLE",
                 ],
                 description:
-                  "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
+                  "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
               },
               data: {
                 type: "array",
@@ -375,7 +375,7 @@ const publicDelegatedPrefixesList: AppBlock = {
                     key: {
                       type: "string",
                       description:
-                        "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
+                        "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
                     },
                     value: {
                       type: "string",
@@ -386,7 +386,7 @@ const publicDelegatedPrefixesList: AppBlock = {
                   additionalProperties: true,
                 },
                 description:
-                  '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
+                  '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
               },
               message: {
                 type: "string",
@@ -394,7 +394,7 @@ const publicDelegatedPrefixesList: AppBlock = {
                   "[Output Only] A human-readable description of the warning code.",
               },
             },
-            description: "[Output Only] Informational warning message.",
+            description: "Informational warning message.",
             additionalProperties: true,
           },
         },

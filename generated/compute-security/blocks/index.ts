@@ -1,303 +1,249 @@
-import firewallsList_0 from "./firewalls/firewallsList";
-import firewallsGet_1 from "./firewalls/firewallsGet";
-import firewallsInsert_2 from "./firewalls/firewallsInsert";
-import firewallsDelete_3 from "./firewalls/firewallsDelete";
-import firewallsPatch_4 from "./firewalls/firewallsPatch";
-import firewallsUpdate_5 from "./firewalls/firewallsUpdate";
-import firewallsTestIamPermissions_6 from "./firewalls/firewallsTestIamPermissions";
-import firewallPoliciesList_7 from "./firewall_policies/firewallPoliciesList";
-import firewallPoliciesGet_8 from "./firewall_policies/firewallPoliciesGet";
-import firewallPoliciesInsert_9 from "./firewall_policies/firewallPoliciesInsert";
-import firewallPoliciesDelete_10 from "./firewall_policies/firewallPoliciesDelete";
-import firewallPoliciesPatch_11 from "./firewall_policies/firewallPoliciesPatch";
-import firewallPoliciesMove_12 from "./firewall_policies/firewallPoliciesMove";
-import firewallPoliciesCloneRules_13 from "./firewall_policies/firewallPoliciesCloneRules";
-import firewallPoliciesGetAssociation_14 from "./firewall_policies/firewallPoliciesGetAssociation";
-import firewallPoliciesGetIamPolicy_15 from "./firewall_policies/firewallPoliciesGetIamPolicy";
-import firewallPoliciesSetIamPolicy_16 from "./firewall_policies/firewallPoliciesSetIamPolicy";
-import firewallPoliciesTestIamPermissions_17 from "./firewall_policies/firewallPoliciesTestIamPermissions";
-import firewallPoliciesGetRule_18 from "./firewall_policies/firewallPoliciesGetRule";
-import firewallPoliciesAddRule_19 from "./firewall_policies/firewallPoliciesAddRule";
-import firewallPoliciesPatchRule_20 from "./firewall_policies/firewallPoliciesPatchRule";
-import firewallPoliciesRemoveRule_21 from "./firewall_policies/firewallPoliciesRemoveRule";
-import firewallPoliciesAddAssociation_22 from "./firewall_policies/firewallPoliciesAddAssociation";
-import firewallPoliciesRemoveAssociation_23 from "./firewall_policies/firewallPoliciesRemoveAssociation";
-import firewallPoliciesListAssociations_24 from "./firewall_policies/firewallPoliciesListAssociations";
-import networkFirewallPoliciesList_25 from "./network_firewall_policies/networkFirewallPoliciesList";
-import networkFirewallPoliciesGet_26 from "./network_firewall_policies/networkFirewallPoliciesGet";
-import networkFirewallPoliciesInsert_27 from "./network_firewall_policies/networkFirewallPoliciesInsert";
-import networkFirewallPoliciesDelete_28 from "./network_firewall_policies/networkFirewallPoliciesDelete";
-import networkFirewallPoliciesPatch_29 from "./network_firewall_policies/networkFirewallPoliciesPatch";
-import networkFirewallPoliciesCloneRules_30 from "./network_firewall_policies/networkFirewallPoliciesCloneRules";
-import networkFirewallPoliciesGetAssociation_31 from "./network_firewall_policies/networkFirewallPoliciesGetAssociation";
-import networkFirewallPoliciesGetIamPolicy_32 from "./network_firewall_policies/networkFirewallPoliciesGetIamPolicy";
-import networkFirewallPoliciesSetIamPolicy_33 from "./network_firewall_policies/networkFirewallPoliciesSetIamPolicy";
-import networkFirewallPoliciesTestIamPermissions_34 from "./network_firewall_policies/networkFirewallPoliciesTestIamPermissions";
-import networkFirewallPoliciesGetRule_35 from "./network_firewall_policies/networkFirewallPoliciesGetRule";
-import networkFirewallPoliciesAddRule_36 from "./network_firewall_policies/networkFirewallPoliciesAddRule";
-import networkFirewallPoliciesPatchRule_37 from "./network_firewall_policies/networkFirewallPoliciesPatchRule";
-import networkFirewallPoliciesRemoveRule_38 from "./network_firewall_policies/networkFirewallPoliciesRemoveRule";
-import networkFirewallPoliciesAddAssociation_39 from "./network_firewall_policies/networkFirewallPoliciesAddAssociation";
-import networkFirewallPoliciesRemoveAssociation_40 from "./network_firewall_policies/networkFirewallPoliciesRemoveAssociation";
-import regionNetworkFirewallPoliciesList_41 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesList";
-import regionNetworkFirewallPoliciesGet_42 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGet";
-import regionNetworkFirewallPoliciesInsert_43 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesInsert";
-import regionNetworkFirewallPoliciesDelete_44 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesDelete";
-import regionNetworkFirewallPoliciesPatch_45 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesPatch";
-import regionNetworkFirewallPoliciesCloneRules_46 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesCloneRules";
-import regionNetworkFirewallPoliciesGetAssociation_47 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetAssociation";
-import regionNetworkFirewallPoliciesGetEffectiveFirewalls_48 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetEffectiveFirewalls";
-import regionNetworkFirewallPoliciesGetIamPolicy_49 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetIamPolicy";
-import regionNetworkFirewallPoliciesSetIamPolicy_50 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesSetIamPolicy";
-import regionNetworkFirewallPoliciesTestIamPermissions_51 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesTestIamPermissions";
-import regionNetworkFirewallPoliciesGetRule_52 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetRule";
-import regionNetworkFirewallPoliciesAddRule_53 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesAddRule";
-import regionNetworkFirewallPoliciesPatchRule_54 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesPatchRule";
-import regionNetworkFirewallPoliciesRemoveRule_55 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesRemoveRule";
-import regionNetworkFirewallPoliciesAddAssociation_56 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesAddAssociation";
-import regionNetworkFirewallPoliciesRemoveAssociation_57 from "./region_network_firewall_policies/regionNetworkFirewallPoliciesRemoveAssociation";
-import securityPoliciesList_58 from "./security_policies/securityPoliciesList";
-import securityPoliciesGet_59 from "./security_policies/securityPoliciesGet";
-import securityPoliciesInsert_60 from "./security_policies/securityPoliciesInsert";
-import securityPoliciesDelete_61 from "./security_policies/securityPoliciesDelete";
-import securityPoliciesPatch_62 from "./security_policies/securityPoliciesPatch";
-import securityPoliciesAggregatedList_63 from "./security_policies/securityPoliciesAggregatedList";
-import securityPoliciesAddRule_64 from "./security_policies/securityPoliciesAddRule";
-import securityPoliciesGetRule_65 from "./security_policies/securityPoliciesGetRule";
-import securityPoliciesPatchRule_66 from "./security_policies/securityPoliciesPatchRule";
-import securityPoliciesRemoveRule_67 from "./security_policies/securityPoliciesRemoveRule";
-import securityPoliciesListPreconfiguredExpressionSets_68 from "./security_policies/securityPoliciesListPreconfiguredExpressionSets";
-import regionSecurityPoliciesList_69 from "./region_security_policies/regionSecurityPoliciesList";
-import regionSecurityPoliciesGet_70 from "./region_security_policies/regionSecurityPoliciesGet";
-import regionSecurityPoliciesInsert_71 from "./region_security_policies/regionSecurityPoliciesInsert";
-import regionSecurityPoliciesDelete_72 from "./region_security_policies/regionSecurityPoliciesDelete";
-import regionSecurityPoliciesPatch_73 from "./region_security_policies/regionSecurityPoliciesPatch";
-import regionSecurityPoliciesAddRule_74 from "./region_security_policies/regionSecurityPoliciesAddRule";
-import regionSecurityPoliciesGetRule_75 from "./region_security_policies/regionSecurityPoliciesGetRule";
-import regionSecurityPoliciesPatchRule_76 from "./region_security_policies/regionSecurityPoliciesPatchRule";
-import regionSecurityPoliciesRemoveRule_77 from "./region_security_policies/regionSecurityPoliciesRemoveRule";
-import organizationSecurityPoliciesList_78 from "./organization_security_policies/organizationSecurityPoliciesList";
-import organizationSecurityPoliciesGet_79 from "./organization_security_policies/organizationSecurityPoliciesGet";
-import organizationSecurityPoliciesInsert_80 from "./organization_security_policies/organizationSecurityPoliciesInsert";
-import organizationSecurityPoliciesDelete_81 from "./organization_security_policies/organizationSecurityPoliciesDelete";
-import organizationSecurityPoliciesPatch_82 from "./organization_security_policies/organizationSecurityPoliciesPatch";
-import organizationSecurityPoliciesMove_83 from "./organization_security_policies/organizationSecurityPoliciesMove";
-import organizationSecurityPoliciesGetAssociation_84 from "./organization_security_policies/organizationSecurityPoliciesGetAssociation";
-import organizationSecurityPoliciesAddAssociation_85 from "./organization_security_policies/organizationSecurityPoliciesAddAssociation";
-import organizationSecurityPoliciesRemoveAssociation_86 from "./organization_security_policies/organizationSecurityPoliciesRemoveAssociation";
-import organizationSecurityPoliciesListAssociations_87 from "./organization_security_policies/organizationSecurityPoliciesListAssociations";
-import organizationSecurityPoliciesCopyRules_88 from "./organization_security_policies/organizationSecurityPoliciesCopyRules";
-import organizationSecurityPoliciesGetRule_89 from "./organization_security_policies/organizationSecurityPoliciesGetRule";
-import organizationSecurityPoliciesAddRule_90 from "./organization_security_policies/organizationSecurityPoliciesAddRule";
-import organizationSecurityPoliciesPatchRule_91 from "./organization_security_policies/organizationSecurityPoliciesPatchRule";
-import organizationSecurityPoliciesRemoveRule_92 from "./organization_security_policies/organizationSecurityPoliciesRemoveRule";
-import sslCertificatesList_93 from "./ssl_certificates/sslCertificatesList";
-import sslCertificatesGet_94 from "./ssl_certificates/sslCertificatesGet";
-import sslCertificatesInsert_95 from "./ssl_certificates/sslCertificatesInsert";
-import sslCertificatesDelete_96 from "./ssl_certificates/sslCertificatesDelete";
-import sslCertificatesAggregatedList_97 from "./ssl_certificates/sslCertificatesAggregatedList";
-import regionSslCertificatesList_98 from "./region_ssl_certificates/regionSslCertificatesList";
-import regionSslCertificatesGet_99 from "./region_ssl_certificates/regionSslCertificatesGet";
-import regionSslCertificatesInsert_100 from "./region_ssl_certificates/regionSslCertificatesInsert";
-import regionSslCertificatesDelete_101 from "./region_ssl_certificates/regionSslCertificatesDelete";
-import sslPoliciesList_102 from "./ssl_policies/sslPoliciesList";
-import sslPoliciesGet_103 from "./ssl_policies/sslPoliciesGet";
-import sslPoliciesInsert_104 from "./ssl_policies/sslPoliciesInsert";
-import sslPoliciesDelete_105 from "./ssl_policies/sslPoliciesDelete";
-import sslPoliciesPatch_106 from "./ssl_policies/sslPoliciesPatch";
-import sslPoliciesListAvailableFeatures_107 from "./ssl_policies/sslPoliciesListAvailableFeatures";
-import regionSslPoliciesList_108 from "./region_ssl_policies/regionSslPoliciesList";
-import regionSslPoliciesGet_109 from "./region_ssl_policies/regionSslPoliciesGet";
-import regionSslPoliciesInsert_110 from "./region_ssl_policies/regionSslPoliciesInsert";
-import regionSslPoliciesDelete_111 from "./region_ssl_policies/regionSslPoliciesDelete";
-import regionSslPoliciesPatch_112 from "./region_ssl_policies/regionSslPoliciesPatch";
-import regionSslPoliciesListAvailableFeatures_113 from "./region_ssl_policies/regionSslPoliciesListAvailableFeatures";
+import firewallPoliciesAddAssociation from "./firewall_policies/firewallPoliciesAddAssociation.ts";
+import firewallPoliciesAddRule from "./firewall_policies/firewallPoliciesAddRule.ts";
+import firewallPoliciesCloneRules from "./firewall_policies/firewallPoliciesCloneRules.ts";
+import firewallPoliciesDelete from "./firewall_policies/firewallPoliciesDelete.ts";
+import firewallPoliciesGet from "./firewall_policies/firewallPoliciesGet.ts";
+import firewallPoliciesGetAssociation from "./firewall_policies/firewallPoliciesGetAssociation.ts";
+import firewallPoliciesGetRule from "./firewall_policies/firewallPoliciesGetRule.ts";
+import firewallPoliciesInsert from "./firewall_policies/firewallPoliciesInsert.ts";
+import firewallPoliciesList from "./firewall_policies/firewallPoliciesList.ts";
+import firewallPoliciesListAssociations from "./firewall_policies/firewallPoliciesListAssociations.ts";
+import firewallPoliciesMove from "./firewall_policies/firewallPoliciesMove.ts";
+import firewallPoliciesPatch from "./firewall_policies/firewallPoliciesPatch.ts";
+import firewallPoliciesPatchRule from "./firewall_policies/firewallPoliciesPatchRule.ts";
+import firewallPoliciesRemoveAssociation from "./firewall_policies/firewallPoliciesRemoveAssociation.ts";
+import firewallPoliciesRemoveRule from "./firewall_policies/firewallPoliciesRemoveRule.ts";
+import firewallsDelete from "./firewalls/firewallsDelete.ts";
+import firewallsGet from "./firewalls/firewallsGet.ts";
+import firewallsInsert from "./firewalls/firewallsInsert.ts";
+import firewallsList from "./firewalls/firewallsList.ts";
+import firewallsPatch from "./firewalls/firewallsPatch.ts";
+import firewallsUpdate from "./firewalls/firewallsUpdate.ts";
+import networkFirewallPoliciesAddAssociation from "./network_firewall_policies/networkFirewallPoliciesAddAssociation.ts";
+import networkFirewallPoliciesAddPacketMirroringRule from "./network_firewall_policies/networkFirewallPoliciesAddPacketMirroringRule.ts";
+import networkFirewallPoliciesAddRule from "./network_firewall_policies/networkFirewallPoliciesAddRule.ts";
+import networkFirewallPoliciesAggregatedList from "./network_firewall_policies/networkFirewallPoliciesAggregatedList.ts";
+import networkFirewallPoliciesCloneRules from "./network_firewall_policies/networkFirewallPoliciesCloneRules.ts";
+import networkFirewallPoliciesDelete from "./network_firewall_policies/networkFirewallPoliciesDelete.ts";
+import networkFirewallPoliciesGet from "./network_firewall_policies/networkFirewallPoliciesGet.ts";
+import networkFirewallPoliciesGetAssociation from "./network_firewall_policies/networkFirewallPoliciesGetAssociation.ts";
+import networkFirewallPoliciesGetPacketMirroringRule from "./network_firewall_policies/networkFirewallPoliciesGetPacketMirroringRule.ts";
+import networkFirewallPoliciesGetRule from "./network_firewall_policies/networkFirewallPoliciesGetRule.ts";
+import networkFirewallPoliciesInsert from "./network_firewall_policies/networkFirewallPoliciesInsert.ts";
+import networkFirewallPoliciesList from "./network_firewall_policies/networkFirewallPoliciesList.ts";
+import networkFirewallPoliciesPatch from "./network_firewall_policies/networkFirewallPoliciesPatch.ts";
+import networkFirewallPoliciesPatchPacketMirroringRule from "./network_firewall_policies/networkFirewallPoliciesPatchPacketMirroringRule.ts";
+import networkFirewallPoliciesPatchRule from "./network_firewall_policies/networkFirewallPoliciesPatchRule.ts";
+import networkFirewallPoliciesRemoveAssociation from "./network_firewall_policies/networkFirewallPoliciesRemoveAssociation.ts";
+import networkFirewallPoliciesRemovePacketMirroringRule from "./network_firewall_policies/networkFirewallPoliciesRemovePacketMirroringRule.ts";
+import networkFirewallPoliciesRemoveRule from "./network_firewall_policies/networkFirewallPoliciesRemoveRule.ts";
+import organizationSecurityPoliciesAddAssociation from "./organization_security_policies/organizationSecurityPoliciesAddAssociation.ts";
+import organizationSecurityPoliciesAddRule from "./organization_security_policies/organizationSecurityPoliciesAddRule.ts";
+import organizationSecurityPoliciesCopyRules from "./organization_security_policies/organizationSecurityPoliciesCopyRules.ts";
+import organizationSecurityPoliciesDelete from "./organization_security_policies/organizationSecurityPoliciesDelete.ts";
+import organizationSecurityPoliciesGet from "./organization_security_policies/organizationSecurityPoliciesGet.ts";
+import organizationSecurityPoliciesGetAssociation from "./organization_security_policies/organizationSecurityPoliciesGetAssociation.ts";
+import organizationSecurityPoliciesGetRule from "./organization_security_policies/organizationSecurityPoliciesGetRule.ts";
+import organizationSecurityPoliciesInsert from "./organization_security_policies/organizationSecurityPoliciesInsert.ts";
+import organizationSecurityPoliciesList from "./organization_security_policies/organizationSecurityPoliciesList.ts";
+import organizationSecurityPoliciesListAssociations from "./organization_security_policies/organizationSecurityPoliciesListAssociations.ts";
+import organizationSecurityPoliciesListPreconfiguredExpressionSets from "./organization_security_policies/organizationSecurityPoliciesListPreconfiguredExpressionSets.ts";
+import organizationSecurityPoliciesMove from "./organization_security_policies/organizationSecurityPoliciesMove.ts";
+import organizationSecurityPoliciesPatch from "./organization_security_policies/organizationSecurityPoliciesPatch.ts";
+import organizationSecurityPoliciesPatchRule from "./organization_security_policies/organizationSecurityPoliciesPatchRule.ts";
+import organizationSecurityPoliciesRemoveAssociation from "./organization_security_policies/organizationSecurityPoliciesRemoveAssociation.ts";
+import organizationSecurityPoliciesRemoveRule from "./organization_security_policies/organizationSecurityPoliciesRemoveRule.ts";
+import regionNetworkFirewallPoliciesAddAssociation from "./region_network_firewall_policies/regionNetworkFirewallPoliciesAddAssociation.ts";
+import regionNetworkFirewallPoliciesAddRule from "./region_network_firewall_policies/regionNetworkFirewallPoliciesAddRule.ts";
+import regionNetworkFirewallPoliciesCloneRules from "./region_network_firewall_policies/regionNetworkFirewallPoliciesCloneRules.ts";
+import regionNetworkFirewallPoliciesDelete from "./region_network_firewall_policies/regionNetworkFirewallPoliciesDelete.ts";
+import regionNetworkFirewallPoliciesGet from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGet.ts";
+import regionNetworkFirewallPoliciesGetAssociation from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetAssociation.ts";
+import regionNetworkFirewallPoliciesGetEffectiveFirewalls from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetEffectiveFirewalls.ts";
+import regionNetworkFirewallPoliciesGetRule from "./region_network_firewall_policies/regionNetworkFirewallPoliciesGetRule.ts";
+import regionNetworkFirewallPoliciesInsert from "./region_network_firewall_policies/regionNetworkFirewallPoliciesInsert.ts";
+import regionNetworkFirewallPoliciesList from "./region_network_firewall_policies/regionNetworkFirewallPoliciesList.ts";
+import regionNetworkFirewallPoliciesPatch from "./region_network_firewall_policies/regionNetworkFirewallPoliciesPatch.ts";
+import regionNetworkFirewallPoliciesPatchRule from "./region_network_firewall_policies/regionNetworkFirewallPoliciesPatchRule.ts";
+import regionNetworkFirewallPoliciesRemoveAssociation from "./region_network_firewall_policies/regionNetworkFirewallPoliciesRemoveAssociation.ts";
+import regionNetworkFirewallPoliciesRemoveRule from "./region_network_firewall_policies/regionNetworkFirewallPoliciesRemoveRule.ts";
+import regionSecurityPoliciesAddRule from "./region_security_policies/regionSecurityPoliciesAddRule.ts";
+import regionSecurityPoliciesDelete from "./region_security_policies/regionSecurityPoliciesDelete.ts";
+import regionSecurityPoliciesGet from "./region_security_policies/regionSecurityPoliciesGet.ts";
+import regionSecurityPoliciesGetRule from "./region_security_policies/regionSecurityPoliciesGetRule.ts";
+import regionSecurityPoliciesInsert from "./region_security_policies/regionSecurityPoliciesInsert.ts";
+import regionSecurityPoliciesList from "./region_security_policies/regionSecurityPoliciesList.ts";
+import regionSecurityPoliciesPatch from "./region_security_policies/regionSecurityPoliciesPatch.ts";
+import regionSecurityPoliciesPatchRule from "./region_security_policies/regionSecurityPoliciesPatchRule.ts";
+import regionSecurityPoliciesRemoveRule from "./region_security_policies/regionSecurityPoliciesRemoveRule.ts";
+import regionSecurityPoliciesSetLabels from "./region_security_policies/regionSecurityPoliciesSetLabels.ts";
+import regionSslCertificatesDelete from "./region_ssl_certificates/regionSslCertificatesDelete.ts";
+import regionSslCertificatesGet from "./region_ssl_certificates/regionSslCertificatesGet.ts";
+import regionSslCertificatesInsert from "./region_ssl_certificates/regionSslCertificatesInsert.ts";
+import regionSslCertificatesList from "./region_ssl_certificates/regionSslCertificatesList.ts";
+import regionSslPoliciesDelete from "./region_ssl_policies/regionSslPoliciesDelete.ts";
+import regionSslPoliciesGet from "./region_ssl_policies/regionSslPoliciesGet.ts";
+import regionSslPoliciesInsert from "./region_ssl_policies/regionSslPoliciesInsert.ts";
+import regionSslPoliciesList from "./region_ssl_policies/regionSslPoliciesList.ts";
+import regionSslPoliciesListAvailableFeatures from "./region_ssl_policies/regionSslPoliciesListAvailableFeatures.ts";
+import regionSslPoliciesPatch from "./region_ssl_policies/regionSslPoliciesPatch.ts";
+import securityPoliciesAddRule from "./security_policies/securityPoliciesAddRule.ts";
+import securityPoliciesAggregatedList from "./security_policies/securityPoliciesAggregatedList.ts";
+import securityPoliciesDelete from "./security_policies/securityPoliciesDelete.ts";
+import securityPoliciesGet from "./security_policies/securityPoliciesGet.ts";
+import securityPoliciesGetRule from "./security_policies/securityPoliciesGetRule.ts";
+import securityPoliciesInsert from "./security_policies/securityPoliciesInsert.ts";
+import securityPoliciesList from "./security_policies/securityPoliciesList.ts";
+import securityPoliciesListPreconfiguredExpressionSets from "./security_policies/securityPoliciesListPreconfiguredExpressionSets.ts";
+import securityPoliciesPatch from "./security_policies/securityPoliciesPatch.ts";
+import securityPoliciesPatchRule from "./security_policies/securityPoliciesPatchRule.ts";
+import securityPoliciesRemoveRule from "./security_policies/securityPoliciesRemoveRule.ts";
+import securityPoliciesSetLabels from "./security_policies/securityPoliciesSetLabels.ts";
+import sslCertificatesAggregatedList from "./ssl_certificates/sslCertificatesAggregatedList.ts";
+import sslCertificatesDelete from "./ssl_certificates/sslCertificatesDelete.ts";
+import sslCertificatesGet from "./ssl_certificates/sslCertificatesGet.ts";
+import sslCertificatesInsert from "./ssl_certificates/sslCertificatesInsert.ts";
+import sslCertificatesList from "./ssl_certificates/sslCertificatesList.ts";
+import sslPoliciesAggregatedList from "./ssl_policies/sslPoliciesAggregatedList.ts";
+import sslPoliciesDelete from "./ssl_policies/sslPoliciesDelete.ts";
+import sslPoliciesGet from "./ssl_policies/sslPoliciesGet.ts";
+import sslPoliciesInsert from "./ssl_policies/sslPoliciesInsert.ts";
+import sslPoliciesList from "./ssl_policies/sslPoliciesList.ts";
+import sslPoliciesListAvailableFeatures from "./ssl_policies/sslPoliciesListAvailableFeatures.ts";
+import sslPoliciesPatch from "./ssl_policies/sslPoliciesPatch.ts";
 
 export const blocks = {
-  firewalls_firewallsList: firewallsList_0,
-  firewalls_firewallsGet: firewallsGet_1,
-  firewalls_firewallsInsert: firewallsInsert_2,
-  firewalls_firewallsDelete: firewallsDelete_3,
-  firewalls_firewallsPatch: firewallsPatch_4,
-  firewalls_firewallsUpdate: firewallsUpdate_5,
-  firewalls_firewallsTestIamPermissions: firewallsTestIamPermissions_6,
-  firewall_policies_firewallPoliciesList: firewallPoliciesList_7,
-  firewall_policies_firewallPoliciesGet: firewallPoliciesGet_8,
-  firewall_policies_firewallPoliciesInsert: firewallPoliciesInsert_9,
-  firewall_policies_firewallPoliciesDelete: firewallPoliciesDelete_10,
-  firewall_policies_firewallPoliciesPatch: firewallPoliciesPatch_11,
-  firewall_policies_firewallPoliciesMove: firewallPoliciesMove_12,
-  firewall_policies_firewallPoliciesCloneRules: firewallPoliciesCloneRules_13,
-  firewall_policies_firewallPoliciesGetAssociation:
-    firewallPoliciesGetAssociation_14,
-  firewall_policies_firewallPoliciesGetIamPolicy:
-    firewallPoliciesGetIamPolicy_15,
-  firewall_policies_firewallPoliciesSetIamPolicy:
-    firewallPoliciesSetIamPolicy_16,
-  firewall_policies_firewallPoliciesTestIamPermissions:
-    firewallPoliciesTestIamPermissions_17,
-  firewall_policies_firewallPoliciesGetRule: firewallPoliciesGetRule_18,
-  firewall_policies_firewallPoliciesAddRule: firewallPoliciesAddRule_19,
-  firewall_policies_firewallPoliciesPatchRule: firewallPoliciesPatchRule_20,
-  firewall_policies_firewallPoliciesRemoveRule: firewallPoliciesRemoveRule_21,
-  firewall_policies_firewallPoliciesAddAssociation:
-    firewallPoliciesAddAssociation_22,
-  firewall_policies_firewallPoliciesRemoveAssociation:
-    firewallPoliciesRemoveAssociation_23,
-  firewall_policies_firewallPoliciesListAssociations:
-    firewallPoliciesListAssociations_24,
-  network_firewall_policies_networkFirewallPoliciesList:
-    networkFirewallPoliciesList_25,
-  network_firewall_policies_networkFirewallPoliciesGet:
-    networkFirewallPoliciesGet_26,
-  network_firewall_policies_networkFirewallPoliciesInsert:
-    networkFirewallPoliciesInsert_27,
-  network_firewall_policies_networkFirewallPoliciesDelete:
-    networkFirewallPoliciesDelete_28,
-  network_firewall_policies_networkFirewallPoliciesPatch:
-    networkFirewallPoliciesPatch_29,
-  network_firewall_policies_networkFirewallPoliciesCloneRules:
-    networkFirewallPoliciesCloneRules_30,
-  network_firewall_policies_networkFirewallPoliciesGetAssociation:
-    networkFirewallPoliciesGetAssociation_31,
-  network_firewall_policies_networkFirewallPoliciesGetIamPolicy:
-    networkFirewallPoliciesGetIamPolicy_32,
-  network_firewall_policies_networkFirewallPoliciesSetIamPolicy:
-    networkFirewallPoliciesSetIamPolicy_33,
-  network_firewall_policies_networkFirewallPoliciesTestIamPermissions:
-    networkFirewallPoliciesTestIamPermissions_34,
-  network_firewall_policies_networkFirewallPoliciesGetRule:
-    networkFirewallPoliciesGetRule_35,
-  network_firewall_policies_networkFirewallPoliciesAddRule:
-    networkFirewallPoliciesAddRule_36,
-  network_firewall_policies_networkFirewallPoliciesPatchRule:
-    networkFirewallPoliciesPatchRule_37,
-  network_firewall_policies_networkFirewallPoliciesRemoveRule:
-    networkFirewallPoliciesRemoveRule_38,
-  network_firewall_policies_networkFirewallPoliciesAddAssociation:
-    networkFirewallPoliciesAddAssociation_39,
-  network_firewall_policies_networkFirewallPoliciesRemoveAssociation:
-    networkFirewallPoliciesRemoveAssociation_40,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesList:
-    regionNetworkFirewallPoliciesList_41,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesGet:
-    regionNetworkFirewallPoliciesGet_42,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesInsert:
-    regionNetworkFirewallPoliciesInsert_43,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesDelete:
-    regionNetworkFirewallPoliciesDelete_44,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesPatch:
-    regionNetworkFirewallPoliciesPatch_45,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesCloneRules:
-    regionNetworkFirewallPoliciesCloneRules_46,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesGetAssociation:
-    regionNetworkFirewallPoliciesGetAssociation_47,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesGetEffectiveFirewalls:
-    regionNetworkFirewallPoliciesGetEffectiveFirewalls_48,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesGetIamPolicy:
-    regionNetworkFirewallPoliciesGetIamPolicy_49,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesSetIamPolicy:
-    regionNetworkFirewallPoliciesSetIamPolicy_50,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesTestIamPermissions:
-    regionNetworkFirewallPoliciesTestIamPermissions_51,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesGetRule:
-    regionNetworkFirewallPoliciesGetRule_52,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesAddRule:
-    regionNetworkFirewallPoliciesAddRule_53,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesPatchRule:
-    regionNetworkFirewallPoliciesPatchRule_54,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesRemoveRule:
-    regionNetworkFirewallPoliciesRemoveRule_55,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesAddAssociation:
-    regionNetworkFirewallPoliciesAddAssociation_56,
-  region_network_firewall_policies_regionNetworkFirewallPoliciesRemoveAssociation:
-    regionNetworkFirewallPoliciesRemoveAssociation_57,
-  security_policies_securityPoliciesList: securityPoliciesList_58,
-  security_policies_securityPoliciesGet: securityPoliciesGet_59,
-  security_policies_securityPoliciesInsert: securityPoliciesInsert_60,
-  security_policies_securityPoliciesDelete: securityPoliciesDelete_61,
-  security_policies_securityPoliciesPatch: securityPoliciesPatch_62,
-  security_policies_securityPoliciesAggregatedList:
-    securityPoliciesAggregatedList_63,
-  security_policies_securityPoliciesAddRule: securityPoliciesAddRule_64,
-  security_policies_securityPoliciesGetRule: securityPoliciesGetRule_65,
-  security_policies_securityPoliciesPatchRule: securityPoliciesPatchRule_66,
-  security_policies_securityPoliciesRemoveRule: securityPoliciesRemoveRule_67,
-  security_policies_securityPoliciesListPreconfiguredExpressionSets:
-    securityPoliciesListPreconfiguredExpressionSets_68,
-  region_security_policies_regionSecurityPoliciesList:
-    regionSecurityPoliciesList_69,
-  region_security_policies_regionSecurityPoliciesGet:
-    regionSecurityPoliciesGet_70,
-  region_security_policies_regionSecurityPoliciesInsert:
-    regionSecurityPoliciesInsert_71,
-  region_security_policies_regionSecurityPoliciesDelete:
-    regionSecurityPoliciesDelete_72,
-  region_security_policies_regionSecurityPoliciesPatch:
-    regionSecurityPoliciesPatch_73,
-  region_security_policies_regionSecurityPoliciesAddRule:
-    regionSecurityPoliciesAddRule_74,
-  region_security_policies_regionSecurityPoliciesGetRule:
-    regionSecurityPoliciesGetRule_75,
-  region_security_policies_regionSecurityPoliciesPatchRule:
-    regionSecurityPoliciesPatchRule_76,
-  region_security_policies_regionSecurityPoliciesRemoveRule:
-    regionSecurityPoliciesRemoveRule_77,
-  organization_security_policies_organizationSecurityPoliciesList:
-    organizationSecurityPoliciesList_78,
-  organization_security_policies_organizationSecurityPoliciesGet:
-    organizationSecurityPoliciesGet_79,
-  organization_security_policies_organizationSecurityPoliciesInsert:
-    organizationSecurityPoliciesInsert_80,
-  organization_security_policies_organizationSecurityPoliciesDelete:
-    organizationSecurityPoliciesDelete_81,
-  organization_security_policies_organizationSecurityPoliciesPatch:
-    organizationSecurityPoliciesPatch_82,
-  organization_security_policies_organizationSecurityPoliciesMove:
-    organizationSecurityPoliciesMove_83,
-  organization_security_policies_organizationSecurityPoliciesGetAssociation:
-    organizationSecurityPoliciesGetAssociation_84,
-  organization_security_policies_organizationSecurityPoliciesAddAssociation:
-    organizationSecurityPoliciesAddAssociation_85,
-  organization_security_policies_organizationSecurityPoliciesRemoveAssociation:
-    organizationSecurityPoliciesRemoveAssociation_86,
-  organization_security_policies_organizationSecurityPoliciesListAssociations:
-    organizationSecurityPoliciesListAssociations_87,
-  organization_security_policies_organizationSecurityPoliciesCopyRules:
-    organizationSecurityPoliciesCopyRules_88,
-  organization_security_policies_organizationSecurityPoliciesGetRule:
-    organizationSecurityPoliciesGetRule_89,
-  organization_security_policies_organizationSecurityPoliciesAddRule:
-    organizationSecurityPoliciesAddRule_90,
-  organization_security_policies_organizationSecurityPoliciesPatchRule:
-    organizationSecurityPoliciesPatchRule_91,
-  organization_security_policies_organizationSecurityPoliciesRemoveRule:
-    organizationSecurityPoliciesRemoveRule_92,
-  ssl_certificates_sslCertificatesList: sslCertificatesList_93,
-  ssl_certificates_sslCertificatesGet: sslCertificatesGet_94,
-  ssl_certificates_sslCertificatesInsert: sslCertificatesInsert_95,
-  ssl_certificates_sslCertificatesDelete: sslCertificatesDelete_96,
-  ssl_certificates_sslCertificatesAggregatedList:
-    sslCertificatesAggregatedList_97,
-  region_ssl_certificates_regionSslCertificatesList:
-    regionSslCertificatesList_98,
-  region_ssl_certificates_regionSslCertificatesGet: regionSslCertificatesGet_99,
-  region_ssl_certificates_regionSslCertificatesInsert:
-    regionSslCertificatesInsert_100,
-  region_ssl_certificates_regionSslCertificatesDelete:
-    regionSslCertificatesDelete_101,
-  ssl_policies_sslPoliciesList: sslPoliciesList_102,
-  ssl_policies_sslPoliciesGet: sslPoliciesGet_103,
-  ssl_policies_sslPoliciesInsert: sslPoliciesInsert_104,
-  ssl_policies_sslPoliciesDelete: sslPoliciesDelete_105,
-  ssl_policies_sslPoliciesPatch: sslPoliciesPatch_106,
-  ssl_policies_sslPoliciesListAvailableFeatures:
-    sslPoliciesListAvailableFeatures_107,
-  region_ssl_policies_regionSslPoliciesList: regionSslPoliciesList_108,
-  region_ssl_policies_regionSslPoliciesGet: regionSslPoliciesGet_109,
-  region_ssl_policies_regionSslPoliciesInsert: regionSslPoliciesInsert_110,
-  region_ssl_policies_regionSslPoliciesDelete: regionSslPoliciesDelete_111,
-  region_ssl_policies_regionSslPoliciesPatch: regionSslPoliciesPatch_112,
-  region_ssl_policies_regionSslPoliciesListAvailableFeatures:
-    regionSslPoliciesListAvailableFeatures_113,
+  firewallPoliciesAddAssociation: firewallPoliciesAddAssociation,
+  firewallPoliciesAddRule: firewallPoliciesAddRule,
+  firewallPoliciesCloneRules: firewallPoliciesCloneRules,
+  firewallPoliciesDelete: firewallPoliciesDelete,
+  firewallPoliciesGet: firewallPoliciesGet,
+  firewallPoliciesGetAssociation: firewallPoliciesGetAssociation,
+  firewallPoliciesGetRule: firewallPoliciesGetRule,
+  firewallPoliciesInsert: firewallPoliciesInsert,
+  firewallPoliciesList: firewallPoliciesList,
+  firewallPoliciesListAssociations: firewallPoliciesListAssociations,
+  firewallPoliciesMove: firewallPoliciesMove,
+  firewallPoliciesPatch: firewallPoliciesPatch,
+  firewallPoliciesPatchRule: firewallPoliciesPatchRule,
+  firewallPoliciesRemoveAssociation: firewallPoliciesRemoveAssociation,
+  firewallPoliciesRemoveRule: firewallPoliciesRemoveRule,
+  firewallsDelete: firewallsDelete,
+  firewallsGet: firewallsGet,
+  firewallsInsert: firewallsInsert,
+  firewallsList: firewallsList,
+  firewallsPatch: firewallsPatch,
+  firewallsUpdate: firewallsUpdate,
+  networkFirewallPoliciesAddAssociation: networkFirewallPoliciesAddAssociation,
+  networkFirewallPoliciesAddPacketMirroringRule:
+    networkFirewallPoliciesAddPacketMirroringRule,
+  networkFirewallPoliciesAddRule: networkFirewallPoliciesAddRule,
+  networkFirewallPoliciesAggregatedList: networkFirewallPoliciesAggregatedList,
+  networkFirewallPoliciesCloneRules: networkFirewallPoliciesCloneRules,
+  networkFirewallPoliciesDelete: networkFirewallPoliciesDelete,
+  networkFirewallPoliciesGet: networkFirewallPoliciesGet,
+  networkFirewallPoliciesGetAssociation: networkFirewallPoliciesGetAssociation,
+  networkFirewallPoliciesGetPacketMirroringRule:
+    networkFirewallPoliciesGetPacketMirroringRule,
+  networkFirewallPoliciesGetRule: networkFirewallPoliciesGetRule,
+  networkFirewallPoliciesInsert: networkFirewallPoliciesInsert,
+  networkFirewallPoliciesList: networkFirewallPoliciesList,
+  networkFirewallPoliciesPatch: networkFirewallPoliciesPatch,
+  networkFirewallPoliciesPatchPacketMirroringRule:
+    networkFirewallPoliciesPatchPacketMirroringRule,
+  networkFirewallPoliciesPatchRule: networkFirewallPoliciesPatchRule,
+  networkFirewallPoliciesRemoveAssociation:
+    networkFirewallPoliciesRemoveAssociation,
+  networkFirewallPoliciesRemovePacketMirroringRule:
+    networkFirewallPoliciesRemovePacketMirroringRule,
+  networkFirewallPoliciesRemoveRule: networkFirewallPoliciesRemoveRule,
+  organizationSecurityPoliciesAddAssociation:
+    organizationSecurityPoliciesAddAssociation,
+  organizationSecurityPoliciesAddRule: organizationSecurityPoliciesAddRule,
+  organizationSecurityPoliciesCopyRules: organizationSecurityPoliciesCopyRules,
+  organizationSecurityPoliciesDelete: organizationSecurityPoliciesDelete,
+  organizationSecurityPoliciesGet: organizationSecurityPoliciesGet,
+  organizationSecurityPoliciesGetAssociation:
+    organizationSecurityPoliciesGetAssociation,
+  organizationSecurityPoliciesGetRule: organizationSecurityPoliciesGetRule,
+  organizationSecurityPoliciesInsert: organizationSecurityPoliciesInsert,
+  organizationSecurityPoliciesList: organizationSecurityPoliciesList,
+  organizationSecurityPoliciesListAssociations:
+    organizationSecurityPoliciesListAssociations,
+  organizationSecurityPoliciesListPreconfiguredExpressionSets:
+    organizationSecurityPoliciesListPreconfiguredExpressionSets,
+  organizationSecurityPoliciesMove: organizationSecurityPoliciesMove,
+  organizationSecurityPoliciesPatch: organizationSecurityPoliciesPatch,
+  organizationSecurityPoliciesPatchRule: organizationSecurityPoliciesPatchRule,
+  organizationSecurityPoliciesRemoveAssociation:
+    organizationSecurityPoliciesRemoveAssociation,
+  organizationSecurityPoliciesRemoveRule:
+    organizationSecurityPoliciesRemoveRule,
+  regionNetworkFirewallPoliciesAddAssociation:
+    regionNetworkFirewallPoliciesAddAssociation,
+  regionNetworkFirewallPoliciesAddRule: regionNetworkFirewallPoliciesAddRule,
+  regionNetworkFirewallPoliciesCloneRules:
+    regionNetworkFirewallPoliciesCloneRules,
+  regionNetworkFirewallPoliciesDelete: regionNetworkFirewallPoliciesDelete,
+  regionNetworkFirewallPoliciesGet: regionNetworkFirewallPoliciesGet,
+  regionNetworkFirewallPoliciesGetAssociation:
+    regionNetworkFirewallPoliciesGetAssociation,
+  regionNetworkFirewallPoliciesGetEffectiveFirewalls:
+    regionNetworkFirewallPoliciesGetEffectiveFirewalls,
+  regionNetworkFirewallPoliciesGetRule: regionNetworkFirewallPoliciesGetRule,
+  regionNetworkFirewallPoliciesInsert: regionNetworkFirewallPoliciesInsert,
+  regionNetworkFirewallPoliciesList: regionNetworkFirewallPoliciesList,
+  regionNetworkFirewallPoliciesPatch: regionNetworkFirewallPoliciesPatch,
+  regionNetworkFirewallPoliciesPatchRule:
+    regionNetworkFirewallPoliciesPatchRule,
+  regionNetworkFirewallPoliciesRemoveAssociation:
+    regionNetworkFirewallPoliciesRemoveAssociation,
+  regionNetworkFirewallPoliciesRemoveRule:
+    regionNetworkFirewallPoliciesRemoveRule,
+  regionSecurityPoliciesAddRule: regionSecurityPoliciesAddRule,
+  regionSecurityPoliciesDelete: regionSecurityPoliciesDelete,
+  regionSecurityPoliciesGet: regionSecurityPoliciesGet,
+  regionSecurityPoliciesGetRule: regionSecurityPoliciesGetRule,
+  regionSecurityPoliciesInsert: regionSecurityPoliciesInsert,
+  regionSecurityPoliciesList: regionSecurityPoliciesList,
+  regionSecurityPoliciesPatch: regionSecurityPoliciesPatch,
+  regionSecurityPoliciesPatchRule: regionSecurityPoliciesPatchRule,
+  regionSecurityPoliciesRemoveRule: regionSecurityPoliciesRemoveRule,
+  regionSecurityPoliciesSetLabels: regionSecurityPoliciesSetLabels,
+  regionSslCertificatesDelete: regionSslCertificatesDelete,
+  regionSslCertificatesGet: regionSslCertificatesGet,
+  regionSslCertificatesInsert: regionSslCertificatesInsert,
+  regionSslCertificatesList: regionSslCertificatesList,
+  regionSslPoliciesDelete: regionSslPoliciesDelete,
+  regionSslPoliciesGet: regionSslPoliciesGet,
+  regionSslPoliciesInsert: regionSslPoliciesInsert,
+  regionSslPoliciesList: regionSslPoliciesList,
+  regionSslPoliciesListAvailableFeatures:
+    regionSslPoliciesListAvailableFeatures,
+  regionSslPoliciesPatch: regionSslPoliciesPatch,
+  securityPoliciesAddRule: securityPoliciesAddRule,
+  securityPoliciesAggregatedList: securityPoliciesAggregatedList,
+  securityPoliciesDelete: securityPoliciesDelete,
+  securityPoliciesGet: securityPoliciesGet,
+  securityPoliciesGetRule: securityPoliciesGetRule,
+  securityPoliciesInsert: securityPoliciesInsert,
+  securityPoliciesList: securityPoliciesList,
+  securityPoliciesListPreconfiguredExpressionSets:
+    securityPoliciesListPreconfiguredExpressionSets,
+  securityPoliciesPatch: securityPoliciesPatch,
+  securityPoliciesPatchRule: securityPoliciesPatchRule,
+  securityPoliciesRemoveRule: securityPoliciesRemoveRule,
+  securityPoliciesSetLabels: securityPoliciesSetLabels,
+  sslCertificatesAggregatedList: sslCertificatesAggregatedList,
+  sslCertificatesDelete: sslCertificatesDelete,
+  sslCertificatesGet: sslCertificatesGet,
+  sslCertificatesInsert: sslCertificatesInsert,
+  sslCertificatesList: sslCertificatesList,
+  sslPoliciesAggregatedList: sslPoliciesAggregatedList,
+  sslPoliciesDelete: sslPoliciesDelete,
+  sslPoliciesGet: sslPoliciesGet,
+  sslPoliciesInsert: sslPoliciesInsert,
+  sslPoliciesList: sslPoliciesList,
+  sslPoliciesListAvailableFeatures: sslPoliciesListAvailableFeatures,
+  sslPoliciesPatch: sslPoliciesPatch,
 };

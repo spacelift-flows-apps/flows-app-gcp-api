@@ -1,90 +1,50 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const vpnGatewaysGet: AppBlock = {
-  name: "VPN Gateways - Get",
-  description: `Returns the specified VPN gateway.`,
-  category: "VPN Gateways",
+  name: "Vpn Gateways - Get",
+  description: `Returns the specified Zone resource.`,
+  category: "Vpn Gateways",
   inputs: {
     default: {
       config: {
-        vpnGateway: {
-          name: "VPN Gateway",
-          description: "Name of the VPN gateway to return.",
-          type: {
-            type: "string",
-          },
-          required: true,
-        },
         region: {
           name: "Region",
           description: "Name of the region for this request.",
           type: {
             type: "string",
+            description: "Name of the region for this request.",
+          },
+          required: true,
+        },
+        vpnGateway: {
+          name: "Vpn Gateway",
+          description: "Name of the VPN gateway to return.",
+          type: {
+            type: "string",
+            description: "Name of the VPN gateway to return.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.vpnGateway !== undefined)
+          pathParams["vpn_gateway"] = String(
+            input.event.inputConfig.vpnGateway,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/vpnGateways/{vpnGateway}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/vpnGateways/{vpn_gateway}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -98,38 +58,96 @@ const vpnGatewaysGet: AppBlock = {
           creationTimestamp: {
             type: "string",
             description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
           },
           gatewayIpVersion: {
             type: "string",
-            enum: ["IPV4", "IPV6"],
+            enum: ["UNDEFINED_GATEWAY_IP_VERSION", "IPV4", "IPV6"],
             description:
-              "The IP family of the gateway IPs for the HA-VPN gateway interfaces. If not\nspecified, IPV4 will be used.",
+              "The IP family of the gateway IPs for the HA-VPN gateway interfaces. If not specified, IPV4 will be used. Check the GatewayIpVersion enum for the list of possible values.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of resource. Always compute#vpnGateway for VPN gateways.",
+          },
+          labelFingerprint: {
+            type: "string",
+            description:
+              "A fingerprint for the labels being applied to this VpnGateway, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a VpnGateway.",
+          },
+          labels: {
+            type: "object",
+            additionalProperties: {
+              type: "string",
+            },
+            description:
+              "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035. Label values may be empty.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          network: {
+            type: "string",
+            description:
+              "URL of the network to which this VPN gateway is attached. Provided by the client when the VPN gateway is created.",
+          },
+          region: {
+            type: "string",
+            description:
+              "Output only. [Output Only] URL of the region where the VPN gateway resides.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for the resource.",
+          },
+          stackType: {
+            type: "string",
+            enum: [
+              "UNDEFINED_STACK_TYPE",
+              "IPV4_IPV6",
+              "IPV4_ONLY",
+              "IPV6_ONLY",
+            ],
+            description:
+              "The stack type for this VPN gateway to identify the IP protocols that are enabled. Possible values are: IPV4_ONLY,IPV4_IPV6, IPV6_ONLY. If not specified,IPV4_ONLY is used if the gateway IP version isIPV4, or IPV4_IPV6 if the gateway IP version isIPV6. Check the StackType enum for the list of possible values.",
           },
           vpnInterfaces: {
             type: "array",
             items: {
               type: "object",
               properties: {
+                id: {
+                  type: "integer",
+                  description:
+                    "Output only. [Output Only] Numeric identifier for this VPN interface associated with the VPN gateway.",
+                },
                 interconnectAttachment: {
                   type: "string",
                   description:
-                    "URL of the VLAN attachment (interconnectAttachment) resource for this\nVPN gateway interface. When the value of this field is present, the VPN\ngateway is used for HA VPN over Cloud Interconnect; all egress\nor ingress traffic for this VPN gateway interface goes through the\nspecified VLAN attachment resource.",
+                    "URL of the VLAN attachment (interconnectAttachment) resource for this VPN gateway interface. When the value of this field is present, the VPN gateway is used for HA VPN over Cloud Interconnect; all egress or ingress traffic for this VPN gateway interface goes through the specified VLAN attachment resource.",
                 },
                 ipAddress: {
                   type: "string",
                   description:
-                    "[Output Only] IP address for this VPN interface associated with the VPN\ngateway.\nThe IP address could be either a regional external IP address or\na regional internal IP address. The two IP addresses for a VPN gateway\nmust be all regional external or regional internal IP addresses. There\ncannot be a mix of regional external IP addresses and regional internal\nIP addresses. For HA VPN over Cloud Interconnect, the IP addresses\nfor both interfaces could either be regional internal IP addresses or\nregional external IP addresses. For regular (non HA VPN over Cloud\nInterconnect) HA VPN tunnels, the IP address must be a regional external\nIP address.",
-                },
-                id: {
-                  type: "integer",
-                  description:
-                    "[Output Only] Numeric identifier for this VPN interface associated with\nthe VPN gateway. (Format: uint32)",
+                    "Output only. [Output Only] IP address for this VPN interface associated with the VPN gateway. The IP address could be either a regional external IP address or a regional internal IP address. The two IP addresses for a VPN gateway must be all regional external or regional internal IP addresses. There cannot be a mix of regional external IP addresses and regional internal IP addresses. For HA VPN over Cloud Interconnect, the IP addresses for both interfaces could either be regional internal IP addresses or regional external IP addresses. For regular (non HA VPN over Cloud Interconnect) HA VPN tunnels, the IP address must be a regional external IP address.",
                 },
                 ipv6Address: {
                   type: "string",
                   description:
-                    "[Output Only] IPv6 address for this VPN interface associated with the VPN\ngateway.\nThe IPv6 address must be a regional external IPv6 address. The format is\nRFC 5952 format (e.g. 2001:db8::2d9:51:0:0).",
+                    "Output only. [Output Only] IPv6 address for this VPN interface associated with the VPN gateway. The IPv6 address must be a regional external IPv6 address. The format is RFC 5952 format (e.g. 2001:db8::2d9:51:0:0).",
                 },
               },
               description: "A VPN gateway interface.",
@@ -138,62 +156,9 @@ const vpnGatewaysGet: AppBlock = {
             description:
               "The list of VPN interfaces associated with this VPN gateway.",
           },
-          stackType: {
-            type: "string",
-            enum: ["IPV4_IPV6", "IPV4_ONLY", "IPV6_ONLY"],
-            description:
-              "The stack type for this VPN gateway to identify the IP protocols that are\nenabled. Possible values are: IPV4_ONLY,IPV4_IPV6, IPV6_ONLY. If not specified,IPV4_ONLY is used if the gateway IP version isIPV4, or IPV4_IPV6 if the gateway IP version isIPV6.",
-          },
-          selfLink: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          region: {
-            type: "string",
-            description:
-              "[Output Only] URL of the region where the VPN gateway resides.",
-          },
-          kind: {
-            type: "string",
-            description:
-              "[Output Only] Type of resource. Always compute#vpnGateway for\nVPN gateways.",
-          },
-          id: {
-            type: "string",
-            description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
-          },
-          name: {
-            type: "string",
-            description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
-          },
-          description: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this property when you\ncreate the resource.",
-          },
-          labelFingerprint: {
-            type: "string",
-            description:
-              "A fingerprint for the labels being applied to this VpnGateway, which\nis essentially a hash of the labels set used for optimistic locking. The\nfingerprint is initially generated by Compute Engine and changes after\nevery request to modify or update labels. You must always provide an\nup-to-date fingerprint hash in order to update or change labels,\notherwise the request will fail with error412 conditionNotMet.\n\nTo see the latest fingerprint, make a get() request to\nretrieve a VpnGateway. (Format: byte)",
-          },
-          network: {
-            type: "string",
-            description:
-              "URL of the network to which this VPN gateway is attached. Provided by the\nclient when the VPN gateway is created.",
-          },
-          labels: {
-            type: "object",
-            additionalProperties: {
-              type: "string",
-            },
-            description:
-              "Labels for this resource. These can only be added or modified by thesetLabels method. Each label key/value pair must comply withRFC1035.\nLabel values may be empty.",
-          },
         },
         description:
-          "Represents a HA VPN gateway.\n\nHA VPN is a high-availability (HA) Cloud VPN solution that lets you securely\nconnect your on-premises network to your Google Cloud Virtual Private Cloud\nnetwork through an IPsec VPN connection in a single region.\nFor more information about Cloud HA VPN solutions, see\nCloud VPN topologies .",
+          "Represents a HA VPN gateway.  HA VPN is a high-availability (HA) Cloud VPN solution that lets you securely connect your on-premises network to your Google Cloud Virtual Private Cloud network through an IPsec VPN connection in a single region. For more information about Cloud HA VPN solutions, see Cloud VPN topologies .",
         additionalProperties: true,
       },
     },

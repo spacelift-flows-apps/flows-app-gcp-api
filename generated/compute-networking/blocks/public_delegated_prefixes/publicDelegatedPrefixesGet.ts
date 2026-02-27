@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const publicDelegatedPrefixesGet: AppBlock = {
   name: "Public Delegated Prefixes - Get",
-  description: `Returns the specified PublicDelegatedPrefix resource in the given region.`,
+  description: `Returns the specified Zone resource.`,
   category: "Public Delegated Prefixes",
   inputs: {
     default: {
@@ -13,6 +13,7 @@ const publicDelegatedPrefixesGet: AppBlock = {
           description: "Name of the region of this request.",
           type: {
             type: "string",
+            description: "Name of the region of this request.",
           },
           required: true,
         },
@@ -21,70 +22,30 @@ const publicDelegatedPrefixesGet: AppBlock = {
           description: "Name of the PublicDelegatedPrefix resource to return.",
           type: {
             type: "string",
+            description:
+              "Name of the PublicDelegatedPrefix resource to return.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.publicDelegatedPrefix !== undefined)
+          pathParams["public_delegated_prefix"] = String(
+            input.event.inputConfig.publicDelegatedPrefix,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/publicDelegatedPrefixes/{publicDelegatedPrefix}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/publicDelegatedPrefixes/{public_delegated_prefix}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -95,101 +56,172 @@ const publicDelegatedPrefixesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
+          allocatablePrefixLength: {
+            type: "integer",
+            description:
+              "The allocatable prefix length supported by this public delegated prefix. This field is optional and cannot be set for prefixes in DELEGATION mode. It cannot be set for IPv4 prefixes either, and it always defaults to 32.",
+          },
+          byoipApiVersion: {
+            type: "string",
+            enum: ["UNDEFINED_BYOIP_API_VERSION", "V1", "V2"],
+            description:
+              "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
+          },
+          creationTimestamp: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
+          },
+          enableEnhancedIpv4Allocation: {
+            type: "boolean",
+            description:
+              "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
+          },
+          fingerprint: {
+            type: "string",
+            description:
+              "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a new PublicDelegatedPrefix. An up-to-date fingerprint must be provided in order to update thePublicDelegatedPrefix, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a PublicDelegatedPrefix.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          ipCidrRange: {
+            type: "string",
+            description:
+              "The IP address range, in CIDR format, represented by this public delegated prefix.",
+          },
+          ipv6AccessType: {
+            type: "string",
+            enum: ["UNDEFINED_IPV6_ACCESS_TYPE", "EXTERNAL", "INTERNAL"],
+            description:
+              "Output only. [Output Only] The internet access type for IPv6 Public Delegated Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
+          },
           isLiveMigration: {
             type: "boolean",
             description: "If true, the prefix will be live migrated.",
           },
-          byoipApiVersion: {
+          kind: {
             type: "string",
-            enum: ["V1", "V2"],
-            description: "[Output Only] The version of BYOIP API.",
+            description:
+              "Output only. [Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefix for public delegated prefixes.",
           },
           mode: {
             type: "string",
             enum: [
+              "UNDEFINED_MODE",
               "DELEGATION",
               "EXTERNAL_IPV6_FORWARDING_RULE_CREATION",
               "EXTERNAL_IPV6_SUBNETWORK_CREATION",
               "INTERNAL_IPV6_SUBNETWORK_CREATION",
             ],
-            description: "The public delegated prefix mode for IPv6 only.",
+            description:
+              "The public delegated prefix mode for IPv6 only. Check the Mode enum for the list of possible values.",
           },
-          selfLink: {
+          name: {
             type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          parentPrefix: {
+            type: "string",
+            description:
+              "The URL of parent prefix. Either PublicAdvertisedPrefix or PublicDelegatedPrefix.",
           },
           publicDelegatedSubPrefixs: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                name: {
-                  type: "string",
-                  description: "The name of the sub public delegated prefix.",
+                allocatablePrefixLength: {
+                  type: "integer",
+                  description:
+                    "The allocatable prefix length supported by this PublicDelegatedSubPrefix.",
                 },
                 delegateeProject: {
                   type: "string",
                   description:
                     "Name of the project scoping this PublicDelegatedSubPrefix.",
                 },
+                description: {
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this property when you create the resource.",
+                },
+                enableEnhancedIpv4Allocation: {
+                  type: "boolean",
+                  description:
+                    "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
+                },
                 ipCidrRange: {
                   type: "string",
                   description:
-                    "The IP address range, in CIDR format, represented by this sub public\ndelegated prefix.",
+                    "The IP address range, in CIDR format, represented by this sub public delegated prefix.",
                 },
-                status: {
+                ipv6AccessType: {
                   type: "string",
-                  enum: ["ACTIVE", "INACTIVE"],
+                  enum: ["UNDEFINED_IPV6_ACCESS_TYPE", "EXTERNAL", "INTERNAL"],
                   description:
-                    "[Output Only] The status of the sub public delegated prefix.",
-                },
-                region: {
-                  type: "string",
-                  description:
-                    "[Output Only] The region of the sub public delegated prefix if it is\nregional. If absent, the sub prefix is global.",
-                },
-                allocatablePrefixLength: {
-                  type: "integer",
-                  description:
-                    "The allocatable prefix length supported by this PublicDelegatedSubPrefix. (Format: int32)",
+                    "Output only. [Output Only] The internet access type for IPv6 Public Delegated Sub Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
                 },
                 isAddress: {
                   type: "boolean",
                   description:
-                    "Whether the sub prefix is delegated to create Address resources in the\ndelegatee project.",
+                    "Whether the sub prefix is delegated to create Address resources in the delegatee project.",
                 },
                 mode: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_MODE",
                     "DELEGATION",
                     "EXTERNAL_IPV6_FORWARDING_RULE_CREATION",
                     "EXTERNAL_IPV6_SUBNETWORK_CREATION",
                     "INTERNAL_IPV6_SUBNETWORK_CREATION",
                   ],
                   description:
-                    "The PublicDelegatedSubPrefix mode for IPv6 only.",
+                    "The PublicDelegatedSubPrefix mode for IPv6 only. Check the Mode enum for the list of possible values.",
                 },
-                description: {
+                name: {
+                  type: "string",
+                  description: "The name of the sub public delegated prefix.",
+                },
+                region: {
                   type: "string",
                   description:
-                    "An optional description of this resource. Provide this property when you\ncreate the resource.",
+                    "Output only. [Output Only] The region of the sub public delegated prefix if it is regional. If absent, the sub prefix is global.",
                 },
-                ipv6AccessType: {
+                status: {
                   type: "string",
-                  enum: ["EXTERNAL", "INTERNAL"],
+                  enum: ["UNDEFINED_STATUS", "ACTIVE", "INACTIVE"],
                   description:
-                    "[Output Only] The internet access type for IPv6 Public Delegated Sub\nPrefixes. Inherited from parent prefix.",
+                    "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
                 },
               },
               description: "Represents a sub PublicDelegatedPrefix.",
               additionalProperties: true,
             },
             description:
-              "The list of sub public delegated prefixes that exist for this public\ndelegated prefix.",
+              "The list of sub public delegated prefixes that exist for this public delegated prefix.",
+          },
+          region: {
+            type: "string",
+            description:
+              "Output only. [Output Only] URL of the region where the public delegated prefix resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           status: {
             type: "string",
             enum: [
+              "UNDEFINED_STATUS",
               "ACTIVE",
               "ANNOUNCED",
               "ANNOUNCED_TO_GOOGLE",
@@ -199,67 +231,11 @@ const publicDelegatedPrefixesGet: AppBlock = {
               "READY_TO_ANNOUNCE",
             ],
             description:
-              "[Output Only] The status of the public delegated prefix, which can be one\nof following values:\n   \n   \n     - `INITIALIZING` The public delegated prefix is being initialized and\n     addresses cannot be created yet.\n     - `READY_TO_ANNOUNCE` The public delegated prefix is a live migration\n     prefix and is active.\n     - `ANNOUNCED` The public delegated prefix is announced and ready to\n     use.\n     - `DELETING` The public delegated prefix is being deprovsioned.\n     - `ACTIVE` The public delegated prefix is ready to use.",
-          },
-          ipCidrRange: {
-            type: "string",
-            description:
-              "The IP address range, in CIDR format, represented by this public\ndelegated prefix.",
-          },
-          kind: {
-            type: "string",
-            description:
-              "[Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefix for public delegated prefixes.",
-          },
-          name: {
-            type: "string",
-            description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
-          },
-          fingerprint: {
-            type: "string",
-            description:
-              "Fingerprint of this resource. A hash of the contents stored in this object.\nThis field is used in optimistic locking. This field will be ignored when\ninserting a new PublicDelegatedPrefix. An up-to-date\nfingerprint must be provided in order to update thePublicDelegatedPrefix, otherwise the request will fail with\nerror 412 conditionNotMet.\n\nTo see the latest fingerprint, make a get() request to\nretrieve a PublicDelegatedPrefix. (Format: byte)",
-          },
-          region: {
-            type: "string",
-            description:
-              "[Output Only] URL of the region where the public delegated prefix resides.\nThis field applies only to the region resource. You must specify this\nfield as part of the HTTP request URL. It is not settable as a field in\nthe request body.",
-          },
-          description: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this property when you\ncreate the resource.",
-          },
-          parentPrefix: {
-            type: "string",
-            description:
-              "The URL of parent prefix. Either PublicAdvertisedPrefix or\nPublicDelegatedPrefix.",
-          },
-          id: {
-            type: "string",
-            description:
-              "[Output Only] The unique identifier for the resource type. The server\ngenerates this identifier. (Format: uint64)",
-          },
-          allocatablePrefixLength: {
-            type: "integer",
-            description:
-              "The allocatable prefix length supported by this public delegated prefix.\nThis field is optional and cannot be set for prefixes in DELEGATION mode.\nIt cannot be set for IPv4 prefixes either, and it always defaults to 32. (Format: int32)",
-          },
-          ipv6AccessType: {
-            type: "string",
-            enum: ["EXTERNAL", "INTERNAL"],
-            description:
-              "[Output Only] The internet access type for IPv6 Public Delegated Prefixes.\nInherited from parent prefix.",
-          },
-          creationTimestamp: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
         },
         description:
-          "A PublicDelegatedPrefix resource represents an IP block within a\nPublicAdvertisedPrefix that is configured within a single cloud scope\n(global or region). IPs in the block can be allocated to resources within\nthat scope. Public delegated prefixes may be further broken up into\nsmaller IP blocks in the same scope as the parent block.",
+          "A PublicDelegatedPrefix resource represents an IP block within a PublicAdvertisedPrefix that is configured within a single cloud scope (global or region). IPs in the block can be allocated to resources within that scope. Public delegated prefixes may be further broken up into smaller IP blocks in the same scope as the parent block.",
         additionalProperties: true,
       },
     },

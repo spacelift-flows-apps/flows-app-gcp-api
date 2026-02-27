@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const policiesList: AppBlock = {
   name: "Policies - List",
@@ -28,66 +28,25 @@ const policiesList: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/cloud-platform.read-only",
-              "https://www.googleapis.com/auth/ndev.clouddns.readonly",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/policies`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await dnsFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate: "dns/v1/projects/{project}/policies",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -143,12 +102,12 @@ const policiesList: AppBlock = {
                       type: "object",
                       properties: {
                         kind: {
-                          type: "string",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         allQueries: {
-                          type: "boolean",
-                          description:
-                            "Controls whether DNS64 is enabled globally for all networks bound to the policy.",
+                          type: "object",
+                          additionalProperties: true,
                         },
                       },
                       additionalProperties: true,
@@ -157,8 +116,8 @@ const policiesList: AppBlock = {
                       type: "string",
                     },
                   },
-                  description: "DNS64 policies",
                   additionalProperties: true,
+                  description: "DNS64 policies",
                 },
                 kind: {
                   type: "string",
@@ -174,26 +133,6 @@ const policiesList: AppBlock = {
                       type: "array",
                       items: {
                         type: "object",
-                        properties: {
-                          kind: {
-                            type: "string",
-                          },
-                          ipv4Address: {
-                            type: "string",
-                            description: "IPv4 address to forward queries to.",
-                          },
-                          forwardingPath: {
-                            type: "string",
-                            enum: ["default", "private"],
-                            description:
-                              "Forwarding path for this TargetNameServer. If unset or set to DEFAULT, Cloud DNS makes forwarding decisions based on address ranges; that is, RFC1918 addresses go to the VPC network, non-RFC1918 addresses go to the internet. When set to PRIVATE, Cloud DNS always sends queries through the VPC network for this target.",
-                          },
-                          ipv6Address: {
-                            type: "string",
-                            description:
-                              "IPv6 address to forward to. Does not accept both fields (ipv4 & ipv6) being populated. Public preview as of November 2022.",
-                          },
-                        },
                         additionalProperties: true,
                       },
                       description:
@@ -213,7 +152,7 @@ const policiesList: AppBlock = {
                 id: {
                   type: "string",
                   description:
-                    "Unique identifier for the resource; defined by the server (output only). (Format: uint64)",
+                    "Unique identifier for the resource; defined by the server (output only).",
                 },
                 enableLogging: {
                   type: "boolean",
@@ -221,9 +160,9 @@ const policiesList: AppBlock = {
                     "Controls whether logging is enabled for the networks bound to this policy. Defaults to no logging if not set.",
                 },
               },
+              additionalProperties: true,
               description:
                 "A policy is a collection of DNS rules applied to one or more Virtual Private Cloud resources.",
-              additionalProperties: true,
             },
             description: "The policy resources.",
           },

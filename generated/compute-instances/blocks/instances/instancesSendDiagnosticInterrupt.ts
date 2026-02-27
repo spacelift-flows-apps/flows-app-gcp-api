@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const instancesSendDiagnosticInterrupt: AppBlock = {
   name: "Instances - Send Diagnostic Interrupt",
@@ -13,6 +13,7 @@ const instancesSendDiagnosticInterrupt: AppBlock = {
           description: "The name of the zone for this request.",
           type: {
             type: "string",
+            description: "The name of the zone for this request.",
           },
           required: true,
         },
@@ -21,69 +22,27 @@ const instancesSendDiagnosticInterrupt: AppBlock = {
           description: "Name of the instance scoping this request.",
           type: {
             type: "string",
+            description: "Name of the instance scoping this request.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.zone !== undefined)
+          pathParams["zone"] = String(input.event.inputConfig.zone);
+        if (input.event.inputConfig.instance !== undefined)
+          pathParams["instance"] = String(input.event.inputConfig.instance);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/zones/{zone}/instances/{instance}/sendDiagnosticInterrupt`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/zones/{zone}/instances/{instance}/sendDiagnosticInterrupt",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -93,6 +52,9 @@ const instancesSendDiagnosticInterrupt: AppBlock = {
       possiblePrimaryParents: ["default"],
       type: {
         type: "object",
+        properties: {},
+        description:
+          "A response message for Instances.SendDiagnosticInterrupt. See the method description for details.",
         additionalProperties: true,
       },
     },

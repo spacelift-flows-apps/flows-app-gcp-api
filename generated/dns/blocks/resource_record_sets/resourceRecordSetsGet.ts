@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const resourceRecordSetsGet: AppBlock = {
   name: "Resource Record Sets - Get",
@@ -34,7 +34,7 @@ const resourceRecordSetsGet: AppBlock = {
           required: true,
         },
         clientOperationId: {
-          name: "Client Operation ID",
+          name: "Client Operation Id",
           description:
             "For mutating operation requests only. An optional identifier specified by the client. Must be unique for operation resources in the Operations collection.",
           type: {
@@ -44,66 +44,32 @@ const resourceRecordSetsGet: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/cloud-platform.read-only",
-              "https://www.googleapis.com/auth/ndev.clouddns.readonly",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.name !== undefined)
+          pathParams["name"] = String(input.event.inputConfig.name);
+        if (input.event.inputConfig.type !== undefined)
+          pathParams["type"] = String(input.event.inputConfig.type);
+        if (input.event.inputConfig.managedZone !== undefined)
+          pathParams["managedZone"] = String(
+            input.event.inputConfig.managedZone,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/managedZones/{managedZone}/rrsets/{name}/{type}`;
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.clientOperationId !== undefined)
+          queryParams["clientOperationId"] = String(
+            input.event.inputConfig.clientOperationId,
+          );
 
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await dnsFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "dns/v1/projects/{project}/managedZones/{managedZone}/rrsets/{name}/{type}",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -129,7 +95,7 @@ const resourceRecordSetsGet: AppBlock = {
           ttl: {
             type: "integer",
             description:
-              "Number of seconds that this `ResourceRecordSet` can be cached by resolvers. (Format: int32)",
+              "Number of seconds that this `ResourceRecordSet` can be cached by resolvers.",
           },
           signatureRrdatas: {
             type: "array",
@@ -159,112 +125,36 @@ const resourceRecordSetsGet: AppBlock = {
                       properties: {
                         healthCheckedTargets: {
                           type: "object",
-                          properties: {
-                            externalEndpoints: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "The Internet IP addresses to be health checked. The format matches the format of ResourceRecordSet.rrdata as defined in RFC 1035 (section 5) and RFC 1034 (section 3.6.1)",
-                            },
-                            internalLoadBalancers: {
-                              type: "array",
-                              items: {
-                                type: "object",
-                                properties: {
-                                  port: {
-                                    type: "string",
-                                    description:
-                                      "The configured port of the load balancer.",
-                                  },
-                                  project: {
-                                    type: "string",
-                                    description:
-                                      "The project ID in which the load balancer is located.",
-                                  },
-                                  ipAddress: {
-                                    type: "string",
-                                    description:
-                                      "The frontend IP address of the load balancer to health check.",
-                                  },
-                                  kind: {
-                                    type: "string",
-                                  },
-                                  ipProtocol: {
-                                    type: "string",
-                                    enum: ["undefined", "tcp", "udp"],
-                                    description:
-                                      "The protocol of the load balancer to health check.",
-                                  },
-                                  region: {
-                                    type: "string",
-                                    description:
-                                      "The region in which the load balancer is located.",
-                                  },
-                                  networkUrl: {
-                                    type: "string",
-                                    description:
-                                      "The fully qualified URL of the network that the load balancer is attached to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.",
-                                  },
-                                  loadBalancerType: {
-                                    type: "string",
-                                    enum: [
-                                      "none",
-                                      "globalL7ilb",
-                                      "regionalL4ilb",
-                                      "regionalL7ilb",
-                                    ],
-                                    description:
-                                      "The type of load balancer specified by this target. This value must match the configuration of the load balancer located at the LoadBalancerTarget's IP address, port, and region. Use the following: - *regionalL4ilb*: for a regional internal passthrough Network Load Balancer. - *regionalL7ilb*: for a regional internal Application Load Balancer. - *globalL7ilb*: for a global internal Application Load Balancer.",
-                                  },
-                                },
-                                description:
-                                  "The configuration for an individual load balancer to health check.",
-                                additionalProperties: true,
-                              },
-                              description:
-                                "Configuration for internal load balancers to be health checked.",
-                            },
-                          },
-                          description:
-                            "HealthCheckTargets describes endpoints to health-check when responding to Routing Policy queries. Only the healthy endpoints will be included in the response. Set either `internal_load_balancer` or `external_endpoints`. Do not set both.",
                           additionalProperties: true,
                         },
                         kind: {
-                          type: "string",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         signatureRrdatas: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "DNSSEC generated signatures for all the `rrdata` within this item. When using health-checked targets for DNSSEC-enabled zones, you can only use at most one health-checked IP address per item.",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         rrdatas: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
+                          type: "object",
+                          additionalProperties: true,
                         },
                         location: {
-                          type: "string",
-                          description:
-                            'The geo-location granularity is a GCP region. This location string should correspond to a GCP region. e.g. "us-east1", "southamerica-east1", "asia-east1", etc.',
+                          type: "object",
+                          additionalProperties: true,
                         },
                       },
+                      additionalProperties: true,
                       description:
                         "ResourceRecordSet data for one geo location.",
-                      additionalProperties: true,
                     },
                     description:
                       "The primary geo routing configuration. If there are multiple items with the same location, an error is returned instead.",
                   },
                 },
+                additionalProperties: true,
                 description:
                   "Configures a `RRSetRoutingPolicy` that routes based on the geo location of the querying user.",
-                additionalProperties: true,
               },
               kind: {
                 type: "string",
@@ -279,113 +169,37 @@ const resourceRecordSetsGet: AppBlock = {
                       properties: {
                         healthCheckedTargets: {
                           type: "object",
-                          properties: {
-                            externalEndpoints: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "The Internet IP addresses to be health checked. The format matches the format of ResourceRecordSet.rrdata as defined in RFC 1035 (section 5) and RFC 1034 (section 3.6.1)",
-                            },
-                            internalLoadBalancers: {
-                              type: "array",
-                              items: {
-                                type: "object",
-                                properties: {
-                                  port: {
-                                    type: "string",
-                                    description:
-                                      "The configured port of the load balancer.",
-                                  },
-                                  project: {
-                                    type: "string",
-                                    description:
-                                      "The project ID in which the load balancer is located.",
-                                  },
-                                  ipAddress: {
-                                    type: "string",
-                                    description:
-                                      "The frontend IP address of the load balancer to health check.",
-                                  },
-                                  kind: {
-                                    type: "string",
-                                  },
-                                  ipProtocol: {
-                                    type: "string",
-                                    enum: ["undefined", "tcp", "udp"],
-                                    description:
-                                      "The protocol of the load balancer to health check.",
-                                  },
-                                  region: {
-                                    type: "string",
-                                    description:
-                                      "The region in which the load balancer is located.",
-                                  },
-                                  networkUrl: {
-                                    type: "string",
-                                    description:
-                                      "The fully qualified URL of the network that the load balancer is attached to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.",
-                                  },
-                                  loadBalancerType: {
-                                    type: "string",
-                                    enum: [
-                                      "none",
-                                      "globalL7ilb",
-                                      "regionalL4ilb",
-                                      "regionalL7ilb",
-                                    ],
-                                    description:
-                                      "The type of load balancer specified by this target. This value must match the configuration of the load balancer located at the LoadBalancerTarget's IP address, port, and region. Use the following: - *regionalL4ilb*: for a regional internal passthrough Network Load Balancer. - *regionalL7ilb*: for a regional internal Application Load Balancer. - *globalL7ilb*: for a global internal Application Load Balancer.",
-                                  },
-                                },
-                                description:
-                                  "The configuration for an individual load balancer to health check.",
-                                additionalProperties: true,
-                              },
-                              description:
-                                "Configuration for internal load balancers to be health checked.",
-                            },
-                          },
-                          description:
-                            "HealthCheckTargets describes endpoints to health-check when responding to Routing Policy queries. Only the healthy endpoints will be included in the response. Set either `internal_load_balancer` or `external_endpoints`. Do not set both.",
                           additionalProperties: true,
                         },
                         signatureRrdatas: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "DNSSEC generated signatures for all the `rrdata` within this item. When using health-checked targets for DNSSEC-enabled zones, you can only use at most one health-checked IP address per item.",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         rrdatas: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
+                          type: "object",
+                          additionalProperties: true,
                         },
                         kind: {
-                          type: "string",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         weight: {
-                          type: "number",
-                          description:
-                            "The weight corresponding to this `WrrPolicyItem` object. When multiple `WrrPolicyItem` objects are configured, the probability of returning an `WrrPolicyItem` object's data is proportional to its weight relative to the sum of weights configured for all items. This weight must be non-negative. (Format: double)",
+                          type: "object",
+                          additionalProperties: true,
                         },
                       },
+                      additionalProperties: true,
                       description:
                         "A routing block which contains the routing information for one WRR item.",
-                      additionalProperties: true,
                     },
                   },
                   kind: {
                     type: "string",
                   },
                 },
+                additionalProperties: true,
                 description:
                   "Configures a RRSetRoutingPolicy that routes in a weighted round robin fashion.",
-                additionalProperties: true,
               },
               healthCheck: {
                 type: "string",
@@ -401,7 +215,8 @@ const resourceRecordSetsGet: AppBlock = {
                       externalEndpoints: {
                         type: "array",
                         items: {
-                          type: "string",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         description:
                           "The Internet IP addresses to be health checked. The format matches the format of ResourceRecordSet.rrdata as defined in RFC 1035 (section 5) and RFC 1034 (section 3.6.1)",
@@ -410,64 +225,15 @@ const resourceRecordSetsGet: AppBlock = {
                         type: "array",
                         items: {
                           type: "object",
-                          properties: {
-                            port: {
-                              type: "string",
-                              description:
-                                "The configured port of the load balancer.",
-                            },
-                            project: {
-                              type: "string",
-                              description:
-                                "The project ID in which the load balancer is located.",
-                            },
-                            ipAddress: {
-                              type: "string",
-                              description:
-                                "The frontend IP address of the load balancer to health check.",
-                            },
-                            kind: {
-                              type: "string",
-                            },
-                            ipProtocol: {
-                              type: "string",
-                              enum: ["undefined", "tcp", "udp"],
-                              description:
-                                "The protocol of the load balancer to health check.",
-                            },
-                            region: {
-                              type: "string",
-                              description:
-                                "The region in which the load balancer is located.",
-                            },
-                            networkUrl: {
-                              type: "string",
-                              description:
-                                "The fully qualified URL of the network that the load balancer is attached to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.",
-                            },
-                            loadBalancerType: {
-                              type: "string",
-                              enum: [
-                                "none",
-                                "globalL7ilb",
-                                "regionalL4ilb",
-                                "regionalL7ilb",
-                              ],
-                              description:
-                                "The type of load balancer specified by this target. This value must match the configuration of the load balancer located at the LoadBalancerTarget's IP address, port, and region. Use the following: - *regionalL4ilb*: for a regional internal passthrough Network Load Balancer. - *regionalL7ilb*: for a regional internal Application Load Balancer. - *globalL7ilb*: for a global internal Application Load Balancer.",
-                            },
-                          },
-                          description:
-                            "The configuration for an individual load balancer to health check.",
                           additionalProperties: true,
                         },
                         description:
                           "Configuration for internal load balancers to be health checked.",
                       },
                     },
+                    additionalProperties: true,
                     description:
                       "HealthCheckTargets describes endpoints to health-check when responding to Routing Policy queries. Only the healthy endpoints will be included in the response. Set either `internal_load_balancer` or `external_endpoints`. Do not set both.",
-                    additionalProperties: true,
                   },
                   kind: {
                     type: "string",
@@ -487,130 +253,30 @@ const resourceRecordSetsGet: AppBlock = {
                         type: "array",
                         items: {
                           type: "object",
-                          properties: {
-                            healthCheckedTargets: {
-                              type: "object",
-                              properties: {
-                                externalEndpoints: {
-                                  type: "array",
-                                  items: {
-                                    type: "string",
-                                  },
-                                  description:
-                                    "The Internet IP addresses to be health checked. The format matches the format of ResourceRecordSet.rrdata as defined in RFC 1035 (section 5) and RFC 1034 (section 3.6.1)",
-                                },
-                                internalLoadBalancers: {
-                                  type: "array",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      port: {
-                                        type: "string",
-                                        description:
-                                          "The configured port of the load balancer.",
-                                      },
-                                      project: {
-                                        type: "string",
-                                        description:
-                                          "The project ID in which the load balancer is located.",
-                                      },
-                                      ipAddress: {
-                                        type: "string",
-                                        description:
-                                          "The frontend IP address of the load balancer to health check.",
-                                      },
-                                      kind: {
-                                        type: "string",
-                                      },
-                                      ipProtocol: {
-                                        type: "string",
-                                        enum: ["undefined", "tcp", "udp"],
-                                        description:
-                                          "The protocol of the load balancer to health check.",
-                                      },
-                                      region: {
-                                        type: "string",
-                                        description:
-                                          "The region in which the load balancer is located.",
-                                      },
-                                      networkUrl: {
-                                        type: "string",
-                                        description:
-                                          "The fully qualified URL of the network that the load balancer is attached to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`.",
-                                      },
-                                      loadBalancerType: {
-                                        type: "string",
-                                        enum: [
-                                          "none",
-                                          "globalL7ilb",
-                                          "regionalL4ilb",
-                                          "regionalL7ilb",
-                                        ],
-                                        description:
-                                          "The type of load balancer specified by this target. This value must match the configuration of the load balancer located at the LoadBalancerTarget's IP address, port, and region. Use the following: - *regionalL4ilb*: for a regional internal passthrough Network Load Balancer. - *regionalL7ilb*: for a regional internal Application Load Balancer. - *globalL7ilb*: for a global internal Application Load Balancer.",
-                                      },
-                                    },
-                                    description:
-                                      "The configuration for an individual load balancer to health check.",
-                                    additionalProperties: true,
-                                  },
-                                  description:
-                                    "Configuration for internal load balancers to be health checked.",
-                                },
-                              },
-                              description:
-                                "HealthCheckTargets describes endpoints to health-check when responding to Routing Policy queries. Only the healthy endpoints will be included in the response. Set either `internal_load_balancer` or `external_endpoints`. Do not set both.",
-                              additionalProperties: true,
-                            },
-                            kind: {
-                              type: "string",
-                            },
-                            signatureRrdatas: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                              description:
-                                "DNSSEC generated signatures for all the `rrdata` within this item. When using health-checked targets for DNSSEC-enabled zones, you can only use at most one health-checked IP address per item.",
-                            },
-                            rrdatas: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                            },
-                            location: {
-                              type: "string",
-                              description:
-                                'The geo-location granularity is a GCP region. This location string should correspond to a GCP region. e.g. "us-east1", "southamerica-east1", "asia-east1", etc.',
-                            },
-                          },
-                          description:
-                            "ResourceRecordSet data for one geo location.",
                           additionalProperties: true,
                         },
                         description:
                           "The primary geo routing configuration. If there are multiple items with the same location, an error is returned instead.",
                       },
                     },
+                    additionalProperties: true,
                     description:
                       "Configures a `RRSetRoutingPolicy` that routes based on the geo location of the querying user.",
-                    additionalProperties: true,
                   },
                   trickleTraffic: {
                     type: "number",
                     description:
-                      "When serving state is `PRIMARY`, this field provides the option of sending a small percentage of the traffic to the backup targets. (Format: double)",
+                      "When serving state is `PRIMARY`, this field provides the option of sending a small percentage of the traffic to the backup targets.",
                   },
                 },
+                additionalProperties: true,
                 description:
                   "Configures a RRSetRoutingPolicy such that all queries are responded with the primary_targets if they are healthy. And if all of them are unhealthy, then we fallback to a geo localized policy.",
-                additionalProperties: true,
               },
             },
+            additionalProperties: true,
             description:
               "A RRSetRoutingPolicy represents ResourceRecordSet data that is returned dynamically with the response varying based on configured properties such as geolocation or by weighted random selection.",
-            additionalProperties: true,
           },
           type: {
             type: "string",
@@ -621,8 +287,8 @@ const resourceRecordSetsGet: AppBlock = {
             type: "string",
           },
         },
-        description: "A unit of data that is returned by the DNS servers.",
         additionalProperties: true,
+        description: "A unit of data that is returned by the DNS servers.",
       },
     },
   },

@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const networksListPeeringRoutes: AppBlock = {
   name: "Networks - List Peering Routes",
@@ -13,51 +13,63 @@ const networksListPeeringRoutes: AppBlock = {
           description: "Name of the network for this request.",
           type: {
             type: "string",
+            description: "Name of the network for this request.",
           },
           required: true,
+        },
+        direction: {
+          name: "Direction",
+          description:
+            "The direction of the exchanged routes. Check the Direction enum for the list of possible values.",
+          type: {
+            type: "string",
+            enum: ["UNDEFINED_DIRECTION", "INCOMING", "OUTGOING"],
+            description:
+              "The direction of the exchanged routes. Check the Direction enum for the list of possible values.",
+          },
+          required: false,
+        },
+        filter: {
+          name: "Filter",
+          description:
+            'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
+          type: {
+            type: "string",
+            description:
+              'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
+          },
+          required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
-            "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
+            "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
           type: {
             type: "integer",
+            description:
+              "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
           },
           required: false,
         },
-        returnPartialSuccess: {
-          name: "Return Partial Success",
+        orderBy: {
+          name: "Order By",
           description:
-            "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: {
-            type: "boolean",
-          },
-          required: false,
-        },
-        direction: {
-          name: "Direction",
-          description: "The direction of the exchanged routes.",
+            'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
           type: {
             type: "string",
-            enum: ["INCOMING", "OUTGOING"],
+            description:
+              'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
           },
           required: false,
         },
         pageToken: {
           name: "Page Token",
           description:
-            "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
+            "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
           type: {
             type: "string",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "The region of the request. The response will include all subnet routes,\nstatic routes and dynamic routes in the region.",
-          type: {
-            type: "string",
+            description:
+              "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
           },
           required: false,
         },
@@ -67,88 +79,73 @@ const networksListPeeringRoutes: AppBlock = {
             "The response will show routes exchanged over the given peering connection.",
           type: {
             type: "string",
+            description:
+              "The response will show routes exchanged over the given peering connection.",
           },
           required: false,
         },
-        filter: {
-          name: "Filter",
+        region: {
+          name: "Region",
           description:
-            'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
+            "The region of the request. The response will include all subnet routes, static routes and dynamic routes in the region.",
           type: {
             type: "string",
+            description:
+              "The region of the request. The response will include all subnet routes, static routes and dynamic routes in the region.",
           },
           required: false,
         },
-        orderBy: {
-          name: "Order By",
+        returnPartialSuccess: {
+          name: "Return Partial Success",
           description:
-            'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
+            "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
           type: {
-            type: "string",
+            type: "boolean",
+            description:
+              "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.network !== undefined)
+          pathParams["network"] = String(input.event.inputConfig.network);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.direction !== undefined)
+          queryParams["direction"] = String(input.event.inputConfig.direction);
+        if (input.event.inputConfig.filter !== undefined)
+          queryParams["filter"] = String(input.event.inputConfig.filter);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.peeringName !== undefined)
+          queryParams["peeringName"] = String(
+            input.event.inputConfig.peeringName,
+          );
+        if (input.event.inputConfig.region !== undefined)
+          queryParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
+          queryParams["returnPartialSuccess"] = String(
+            input.event.inputConfig.returnPartialSuccess,
+          );
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/global/networks/{network}/listPeeringRoutes`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/global/networks/{network}/listPeeringRoutes",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -159,6 +156,11 @@ const networksListPeeringRoutes: AppBlock = {
       type: {
         type: "object",
         properties: {
+          id: {
+            type: "string",
+            description:
+              "[Output Only] Unique identifier for the resource; defined by the server.",
+          },
           items: {
             type: "array",
             items: {
@@ -171,16 +173,7 @@ const networksListPeeringRoutes: AppBlock = {
                 imported: {
                   type: "boolean",
                   description:
-                    "True if the peering route has been imported from a peer. The actual import\nhappens if the field networkPeering.importCustomRoutes is true\nfor this network, and networkPeering.exportCustomRoutes is\ntrue for the peer network, and the import does not result in a route\nconflict.",
-                },
-                type: {
-                  type: "string",
-                  enum: [
-                    "DYNAMIC_PEERING_ROUTE",
-                    "STATIC_PEERING_ROUTE",
-                    "SUBNET_PEERING_ROUTE",
-                  ],
-                  description: "The type of the peering route.",
+                    "True if the peering route has been imported from a peer. The actual import happens if the field networkPeering.importCustomRoutes is true for this network, and networkPeering.exportCustomRoutes is true for the peer network, and the import does not result in a route conflict.",
                 },
                 nextHopRegion: {
                   type: "string",
@@ -189,56 +182,46 @@ const networksListPeeringRoutes: AppBlock = {
                 },
                 priority: {
                   type: "integer",
+                  description: "The priority of the peering route.",
+                },
+                type: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_TYPE",
+                    "DYNAMIC_PEERING_ROUTE",
+                    "STATIC_PEERING_ROUTE",
+                    "SUBNET_PEERING_ROUTE",
+                  ],
                   description:
-                    "The priority of the peering route. (Format: uint32)",
+                    "The type of the peering route. Check the Type enum for the list of possible values.",
                 },
               },
               additionalProperties: true,
             },
             description: "A list of ExchangedPeeringRoute resources.",
           },
-          nextPageToken: {
-            type: "string",
-            description:
-              "[Output Only] This token allows you to get the next page of results for\nlist requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for\nthe query parameter pageToken in the next list request.\nSubsequent list requests will have their own nextPageToken to\ncontinue paging through the results.",
-          },
-          id: {
-            type: "string",
-            description:
-              "[Output Only] Unique identifier for the resource; defined by the server.",
-          },
           kind: {
             type: "string",
             description:
-              "[Output Only] Type of resource. Alwayscompute#exchangedPeeringRoutesList for exchanged peering\nroutes lists.",
+              "Output only. [Output Only] Type of resource. Alwayscompute#exchangedPeeringRoutesList for exchanged peering routes lists.",
+          },
+          nextPageToken: {
+            type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for this resource.",
           },
           warning: {
             type: "object",
             properties: {
-              data: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    key: {
-                      type: "string",
-                      description:
-                        "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
-                    },
-                    value: {
-                      type: "string",
-                      description:
-                        "[Output Only] A warning data value corresponding to the key.",
-                    },
-                  },
-                  additionalProperties: true,
-                },
-                description:
-                  '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
-              },
               code: {
                 type: "string",
                 enum: [
+                  "UNDEFINED_CODE",
                   "CLEANUP_FAILED",
                   "DEPRECATED_RESOURCE_USED",
                   "DEPRECATED_TYPE_USED",
@@ -270,7 +253,28 @@ const networksListPeeringRoutes: AppBlock = {
                   "UNREACHABLE",
                 ],
                 description:
-                  "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
+                  "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
+              },
+              data: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    key: {
+                      type: "string",
+                      description:
+                        "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                    },
+                    value: {
+                      type: "string",
+                      description:
+                        "[Output Only] A warning data value corresponding to the key.",
+                    },
+                  },
+                  additionalProperties: true,
+                },
+                description:
+                  '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
               },
               message: {
                 type: "string",
@@ -278,12 +282,8 @@ const networksListPeeringRoutes: AppBlock = {
                   "[Output Only] A human-readable description of the warning code.",
               },
             },
-            description: "[Output Only] Informational warning message.",
+            description: "Informational warning message.",
             additionalProperties: true,
-          },
-          selfLink: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for this resource.",
           },
         },
         additionalProperties: true,

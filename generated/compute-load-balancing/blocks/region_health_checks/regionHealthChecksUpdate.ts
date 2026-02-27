@@ -1,55 +1,68 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const regionHealthChecksUpdate: AppBlock = {
   name: "Region Health Checks - Update",
-  description: `Updates a HealthCheck resource in the specified project using the data included in the request.`,
+  description: `Updates the specified UrlMap resource with the data included in the request.`,
   category: "Region Health Checks",
   inputs: {
     default: {
       config: {
+        region: {
+          name: "Region",
+          description: "Name of the region scoping this request.",
+          type: {
+            type: "string",
+            description: "Name of the region scoping this request.",
+          },
+          required: true,
+        },
         healthCheck: {
           name: "Health Check",
           description: "Name of the HealthCheck resource to update.",
           type: {
             type: "string",
+            description: "Name of the HealthCheck resource to update.",
           },
           required: true,
         },
-        region: {
-          name: "Region",
-          description: "[Output Only] Region where the health check resides.",
+        checkIntervalSec: {
+          name: "Check Interval Sec",
+          description:
+            "How often (in seconds) to send a health check. The default value is 5 seconds.",
+          type: {
+            type: "integer",
+            description:
+              "How often (in seconds) to send a health check. The default value is 5 seconds.",
+          },
+          required: false,
+        },
+        description: {
+          name: "Description",
+          description:
+            "An optional description of this resource. Provide this property when you create the resource.",
           type: {
             type: "string",
             description:
-              "[Output Only] Region where the health check resides.  Not applicable to\nglobal health checks.",
+              "An optional description of this resource. Provide this property when you create the resource.",
           },
           required: false,
         },
-        requestId: {
-          name: "Request ID",
-          description:
-            "An optional request ID to identify requests. Specify a unique request ID so\nthat if you must retry your request, the server will know to ignore the\nrequest if it has already been completed.\n\nFor example, consider a situation where you make an initial request and\nthe request times out. If you make the request again with the same\nrequest ID, the server can check if original operation with the same\nrequest ID was received, and if so, will ignore the second request. This\nprevents clients from accidentally creating duplicate commitments.\n\nThe request ID must be\na valid UUID with the exception that zero UUID is not supported\n(00000000-0000-0000-0000-000000000000).",
-          type: {
-            type: "string",
-          },
-          required: false,
-        },
-        tcpHealthCheck: {
-          name: "TCP Health Check",
-          description: "Request body field: tcpHealthCheck",
+        grpcHealthCheck: {
+          name: "Grpc Health Check",
+          description: "Grpc Health Check field",
           type: {
             type: "object",
             properties: {
-              request: {
+              grpcServiceName: {
                 type: "string",
                 description:
-                  "Instructs the health check prober to send this exact ASCII string, up to\n1024 bytes in length, after establishing the TCP connection.",
+                  "The gRPC service name for the health check. This field is optional. The value of grpc_service_name has the following meanings by convention:  - Empty service_name means the overall status of all services at the backend.  - Non-empty service_name means the health of that gRPC service, as defined by the owner of the service.  The grpc_service_name can only be ASCII.",
               },
-              response: {
-                type: "string",
+              port: {
+                type: "integer",
                 description:
-                  "Creates a content-based TCP health check. In addition to establishing a\nTCP connection, you can configure the health check to pass only when the\nbackend sends this exact response ASCII string, up to 1024 bytes in length.\nFor details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-ssl-tcp",
+                  "The TCP port number to which the health check prober sends packets. Valid values are 1 through 65535.",
               },
               portName: {
                 type: "string",
@@ -57,185 +70,213 @@ const regionHealthChecksUpdate: AppBlock = {
               },
               portSpecification: {
                 type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
                 description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Not supported by target pools. The health check supports all\nbackends supported by the backend service provided the backend can be\nhealth checked. For example, GCE_VM_IP network endpoint\ngroups, GCE_VM_IP_PORT network endpoint groups, and instance\ngroup backends. \nUSE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for passthrough load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
-              },
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. The\ndefault value is 80. Valid values are 1 through65535. (Format: int32)",
-              },
-              proxyHeader: {
-                type: "string",
-                enum: ["NONE", "PROXY_V1"],
-                description:
-                  "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
               },
             },
             additionalProperties: true,
           },
           required: false,
         },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        id: {
-          name: "ID",
-          description: "[Output Only] The unique identifier for the resource.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
-          },
-          required: false,
-        },
-        httpsHealthCheck: {
-          name: "HTTPS Health Check",
-          description: "Request body field: httpsHealthCheck",
+        grpcTlsHealthCheck: {
+          name: "Grpc Tls Health Check",
+          description: "Grpc Tls Health Check field",
           type: {
             type: "object",
             properties: {
+              grpcServiceName: {
+                type: "string",
+                description:
+                  "The gRPC service name for the health check. This field is optional. The value of grpc_service_name has the following meanings by convention:  - Empty service_name means the overall status of all services at the backend.  - Non-empty service_name means the health of that gRPC service, as defined by the owner of the service.  The grpc_service_name can only be ASCII.",
+              },
+              port: {
+                type: "integer",
+                description:
+                  "The TCP port number to which the health check prober sends packets. Valid values are 1 through 65535.",
+              },
+              portSpecification: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
+                description:
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
+              },
+            },
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        healthyThreshold: {
+          name: "Healthy Threshold",
+          description:
+            "A so-far unhealthy instance will be marked healthy after this many consecutive successes. The default value is 2.",
+          type: {
+            type: "integer",
+            description:
+              "A so-far unhealthy instance will be marked healthy after this many consecutive successes. The default value is 2.",
+          },
+          required: false,
+        },
+        http2HealthCheck: {
+          name: "Http2 Health Check",
+          description: "Http2 Health Check field",
+          type: {
+            type: "object",
+            properties: {
+              host: {
+                type: "string",
+                description:
+                  "The value of the host header in the HTTP/2 health check request. If left empty (default value), the host header is set to the destination IP address to which health check packets are sent. The destination IP address depends on the type of load balancer. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#hc-packet-dest",
+              },
+              port: {
+                type: "integer",
+                description:
+                  "The TCP port number to which the health check prober sends packets. The default value is 443. Valid values are 1 through65535.",
+              },
               portName: {
                 type: "string",
                 description: "Not supported.",
               },
               portSpecification: {
                 type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
                 description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Not supported by target pools. The health check supports all\nbackends supported by the backend service provided the backend can be\nhealth checked. For example, GCE_VM_IP network endpoint\ngroups, GCE_VM_IP_PORT network endpoint groups, and instance\ngroup backends. \n USE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for passthrough load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
+              },
+              proxyHeader: {
+                type: "string",
+                enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
+                description:
+                  "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
+              },
+              requestPath: {
+                type: "string",
+                description:
+                  "The request path of the HTTP/2 health check request. The default value is/. Must comply withRFC3986.",
               },
               response: {
                 type: "string",
                 description:
-                  "Creates a content-based HTTPS health check. In addition to the required\nHTTP 200 (OK) status code, you can configure the health check to pass only\nwhen the backend sends this specific ASCII response string within the first\n1024 bytes of the HTTP response body. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-http",
+                  "Creates a content-based HTTP/2 health check. In addition to the required HTTP 200 (OK) status code, you can configure the health check to pass only when the backend sends this specific ASCII response string within the first 1024 bytes of the HTTP response body. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-http",
               },
+            },
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        httpHealthCheck: {
+          name: "Http Health Check",
+          description: "Http Health Check field",
+          type: {
+            type: "object",
+            properties: {
               host: {
                 type: "string",
                 description:
-                  "The value of the host header in the HTTPS health check request. If left\nempty (default value), the host header is set to the destination IP address\nto which health check packets are sent. The destination IP address depends\non the type of load balancer. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#hc-packet-dest",
+                  "The value of the host header in the HTTP health check request. If left empty (default value), the host header is set to the destination IP address to which health check packets are sent. The destination IP address depends on the type of load balancer. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#hc-packet-dest",
+              },
+              port: {
+                type: "integer",
+                description:
+                  "The TCP port number to which the health check prober sends packets. The default value is 80. Valid values are 1 through65535.",
+              },
+              portName: {
+                type: "string",
+                description: "Not supported.",
+              },
+              portSpecification: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
+                description:
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Also supported in legacy HTTP health checks for target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example,GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends. USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for pass-through load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
+              },
+              proxyHeader: {
+                type: "string",
+                enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
+                description:
+                  "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
+              },
+              requestPath: {
+                type: "string",
+                description:
+                  "The request path of the HTTP health check request. The default value is/. Must comply withRFC3986.",
+              },
+              response: {
+                type: "string",
+                description:
+                  "Creates a content-based HTTP health check. In addition to the required HTTP 200 (OK) status code, you can configure the health check to pass only when the backend sends this specific ASCII response string within the first 1024 bytes of the HTTP response body. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-http",
+              },
+            },
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        httpsHealthCheck: {
+          name: "Https Health Check",
+          description: "Https Health Check field",
+          type: {
+            type: "object",
+            properties: {
+              host: {
+                type: "string",
+                description:
+                  "The value of the host header in the HTTPS health check request. If left empty (default value), the host header is set to the destination IP address to which health check packets are sent. The destination IP address depends on the type of load balancer. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#hc-packet-dest",
+              },
+              port: {
+                type: "integer",
+                description:
+                  "The TCP port number to which the health check prober sends packets. The default value is 443. Valid values are 1 through65535.",
+              },
+              portName: {
+                type: "string",
+                description: "Not supported.",
+              },
+              portSpecification: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
+                description:
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
+              },
+              proxyHeader: {
+                type: "string",
+                enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
+                description:
+                  "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
               },
               requestPath: {
                 type: "string",
                 description:
                   "The request path of the HTTPS health check request. The default value is/. Must comply withRFC3986.",
               },
-              proxyHeader: {
-                type: "string",
-                enum: ["NONE", "PROXY_V1"],
-                description:
-                  "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
-              },
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. The\ndefault value is 443. Valid values are 1 through65535. (Format: int32)",
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        sslHealthCheck: {
-          name: "SSL Health Check",
-          description: "Request body field: sslHealthCheck",
-          type: {
-            type: "object",
-            properties: {
-              portSpecification: {
-                type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
-                description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Not supported by target pools. The health check supports all\nbackends supported by the backend service provided the backend can be\nhealth checked. For example, GCE_VM_IP network endpoint\ngroups, GCE_VM_IP_PORT network endpoint groups, and instance\ngroup backends. \n USE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for passthrough load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
-              },
-              request: {
-                type: "string",
-                description:
-                  "Instructs the health check prober to send this exact ASCII string, up to\n1024 bytes in length, after establishing the TCP connection and SSL\nhandshake.",
-              },
-              proxyHeader: {
-                type: "string",
-                enum: ["NONE", "PROXY_V1"],
-                description:
-                  "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
-              },
               response: {
                 type: "string",
                 description:
-                  "Creates a content-based SSL health check. In addition to establishing a\nTCP connection and the TLS handshake, you can configure the health check to\npass only when the backend sends this exact response ASCII string, up to\n1024 bytes in length. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-ssl-tcp",
-              },
-              portName: {
-                type: "string",
-                description: "Not supported.",
-              },
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. The\ndefault value is 443. Valid values are 1 through65535. (Format: int32)",
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description: "[Output Only] Creation timestamp in3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp in3339\ntext format.",
-          },
-          required: false,
-        },
-        http2HealthCheck: {
-          name: "Http2 Health Check",
-          description: "Request body field: http2HealthCheck",
-          type: {
-            type: "object",
-            properties: {
-              requestPath: {
-                type: "string",
-                description:
-                  "The request path of the HTTP/2 health check request. The default value is/. Must comply withRFC3986.",
-              },
-              portSpecification: {
-                type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
-                description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Not supported by target pools. The health check supports all\nbackends supported by the backend service provided the backend can be\nhealth checked. For example, GCE_VM_IP network endpoint\ngroups, GCE_VM_IP_PORT network endpoint groups, and instance\ngroup backends. \n USE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for passthrough load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
-              },
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. The\ndefault value is 443. Valid values are 1 through65535. (Format: int32)",
-              },
-              portName: {
-                type: "string",
-                description: "Not supported.",
-              },
-              proxyHeader: {
-                type: "string",
-                enum: ["NONE", "PROXY_V1"],
-                description:
-                  "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
-              },
-              host: {
-                type: "string",
-                description:
-                  "The value of the host header in the HTTP/2 health check request. If left\nempty (default value), the host header is set to the destination IP address\nto which health check packets are sent. The destination IP address depends\non the type of load balancer. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#hc-packet-dest",
-              },
-              response: {
-                type: "string",
-                description:
-                  "Creates a content-based HTTP/2 health check. In addition to the required\nHTTP 200 (OK) status code, you can configure the health check to pass only\nwhen the backend sends this specific ASCII response string within the first\n1024 bytes of the HTTP response body. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-http",
+                  "Creates a content-based HTTPS health check. In addition to the required HTTP 200 (OK) status code, you can configure the health check to pass only when the backend sends this specific ASCII response string within the first 1024 bytes of the HTTP response body. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-http",
               },
             },
             additionalProperties: true,
@@ -244,10 +285,10 @@ const regionHealthChecksUpdate: AppBlock = {
         },
         kind: {
           name: "Kind",
-          description: "Type of the resource.",
+          description: "Output only. Type of the resource.",
           type: {
             type: "string",
-            description: "Type of the resource.",
+            description: "Output only. Type of the resource.",
           },
           required: false,
         },
@@ -260,79 +301,153 @@ const regionHealthChecksUpdate: AppBlock = {
               enable: {
                 type: "boolean",
                 description:
-                  "Indicates whether or not to export logs. This is false by default, which\nmeans no health check logging will be done.",
+                  "Indicates whether or not to export logs. This is false by default, which means no health check logging will be done.",
               },
             },
             description:
-              "Configuration of logging on a health check. If logging is enabled, logs\nwill be exported to Stackdriver.",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        httpHealthCheck: {
-          name: "HTTP Health Check",
-          description: "Request body field: httpHealthCheck",
-          type: {
-            type: "object",
-            properties: {
-              response: {
-                type: "string",
-                description:
-                  "Creates a content-based HTTP health check. In addition to the required\nHTTP 200 (OK) status code, you can configure the health check to pass only\nwhen the backend sends this specific ASCII response string within the first\n1024 bytes of the HTTP response body. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-http",
-              },
-              requestPath: {
-                type: "string",
-                description:
-                  "The request path of the HTTP health check request. The default value is/. Must comply withRFC3986.",
-              },
-              portSpecification: {
-                type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
-                description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Also supported in legacy HTTP health checks for target pools.\nThe health check supports all backends supported by the backend service\nprovided the backend can be health checked. For example,GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT\nnetwork endpoint groups, and instance group backends. \nUSE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for pass-through load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
-              },
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. The\ndefault value is 80. Valid values are 1 through65535. (Format: int32)",
-              },
-              portName: {
-                type: "string",
-                description: "Not supported.",
-              },
-              host: {
-                type: "string",
-                description:
-                  "The value of the host header in the HTTP health check request. If left\nempty (default value), the host header is set to the destination IP address\nto which health check packets are sent. The destination IP address depends\non the type of load balancer. For details, see:\nhttps://cloud.google.com/load-balancing/docs/health-check-concepts#hc-packet-dest",
-              },
-              proxyHeader: {
-                type: "string",
-                enum: ["NONE", "PROXY_V1"],
-                description:
-                  "Specifies the type of proxy header to append before sending data to the\nbackend, either NONE or PROXY_V1. The default\nis NONE.",
-              },
-            },
+              "Configuration of logging on a health check. If logging is enabled, logs will be exported to Stackdriver.",
             additionalProperties: true,
           },
           required: false,
         },
         name: {
           name: "Name",
-          description: "Name of the resource.",
+          description:
+            "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. For example, a name that is 1-63 characters long, matches the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`, and otherwise complies with RFC1035. This regular expression describes a name where the first character is a lowercase letter, and all following characters are a dash, lowercase letter, or digit, except the last character, which isn't a dash.",
           type: {
             type: "string",
             description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nFor example, a name that is 1-63 characters long, matches the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?`, and otherwise complies with\nRFC1035. This regular expression describes a name where the first\ncharacter is a lowercase letter, and all following characters are a dash,\nlowercase letter, or digit, except the last character, which isn't a dash.",
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. For example, a name that is 1-63 characters long, matches the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`, and otherwise complies with RFC1035. This regular expression describes a name where the first character is a lowercase letter, and all following characters are a dash, lowercase letter, or digit, except the last character, which isn't a dash.",
+          },
+          required: false,
+        },
+        sourceRegions: {
+          name: "Source Regions",
+          description:
+            "The list of cloud regions from which health checks are performed. If any regions are specified, then exactly 3 regions should be specified. The region names must be valid names of Google Cloud regions. This can only be set for global health check. If this list is non-empty, then there are restrictions on what other health check fields are supported and what other resources can use this health check:     - SSL, HTTP2, and GRPC protocols are not supported.    - The TCP request field is not supported.    - The proxyHeader field for HTTP, HTTPS, and TCP is not    supported.    - The checkIntervalSec field must be at least 30.    - The health check cannot be used with BackendService nor with managed    instance group auto-healing.",
+          type: {
+            type: "array",
+            items: {
+              type: "string",
+            },
+            description:
+              "The list of cloud regions from which health checks are performed. If any regions are specified, then exactly 3 regions should be specified. The region names must be valid names of Google Cloud regions. This can only be set for global health check. If this list is non-empty, then there are restrictions on what other health check fields are supported and what other resources can use this health check:     - SSL, HTTP2, and GRPC protocols are not supported.    - The TCP request field is not supported.    - The proxyHeader field for HTTP, HTTPS, and TCP is not    supported.    - The checkIntervalSec field must be at least 30.    - The health check cannot be used with BackendService nor with managed    instance group auto-healing.",
+          },
+          required: false,
+        },
+        sslHealthCheck: {
+          name: "Ssl Health Check",
+          description: "Ssl Health Check field",
+          type: {
+            type: "object",
+            properties: {
+              port: {
+                type: "integer",
+                description:
+                  "The TCP port number to which the health check prober sends packets. The default value is 443. Valid values are 1 through65535.",
+              },
+              portName: {
+                type: "string",
+                description: "Not supported.",
+              },
+              portSpecification: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
+                description:
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends.  USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
+              },
+              proxyHeader: {
+                type: "string",
+                enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
+                description:
+                  "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
+              },
+              request: {
+                type: "string",
+                description:
+                  "Instructs the health check prober to send this exact ASCII string, up to 1024 bytes in length, after establishing the TCP connection and SSL handshake.",
+              },
+              response: {
+                type: "string",
+                description:
+                  "Creates a content-based SSL health check. In addition to establishing a TCP connection and the TLS handshake, you can configure the health check to pass only when the backend sends this exact response ASCII string, up to 1024 bytes in length. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-ssl-tcp",
+              },
+            },
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        tcpHealthCheck: {
+          name: "Tcp Health Check",
+          description: "Tcp Health Check field",
+          type: {
+            type: "object",
+            properties: {
+              port: {
+                type: "integer",
+                description:
+                  "The TCP port number to which the health check prober sends packets. The default value is 80. Valid values are 1 through65535.",
+              },
+              portName: {
+                type: "string",
+                description: "Not supported.",
+              },
+              portSpecification: {
+                type: "string",
+                enum: [
+                  "UNDEFINED_PORT_SPECIFICATION",
+                  "USE_FIXED_PORT",
+                  "USE_NAMED_PORT",
+                  "USE_SERVING_PORT",
+                ],
+                description:
+                  "Specifies how a port is selected for health checking. Can be one of the following values: USE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services for passthrough load balancers and backend services for proxy load balancers. Not supported by target pools. The health check supports all backends supported by the backend service provided the backend can be health checked. For example, GCE_VM_IP network endpoint groups, GCE_VM_IP_PORT network endpoint groups, and instance group backends. USE_NAMED_PORT: Not supported. USE_SERVING_PORT: Provides an indirect method of specifying the health check port by referring to the backend service. Only supported by backend services for proxy load balancers. Not supported by target pools.  Not supported by backend services for passthrough load balancers. Supports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group backends.  For GCE_VM_IP_PORT network endpoint group backends, the health check uses the port number specified for each endpoint in the network endpoint group.  For instance group backends, the health check uses the port number determined by looking up the backend service's named port in the instance group's list of named ports. Check the PortSpecification enum for the list of possible values.",
+              },
+              proxyHeader: {
+                type: "string",
+                enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
+                description:
+                  "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
+              },
+              request: {
+                type: "string",
+                description:
+                  "Instructs the health check prober to send this exact ASCII string, up to 1024 bytes in length, after establishing the TCP connection.",
+              },
+              response: {
+                type: "string",
+                description:
+                  "Creates a content-based TCP health check. In addition to establishing a TCP connection, you can configure the health check to pass only when the backend sends this exact response ASCII string, up to 1024 bytes in length. For details, see: https://cloud.google.com/load-balancing/docs/health-check-concepts#criteria-protocol-ssl-tcp",
+              },
+            },
+            additionalProperties: true,
+          },
+          required: false,
+        },
+        timeoutSec: {
+          name: "Timeout Sec",
+          description:
+            "How long (in seconds) to wait before claiming failure. The default value is 5 seconds. It is invalid for timeoutSec to have greater value than checkIntervalSec.",
+          type: {
+            type: "integer",
+            description:
+              "How long (in seconds) to wait before claiming failure. The default value is 5 seconds. It is invalid for timeoutSec to have greater value than checkIntervalSec.",
           },
           required: false,
         },
         type: {
           name: "Type",
           description:
-            "Specifies the type of the healthCheck, either TCP,SSL, HTTP, HTTPS,HTTP2 or GRPC.",
+            "Specifies the type of the healthCheck, either TCP,SSL, HTTP, HTTPS,HTTP2 or GRPC. Exactly one of the protocol-specific health check fields must be specified, which must matchtype field. Check the Type enum for the list of possible values.",
           type: {
             type: "string",
             enum: [
+              "UNDEFINED_TYPE",
               "GRPC",
               "GRPC_WITH_TLS",
               "HTTP",
@@ -343,251 +458,100 @@ const regionHealthChecksUpdate: AppBlock = {
               "TCP",
             ],
             description:
-              "Specifies the type of the healthCheck, either TCP,SSL, HTTP, HTTPS,HTTP2 or GRPC. Exactly one of the\nprotocol-specific health check fields must be specified, which must matchtype field.",
-          },
-          required: false,
-        },
-        healthyThreshold: {
-          name: "Healthy Threshold",
-          description:
-            "A so-far unhealthy instance will be marked healthy after this many consecutive successes.",
-          type: {
-            type: "integer",
-            description:
-              "A so-far unhealthy instance will be marked healthy after this\nmany consecutive successes. The default value is 2. (Format: int32)",
-          },
-          required: false,
-        },
-        description: {
-          name: "Description",
-          description: "An optional description of this resource.",
-          type: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this property when you\ncreate the resource.",
-          },
-          required: false,
-        },
-        sourceRegions: {
-          name: "Source Regions",
-          description:
-            "The list of cloud regions from which health checks are performed.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "The list of cloud regions from which health checks are performed. If any\nregions are specified, then exactly 3 regions should be specified. The\nregion names must be valid names of Google Cloud regions.\nThis can only be set for global health check.\nIf this list is non-empty, then there are restrictions\non what other health check fields are supported and what other resources\ncan use this health check:\n   \n   - SSL, HTTP2, and GRPC protocols are not supported.\n   - The TCP request field is not supported.\n   - The proxyHeader field for HTTP, HTTPS, and TCP is not\n   supported.\n   - The checkIntervalSec field must be at least 30.\n   - The health check cannot be used with BackendService nor with managed\n   instance group auto-healing.",
+              "Specifies the type of the healthCheck, either TCP,SSL, HTTP, HTTPS,HTTP2 or GRPC. Exactly one of the protocol-specific health check fields must be specified, which must matchtype field. Check the Type enum for the list of possible values.",
           },
           required: false,
         },
         unhealthyThreshold: {
           name: "Unhealthy Threshold",
           description:
-            "A so-far healthy instance will be marked unhealthy after this many consecutive failures.",
+            "A so-far healthy instance will be marked unhealthy after this many consecutive failures. The default value is 2.",
           type: {
             type: "integer",
             description:
-              "A so-far healthy instance will be marked unhealthy after this many\nconsecutive failures. The default value is 2. (Format: int32)",
+              "A so-far healthy instance will be marked unhealthy after this many consecutive failures. The default value is 2.",
           },
           required: false,
         },
-        checkIntervalSec: {
-          name: "Check Interval Sec",
-          description: "How often (in seconds) to send a health check.",
+        requestId: {
+          name: "Request Id",
+          description:
+            "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
           type: {
-            type: "integer",
+            type: "string",
             description:
-              "How often (in seconds) to send a health check. The default value is 5\nseconds. (Format: int32)",
-          },
-          required: false,
-        },
-        grpcHealthCheck: {
-          name: "Grpc Health Check",
-          description: "Request body field: grpcHealthCheck",
-          type: {
-            type: "object",
-            properties: {
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. Valid\nvalues are 1 through 65535. (Format: int32)",
-              },
-              portName: {
-                type: "string",
-                description: "Not supported.",
-              },
-              portSpecification: {
-                type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
-                description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Not supported by target pools. The health check supports all\nbackends supported by the backend service provided the backend can be\nhealth checked. For example, GCE_VM_IP network endpoint\ngroups, GCE_VM_IP_PORT network endpoint groups, and instance\ngroup backends. \n USE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for passthrough load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
-              },
-              grpcServiceName: {
-                type: "string",
-                description:
-                  "The gRPC service name for the health check. This field is optional. The\nvalue of grpc_service_name has the following meanings by convention: \n\n- Empty service_name means the overall status of all services at the\nbackend. \n\n- Non-empty service_name means the health of that gRPC service, as defined\nby the owner of the service. \n\nThe grpc_service_name can only be ASCII.",
-              },
-            },
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        timeoutSec: {
-          name: "Timeout Sec",
-          description: "How long (in seconds) to wait before claiming failure.",
-          type: {
-            type: "integer",
-            description:
-              "How long (in seconds) to wait before claiming failure. The default value is\n5 seconds. It is invalid for timeoutSec to have greater\nvalue than checkIntervalSec. (Format: int32)",
-          },
-          required: false,
-        },
-        grpcTlsHealthCheck: {
-          name: "Grpc TLS Health Check",
-          description: "Request body field: grpcTlsHealthCheck",
-          type: {
-            type: "object",
-            properties: {
-              grpcServiceName: {
-                type: "string",
-                description:
-                  "The gRPC service name for the health check. This field is optional. The\nvalue of grpc_service_name has the following meanings by convention: \n\n- Empty service_name means the overall status of all services at the\nbackend. \n\n- Non-empty service_name means the health of that gRPC service, as defined\nby the owner of the service. \n\nThe grpc_service_name can only be ASCII.",
-              },
-              portSpecification: {
-                type: "string",
-                enum: ["USE_FIXED_PORT", "USE_NAMED_PORT", "USE_SERVING_PORT"],
-                description:
-                  "Specifies how a port is selected for health checking. Can be one of the\nfollowing values: \nUSE_FIXED_PORT: Specifies a port number explicitly using theport field  in the health check. Supported by backend services\nfor passthrough load balancers and backend services for proxy load\nbalancers. Not supported by target pools. The health check supports all\nbackends supported by the backend service provided the backend can be\nhealth checked. For example, GCE_VM_IP network endpoint\ngroups, GCE_VM_IP_PORT network endpoint groups, and instance\ngroup backends. \n USE_NAMED_PORT: Not supported. \nUSE_SERVING_PORT: Provides an indirect method of specifying\nthe health check port by referring to the backend service. Only supported\nby backend services for proxy load balancers. Not supported by target\npools.  Not supported by backend services for passthrough load balancers.\nSupports all backends that can be health checked; for example,GCE_VM_IP_PORT network endpoint groups and instance group\nbackends.\n\nFor GCE_VM_IP_PORT network endpoint group backends, the health\ncheck uses the port number specified for each endpoint in the network\nendpoint group.  For instance group backends, the health check uses the\nport number determined by looking up the backend service's named port in\nthe instance group's list of named ports.",
-              },
-              port: {
-                type: "integer",
-                description:
-                  "The TCP port number to which the health check prober sends packets. Valid\nvalues are 1 through 65535. (Format: int32)",
-              },
-            },
-            additionalProperties: true,
+              "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed.  For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments.  The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/healthChecks/{healthCheck}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-
-        // Assemble request body from individual inputs
-        const requestBody: Record<string, any> = {};
-
-        if (input.event.inputConfig.tcpHealthCheck !== undefined)
-          requestBody.tcpHealthCheck = input.event.inputConfig.tcpHealthCheck;
-        if (input.event.inputConfig.selfLink !== undefined)
-          requestBody.selfLink = input.event.inputConfig.selfLink;
-        if (input.event.inputConfig.id !== undefined)
-          requestBody.id = input.event.inputConfig.id;
-        if (input.event.inputConfig.httpsHealthCheck !== undefined)
-          requestBody.httpsHealthCheck =
-            input.event.inputConfig.httpsHealthCheck;
-        if (input.event.inputConfig.sslHealthCheck !== undefined)
-          requestBody.sslHealthCheck = input.event.inputConfig.sslHealthCheck;
-        if (input.event.inputConfig.creationTimestamp !== undefined)
-          requestBody.creationTimestamp =
-            input.event.inputConfig.creationTimestamp;
-        if (input.event.inputConfig.http2HealthCheck !== undefined)
-          requestBody.http2HealthCheck =
-            input.event.inputConfig.http2HealthCheck;
-        if (input.event.inputConfig.kind !== undefined)
-          requestBody.kind = input.event.inputConfig.kind;
-        if (input.event.inputConfig.logConfig !== undefined)
-          requestBody.logConfig = input.event.inputConfig.logConfig;
-        if (input.event.inputConfig.httpHealthCheck !== undefined)
-          requestBody.httpHealthCheck = input.event.inputConfig.httpHealthCheck;
-        if (input.event.inputConfig.name !== undefined)
-          requestBody.name = input.event.inputConfig.name;
-        if (input.event.inputConfig.type !== undefined)
-          requestBody.type = input.event.inputConfig.type;
-        if (input.event.inputConfig.healthyThreshold !== undefined)
-          requestBody.healthyThreshold =
-            input.event.inputConfig.healthyThreshold;
-        if (input.event.inputConfig.description !== undefined)
-          requestBody.description = input.event.inputConfig.description;
-        if (input.event.inputConfig.sourceRegions !== undefined)
-          requestBody.sourceRegions = input.event.inputConfig.sourceRegions;
-        if (input.event.inputConfig.unhealthyThreshold !== undefined)
-          requestBody.unhealthyThreshold =
-            input.event.inputConfig.unhealthyThreshold;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
         if (input.event.inputConfig.region !== undefined)
-          requestBody.region = input.event.inputConfig.region;
-        if (input.event.inputConfig.checkIntervalSec !== undefined)
-          requestBody.checkIntervalSec =
-            input.event.inputConfig.checkIntervalSec;
-        if (input.event.inputConfig.grpcHealthCheck !== undefined)
-          requestBody.grpcHealthCheck = input.event.inputConfig.grpcHealthCheck;
-        if (input.event.inputConfig.timeoutSec !== undefined)
-          requestBody.timeoutSec = input.event.inputConfig.timeoutSec;
-        if (input.event.inputConfig.grpcTlsHealthCheck !== undefined)
-          requestBody.grpcTlsHealthCheck =
-            input.event.inputConfig.grpcTlsHealthCheck;
-
-        if (Object.keys(requestBody).length > 0) {
-          requestOptions.body = JSON.stringify(requestBody);
-        }
-
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
+          pathParams["region"] = String(input.event.inputConfig.region);
+        if (input.event.inputConfig.healthCheck !== undefined)
+          pathParams["health_check"] = String(
+            input.event.inputConfig.healthCheck,
           );
-        }
 
-        const result = await response.json();
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.requestId !== undefined)
+          queryParams["requestId"] = String(input.event.inputConfig.requestId);
+        const body: Record<string, any> = {};
+        if (input.event.inputConfig.checkIntervalSec !== undefined)
+          body.checkIntervalSec = input.event.inputConfig.checkIntervalSec;
+        if (input.event.inputConfig.creationTimestamp !== undefined)
+          body.creationTimestamp = input.event.inputConfig.creationTimestamp;
+        if (input.event.inputConfig.description !== undefined)
+          body.description = input.event.inputConfig.description;
+        if (input.event.inputConfig.grpcHealthCheck !== undefined)
+          body.grpcHealthCheck = input.event.inputConfig.grpcHealthCheck;
+        if (input.event.inputConfig.grpcTlsHealthCheck !== undefined)
+          body.grpcTlsHealthCheck = input.event.inputConfig.grpcTlsHealthCheck;
+        if (input.event.inputConfig.healthyThreshold !== undefined)
+          body.healthyThreshold = input.event.inputConfig.healthyThreshold;
+        if (input.event.inputConfig.http2HealthCheck !== undefined)
+          body.http2HealthCheck = input.event.inputConfig.http2HealthCheck;
+        if (input.event.inputConfig.httpHealthCheck !== undefined)
+          body.httpHealthCheck = input.event.inputConfig.httpHealthCheck;
+        if (input.event.inputConfig.httpsHealthCheck !== undefined)
+          body.httpsHealthCheck = input.event.inputConfig.httpsHealthCheck;
+        if (input.event.inputConfig.id !== undefined)
+          body.id = input.event.inputConfig.id;
+        if (input.event.inputConfig.kind !== undefined)
+          body.kind = input.event.inputConfig.kind;
+        if (input.event.inputConfig.logConfig !== undefined)
+          body.logConfig = input.event.inputConfig.logConfig;
+        if (input.event.inputConfig.name !== undefined)
+          body.name = input.event.inputConfig.name;
+        if (input.event.inputConfig.region !== undefined)
+          body.region = input.event.inputConfig.region;
+        if (input.event.inputConfig.selfLink !== undefined)
+          body.selfLink = input.event.inputConfig.selfLink;
+        if (input.event.inputConfig.sourceRegions !== undefined)
+          body.sourceRegions = input.event.inputConfig.sourceRegions;
+        if (input.event.inputConfig.sslHealthCheck !== undefined)
+          body.sslHealthCheck = input.event.inputConfig.sslHealthCheck;
+        if (input.event.inputConfig.tcpHealthCheck !== undefined)
+          body.tcpHealthCheck = input.event.inputConfig.tcpHealthCheck;
+        if (input.event.inputConfig.timeoutSec !== undefined)
+          body.timeoutSec = input.event.inputConfig.timeoutSec;
+        if (input.event.inputConfig.type !== undefined)
+          body.type = input.event.inputConfig.type;
+        if (input.event.inputConfig.unhealthyThreshold !== undefined)
+          body.unhealthyThreshold = input.event.inputConfig.unhealthyThreshold;
+
+        const result = await computeFetch({
+          config: input.app.config,
+          method: "PUT",
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/healthChecks/{health_check}",
+          pathParams,
+          queryParams,
+          body: Object.keys(body).length > 0 ? body : undefined,
+        });
+
         await events.emit(result || {});
       },
     },
@@ -598,107 +562,313 @@ const regionHealthChecksUpdate: AppBlock = {
       type: {
         type: "object",
         properties: {
-          targetId: {
+          clientOperationId: {
             type: "string",
             description:
-              "[Output Only] The unique target ID, which identifies a specific incarnation\nof the target resource. (Format: uint64)",
+              "[Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.",
           },
           creationTimestamp: {
             type: "string",
             description: "[Deprecated] This field is deprecated.",
           },
+          description: {
+            type: "string",
+            description:
+              "[Output Only] A textual description of the operation, which is set when the operation is created.",
+          },
+          endTime: {
+            type: "string",
+            description:
+              "[Output Only] The time that this operation was completed. This value is inRFC3339 text format.",
+          },
+          error: {
+            type: "object",
+            properties: {
+              errors: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    code: {
+                      type: "string",
+                      description:
+                        "[Output Only] The error type identifier for this error.",
+                    },
+                    errorDetails: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          errorInfo: {
+                            type: "object",
+                            properties: {
+                              domain: {
+                                type: "string",
+                                description:
+                                  'The logical grouping to which the "reason" belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: "pubsub.googleapis.com". If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is "googleapis.com".',
+                              },
+                              metadatas: {
+                                type: "object",
+                                additionalProperties: {
+                                  type: "string",
+                                },
+                                description:
+                                  'Additional structured details about this error.  Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value.  For example, rather than `{"instanceLimit": "100/request"}`, should be returned as, `{"instanceLimitPerRequest": "100"}`, if the client exceeds the number of instances that can be created in a single (batch) request.',
+                              },
+                              reason: {
+                                type: "string",
+                                description:
+                                  "The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.",
+                              },
+                            },
+                            description:
+                              'Describes the cause of the error with structured details.  Example of an error when contacting the "pubsub.googleapis.com" API when it is not enabled:      { "reason": "API_DISABLED"       "domain": "googleapis.com"       "metadata": {         "resource": "projects/123",         "service": "pubsub.googleapis.com"       }     }  This response indicates that the pubsub.googleapis.com API is not enabled.  Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock:      { "reason": "STOCKOUT"       "domain": "spanner.googleapis.com",       "metadata": {         "availableRegions": "us-central1,us-east2"       }     }',
+                            additionalProperties: true,
+                          },
+                          help: {
+                            type: "object",
+                            properties: {
+                              links: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    description: {
+                                      type: "string",
+                                      description:
+                                        "Describes what the link offers.",
+                                    },
+                                    url: {
+                                      type: "string",
+                                      description: "The URL of the link.",
+                                    },
+                                  },
+                                  description: "Describes a URL link.",
+                                  additionalProperties: true,
+                                },
+                                description:
+                                  "URL(s) pointing to additional information on handling the current error.",
+                              },
+                            },
+                            description:
+                              "Provides links to documentation or for performing an out of band action.  For example, if a quota check failed with an error indicating the calling project hasn't enabled the accessed service, this can contain a URL pointing directly to the right place in the developer console to flip the bit.",
+                            additionalProperties: true,
+                          },
+                          localizedMessage: {
+                            type: "object",
+                            properties: {
+                              locale: {
+                                type: "string",
+                                description:
+                                  'The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: "en-US", "fr-CH", "es-MX"',
+                              },
+                              message: {
+                                type: "string",
+                                description:
+                                  "The localized error message in the above locale.",
+                              },
+                            },
+                            description:
+                              "Provides a localized error message that is safe to return to the user which can be attached to an RPC error.",
+                            additionalProperties: true,
+                          },
+                          quotaInfo: {
+                            type: "object",
+                            properties: {
+                              dimensions: {
+                                type: "object",
+                                additionalProperties: {
+                                  type: "string",
+                                },
+                                description:
+                                  "The map holding related quota dimensions.",
+                              },
+                              futureLimit: {
+                                type: "number",
+                                description:
+                                  "Future quota limit being rolled out. The limit's unit depends on the quota  type or metric.",
+                              },
+                              limit: {
+                                type: "number",
+                                description:
+                                  "Current effective quota limit. The limit's unit depends on the quota type or metric.",
+                              },
+                              limitName: {
+                                type: "string",
+                                description: "The name of the quota limit.",
+                              },
+                              metricName: {
+                                type: "string",
+                                description:
+                                  "The Compute Engine quota metric name.",
+                              },
+                              rolloutStatus: {
+                                type: "string",
+                                enum: [
+                                  "UNDEFINED_ROLLOUT_STATUS",
+                                  "IN_PROGRESS",
+                                  "ROLLOUT_STATUS_UNSPECIFIED",
+                                ],
+                                description:
+                                  "Rollout status of the future quota limit. Check the RolloutStatus enum for the list of possible values.",
+                              },
+                            },
+                            description:
+                              "Additional details for quota exceeded error for resource quota.",
+                            additionalProperties: true,
+                          },
+                        },
+                        additionalProperties: true,
+                      },
+                      description:
+                        "[Output Only] An optional list of messages that contain the error details. There is a set of defined message types to use for providing details.The syntax depends on the error code. For example, QuotaExceededInfo will have details when the error code is QUOTA_EXCEEDED.",
+                    },
+                    location: {
+                      type: "string",
+                      description:
+                        "[Output Only] Indicates the field in the request that caused the error. This property is optional.",
+                    },
+                    message: {
+                      type: "string",
+                      description:
+                        "[Output Only] An optional, human-readable error message.",
+                    },
+                  },
+                  additionalProperties: true,
+                },
+                description:
+                  "[Output Only] The array of errors encountered while processing this operation.",
+              },
+            },
+            description:
+              "Output only. Errors that prevented the ResizeRequest to be fulfilled.",
+            additionalProperties: true,
+          },
           httpErrorMessage: {
             type: "string",
             description:
-              "[Output Only] If the operation fails, this field contains the HTTP error\nmessage that was returned, such as `NOT FOUND`.",
+              "[Output Only] If the operation fails, this field contains the HTTP error message that was returned, such as `NOT FOUND`.",
           },
-          kind: {
+          httpErrorStatusCode: {
+            type: "integer",
+            description:
+              "[Output Only] If the operation fails, this field contains the HTTP error status code that was returned. For example, a `404` means the resource was not found.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          insertTime: {
             type: "string",
             description:
-              "[Output Only] Type of the resource. Always `compute#operation` for\nOperation resources.",
+              "[Output Only] The time that this operation was requested. This value is inRFC3339 text format.",
           },
-          setCommonInstanceMetadataOperationMetadata: {
+          instancesBulkInsertOperationMetadata: {
             type: "object",
             properties: {
-              perLocationOperations: {
+              perLocationStatus: {
                 type: "object",
                 additionalProperties: {
-                  type: "object",
+                  type: "string",
                 },
                 description:
-                  "[Output Only] Status information per location (location name is key).\nExample key: zones/us-central1-a",
-              },
-              clientOperationId: {
-                type: "string",
-                description: "[Output Only] The client operation id.",
+                  "Status information per location (location name is key). Example key: zones/us-central1-a",
               },
             },
             additionalProperties: true,
           },
-          id: {
+          kind: {
             type: "string",
             description:
-              "[Output Only] The unique identifier for the operation. This identifier is\ndefined by the server. (Format: uint64)",
+              "Output only. [Output Only] Type of the resource. Always `compute#operation` for Operation resources.",
+          },
+          name: {
+            type: "string",
+            description: "[Output Only] Name of the operation.",
+          },
+          operationGroupId: {
+            type: "string",
+            description:
+              "Output only. [Output Only] An ID that represents a group of operations, such as when a group of operations results from a `bulkInsert` API request.",
+          },
+          operationType: {
+            type: "string",
+            description:
+              "[Output Only] The type of operation, such as `insert`, `update`, or `delete`, and so on.",
+          },
+          progress: {
+            type: "integer",
+            description:
+              "[Output Only] An optional progress indicator that ranges from 0 to 100. There is no requirement that this be linear or support any granularity of operations. This should not be used to guess when the operation will be complete. This number should monotonically increase as the operation progresses.",
           },
           region: {
             type: "string",
             description:
-              "[Output Only] The URL of the region where the operation resides. Only\napplicable when performing regional operations.",
+              "[Output Only] The URL of the region where the operation resides. Only applicable when performing regional operations.",
+          },
+          selfLink: {
+            type: "string",
+            description: "[Output Only] Server-defined URL for the resource.",
+          },
+          setCommonInstanceMetadataOperationMetadata: {
+            type: "object",
+            properties: {
+              clientOperationId: {
+                type: "string",
+                description: "[Output Only] The client operation id.",
+              },
+              perLocationOperations: {
+                type: "object",
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "[Output Only] Status information per location (location name is key). Example key: zones/us-central1-a",
+              },
+            },
+            additionalProperties: true,
+            description:
+              "Output only. [Output Only] If the operation is for projects.setCommonInstanceMetadata, this field will contain information on all underlying zonal actions and their state.",
           },
           startTime: {
             type: "string",
             description:
-              "[Output Only] The time that this operation was started by the server.\nThis value is inRFC3339\ntext format.",
+              "[Output Only] The time that this operation was started by the server. This value is inRFC3339 text format.",
           },
-          zone: {
+          status: {
             type: "string",
+            enum: ["UNDEFINED_STATUS", "DONE", "PENDING", "RUNNING"],
             description:
-              "[Output Only] The URL of the zone where the operation resides. Only\napplicable when performing per-zone operations.",
+              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           statusMessage: {
             type: "string",
             description:
-              "[Output Only] An optional textual description of the current status of the\noperation.",
+              "[Output Only] An optional textual description of the current status of the operation.",
+          },
+          targetId: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          targetLink: {
+            type: "string",
+            description:
+              "[Output Only] The URL of the resource that the operation modifies. For operations related to creating a snapshot, this points to the disk that the snapshot was created from.",
           },
           user: {
             type: "string",
             description:
-              "[Output Only] User who requested the operation, for example:\n`user@example.com` or\n`alice_smith_identifier (global/workforcePools/example-com-us-employees)`.",
+              "[Output Only] User who requested the operation, for example: `user@example.com` or `alice_smith_identifier (global/workforcePools/example-com-us-employees)`.",
           },
           warnings: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                message: {
-                  type: "string",
-                  description:
-                    "[Output Only] A human-readable description of the warning code.",
-                },
-                data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      key: {
-                        type: "string",
-                        description:
-                          "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
-                      },
-                      value: {
-                        type: "string",
-                        description:
-                          "[Output Only] A warning data value corresponding to the key.",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  description:
-                    '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
-                },
                 code: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_CODE",
                     "CLEANUP_FAILED",
                     "DEPRECATED_RESOURCE_USED",
                     "DEPRECATED_TYPE_USED",
@@ -730,252 +900,48 @@ const regionHealthChecksUpdate: AppBlock = {
                     "UNREACHABLE",
                   ],
                   description:
-                    "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
+                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
+                },
+                data: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      key: {
+                        type: "string",
+                        description:
+                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                      },
+                      value: {
+                        type: "string",
+                        description:
+                          "[Output Only] A warning data value corresponding to the key.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  description:
+                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+                },
+                message: {
+                  type: "string",
+                  description:
+                    "[Output Only] A human-readable description of the warning code.",
                 },
               },
               additionalProperties: true,
             },
             description:
-              "[Output Only] If warning messages are generated during processing of the\noperation, this field will be populated.",
+              "[Output Only] If warning messages are generated during processing of the operation, this field will be populated.",
           },
-          operationType: {
+          zone: {
             type: "string",
             description:
-              "[Output Only] The type of operation, such as `insert`,\n`update`, or `delete`, and so on.",
-          },
-          targetLink: {
-            type: "string",
-            description:
-              "[Output Only] The URL of the resource that the operation modifies. For\noperations related to creating a snapshot, this points to the disk\nthat the snapshot was created from.",
-          },
-          instancesBulkInsertOperationMetadata: {
-            type: "object",
-            properties: {
-              perLocationStatus: {
-                type: "object",
-                additionalProperties: {
-                  type: "object",
-                },
-                description:
-                  "Status information per location (location name is key).\nExample key: zones/us-central1-a",
-              },
-            },
-            additionalProperties: true,
-          },
-          error: {
-            type: "object",
-            properties: {
-              errors: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    code: {
-                      type: "string",
-                      description:
-                        "[Output Only] The error type identifier for this error.",
-                    },
-                    message: {
-                      type: "string",
-                      description:
-                        "[Output Only] An optional, human-readable error message.",
-                    },
-                    errorDetails: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          localizedMessage: {
-                            type: "object",
-                            properties: {
-                              message: {
-                                type: "string",
-                                description:
-                                  "The localized error message in the above locale.",
-                              },
-                              locale: {
-                                type: "string",
-                                description:
-                                  'The locale used following the specification defined at\nhttps://www.rfc-editor.org/rfc/bcp/bcp47.txt.\nExamples are: "en-US", "fr-CH", "es-MX"',
-                              },
-                            },
-                            description:
-                              "Provides a localized error message that is safe to return to the user\nwhich can be attached to an RPC error.",
-                            additionalProperties: true,
-                          },
-                          errorInfo: {
-                            type: "object",
-                            properties: {
-                              metadatas: {
-                                type: "object",
-                                additionalProperties: {
-                                  type: "string",
-                                },
-                                description:
-                                  'Additional structured details about this error.\n\nKeys must match a regular expression of `a-z+` but should\nideally be lowerCamelCase. Also, they must be limited to 64 characters in\nlength. When identifying the current value of an exceeded limit, the units\nshould be contained in the key, not the value.  For example, rather than\n`{"instanceLimit": "100/request"}`, should be returned as,\n`{"instanceLimitPerRequest": "100"}`, if the client exceeds the number of\ninstances that can be created in a single (batch) request.',
-                              },
-                              domain: {
-                                type: "string",
-                                description:
-                                  'The logical grouping to which the "reason" belongs. The error domain\nis typically the registered service name of the tool or product that\ngenerates the error. Example: "pubsub.googleapis.com". If the error is\ngenerated by some common infrastructure, the error domain must be a\nglobally unique value that identifies the infrastructure. For Google API\ninfrastructure, the error domain is "googleapis.com".',
-                              },
-                              reason: {
-                                type: "string",
-                                description:
-                                  "The reason of the error. This is a constant value that identifies the\nproximate cause of the error. Error reasons are unique within a particular\ndomain of errors. This should be at most 63 characters and match a\nregular expression of `A-Z+[A-Z0-9]`, which represents\nUPPER_SNAKE_CASE.",
-                              },
-                            },
-                            description:
-                              'Describes the cause of the error with structured details.\n\nExample of an error when contacting the "pubsub.googleapis.com" API when it\nis not enabled:\n\n    { "reason": "API_DISABLED"\n      "domain": "googleapis.com"\n      "metadata": {\n        "resource": "projects/123",\n        "service": "pubsub.googleapis.com"\n      }\n    }\n\nThis response indicates that the pubsub.googleapis.com API is not enabled.\n\nExample of an error that is returned when attempting to create a Spanner\ninstance in a region that is out of stock:\n\n    { "reason": "STOCKOUT"\n      "domain": "spanner.googleapis.com",\n      "metadata": {\n        "availableRegions": "us-central1,us-east2"\n      }\n    }',
-                            additionalProperties: true,
-                          },
-                          quotaInfo: {
-                            type: "object",
-                            properties: {
-                              limit: {
-                                type: "number",
-                                description:
-                                  "Current effective quota limit. The limit's unit depends on the quota type\nor metric. (Format: double)",
-                              },
-                              futureLimit: {
-                                type: "number",
-                                description:
-                                  "Future quota limit being rolled out. The limit's unit depends on the quota\n type or metric. (Format: double)",
-                              },
-                              metricName: {
-                                type: "string",
-                                description:
-                                  "The Compute Engine quota metric name.",
-                              },
-                              rolloutStatus: {
-                                type: "string",
-                                enum: [
-                                  "IN_PROGRESS",
-                                  "ROLLOUT_STATUS_UNSPECIFIED",
-                                ],
-                                description:
-                                  "Rollout status of the future quota limit.",
-                              },
-                              limitName: {
-                                type: "string",
-                                description: "The name of the quota limit.",
-                              },
-                              dimensions: {
-                                type: "object",
-                                additionalProperties: {
-                                  type: "string",
-                                },
-                                description:
-                                  "The map holding related quota dimensions.",
-                              },
-                            },
-                            description:
-                              "Additional details for quota exceeded error for resource quota.",
-                            additionalProperties: true,
-                          },
-                          help: {
-                            type: "object",
-                            properties: {
-                              links: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    url: {
-                                      type: "string",
-                                      description: "The URL of the link.",
-                                    },
-                                    description: {
-                                      type: "string",
-                                      description:
-                                        "Describes what the link offers.",
-                                    },
-                                  },
-                                  description: "Describes a URL link.",
-                                  additionalProperties: true,
-                                },
-                                description:
-                                  "URL(s) pointing to additional information on handling the current error.",
-                              },
-                            },
-                            description:
-                              "Provides links to documentation or for performing an out of band action.\n\nFor example, if a quota check failed with an error indicating the calling\nproject hasn't enabled the accessed service, this can contain a URL pointing\ndirectly to the right place in the developer console to flip the bit.",
-                            additionalProperties: true,
-                          },
-                        },
-                        additionalProperties: true,
-                      },
-                      description:
-                        "[Output Only] An optional list of messages that contain the error\ndetails. There is a set of defined message types to use for providing\ndetails.The syntax depends on the error code. For example,\nQuotaExceededInfo will have details when the error code is\nQUOTA_EXCEEDED.",
-                    },
-                    location: {
-                      type: "string",
-                      description:
-                        "[Output Only] Indicates the field in the request that caused the error.\nThis property is optional.",
-                    },
-                  },
-                  additionalProperties: true,
-                },
-                description:
-                  "[Output Only] The array of errors encountered while processing this\noperation.",
-              },
-            },
-            description:
-              "[Output Only] If errors are generated during processing of the operation,\nthis field will be populated.",
-            additionalProperties: true,
-          },
-          endTime: {
-            type: "string",
-            description:
-              "[Output Only] The time that this operation was completed. This value is inRFC3339\ntext format.",
-          },
-          httpErrorStatusCode: {
-            type: "integer",
-            description:
-              "[Output Only] If the operation fails, this field contains the HTTP error\nstatus code that was returned. For example, a `404` means the\nresource was not found. (Format: int32)",
-          },
-          operationGroupId: {
-            type: "string",
-            description:
-              "[Output Only] An ID that represents a group of operations, such as when a\ngroup of operations results from a `bulkInsert` API request.",
-          },
-          description: {
-            type: "string",
-            description:
-              "[Output Only] A textual description of the operation, which is\nset when the operation is created.",
-          },
-          name: {
-            type: "string",
-            description: "[Output Only] Name of the operation.",
-          },
-          selfLink: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          clientOperationId: {
-            type: "string",
-            description:
-              "[Output Only] The value of `requestId` if you provided it in the request.\nNot present otherwise.",
-          },
-          insertTime: {
-            type: "string",
-            description:
-              "[Output Only] The time that this operation was requested.\nThis value is inRFC3339\ntext format.",
-          },
-          status: {
-            type: "string",
-            enum: ["DONE", "PENDING", "RUNNING"],
-            description:
-              "[Output Only] The status of the operation, which can be one of the\nfollowing:\n`PENDING`, `RUNNING`, or `DONE`.",
-          },
-          progress: {
-            type: "integer",
-            description:
-              "[Output Only] An optional progress indicator that ranges from 0 to 100.\nThere is no requirement that this be linear or support any granularity of\noperations. This should not be used to guess when the operation will be\ncomplete. This number should monotonically increase as the operation\nprogresses. (Format: int32)",
+              "[Output Only] The URL of the zone where the operation resides. Only applicable when performing per-zone operations.",
           },
         },
         description:
-          "Represents an Operation resource.\n\nGoogle Compute Engine has three Operation resources:\n\n* [Global](/compute/docs/reference/rest/v1/globalOperations)\n* [Regional](/compute/docs/reference/rest/v1/regionOperations)\n* [Zonal](/compute/docs/reference/rest/v1/zoneOperations)\n\nYou can use an operation resource to manage asynchronous API requests.\nFor more information, readHandling\nAPI responses.\n\nOperations can be global, regional or zonal.\n   \n   - For global operations, use the `globalOperations`\n   resource. \n   - For regional operations, use the\n   `regionOperations` resource. \n   - For zonal operations, use\n   the `zoneOperations` resource.\n\n\n\nFor more information, read\nGlobal, Regional, and Zonal Resources.\n\nNote that completed Operation resources have a limited \nretention period.",
+          "Represents an Operation resource.  Google Compute Engine has three Operation resources:  * [Global](/compute/docs/reference/rest/v1/globalOperations) * [Regional](/compute/docs/reference/rest/v1/regionOperations) * [Zonal](/compute/docs/reference/rest/v1/zoneOperations)  You can use an operation resource to manage asynchronous API requests. For more information, readHandling API responses.  Operations can be global, regional or zonal.     - For global operations, use the `globalOperations`    resource.    - For regional operations, use the    `regionOperations` resource.    - For zonal operations, use    the `zoneOperations` resource.    For more information, read Global, Regional, and Zonal Resources.  Note that completed Operation resources have a limited retention period.",
         additionalProperties: true,
       },
     },

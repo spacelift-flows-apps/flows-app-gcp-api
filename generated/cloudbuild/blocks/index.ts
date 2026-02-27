@@ -1,49 +1,71 @@
-import list_0 from "./operations/list";
-import get_1 from "./operations/get";
-import operationsGet_2 from "./operations/operationsGet";
-import operationsCancel_3 from "./operations/operationsCancel";
-import connectionsCreate_4 from "./connections/connectionsCreate";
-import connectionsGet_5 from "./connections/connectionsGet";
-import connectionsList_6 from "./connections/connectionsList";
-import connectionsPatch_7 from "./connections/connectionsPatch";
-import connectionsDelete_8 from "./connections/connectionsDelete";
-import connectionsProcessWebhook_9 from "./connections/connectionsProcessWebhook";
-import connectionsFetchLinkableRepositories_10 from "./connections/connectionsFetchLinkableRepositories";
-import connectionsSetIamPolicy_11 from "./connections/connectionsSetIamPolicy";
-import connectionsGetIamPolicy_12 from "./connections/connectionsGetIamPolicy";
-import connectionsTestIamPermissions_13 from "./connections/connectionsTestIamPermissions";
-import repositoriesCreate_14 from "./repositories/repositoriesCreate";
-import repositoriesBatchCreate_15 from "./repositories/repositoriesBatchCreate";
-import repositoriesGet_16 from "./repositories/repositoriesGet";
-import repositoriesList_17 from "./repositories/repositoriesList";
-import repositoriesDelete_18 from "./repositories/repositoriesDelete";
-import repositoriesAccessReadWriteToken_19 from "./repositories/repositoriesAccessReadWriteToken";
-import repositoriesAccessReadToken_20 from "./repositories/repositoriesAccessReadToken";
-import repositoriesFetchGitRefs_21 from "./repositories/repositoriesFetchGitRefs";
+import build_triggers_createBuildTrigger from "./build_triggers/createBuildTrigger.ts";
+import build_triggers_deleteBuildTrigger from "./build_triggers/deleteBuildTrigger.ts";
+import build_triggers_getBuildTrigger from "./build_triggers/getBuildTrigger.ts";
+import build_triggers_listBuildTriggers from "./build_triggers/listBuildTriggers.ts";
+import build_triggers_receiveTriggerWebhook from "./build_triggers/receiveTriggerWebhook.ts";
+import build_triggers_runBuildTrigger from "./build_triggers/runBuildTrigger.ts";
+import build_triggers_updateBuildTrigger from "./build_triggers/updateBuildTrigger.ts";
+import builds_approveBuild from "./builds/approveBuild.ts";
+import builds_cancelBuild from "./builds/cancelBuild.ts";
+import builds_createBuild from "./builds/createBuild.ts";
+import builds_getBuild from "./builds/getBuild.ts";
+import builds_listBuilds from "./builds/listBuilds.ts";
+import builds_retryBuild from "./builds/retryBuild.ts";
+import connections_createConnection from "./connections/createConnection.ts";
+import connections_deleteConnection from "./connections/deleteConnection.ts";
+import connections_getConnection from "./connections/getConnection.ts";
+import connections_listConnections from "./connections/listConnections.ts";
+import connections_updateConnection from "./connections/updateConnection.ts";
+import repositories_batchCreateRepositories from "./repositories/batchCreateRepositories.ts";
+import repositories_createRepository from "./repositories/createRepository.ts";
+import repositories_deleteRepository from "./repositories/deleteRepository.ts";
+import repositories_fetchGitRefs from "./repositories/fetchGitRefs.ts";
+import repositories_fetchLinkableRepositories from "./repositories/fetchLinkableRepositories.ts";
+import repositories_fetchReadToken from "./repositories/fetchReadToken.ts";
+import repositories_fetchReadWriteToken from "./repositories/fetchReadWriteToken.ts";
+import repositories_getRepository from "./repositories/getRepository.ts";
+import repositories_listRepositories from "./repositories/listRepositories.ts";
+import service_accounts_getDefaultServiceAccount from "./service_accounts/getDefaultServiceAccount.ts";
+import worker_pools_createWorkerPool from "./worker_pools/createWorkerPool.ts";
+import worker_pools_deleteWorkerPool from "./worker_pools/deleteWorkerPool.ts";
+import worker_pools_getWorkerPool from "./worker_pools/getWorkerPool.ts";
+import worker_pools_listWorkerPools from "./worker_pools/listWorkerPools.ts";
+import worker_pools_updateWorkerPool from "./worker_pools/updateWorkerPool.ts";
 
 export const blocks = {
-  operations_list: list_0,
-  operations_get: get_1,
-  operations_operationsGet: operationsGet_2,
-  operations_operationsCancel: operationsCancel_3,
-  connections_connectionsCreate: connectionsCreate_4,
-  connections_connectionsGet: connectionsGet_5,
-  connections_connectionsList: connectionsList_6,
-  connections_connectionsPatch: connectionsPatch_7,
-  connections_connectionsDelete: connectionsDelete_8,
-  connections_connectionsProcessWebhook: connectionsProcessWebhook_9,
-  connections_connectionsFetchLinkableRepositories:
-    connectionsFetchLinkableRepositories_10,
-  connections_connectionsSetIamPolicy: connectionsSetIamPolicy_11,
-  connections_connectionsGetIamPolicy: connectionsGetIamPolicy_12,
-  connections_connectionsTestIamPermissions: connectionsTestIamPermissions_13,
-  repositories_repositoriesCreate: repositoriesCreate_14,
-  repositories_repositoriesBatchCreate: repositoriesBatchCreate_15,
-  repositories_repositoriesGet: repositoriesGet_16,
-  repositories_repositoriesList: repositoriesList_17,
-  repositories_repositoriesDelete: repositoriesDelete_18,
-  repositories_repositoriesAccessReadWriteToken:
-    repositoriesAccessReadWriteToken_19,
-  repositories_repositoriesAccessReadToken: repositoriesAccessReadToken_20,
-  repositories_repositoriesFetchGitRefs: repositoriesFetchGitRefs_21,
+  build_triggers_createBuildTrigger: build_triggers_createBuildTrigger,
+  build_triggers_deleteBuildTrigger: build_triggers_deleteBuildTrigger,
+  build_triggers_getBuildTrigger: build_triggers_getBuildTrigger,
+  build_triggers_listBuildTriggers: build_triggers_listBuildTriggers,
+  build_triggers_receiveTriggerWebhook: build_triggers_receiveTriggerWebhook,
+  build_triggers_runBuildTrigger: build_triggers_runBuildTrigger,
+  build_triggers_updateBuildTrigger: build_triggers_updateBuildTrigger,
+  builds_approveBuild: builds_approveBuild,
+  builds_cancelBuild: builds_cancelBuild,
+  builds_createBuild: builds_createBuild,
+  builds_getBuild: builds_getBuild,
+  builds_listBuilds: builds_listBuilds,
+  builds_retryBuild: builds_retryBuild,
+  connections_createConnection: connections_createConnection,
+  connections_deleteConnection: connections_deleteConnection,
+  connections_getConnection: connections_getConnection,
+  connections_listConnections: connections_listConnections,
+  connections_updateConnection: connections_updateConnection,
+  repositories_batchCreateRepositories: repositories_batchCreateRepositories,
+  repositories_createRepository: repositories_createRepository,
+  repositories_deleteRepository: repositories_deleteRepository,
+  repositories_fetchGitRefs: repositories_fetchGitRefs,
+  repositories_fetchLinkableRepositories:
+    repositories_fetchLinkableRepositories,
+  repositories_fetchReadToken: repositories_fetchReadToken,
+  repositories_fetchReadWriteToken: repositories_fetchReadWriteToken,
+  repositories_getRepository: repositories_getRepository,
+  repositories_listRepositories: repositories_listRepositories,
+  service_accounts_getDefaultServiceAccount:
+    service_accounts_getDefaultServiceAccount,
+  worker_pools_createWorkerPool: worker_pools_createWorkerPool,
+  worker_pools_deleteWorkerPool: worker_pools_deleteWorkerPool,
+  worker_pools_getWorkerPool: worker_pools_getWorkerPool,
+  worker_pools_listWorkerPools: worker_pools_listWorkerPools,
+  worker_pools_updateWorkerPool: worker_pools_updateWorkerPool,
 };

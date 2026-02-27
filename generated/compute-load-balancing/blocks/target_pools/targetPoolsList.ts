@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const targetPoolsList: AppBlock = {
   name: "Target Pools - List",
-  description: `Retrieves a list of target pools available to the specified project and region.`,
+  description: `Retrieves the list of Zone resources available to the specified project.`,
   category: "Target Pools",
   inputs: {
     default: {
@@ -13,115 +13,97 @@ const targetPoolsList: AppBlock = {
           description: "Name of the region scoping this request.",
           type: {
             type: "string",
+            description: "Name of the region scoping this request.",
           },
           required: true,
         },
         filter: {
           name: "Filter",
           description:
-            'A filter expression that filters resources listed in the response. Most\nCompute resources support two types of filter expressions:\nexpressions that support regular expressions and expressions that follow\nAPI improvement proposal AIP-160.\nThese two types of filter expressions cannot be mixed in one request.\n\nIf you want to use AIP-160, your expression must specify the field name, an\noperator, and the value that you want to use for filtering. The value\nmust be a string, a number, or a boolean. The operator\nmust be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.\n\nFor example, if you are filtering Compute Engine instances, you can\nexclude instances named `example-instance` by specifying\n`name != example-instance`.\n\nThe `:*` comparison can be used to test whether a key has been defined.\nFor example, to find all objects with `owner` label use:\n```\nlabels.owner:*\n```\n\nYou can also filter nested fields. For example, you could specify\n`scheduling.automaticRestart = false` to include instances only\nif they are not scheduled for automatic restarts. You can use filtering\non nested fields to filter based onresource labels.\n\nTo filter on multiple expressions, provide each separate expression within\nparentheses. For example:\n```\n(scheduling.automaticRestart = true)\n(cpuPlatform = "Intel Skylake")\n```\nBy default, each expression is an `AND` expression. However, you\ncan include `AND` and `OR` expressions explicitly.\nFor example:\n```\n(cpuPlatform = "Intel Skylake") OR\n(cpuPlatform = "Intel Broadwell") AND\n(scheduling.automaticRestart = true)\n```\n\nIf you want to use a regular expression, use the `eq` (equal) or `ne`\n(not equal) operator against a single un-parenthesized expression with or\nwithout quotes or against multiple parenthesized expressions. Examples:\n\n`fieldname eq unquoted literal`\n`fieldname eq \'single quoted literal\'`\n`fieldname eq "double quoted literal"`\n`(fieldname1 eq literal) (fieldname2 ne "literal")`\n\nThe literal value is interpreted as a regular expression using GoogleRE2 library syntax.\nThe literal value must match the entire field.\n\nFor example, to filter for instances that do not end with name "instance",\nyou would use `name ne .*instance`.\n\nYou cannot combine constraints on multiple fields using regular\nexpressions.',
+            'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
           type: {
             type: "string",
-          },
-          required: false,
-        },
-        pageToken: {
-          name: "Page Token",
-          description:
-            "Specifies a page token to use. Set `pageToken` to the\n`nextPageToken` returned by a previous list request to get\nthe next page of results.",
-          type: {
-            type: "string",
-          },
-          required: false,
-        },
-        returnPartialSuccess: {
-          name: "Return Partial Success",
-          description:
-            "Opt-in for partial success behavior which provides partial results in case\nof failure. The default value is false.\n\nFor example, when partial success behavior is enabled, aggregatedList for a\nsingle zone scope either returns all resources in the zone or no resources,\nwith an error code.",
-          type: {
-            type: "boolean",
-          },
-          required: false,
-        },
-        orderBy: {
-          name: "Order By",
-          description:
-            'Sorts list results by a certain order. By default, results\nare returned in alphanumerical order based on the resource name.\n\nYou can also sort results in descending order based on the creation\ntimestamp using `orderBy="creationTimestamp desc"`. This sorts\nresults based on the `creationTimestamp` field in\nreverse chronological order (newest result first). Use this to sort\nresources like operations so that the newest operation is returned first.\n\nCurrently, only sorting by `name` or\n`creationTimestamp desc` is supported.',
-          type: {
-            type: "string",
+            description:
+              'A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request.  If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`.  For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`.  The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ```  You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based onresource labels.  To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = "Intel Skylake") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = "Intel Skylake") OR (cpuPlatform = "Intel Broadwell") AND (scheduling.automaticRestart = true) ```  If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples:  `fieldname eq unquoted literal` `fieldname eq \'single quoted literal\'` `fieldname eq "double quoted literal"` `(fieldname1 eq literal) (fieldname2 ne "literal")`  The literal value is interpreted as a regular expression using GoogleRE2 library syntax. The literal value must match the entire field.  For example, to filter for instances that do not end with name "instance", you would use `name ne .*instance`.  You cannot combine constraints on multiple fields using regular expressions.',
           },
           required: false,
         },
         maxResults: {
           name: "Max Results",
           description:
-            "The maximum number of results per page that should be returned.\nIf the number of available results is larger than `maxResults`,\nCompute Engine returns a `nextPageToken` that can be used to get\nthe next page of results in subsequent list requests. Acceptable values are\n`0` to `500`, inclusive. (Default: `500`)",
+            "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
           type: {
             type: "integer",
+            description:
+              "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+          },
+          required: false,
+        },
+        orderBy: {
+          name: "Order By",
+          description:
+            'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          type: {
+            type: "string",
+            description:
+              'Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name.  You can also sort results in descending order based on the creation timestamp using `orderBy="creationTimestamp desc"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first.  Currently, only sorting by `name` or `creationTimestamp desc` is supported.',
+          },
+          required: false,
+        },
+        pageToken: {
+          name: "Page Token",
+          description:
+            "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          type: {
+            type: "string",
+            description:
+              "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+          },
+          required: false,
+        },
+        returnPartialSuccess: {
+          name: "Return Partial Success",
+          description:
+            "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+          type: {
+            type: "boolean",
+            description:
+              "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.  For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
           },
           required: false,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.region !== undefined)
+          pathParams["region"] = String(input.event.inputConfig.region);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.filter !== undefined)
+          queryParams["filter"] = String(input.event.inputConfig.filter);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
+        if (input.event.inputConfig.orderBy !== undefined)
+          queryParams["orderBy"] = String(input.event.inputConfig.orderBy);
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.returnPartialSuccess !== undefined)
+          queryParams["returnPartialSuccess"] = String(
+            input.event.inputConfig.returnPartialSuccess,
+          );
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/regions/{region}/targetPools`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/regions/{region}/targetPools",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -132,67 +114,35 @@ const targetPoolsList: AppBlock = {
       type: {
         type: "object",
         properties: {
-          kind: {
-            type: "string",
-            description:
-              "[Output Only] Type of resource. Always compute#targetPoolList\nfor lists of target pools.",
-          },
-          selfLink: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for this resource.",
-          },
           id: {
             type: "string",
             description:
               "[Output Only] Unique identifier for the resource; defined by the server.",
-          },
-          nextPageToken: {
-            type: "string",
-            description:
-              "[Output Only] This token allows you to get the next page of results for\nlist requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for\nthe query parameter pageToken in the next list request.\nSubsequent list requests will have their own nextPageToken to\ncontinue paging through the results.",
           },
           items: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                kind: {
-                  type: "string",
-                  description:
-                    "[Output Only] Type of the resource. Always compute#targetPool\nfor target pools.",
-                },
-                securityPolicy: {
-                  type: "string",
-                  description:
-                    "[Output Only] The resource URL for the security policy associated with this\ntarget pool.",
-                },
-                instances: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description:
-                    "A list of resource URLs to the virtual machine instances serving this pool.\nThey must live in zones contained in the same region as this pool.",
-                },
-                selfLink: {
-                  type: "string",
-                  description:
-                    "[Output Only] Server-defined URL for the resource.",
-                },
-                region: {
-                  type: "string",
-                  description:
-                    "[Output Only] URL of the region where the target pool resides.",
-                },
-                id: {
-                  type: "string",
-                  description:
-                    "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
-                },
                 backupPool: {
                   type: "string",
                   description:
-                    'The server-defined URL for the resource. This field is applicable only when\nthe containing target pool is serving a forwarding rule as the primary\npool, and its failoverRatio field is properly set to a value\nbetween [0, 1].backupPool and failoverRatio together define\nthe fallback behavior of the primary target pool: if the ratio of the\nhealthy instances in the primary pool is at or belowfailoverRatio, traffic arriving at the load-balanced\nIP will be directed to the backup pool.\n\nIn case where failoverRatio and backupPool\nare not set, or all the instances in the backup pool are unhealthy,\nthe traffic will be directed back to the primary pool in the "force"\nmode, where traffic will be spread to the healthy instances with the\nbest effort, or to all instances when no instance is healthy.',
+                    'The server-defined URL for the resource. This field is applicable only when the containing target pool is serving a forwarding rule as the primary pool, and its failoverRatio field is properly set to a value between [0, 1].backupPool and failoverRatio together define the fallback behavior of the primary target pool: if the ratio of the healthy instances in the primary pool is at or belowfailoverRatio, traffic arriving at the load-balanced IP will be directed to the backup pool.  In case where failoverRatio and backupPool are not set, or all the instances in the backup pool are unhealthy, the traffic will be directed back to the primary pool in the "force" mode, where traffic will be spread to the healthy instances with the best effort, or to all instances when no instance is healthy.',
+                },
+                creationTimestamp: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+                },
+                description: {
+                  type: "string",
+                  description:
+                    "An optional description of this resource. Provide this property when you create the resource.",
+                },
+                failoverRatio: {
+                  type: "number",
+                  description:
+                    'This field is applicable only when the containing target pool is serving a forwarding rule as the primary pool (i.e., not as a backup pool to some other target pool). The value of the field must be in [0, 1].  If set, backupPool must also be set. They together define the fallback behavior of the primary target pool: if the ratio of the healthy instances in the primary pool is at or below this number, traffic arriving at the load-balanced IP will be directed to the backup pool.  In case where failoverRatio is not set or all the instances in the backup pool are unhealthy, the traffic will be directed back to the primary pool in the "force" mode, where traffic will be spread to the healthy instances with the best effort, or to all instances when no instance is healthy.',
                 },
                 healthChecks: {
                   type: "array",
@@ -200,21 +150,49 @@ const targetPoolsList: AppBlock = {
                     type: "string",
                   },
                   description:
-                    "The URL of the HttpHealthCheck resource. A member instance in this\npool is considered healthy if and only if the health checks pass.\nOnly legacy HttpHealthChecks are supported. Only one health check may be\nspecified.",
+                    "The URL of the HttpHealthCheck resource. A member instance in this pool is considered healthy if and only if the health checks pass. Only legacy HttpHealthChecks are supported. Only one health check may be specified.",
                 },
-                creationTimestamp: {
+                id: {
+                  type: "string",
+                  description: "64-bit integer as string",
+                },
+                instances: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                  },
+                  description:
+                    "A list of resource URLs to the virtual machine instances serving this pool. They must live in zones contained in the same region as this pool.",
+                },
+                kind: {
                   type: "string",
                   description:
-                    "[Output Only] Creation timestamp inRFC3339\ntext format.",
+                    "Output only. [Output Only] Type of the resource. Always compute#targetPool for target pools.",
                 },
-                description: {
+                name: {
                   type: "string",
                   description:
-                    "An optional description of this resource. Provide this property when you\ncreate the resource.",
+                    "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+                },
+                region: {
+                  type: "string",
+                  description:
+                    "Output only. [Output Only] URL of the region where the target pool resides.",
+                },
+                securityPolicy: {
+                  type: "string",
+                  description:
+                    "[Output Only] The resource URL for the security policy associated with this target pool.",
+                },
+                selfLink: {
+                  type: "string",
+                  description:
+                    "[Output Only] Server-defined URL for the resource.",
                 },
                 sessionAffinity: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_SESSION_AFFINITY",
                     "CLIENT_IP",
                     "CLIENT_IP_NO_DESTINATION",
                     "CLIENT_IP_PORT_PROTO",
@@ -226,24 +204,29 @@ const targetPoolsList: AppBlock = {
                     "STRONG_COOKIE_AFFINITY",
                   ],
                   description:
-                    "Session affinity option, must be one of the following values: \nNONE: Connections from the same client IP may go to any\n    instance in the pool. \nCLIENT_IP: Connections from the same client IP will go\n    to the same instance in\n    the pool while that instance remains healthy. \nCLIENT_IP_PROTO: Connections from the same client IP\n    with the same IP protocol will go to the same instance in the\n    pool while that instance remains healthy.",
-                },
-                name: {
-                  type: "string",
-                  description:
-                    "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first\ncharacter must be a lowercase letter, and all following characters must\nbe a dash, lowercase letter, or digit, except the last character, which\ncannot be a dash.",
-                },
-                failoverRatio: {
-                  type: "number",
-                  description:
-                    'This field is applicable only when the containing target pool is serving a\nforwarding rule as the primary pool (i.e., not as a backup pool to some\nother target pool). The value of the field must be in [0, 1].\n\nIf set, backupPool must also be set. They together define\nthe fallback behavior of the primary target pool: if the ratio of the\nhealthy instances in the primary pool is at or below this number,\ntraffic arriving at the load-balanced IP will be directed to the\nbackup pool.\n\nIn case where failoverRatio is not set or all the\ninstances in the backup pool are unhealthy, the traffic will be\ndirected back to the primary pool in the "force" mode, where traffic\nwill be spread to the healthy instances with the\nbest effort, or to all instances when no instance is healthy. (Format: float)',
+                    "Session affinity option, must be one of the following values: NONE: Connections from the same client IP may go to any     instance in the pool. CLIENT_IP: Connections from the same client IP will go     to the same instance in     the pool while that instance remains healthy. CLIENT_IP_PROTO: Connections from the same client IP     with the same IP protocol will go to the same instance in the     pool while that instance remains healthy. Check the SessionAffinity enum for the list of possible values.",
                 },
               },
               description:
-                "Represents a Target Pool resource.\n\nTarget pools are used with external passthrough Network Load Balancers.\nA target pool references member instances, an associated legacy\nHttpHealthCheck resource, and, optionally, a backup target pool.\nFor more information, readUsing target pools.",
+                "Represents a Target Pool resource.  Target pools are used with external passthrough Network Load Balancers. A target pool references member instances, an associated legacy HttpHealthCheck resource, and, optionally, a backup target pool. For more information, readUsing target pools.",
               additionalProperties: true,
             },
             description: "A list of TargetPool resources.",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of resource. Always compute#targetPoolList for lists of target pools.",
+          },
+          nextPageToken: {
+            type: "string",
+            description:
+              "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger thanmaxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for this resource.",
           },
           warning: {
             type: "object",
@@ -251,6 +234,7 @@ const targetPoolsList: AppBlock = {
               code: {
                 type: "string",
                 enum: [
+                  "UNDEFINED_CODE",
                   "CLEANUP_FAILED",
                   "DEPRECATED_RESOURCE_USED",
                   "DEPRECATED_TYPE_USED",
@@ -282,36 +266,36 @@ const targetPoolsList: AppBlock = {
                   "UNREACHABLE",
                 ],
                 description:
-                  "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
-              },
-              message: {
-                type: "string",
-                description:
-                  "[Output Only] A human-readable description of the warning code.",
+                  "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
               },
               data: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
+                    key: {
+                      type: "string",
+                      description:
+                        "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                    },
                     value: {
                       type: "string",
                       description:
                         "[Output Only] A warning data value corresponding to the key.",
                     },
-                    key: {
-                      type: "string",
-                      description:
-                        "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
-                    },
                   },
                   additionalProperties: true,
                 },
                 description:
-                  '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
+                  '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+              },
+              message: {
+                type: "string",
+                description:
+                  "[Output Only] A human-readable description of the warning code.",
               },
             },
-            description: "[Output Only] Informational warning message.",
+            description: "Informational warning message.",
             additionalProperties: true,
           },
         },

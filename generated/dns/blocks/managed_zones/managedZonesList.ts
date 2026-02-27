@@ -1,5 +1,5 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { dnsFetch } from "../../lib/restClient.ts";
 
 const managedZonesList: AppBlock = {
   name: "Managed Zones - List",
@@ -18,7 +18,7 @@ const managedZonesList: AppBlock = {
           required: false,
         },
         dnsName: {
-          name: "DNS Name",
+          name: "Dns Name",
           description:
             "Restricts the list to return only zones with this domain name.",
           type: {
@@ -37,66 +37,27 @@ const managedZonesList: AppBlock = {
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/cloud-platform.read-only",
-              "https://www.googleapis.com/auth/ndev.clouddns.readonly",
-              "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const queryParams: Record<string, string> = {};
+        if (input.event.inputConfig.pageToken !== undefined)
+          queryParams["pageToken"] = String(input.event.inputConfig.pageToken);
+        if (input.event.inputConfig.dnsName !== undefined)
+          queryParams["dnsName"] = String(input.event.inputConfig.dnsName);
+        if (input.event.inputConfig.maxResults !== undefined)
+          queryParams["maxResults"] = String(
+            input.event.inputConfig.maxResults,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://dns.googleapis.com/";
-        let path = `dns/v1/projects/{project}/managedZones`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await dnsFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate: "dns/v1/projects/{project}/managedZones",
+          pathParams,
+          queryParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -119,16 +80,6 @@ const managedZonesList: AppBlock = {
                       type: "array",
                       items: {
                         type: "object",
-                        properties: {
-                          gkeClusterName: {
-                            type: "string",
-                            description:
-                              "The resource name of the cluster to bind this ManagedZone to. This should be specified in the format like: projects/*/locations/*/clusters/*. This is referenced from GKE projects.locations.clusters.get API: https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/get",
-                          },
-                          kind: {
-                            type: "string",
-                          },
-                        },
                         additionalProperties: true,
                       },
                       description:
@@ -141,16 +92,6 @@ const managedZonesList: AppBlock = {
                       type: "array",
                       items: {
                         type: "object",
-                        properties: {
-                          networkUrl: {
-                            type: "string",
-                            description:
-                              "The fully qualified URL of the VPC network to bind to. Format this URL like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`",
-                          },
-                          kind: {
-                            type: "string",
-                          },
-                        },
                         additionalProperties: true,
                       },
                       description:
@@ -177,36 +118,6 @@ const managedZonesList: AppBlock = {
                       type: "array",
                       items: {
                         type: "object",
-                        properties: {
-                          kind: {
-                            type: "string",
-                          },
-                          keyType: {
-                            type: "string",
-                            enum: ["keySigning", "zoneSigning"],
-                            description:
-                              "Specifies whether this is a key signing key (KSK) or a zone signing key (ZSK). Key signing keys have the Secure Entry Point flag set and, when active, are only used to sign resource record sets of type DNSKEY. Zone signing keys do not have the Secure Entry Point flag set and are used to sign all other types of resource record sets.",
-                          },
-                          algorithm: {
-                            type: "string",
-                            enum: [
-                              "rsasha1",
-                              "rsasha256",
-                              "rsasha512",
-                              "ecdsap256sha256",
-                              "ecdsap384sha384",
-                            ],
-                            description:
-                              "String mnemonic specifying the DNSSEC algorithm of this key.",
-                          },
-                          keyLength: {
-                            type: "integer",
-                            description:
-                              "Length of the keys in bits. (Format: uint32)",
-                          },
-                        },
-                        description:
-                          "Parameters for DnsKey key generation. Used for generating initial keys for a new ManagedZone and as default when adding a new DnsKey.",
                         additionalProperties: true,
                       },
                       description:
@@ -236,9 +147,9 @@ const managedZonesList: AppBlock = {
                       type: "string",
                     },
                   },
+                  additionalProperties: true,
                   description:
                     "Cloud Logging configurations for publicly visible zones.",
-                  additionalProperties: true,
                 },
                 creationTime: {
                   type: "string",
@@ -265,17 +176,16 @@ const managedZonesList: AppBlock = {
                       type: "object",
                       properties: {
                         kind: {
-                          type: "string",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         namespaceUrl: {
-                          type: "string",
-                          description:
-                            "The fully qualified URL of the namespace associated with the zone. Format must be `https://servicedirectory.googleapis.com/v1/projects/{project}/locations/{location}/namespaces/{namespace}`",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         deletionTime: {
-                          type: "string",
-                          description:
-                            "The time that the namespace backing this zone was deleted; an empty string if it still exists. This is in RFC3339 text format. Output only.",
+                          type: "object",
+                          additionalProperties: true,
                         },
                       },
                       additionalProperties: true,
@@ -284,9 +194,9 @@ const managedZonesList: AppBlock = {
                       type: "string",
                     },
                   },
+                  additionalProperties: true,
                   description:
                     "Contains information about Service Directory-backed zones.",
-                  additionalProperties: true,
                 },
                 visibility: {
                   type: "string",
@@ -302,7 +212,7 @@ const managedZonesList: AppBlock = {
                 id: {
                   type: "string",
                   description:
-                    "Unique identifier for the resource; defined by the server (output only) (Format: uint64)",
+                    "Unique identifier for the resource; defined by the server (output only)",
                 },
                 labels: {
                   type: "object",
@@ -332,17 +242,16 @@ const managedZonesList: AppBlock = {
                       type: "object",
                       properties: {
                         deactivateTime: {
-                          type: "string",
-                          description:
-                            "The time at which the zone was deactivated, in RFC 3339 date-time format. An empty string indicates that the peering connection is active. The producer network can deactivate a zone. The zone is automatically deactivated if the producer network that the zone targeted is deleted. Output only.",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         kind: {
-                          type: "string",
+                          type: "object",
+                          additionalProperties: true,
                         },
                         networkUrl: {
-                          type: "string",
-                          description:
-                            "The fully qualified URL of the VPC network to forward queries to. This should be formatted like `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`",
+                          type: "object",
+                          additionalProperties: true,
                         },
                       },
                       additionalProperties: true,
@@ -360,32 +269,6 @@ const managedZonesList: AppBlock = {
                       type: "array",
                       items: {
                         type: "object",
-                        properties: {
-                          ipv4Address: {
-                            type: "string",
-                            description:
-                              "IPv4 address of a target name server.",
-                          },
-                          domainName: {
-                            type: "string",
-                            description:
-                              "Fully qualified domain name for the forwarding target.",
-                          },
-                          kind: {
-                            type: "string",
-                          },
-                          forwardingPath: {
-                            type: "string",
-                            enum: ["default", "private"],
-                            description:
-                              "Forwarding path for this NameServerTarget. If unset or set to DEFAULT, Cloud DNS makes forwarding decisions based on IP address ranges; that is, RFC1918 addresses go to the VPC network, non-RFC1918 addresses go to the internet. When set to PRIVATE, Cloud DNS always sends queries through the VPC network for this target.",
-                          },
-                          ipv6Address: {
-                            type: "string",
-                            description:
-                              "IPv6 address of a target name server. Does not accept both fields (ipv4 & ipv6) being populated. Public preview as of November 2022.",
-                          },
-                        },
                         additionalProperties: true,
                       },
                       description:
@@ -401,9 +284,9 @@ const managedZonesList: AppBlock = {
                   type: "string",
                 },
               },
+              additionalProperties: true,
               description:
                 "A zone is a subtree of the DNS namespace under one administrative responsibility. A ManagedZone is a resource that represents a DNS zone hosted by the Cloud DNS service.",
-              additionalProperties: true,
             },
             description: "The managed zone resources.",
           },

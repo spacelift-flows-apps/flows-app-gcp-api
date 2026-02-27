@@ -1,8 +1,8 @@
 import { defineApp } from "@slflows/sdk/v1";
-import { blocks } from "./blocks";
+import { blocks } from "./blocks/index.ts";
 
 export const app = defineApp({
-  name: "Compute Engine - Security",
+  name: "Compute Engine API - Security",
   installationInstructions: `## Authentication Setup
 
 You need to authenticate with GCP using **one** of these methods:
@@ -11,7 +11,7 @@ You need to authenticate with GCP using **one** of these methods:
 
 1. Go to [GCP Console → IAM & Admin → Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
 2. Create or select a service account
-3. Grant necessary permissions (varies by service - see GCP documentation)
+3. Grant the **Compute Admin** role (or more specific roles as needed)
 4. Click **Keys** → **Add Key** → **Create New Key** → **JSON**
 5. Download the JSON file
 6. Paste the entire JSON contents into the **Service Account Key** field below
@@ -23,24 +23,14 @@ For better security, use short-lived access tokens instead of long-lived keys:
 1. Install the **GCP Workload Identity Federation** app in your Flows workspace
 2. Configure it with your OIDC provider (GitHub, GitLab, etc.)
 3. Use that app to generate access tokens
-4. Pass the token to the **Access Token** field below
-
-This approach eliminates the need for long-lived credentials and provides better audit trails.
-
-## Project ID
-
-Find your GCP Project ID:
-- In the [GCP Console](https://console.cloud.google.com) (top navigation)
-- Or run: \`gcloud config get-value project\``,
+4. Pass the token to the **Access Token** field below`,
   config: {
     projectId: {
       name: "Project ID",
-      description: `Your GCP Project ID (e.g., \`my-project-123\`)
+      description: `Your GCP project ID.
 
-Find this in the [GCP Console](https://console.cloud.google.com) or run:
-\`\`\`bash
-gcloud config get-value project
-\`\`\``,
+This is used for all Compute Engine API calls. You can find it in the
+[GCP Console Dashboard](https://console.cloud.google.com/home/dashboard).`,
       type: "string",
       required: true,
     },
@@ -49,12 +39,6 @@ gcloud config get-value project
       description: `**Long-lived credentials** (optional if using Access Token below)
 
 Provide your GCP Service Account JSON key file contents.
-
-**To create:**
-1. Go to [GCP Console → IAM & Admin → Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
-2. Create or select a service account with appropriate permissions
-3. Click **Keys** → **Add Key** → **Create New Key** → **JSON**
-4. Download the JSON file and paste its entire contents here
 
 **Not required** if you're using the **Access Token** field below.`,
       type: "string",
@@ -67,7 +51,7 @@ Provide your GCP Service Account JSON key file contents.
 
 Provide a pre-generated GCP access token for keyless authentication.
 
-**Recommended approach:** Use the **GCP Workload Identity Federation** app to generate short-lived tokens via OIDC. This is more secure than long-lived service account keys.
+**Recommended approach:** Use the **GCP Workload Identity Federation** app to generate short-lived tokens via OIDC.
 
 **Not required** if you're using the **Service Account Key** field above.`,
       type: "string",

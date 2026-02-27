@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const routesGet: AppBlock = {
   name: "Routes - Get",
-  description: `Returns the specified Route resource.`,
+  description: `Returns the specified Zone resource.`,
   category: "Routes",
   inputs: {
     default: {
@@ -13,70 +13,24 @@ const routesGet: AppBlock = {
           description: "Name of the Route resource to return.",
           type: {
             type: "string",
+            description: "Name of the Route resource to return.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.route !== undefined)
+          pathParams["route"] = String(input.event.inputConfig.route);
 
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
-          );
-        }
-
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/global/routes/{route}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate: "/compute/v1/projects/{project}/global/routes/{route}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -87,10 +41,163 @@ const routesGet: AppBlock = {
       type: {
         type: "object",
         properties: {
+          asPaths: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                asLists: {
+                  type: "array",
+                  items: {
+                    type: "integer",
+                  },
+                  description: "[Output Only] The AS numbers of the AS Path.",
+                },
+                pathSegmentType: {
+                  type: "string",
+                  enum: [
+                    "UNDEFINED_PATH_SEGMENT_TYPE",
+                    "AS_CONFED_SEQUENCE",
+                    "AS_CONFED_SET",
+                    "AS_SEQUENCE",
+                    "AS_SET",
+                  ],
+                  description:
+                    "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
+                },
+              },
+              additionalProperties: true,
+            },
+            description: "Output only. [Output Only] AS path.",
+          },
+          creationTimestamp: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this field when you create the resource.",
+          },
+          destRange: {
+            type: "string",
+            description:
+              "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
           kind: {
             type: "string",
             description:
-              "[Output Only] Type of this resource. Always compute#routes for\nRoute resources.",
+              "Output only. [Output Only] Type of this resource. Always compute#routes for Route resources.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all following characters (except for the last character) must be a dash, lowercase letter, or digit. The last character must be a lowercase letter or digit.",
+          },
+          network: {
+            type: "string",
+            description:
+              "Fully-qualified URL of the network that this route applies to.",
+          },
+          nextHopGateway: {
+            type: "string",
+            description:
+              "The URL to a gateway that should handle matching packets. You can only specify the internet gateway using a full or partial valid URL: projects/project/global/gateways/default-internet-gateway",
+          },
+          nextHopHub: {
+            type: "string",
+            description:
+              "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
+          },
+          nextHopIlb: {
+            type: "string",
+            description:
+              "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs:         - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule    - regions/region/forwardingRules/forwardingRule   If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses:         - 10.128.0.56       - 2001:db8::2d9:51:0:0       - 2001:db8:0:0:2d9:51:0:0   IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
+          },
+          nextHopInstance: {
+            type: "string",
+            description:
+              "The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
+          },
+          nextHopInterRegionCost: {
+            type: "integer",
+            description:
+              "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
+          },
+          nextHopInterconnectAttachment: {
+            type: "string",
+            description:
+              "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
+          },
+          nextHopIp: {
+            type: "string",
+            description:
+              "The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
+          },
+          nextHopMed: {
+            type: "integer",
+            description:
+              "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
+          },
+          nextHopNetwork: {
+            type: "string",
+            description:
+              "The URL of the local network if it should handle matching packets.",
+          },
+          nextHopOrigin: {
+            type: "string",
+            enum: ["UNDEFINED_NEXT_HOP_ORIGIN", "EGP", "IGP", "INCOMPLETE"],
+            description:
+              "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
+          },
+          nextHopPeering: {
+            type: "string",
+            description:
+              "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
+          },
+          nextHopVpnTunnel: {
+            type: "string",
+            description:
+              "The URL to a VpnTunnel that should handle matching packets.",
+          },
+          priority: {
+            type: "integer",
+            description:
+              "The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.",
+          },
+          routeStatus: {
+            type: "string",
+            enum: [
+              "UNDEFINED_ROUTE_STATUS",
+              "ACTIVE",
+              "DROPPED",
+              "INACTIVE",
+              "PENDING",
+            ],
+            description:
+              "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
+          },
+          routeType: {
+            type: "string",
+            enum: [
+              "UNDEFINED_ROUTE_TYPE",
+              "BGP",
+              "STATIC",
+              "SUBNET",
+              "TRANSIT",
+            ],
+            description:
+              "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
+          },
+          selfLink: {
+            type: "string",
+            description:
+              "[Output Only] Server-defined fully-qualified URL for this resource.",
           },
           tags: {
             type: "array",
@@ -99,96 +206,15 @@ const routesGet: AppBlock = {
             },
             description: "A list of instance tags to which this route applies.",
           },
-          nextHopMed: {
-            type: "integer",
-            description:
-              "[Output Only] Multi-Exit Discriminator, a BGP route metric that indicates\nthe desirability of a particular route in a network. (Format: uint32)",
-          },
-          routeType: {
-            type: "string",
-            enum: ["BGP", "STATIC", "SUBNET", "TRANSIT"],
-            description:
-              "[Output Only] The type of this route, which can be one of the following\nvalues:\n- 'TRANSIT' for a transit route that this router learned from\nanother Cloud Router and will readvertise to one of its BGP peers \n- 'SUBNET' for a route from a subnet of the VPC \n- 'BGP' for a route learned from a BGP peer of this router \n- 'STATIC' for a static route",
-          },
-          routeStatus: {
-            type: "string",
-            enum: ["ACTIVE", "DROPPED", "INACTIVE", "PENDING"],
-            description:
-              "[Output only] The status of the route. This status only applies to\ndynamic routes learned by Cloud Routers. This status is not applicable\nto static routes.",
-          },
-          description: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this field when you\ncreate the resource.",
-          },
-          nextHopHub: {
-            type: "string",
-            description:
-              "[Output Only] The full resource name of the Network Connectivity Center hub\nthat will handle matching packets.",
-          },
-          asPaths: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                pathSegmentType: {
-                  type: "string",
-                  enum: [
-                    "AS_CONFED_SEQUENCE",
-                    "AS_CONFED_SET",
-                    "AS_SEQUENCE",
-                    "AS_SET",
-                  ],
-                  description:
-                    "[Output Only] The type of the AS Path, which can be one of the following\nvalues: \n- 'AS_SET': unordered set of autonomous systems that the route\nin has traversed  \n- 'AS_SEQUENCE': ordered set of autonomous\nsystems that the route has traversed  \n- 'AS_CONFED_SEQUENCE':\nordered set of Member Autonomous Systems in the local confederation that\nthe route has traversed  \n- 'AS_CONFED_SET': unordered set of\nMember Autonomous Systems in the local confederation that the route has\ntraversed",
-                },
-                asLists: {
-                  type: "array",
-                  items: {
-                    type: "integer",
-                    description: "Format: uint32",
-                  },
-                  description: "[Output Only] The AS numbers of the AS Path.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description: "[Output Only] AS path.",
-          },
           warnings: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      value: {
-                        type: "string",
-                        description:
-                          "[Output Only] A warning data value corresponding to the key.",
-                      },
-                      key: {
-                        type: "string",
-                        description:
-                          "[Output Only] A key that provides more detail on the warning being\nreturned. For example, for warnings where there are no results in a list\nrequest for a particular zone, this key might be scope and\nthe key value might be the zone name. Other examples might be a key\nindicating a deprecated resource and a suggested replacement, or a\nwarning about invalid network settings (for example, if an instance\nattempts to perform IP forwarding but is not enabled for IP forwarding).",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  description:
-                    '[Output Only] Metadata about this warning in key:\nvalue format. For example:\n\n"data": [\n  {\n   "key": "scope",\n   "value": "zones/us-east1-d"\n  }',
-                },
-                message: {
-                  type: "string",
-                  description:
-                    "[Output Only] A human-readable description of the warning code.",
-                },
                 code: {
                   type: "string",
                   enum: [
+                    "UNDEFINED_CODE",
                     "CLEANUP_FAILED",
                     "DEPRECATED_RESOURCE_USED",
                     "DEPRECATED_TYPE_USED",
@@ -220,113 +246,43 @@ const routesGet: AppBlock = {
                     "UNREACHABLE",
                   ],
                   description:
-                    "[Output Only] A warning code, if applicable. For example, Compute\nEngine returns NO_RESULTS_ON_PAGE if there\nare no results in the response.",
+                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
+                },
+                data: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      key: {
+                        type: "string",
+                        description:
+                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+                      },
+                      value: {
+                        type: "string",
+                        description:
+                          "[Output Only] A warning data value corresponding to the key.",
+                      },
+                    },
+                    additionalProperties: true,
+                  },
+                  description:
+                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
+                },
+                message: {
+                  type: "string",
+                  description:
+                    "[Output Only] A human-readable description of the warning code.",
                 },
               },
               additionalProperties: true,
             },
             description:
-              "[Output Only] If potential misconfigurations are detected for this\nroute, this field will be populated with warning messages.",
-          },
-          nextHopGateway: {
-            type: "string",
-            description:
-              "The URL to a gateway that should handle matching packets.\nYou can only specify the internet gateway using a full or\npartial valid URL: projects/project/global/gateways/default-internet-gateway",
-          },
-          nextHopIp: {
-            type: "string",
-            description:
-              "The network IP address of an instance that should handle matching packets.\nBoth IPv6 address and IPv4 addresses are supported.\nMust specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or\nan IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or\n2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952\ncompressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an\nIPv4-mapped IPv6 address.",
-          },
-          nextHopInterRegionCost: {
-            type: "integer",
-            description:
-              "[Output only] Internal fixed region-to-region cost that Google Cloud\ncalculates based on factors such as network performance, distance, and\navailable bandwidth between regions. (Format: uint32)",
-          },
-          creationTimestamp: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
-          },
-          id: {
-            type: "string",
-            description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
-          },
-          params: {
-            type: "object",
-            properties: {
-              resourceManagerTags: {
-                type: "object",
-                additionalProperties: {
-                  type: "string",
-                },
-                description:
-                  'Tag keys/values directly bound to this resource.\nTag keys and values have the same definition as resource\nmanager tags. The field is allowed for INSERT\nonly. The keys/values to set on the resource should be specified in\neither ID { : } or Namespaced format\n{ : }.\nFor example the following are valid inputs:\n* {"tagKeys/333" : "tagValues/444", "tagKeys/123" : "tagValues/456"}\n* {"123/environment" : "production", "345/abc" : "xyz"}\nNote:\n* Invalid combinations of ID & namespaced format is not supported. For\n  instance: {"123/environment" : "tagValues/444"} is invalid.',
-              },
-            },
-            description: "Additional route parameters.",
-            additionalProperties: true,
-          },
-          nextHopVpnTunnel: {
-            type: "string",
-            description:
-              "The URL to a VpnTunnel that should handle matching packets.",
-          },
-          destRange: {
-            type: "string",
-            description:
-              "The destination range of outgoing packets that this route applies to. Both\nIPv4 and IPv6 are supported.\nMust specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291\nformat (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952\ncompressed format.",
-          },
-          nextHopOrigin: {
-            type: "string",
-            enum: ["EGP", "IGP", "INCOMPLETE"],
-            description:
-              "[Output Only] Indicates the origin of the route. Can be IGP\n(Interior Gateway Protocol), EGP (Exterior Gateway Protocol),\nor INCOMPLETE.",
-          },
-          network: {
-            type: "string",
-            description:
-              "Fully-qualified URL of the network that this route applies to.",
-          },
-          nextHopNetwork: {
-            type: "string",
-            description:
-              "The URL of the local network if it should handle matching packets.",
-          },
-          nextHopInstance: {
-            type: "string",
-            description:
-              "The URL to an instance that should handle matching packets. You can specify\nthis as a full or partial URL.\nFor example: \nhttps://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/",
-          },
-          name: {
-            type: "string",
-            description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a\nlowercase letter, and all following characters (except for the last\ncharacter) must be a dash, lowercase letter, or digit. The last character\nmust be a lowercase letter or digit.",
-          },
-          nextHopIlb: {
-            type: "string",
-            description:
-              "The URL to a forwarding rule of typeloadBalancingScheme=INTERNAL that should handle matching\npackets or the IP address of the forwarding Rule.\nFor example, the following are all valid URLs:\n   \n   \n      - https://www.googleapis.com/compute/v1/projects/project/regions/region/forwardingRules/forwardingRule \n   - regions/region/forwardingRules/forwardingRule\n\n\nIf an IP address is provided, must specify an IPv4 address in dot-decimal\nnotation or an IPv6 address in RFC 4291 format. For example, the following\nare all valid IP addresses:\n   \n   \n      - 10.128.0.56\n      - 2001:db8::2d9:51:0:0\n      - 2001:db8:0:0:2d9:51:0:0\n\n\nIPv6 addresses will be displayed using RFC 5952 compressed format (e.g.\n2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.",
-          },
-          nextHopPeering: {
-            type: "string",
-            description:
-              "[Output Only] The network peering name that should handle matching packets,\nwhich should conform to RFC1035.",
-          },
-          selfLink: {
-            type: "string",
-            description:
-              "[Output Only] Server-defined fully-qualified URL for this resource.",
-          },
-          priority: {
-            type: "integer",
-            description:
-              "The priority of this route. Priority is used to break ties in cases\nwhere there is more than one matching route of equal prefix length. In\ncases where multiple routes have equal prefix length, the one with the\nlowest-numbered priority value wins. The default value is `1000`. The\npriority value must be from `0` to `65535`, inclusive. (Format: uint32)",
+              "Output only. [Output Only] If potential misconfigurations are detected for this route, this field will be populated with warning messages.",
           },
         },
         description:
-          "Represents a Route resource.\n\nA route defines a path from VM instances in the VPC network to a specific\ndestination. This destination can be inside or outside the VPC network.\nFor more information, read theRoutes overview.",
+          "Represents a Route resource.  A route defines a path from VM instances in the VPC network to a specific destination. This destination can be inside or outside the VPC network. For more information, read theRoutes overview.",
         additionalProperties: true,
       },
     },

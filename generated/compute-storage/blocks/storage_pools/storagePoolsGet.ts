@@ -1,9 +1,9 @@
 import { AppBlock, events } from "@slflows/sdk/v1";
-import { GoogleAuth } from "google-auth-library";
+import { computeFetch } from "../../lib/restClient.ts";
 
 const storagePoolsGet: AppBlock = {
   name: "Storage Pools - Get",
-  description: `Returns a specified storage pool.`,
+  description: `Returns the specified Zone resource.`,
   category: "Storage Pools",
   inputs: {
     default: {
@@ -13,6 +13,7 @@ const storagePoolsGet: AppBlock = {
           description: "The name of the zone for this request.",
           type: {
             type: "string",
+            description: "The name of the zone for this request.",
           },
           required: true,
         },
@@ -21,70 +22,29 @@ const storagePoolsGet: AppBlock = {
           description: "Name of the storage pool to return.",
           type: {
             type: "string",
+            description: "Name of the storage pool to return.",
           },
           required: true,
         },
       },
       onEvent: async (input) => {
-        // Support both service account keys and pre-generated access tokens
-        let accessToken: string;
-
-        if (input.app.config.accessToken) {
-          // Use pre-generated access token (Workload Identity Federation, etc.)
-          accessToken = input.app.config.accessToken;
-        } else if (input.app.config.serviceAccountKey) {
-          // Parse service account credentials and generate token
-          const credentials = JSON.parse(input.app.config.serviceAccountKey);
-
-          const auth = new GoogleAuth({
-            credentials,
-            scopes: [
-              "https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/compute",
-              "https://www.googleapis.com/auth/compute.readonly",
-            ],
-          });
-
-          const client = await auth.getClient();
-          const token = await client.getAccessToken();
-          accessToken = token.token!;
-        } else {
-          throw new Error(
-            "Either serviceAccountKey or accessToken must be provided in app configuration",
+        const pathParams: Record<string, string> = {};
+        pathParams.project = input.app.config.projectId as string;
+        if (input.event.inputConfig.zone !== undefined)
+          pathParams["zone"] = String(input.event.inputConfig.zone);
+        if (input.event.inputConfig.storagePool !== undefined)
+          pathParams["storage_pool"] = String(
+            input.event.inputConfig.storagePool,
           );
-        }
 
-        // Build request URL and parameters
-        const baseUrl = "https://compute.googleapis.com/compute/v1/";
-        let path = `projects/{project}/zones/{zone}/storagePools/{storagePool}`;
-
-        // Replace project placeholders with config value
-        path = path.replace(
-          /\{\+?project(s|Id)?\}/g,
-          input.app.config.projectId,
-        );
-
-        const url = baseUrl + path;
-
-        // Make API request using fetch
-        const requestOptions: RequestInit = {
+        const result = await computeFetch({
+          config: input.app.config,
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
+          pathTemplate:
+            "/compute/v1/projects/{project}/zones/{zone}/storagePools/{storage_pool}",
+          pathParams,
+        });
 
-        const response = await fetch(url, requestOptions);
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-          throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
-          );
-        }
-
-        const result = await response.json();
         await events.emit(result || {});
       },
     },
@@ -95,195 +55,54 @@ const storagePoolsGet: AppBlock = {
       type: {
         type: "object",
         properties: {
-          kind: {
-            type: "string",
-            description:
-              "[Output Only] Type of the resource. Always compute#storagePool\nfor storage pools.",
-          },
-          name: {
-            type: "string",
-            description:
-              "Name of the resource. Provided by the client when the resource is created.\nThe name must be 1-63 characters long, and comply withRFC1035.\nSpecifically, the name must be 1-63 characters long and match the regular\nexpression `[a-z]([-a-z0-9]*[a-z0-9])?`\nwhich means the first character must be a lowercase letter, and all\nfollowing characters must be a dash, lowercase letter, or digit, except\nthe last character, which cannot be a dash.",
-          },
-          state: {
-            type: "string",
-            enum: ["CREATING", "DELETING", "FAILED", "READY"],
-            description:
-              "[Output Only] The status of storage pool creation.\n   \n   \n     - CREATING: Storage pool is provisioning.\n     storagePool.\n     - FAILED: Storage pool creation failed.\n     - READY: Storage pool is ready for use.\n     - DELETING: Storage pool is deleting.",
-          },
-          storagePoolType: {
-            type: "string",
-            description: "Type of the storage pool.",
-          },
-          poolProvisionedIops: {
-            type: "string",
-            description:
-              "Provisioned IOPS of the storage pool. Only relevant if the storage pool\ntype is hyperdisk-balanced. (Format: int64)",
-          },
-          description: {
-            type: "string",
-            description:
-              "An optional description of this resource. Provide this property when you\ncreate the resource.",
-          },
-          performanceProvisioningType: {
-            type: "string",
-            enum: ["ADVANCED", "STANDARD", "UNSPECIFIED"],
-            description:
-              "Provisioning type of the performance-related parameters of the pool,\nsuch as throughput and IOPS.",
-          },
-          poolProvisionedThroughput: {
-            type: "string",
-            description:
-              "Provisioned throughput of the storage pool in MiB/s. Only relevant if the\nstorage pool type is hyperdisk-balanced or hyperdisk-throughput. (Format: int64)",
-          },
           capacityProvisioningType: {
             type: "string",
-            enum: ["ADVANCED", "STANDARD", "UNSPECIFIED"],
-            description: "Provisioning type of the byte capacity of the pool.",
-          },
-          status: {
-            type: "object",
-            properties: {
-              poolUsedIops: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned IOPS, minus some amount\nthat is allowed per disk that is not counted towards pool's IOPS\ncapacity. For more information, see\nhttps://cloud.google.com/compute/docs/disks/storage-pools. (Format: int64)",
-              },
-              diskCount: {
-                type: "string",
-                description:
-                  "[Output Only] Number of disks used. (Format: int64)",
-              },
-              poolUsedThroughput: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned throughput in MiB/s. (Format: int64)",
-              },
-              poolUserWrittenBytes: {
-                type: "string",
-                description:
-                  "[Output Only] Amount of data written into the pool, before it is\ncompacted. (Format: int64)",
-              },
-              poolUsedCapacityBytes: {
-                type: "string",
-                description:
-                  "[Output Only] Space used by data stored in disks within the storage pool\n(in bytes). This will reflect the total number of bytes written to the\ndisks in the pool, in contrast to the capacity of those disks. (Format: int64)",
-              },
-              totalProvisionedDiskIops: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned IOPS. (Format: int64)",
-              },
-              lastResizeTimestamp: {
-                type: "string",
-                description:
-                  "[Output Only] Timestamp of the last successful resize inRFC3339 text format.",
-              },
-              totalProvisionedDiskThroughput: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned throughput in MiB/s,\nminus some amount that is allowed per disk that is not counted towards\npool's throughput capacity. (Format: int64)",
-              },
-              totalProvisionedDiskCapacityGb: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned capacity (in GiB) in\nthis storage pool. A disk's provisioned capacity is the same as its total\ncapacity. (Format: int64)",
-              },
-              maxTotalProvisionedDiskCapacityGb: {
-                type: "string",
-                description:
-                  "[Output Only] Maximum allowed aggregate disk size in GiB. (Format: int64)",
-              },
-            },
-            description: "[Output Only] Contains output only fields.",
-            additionalProperties: true,
-          },
-          selfLinkWithId: {
-            type: "string",
+            enum: ["UNDEFINED_CAPACITY_PROVISIONING_TYPE"],
             description:
-              "[Output Only] Server-defined URL for this resource's resource id.",
-          },
-          resourceStatus: {
-            type: "object",
-            properties: {
-              poolUsedIops: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned IOPS, minus some amount\nthat is allowed per disk that is not counted towards pool's IOPS\ncapacity. For more information, see\nhttps://cloud.google.com/compute/docs/disks/storage-pools. (Format: int64)",
-              },
-              diskCount: {
-                type: "string",
-                description:
-                  "[Output Only] Number of disks used. (Format: int64)",
-              },
-              poolUsedThroughput: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned throughput in MiB/s. (Format: int64)",
-              },
-              poolUserWrittenBytes: {
-                type: "string",
-                description:
-                  "[Output Only] Amount of data written into the pool, before it is\ncompacted. (Format: int64)",
-              },
-              poolUsedCapacityBytes: {
-                type: "string",
-                description:
-                  "[Output Only] Space used by data stored in disks within the storage pool\n(in bytes). This will reflect the total number of bytes written to the\ndisks in the pool, in contrast to the capacity of those disks. (Format: int64)",
-              },
-              totalProvisionedDiskIops: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned IOPS. (Format: int64)",
-              },
-              lastResizeTimestamp: {
-                type: "string",
-                description:
-                  "[Output Only] Timestamp of the last successful resize inRFC3339 text format.",
-              },
-              totalProvisionedDiskThroughput: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned throughput in MiB/s,\nminus some amount that is allowed per disk that is not counted towards\npool's throughput capacity. (Format: int64)",
-              },
-              totalProvisionedDiskCapacityGb: {
-                type: "string",
-                description:
-                  "[Output Only] Sum of all the disks' provisioned capacity (in GiB) in\nthis storage pool. A disk's provisioned capacity is the same as its total\ncapacity. (Format: int64)",
-              },
-              maxTotalProvisionedDiskCapacityGb: {
-                type: "string",
-                description:
-                  "[Output Only] Maximum allowed aggregate disk size in GiB. (Format: int64)",
-              },
-            },
-            description: "[Output Only] Contains output only fields.",
-            additionalProperties: true,
-          },
-          zone: {
-            type: "string",
-            description:
-              "[Output Only] URL of the zone where the storage pool resides.\nYou must specify this field as part of the HTTP request URL. It is\nnot settable as a field in the request body.",
-          },
-          id: {
-            type: "string",
-            description:
-              "[Output Only] The unique identifier for the resource. This identifier is\ndefined by the server. (Format: uint64)",
-          },
-          selfLink: {
-            type: "string",
-            description:
-              "[Output Only] Server-defined fully-qualified URL for this resource.",
+              "Provisioning type of the byte capacity of the pool. Check the CapacityProvisioningType enum for the list of possible values.",
           },
           creationTimestamp: {
             type: "string",
             description:
-              "[Output Only] Creation timestamp inRFC3339\ntext format.",
+              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
+          },
+          description: {
+            type: "string",
+            description:
+              "An optional description of this resource. Provide this property when you create the resource.",
+          },
+          exapoolProvisionedCapacityGb: {
+            type: "object",
+            properties: {
+              capacityOptimized: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              readOptimized: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              writeOptimized: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+            },
+            description: "Exapool provisioned capacities for each SKU type",
+            additionalProperties: true,
+          },
+          id: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          kind: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Type of the resource. Always compute#storagePool for storage pools.",
           },
           labelFingerprint: {
             type: "string",
             description:
-              "A fingerprint for the labels being applied to this storage pool, which is\nessentially a hash of the labels set used for optimistic locking. The\nfingerprint is initially generated by Compute Engine and changes after\nevery request to modify or update labels. You must always provide an\nup-to-date fingerprint hash in order to update or change labels,\notherwise the request will fail with error412 conditionNotMet.\n\nTo see the latest fingerprint, make a get() request to\nretrieve a storage pool. (Format: byte)",
+              "A fingerprint for the labels being applied to this storage pool, which is essentially a hash of the labels set used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update labels. You must always provide an up-to-date fingerprint hash in order to update or change labels, otherwise the request will fail with error412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a storage pool.",
           },
           labels: {
             type: "object",
@@ -291,12 +110,204 @@ const storagePoolsGet: AppBlock = {
               type: "string",
             },
             description:
-              "Labels to apply to this storage pool. These can be later modified by\nthe setLabels method.",
+              "Labels to apply to this storage pool. These can be later modified by the setLabels method.",
+          },
+          name: {
+            type: "string",
+            description:
+              "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+          },
+          params: {
+            type: "object",
+            properties: {
+              resourceManagerTags: {
+                type: "object",
+                additionalProperties: {
+                  type: "string",
+                },
+                description:
+                  "Input only. Resource manager tags to be bound to the storage pool. Tag keys and values have the same definition as resource manager tags. Keys and values can be either in numeric format, such as `tagKeys/{tag_key_id}` and `tagValues/456` or in namespaced format such as `{org_id|project_id}/{tag_key_short_name}` and `{tag_value_short_name}`. The field is ignored (both PUT & PATCH) when empty.",
+              },
+            },
+            description: "Additional storage pool params.",
+            additionalProperties: true,
+          },
+          performanceProvisioningType: {
+            type: "string",
+            enum: ["UNDEFINED_PERFORMANCE_PROVISIONING_TYPE"],
+            description:
+              "Provisioning type of the performance-related parameters of the pool, such as throughput and IOPS. Check the PerformanceProvisioningType enum for the list of possible values.",
           },
           poolProvisionedCapacityGb: {
             type: "string",
+            description: "64-bit integer as string",
+          },
+          poolProvisionedIops: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          poolProvisionedThroughput: {
+            type: "string",
+            description: "64-bit integer as string",
+          },
+          resourceStatus: {
+            type: "object",
+            properties: {
+              diskCount: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxReadIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxReadThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxWriteIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxWriteThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              lastResizeTimestamp: {
+                type: "string",
+                description:
+                  "Output only. [Output Only] Timestamp of the last successful resize inRFC3339 text format.",
+              },
+              maxTotalProvisionedDiskCapacityGb: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUsedCapacityBytes: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUsedIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUsedThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUserWrittenBytes: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              totalProvisionedDiskCapacityGb: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              totalProvisionedDiskIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              totalProvisionedDiskThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+            },
+            description: "[Output Only] Contains output only fields.",
+            additionalProperties: true,
+          },
+          selfLink: {
+            type: "string",
             description:
-              "Size of the storage pool in GiB. For more information about the size\nlimits, see https://cloud.google.com/compute/docs/disks/storage-pools. (Format: int64)",
+              "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
+          },
+          selfLinkWithId: {
+            type: "string",
+            description:
+              "Output only. [Output Only] Server-defined URL for this resource's resource id.",
+          },
+          state: {
+            type: "string",
+            enum: [
+              "UNDEFINED_STATE",
+              "CREATING",
+              "DELETING",
+              "FAILED",
+              "READY",
+            ],
+            description:
+              "Output only. [Output Only] The status of storage pool creation.        - CREATING: Storage pool is provisioning.      storagePool.      - FAILED: Storage pool creation failed.      - READY: Storage pool is ready for use.      - DELETING: Storage pool is deleting. Check the State enum for the list of possible values.",
+          },
+          status: {
+            type: "object",
+            properties: {
+              diskCount: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxReadIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxReadThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxWriteIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              exapoolMaxWriteThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              lastResizeTimestamp: {
+                type: "string",
+                description:
+                  "Output only. [Output Only] Timestamp of the last successful resize inRFC3339 text format.",
+              },
+              maxTotalProvisionedDiskCapacityGb: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUsedCapacityBytes: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUsedIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUsedThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              poolUserWrittenBytes: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              totalProvisionedDiskCapacityGb: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              totalProvisionedDiskIops: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+              totalProvisionedDiskThroughput: {
+                type: "string",
+                description: "64-bit integer as string",
+              },
+            },
+            description: "[Output Only] Contains output only fields.",
+            additionalProperties: true,
+          },
+          storagePoolType: {
+            type: "string",
+            description: "Type of the storage pool.",
+          },
+          zone: {
+            type: "string",
+            description:
+              "Output only. [Output Only] URL of the zone where the storage pool resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
         },
         description: "Represents a zonal storage pool resource.",
