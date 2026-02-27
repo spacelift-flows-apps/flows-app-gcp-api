@@ -142,6 +142,15 @@ const RESOURCE_PATTERNS: Array<{ pattern: RegExp; category: string }> = [
   { pattern: /database/i, category: "Databases" },
   { pattern: /flag/i, category: "Flags" },
   { pattern: /tier/i, category: "Tiers" },
+  // Generative Language (more specific first)
+  { pattern: /tunedmodel/i, category: "Tuned Models" },
+  { pattern: /cachedcontent/i, category: "Cached Content" },
+  { pattern: /corpus|corpora/i, category: "Corpora" },
+  { pattern: /document/i, category: "Documents" },
+  { pattern: /chunk/i, category: "Chunks" },
+  { pattern: /permission/i, category: "Permissions" },
+  { pattern: /embed/i, category: "Embeddings" },
+  { pattern: /counttoken/i, category: "Generation" },
 ];
 
 /**
@@ -215,6 +224,13 @@ const SERVICE_DEFAULTS: Record<string, string> = {
   SqlInstanceNamesService: "Instances",
   SqlFeatureEligibilityService: "Feature Eligibility",
   SqlEventsService: "Events",
+  // Generative Language
+  GenerativeService: "Generation",
+  ModelService: "Models",
+  CacheService: "Cached Content",
+  FileService: "Files",
+  RetrieverService: "Corpora",
+  PermissionService: "Permissions",
 };
 
 /**

@@ -161,6 +161,19 @@ const SERVICES: Record<string, ServiceConfig> = {
     title: "Cloud SQL Admin API",
     outputDir: "generatedv2/sqladmin",
   },
+  generativelanguage: {
+    protoFiles: [
+      "local/googleapis/google/ai/generativelanguage/v1beta/generative_service.proto",
+      "local/googleapis/google/ai/generativelanguage/v1beta/model_service.proto",
+      "local/googleapis/google/ai/generativelanguage/v1beta/cache_service.proto",
+      "local/googleapis/google/ai/generativelanguage/v1beta/file_service.proto",
+      "local/googleapis/google/ai/generativelanguage/v1beta/retriever_service.proto",
+      "local/googleapis/google/ai/generativelanguage/v1beta/permission_service.proto",
+    ],
+    host: "generativelanguage.googleapis.com",
+    title: "Generative Language API",
+    outputDir: "generatedv2/generativelanguage",
+  },
 };
 
 async function generateService(
