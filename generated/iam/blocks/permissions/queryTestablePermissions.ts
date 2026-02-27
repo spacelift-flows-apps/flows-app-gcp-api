@@ -23,7 +23,7 @@ const outputMapping = {
 const queryTestablePermissions: AppBlock = {
   name: "Query Testable Permissions",
   description: `Lists every permission that you can test on a resource. A permission is testable if you can check whether a principal has that permission on the resource.`,
-  category: "IAM",
+  category: "Permissions",
   inputs: {
     default: {
       config: {

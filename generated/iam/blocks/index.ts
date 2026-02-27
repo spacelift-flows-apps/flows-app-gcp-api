@@ -1,8 +1,8 @@
 import iam_lintPolicy from "./iam/lintPolicy.ts";
 import iam_queryAuditableServices from "./iam/queryAuditableServices.ts";
-import iam_queryTestablePermissions from "./iam/queryTestablePermissions.ts";
 import iam_signBlob from "./iam/signBlob.ts";
 import iam_signJwt from "./iam/signJwt.ts";
+import permissions_queryTestablePermissions from "./permissions/queryTestablePermissions.ts";
 import roles_createRole from "./roles/createRole.ts";
 import roles_deleteRole from "./roles/deleteRole.ts";
 import roles_getRole from "./roles/getRole.ts";
@@ -30,9 +30,9 @@ import service_accounts_updateServiceAccount from "./service_accounts/updateServ
 export const blocks = {
   iam_lintPolicy: iam_lintPolicy,
   iam_queryAuditableServices: iam_queryAuditableServices,
-  iam_queryTestablePermissions: iam_queryTestablePermissions,
   iam_signBlob: iam_signBlob,
   iam_signJwt: iam_signJwt,
+  permissions_queryTestablePermissions: permissions_queryTestablePermissions,
   roles_createRole: roles_createRole,
   roles_deleteRole: roles_deleteRole,
   roles_getRole: roles_getRole,
