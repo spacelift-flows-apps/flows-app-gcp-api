@@ -10,14 +10,12 @@ const instancesUpdate: AppBlock = {
       config: {
         zone: {
           name: "Zone",
-          description:
-            "Output only. [Output Only] URL of the zone where the instance resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "The name of the zone for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the zone where the instance resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "The name of the zone for this request.",
           },
-          required: false,
+          required: true,
         },
         instance: {
           name: "Instance",
@@ -119,28 +117,6 @@ const instancesUpdate: AppBlock = {
           },
           required: false,
         },
-        cpuPlatform: {
-          name: "Cpu Platform",
-          description:
-            "Output only. [Output Only] The CPU platform used by this instance.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The CPU platform used by this instance.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         deletionProtection: {
           name: "Deletion Protection",
           description:
@@ -172,17 +148,6 @@ const instancesUpdate: AppBlock = {
             items: {
               type: "object",
               properties: {
-                architecture: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_ARCHITECTURE",
-                    "ARCHITECTURE_UNSPECIFIED",
-                    "ARM64",
-                    "X86_64",
-                  ],
-                  description:
-                    "Output only. [Output Only] The architecture of the attached disk. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
-                },
                 autoDelete: {
                   type: "boolean",
                   description:
@@ -220,11 +185,6 @@ const instancesUpdate: AppBlock = {
                       type: "string",
                       description:
                         'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-                    },
-                    sha256: {
-                      type: "string",
-                      description:
-                        "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
                     },
                   },
                   additionalProperties: true,
@@ -274,11 +234,6 @@ const instancesUpdate: AppBlock = {
                   },
                   description:
                     "A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
-                },
-                index: {
-                  type: "integer",
-                  description:
-                    "Output only. [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.",
                 },
                 initializeParams: {
                   type: "object",
@@ -405,11 +360,6 @@ const instancesUpdate: AppBlock = {
                           description:
                             'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
                         },
-                        sha256: {
-                          type: "string",
-                          description:
-                            "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                        },
                       },
                       additionalProperties: true,
                       description:
@@ -443,11 +393,6 @@ const instancesUpdate: AppBlock = {
                           description:
                             'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
                         },
-                        sha256: {
-                          type: "string",
-                          description:
-                            "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                        },
                       },
                       additionalProperties: true,
                       description:
@@ -469,19 +414,6 @@ const instancesUpdate: AppBlock = {
                   description:
                     "Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. For most machine types, the default is SCSI. Local SSDs can use either NVME or SCSI. In certain configurations, persistent disks can use NVMe. For more information, seeAbout persistent disks. Check the Interface enum for the list of possible values.",
                 },
-                kind: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] Type of the resource. Alwayscompute#attachedDisk for attached disks.",
-                },
-                licenses: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description:
-                    "Output only. [Output Only] Any valid publicly visible licenses.",
-                },
                 mode: {
                   type: "string",
                   enum: ["UNDEFINED_MODE", "READ_ONLY", "READ_WRITE"],
@@ -497,115 +429,6 @@ const instancesUpdate: AppBlock = {
                   ],
                   description:
                     "Output only. For LocalSSD disks on VM Instances in STOPPED or SUSPENDED state, this field is set to PRESERVED if the LocalSSD data has been saved to a persistent location by customer request.  (see the discard_local_ssd option on Stop/Suspend). Read-only in the api. Check the SavedState enum for the list of possible values.",
-                },
-                shieldedInstanceInitialState: {
-                  type: "object",
-                  properties: {
-                    dbs: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          content: {
-                            type: "string",
-                            description:
-                              "The raw content in the secure keys file.",
-                          },
-                          fileType: {
-                            type: "string",
-                            enum: [
-                              "UNDEFINED_FILE_TYPE",
-                              "BIN",
-                              "UNDEFINED",
-                              "X509",
-                            ],
-                            description:
-                              "The file type of source file. Check the FileType enum for the list of possible values.",
-                          },
-                        },
-                        additionalProperties: true,
-                      },
-                      description: "The Key Database (db).",
-                    },
-                    dbxs: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          content: {
-                            type: "string",
-                            description:
-                              "The raw content in the secure keys file.",
-                          },
-                          fileType: {
-                            type: "string",
-                            enum: [
-                              "UNDEFINED_FILE_TYPE",
-                              "BIN",
-                              "UNDEFINED",
-                              "X509",
-                            ],
-                            description:
-                              "The file type of source file. Check the FileType enum for the list of possible values.",
-                          },
-                        },
-                        additionalProperties: true,
-                      },
-                      description: "The forbidden key database (dbx).",
-                    },
-                    keks: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          content: {
-                            type: "string",
-                            description:
-                              "The raw content in the secure keys file.",
-                          },
-                          fileType: {
-                            type: "string",
-                            enum: [
-                              "UNDEFINED_FILE_TYPE",
-                              "BIN",
-                              "UNDEFINED",
-                              "X509",
-                            ],
-                            description:
-                              "The file type of source file. Check the FileType enum for the list of possible values.",
-                          },
-                        },
-                        additionalProperties: true,
-                      },
-                      description: "The Key Exchange Key (KEK).",
-                    },
-                    pk: {
-                      type: "object",
-                      properties: {
-                        content: {
-                          type: "string",
-                          description:
-                            "The raw content in the secure keys file.",
-                        },
-                        fileType: {
-                          type: "string",
-                          enum: [
-                            "UNDEFINED_FILE_TYPE",
-                            "BIN",
-                            "UNDEFINED",
-                            "X509",
-                          ],
-                          description:
-                            "The file type of source file. Check the FileType enum for the list of possible values.",
-                        },
-                      },
-                      additionalProperties: true,
-                      description: "The Platform Key (PK).",
-                    },
-                  },
-                  description:
-                    "Initial State for shielded instance, these are public keys which are safe to store in public",
-                  additionalProperties: true,
                 },
                 source: {
                   type: "string",
@@ -695,16 +518,6 @@ const instancesUpdate: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         instanceEncryptionKey: {
           name: "Instance Encryption Key",
           description:
@@ -732,11 +545,6 @@ const instancesUpdate: AppBlock = {
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-              },
             },
             additionalProperties: true,
             description:
@@ -758,17 +566,6 @@ const instancesUpdate: AppBlock = {
             ],
             description:
               'KeyRevocationActionType of the instance. Supported options are "STOP" and "NONE". The default value is "NONE" if it is not specified. Check the KeyRevocationActionType enum for the list of possible values.',
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#instance for instances.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#instance for instances.",
           },
           required: false,
         },
@@ -794,39 +591,6 @@ const instancesUpdate: AppBlock = {
             },
             description:
               "Labels to apply to this instance. These can be later modified by the setLabels method.",
-          },
-          required: false,
-        },
-        lastStartTimestamp: {
-          name: "Last Start Timestamp",
-          description:
-            "Output only. [Output Only] Last start timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Last start timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
-        lastStopTimestamp: {
-          name: "Last Stop Timestamp",
-          description:
-            "Output only. [Output Only] Last stop timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Last stop timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
-        lastSuspendedTimestamp: {
-          name: "Last Suspended Timestamp",
-          description:
-            "Output only. [Output Only] Last suspended timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Last suspended timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -874,11 +638,6 @@ const instancesUpdate: AppBlock = {
                 },
                 description:
                   "Array of key/value pairs. The total size of all keys and values must be less than 512 KB.",
-              },
-              kind: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Type of the resource. Always compute#metadata for metadata.",
               },
             },
             description: "A metadata key/value entry.",
@@ -931,11 +690,6 @@ const instancesUpdate: AppBlock = {
                         type: "integer",
                         description:
                           "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
-                      },
-                      kind: {
-                        type: "string",
-                        description:
-                          "Output only. [Output Only] Type of the resource. Alwayscompute#accessConfig for access configs.",
                       },
                       name: {
                         type: "string",
@@ -1050,11 +804,6 @@ const instancesUpdate: AppBlock = {
                         description:
                           "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
                       },
-                      kind: {
-                        type: "string",
-                        description:
-                          "Output only. [Output Only] Type of the resource. Alwayscompute#accessConfig for access configs.",
-                      },
                       name: {
                         type: "string",
                         description:
@@ -1110,31 +859,10 @@ const instancesUpdate: AppBlock = {
                   description:
                     "An array of IPv6 access configurations for this interface. Currently, only one IPv6 access config, DIRECT_IPV6, is supported. If there is no ipv6AccessConfig specified, then this instance will have no external IPv6 Internet access.",
                 },
-                ipv6AccessType: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_IPV6_ACCESS_TYPE",
-                    "EXTERNAL",
-                    "INTERNAL",
-                    "UNSPECIFIED_IPV6_ACCESS_TYPE",
-                  ],
-                  description:
-                    "Output only. [Output Only] One of EXTERNAL, INTERNAL to indicate whether the IP can be accessed from the Internet. This field is always inherited from its subnetwork.  Valid only if stackType is IPV4_IPV6. Check the Ipv6AccessType enum for the list of possible values.",
-                },
                 ipv6Address: {
                   type: "string",
                   description:
                     "An IPv6 internal network address for this network interface. To use a static internal IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.",
-                },
-                kind: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] Type of the resource. Alwayscompute#networkInterface for network interfaces.",
-                },
-                name: {
-                  type: "string",
-                  description:
-                    "[Output Only] The name of the network interface, which is generated by the server. For a VM, the network interface uses the nicN naming format. Where N is a value between 0 and7. The default interface value is nic0.",
                 },
                 network: {
                   type: "string",
@@ -1334,225 +1062,6 @@ const instancesUpdate: AppBlock = {
           },
           required: false,
         },
-        resourceStatus: {
-          name: "Resource Status",
-          description:
-            "Output only. [Output Only] Specifies values set for instance attributes as compared to the values requested by user in the corresponding input only field.",
-          type: {
-            type: "object",
-            properties: {
-              effectiveInstanceMetadata: {
-                type: "object",
-                properties: {
-                  blockProjectSshKeysMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective block-project-ssh-keys value at Instance level.",
-                  },
-                  enableGuestAttributesMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective enable-guest-attributes value at Instance level.",
-                  },
-                  enableOsInventoryMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective enable-os-inventory value at Instance level.",
-                  },
-                  enableOsconfigMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective enable-osconfig value at Instance level.",
-                  },
-                  enableOsloginMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective enable-oslogin value at Instance level.",
-                  },
-                  serialPortEnableMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective serial-port-enable value at Instance level.",
-                  },
-                  serialPortLoggingEnableMetadataValue: {
-                    type: "boolean",
-                    description:
-                      "Effective serial-port-logging-enable value at Instance level.",
-                  },
-                  vmDnsSettingMetadataValue: {
-                    type: "string",
-                    description: "Effective VM DNS setting at Instance level.",
-                  },
-                },
-                description:
-                  "Effective values of predefined metadata keys for an instance.",
-                additionalProperties: true,
-              },
-              physicalHost: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] The precise location of your instance within the zone's data center, including the block, sub-block, and host. The field is formatted as follows: blockId/subBlockId/hostId.",
-              },
-              physicalHostTopology: {
-                type: "object",
-                properties: {
-                  block: {
-                    type: "string",
-                    description:
-                      "[Output Only] The ID of the block in which the running instance is located. Instances within the same block experience low network latency.",
-                  },
-                  cluster: {
-                    type: "string",
-                    description:
-                      "[Output Only] The global name of the Compute Engine cluster where the running instance is located.",
-                  },
-                  host: {
-                    type: "string",
-                    description:
-                      "[Output Only] The ID of the host on which the running instance is located. Instances on the same host experience the lowest possible network latency.",
-                  },
-                  subblock: {
-                    type: "string",
-                    description:
-                      "[Output Only] The ID of the sub-block in which the running instance is located. Instances in the same sub-block experience lower network latency than instances in the same block.",
-                  },
-                },
-                description:
-                  "Represents the physical host topology of the host on which the VM is running.",
-                additionalProperties: true,
-              },
-              reservationConsumptionInfo: {
-                type: "object",
-                properties: {
-                  consumedReservation: {
-                    type: "string",
-                    description:
-                      "Output only. [Output Only] The full resource name of the reservation that this instance is consuming from.",
-                  },
-                },
-                description:
-                  "Reservation consumption information that the instance is consuming from.",
-                additionalProperties: true,
-              },
-              scheduling: {
-                type: "object",
-                properties: {
-                  availabilityDomain: {
-                    type: "integer",
-                    description:
-                      "Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.",
-                  },
-                },
-                additionalProperties: true,
-              },
-              upcomingMaintenance: {
-                type: "object",
-                properties: {
-                  canReschedule: {
-                    type: "boolean",
-                    description:
-                      "Indicates if the maintenance can be customer triggered.",
-                  },
-                  latestWindowStartTime: {
-                    type: "string",
-                    description:
-                      "The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.",
-                  },
-                  maintenanceOnShutdown: {
-                    type: "boolean",
-                    description:
-                      "Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.",
-                  },
-                  maintenanceReasons: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                      enum: [
-                        "UNDEFINED_MAINTENANCE_REASONS",
-                        "FAILURE_DISK",
-                        "FAILURE_GPU",
-                        "FAILURE_GPU_MULTIPLE_FAULTY_HOSTS_CUSTOMER_REPORTED",
-                        "FAILURE_GPU_NVLINK_SWITCH_CUSTOMER_REPORTED",
-                        "FAILURE_GPU_TEMPERATURE",
-                        "FAILURE_GPU_XID",
-                        "FAILURE_INFRA",
-                        "FAILURE_INTERFACE",
-                        "FAILURE_MEMORY",
-                        "FAILURE_NETWORK",
-                        "FAILURE_NVLINK",
-                        "FAILURE_REDUNDANT_HARDWARE_FAULT",
-                        "FAILURE_TPU",
-                        "INFRASTRUCTURE_RELOCATION",
-                        "MAINTENANCE_REASON_UNKNOWN",
-                        "PLANNED_NETWORK_UPDATE",
-                        "PLANNED_UPDATE",
-                      ],
-                    },
-                    description:
-                      "The reasons for the maintenance. Only valid for vms. Check the MaintenanceReasons enum for the list of possible values.",
-                  },
-                  maintenanceStatus: {
-                    type: "string",
-                    enum: [
-                      "UNDEFINED_MAINTENANCE_STATUS",
-                      "ONGOING",
-                      "PENDING",
-                      "UNKNOWN",
-                    ],
-                    description:
-                      "Check the MaintenanceStatus enum for the list of possible values.",
-                  },
-                  type: {
-                    type: "string",
-                    enum: [
-                      "UNDEFINED_TYPE",
-                      "MULTIPLE",
-                      "SCHEDULED",
-                      "UNKNOWN_TYPE",
-                      "UNSCHEDULED",
-                    ],
-                    description:
-                      "Defines the type of maintenance. Check the Type enum for the list of possible values.",
-                  },
-                  windowEndTime: {
-                    type: "string",
-                    description:
-                      "The time by which the maintenance disruption will be completed. This timestamp value is in RFC3339 text format.",
-                  },
-                  windowStartTime: {
-                    type: "string",
-                    description:
-                      "The current start time of the maintenance window. This timestamp value is in RFC3339 text format.",
-                  },
-                },
-                description: "Upcoming Maintenance notification information.",
-                additionalProperties: true,
-              },
-            },
-            description:
-              "Contains output only fields. Use this sub-message for actual values set on Instance attributes as compared to the value requested by the user (intent) in their instance CRUD calls.",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        satisfiesPzi: {
-          name: "Satisfies Pzi",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
         scheduling: {
           name: "Scheduling",
           description: "Sets the scheduling options for this instance.",
@@ -1718,17 +1227,6 @@ const instancesUpdate: AppBlock = {
           },
           required: false,
         },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for this resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for this resource.",
-          },
-          required: false,
-        },
         serviceAccounts: {
           name: "Service Accounts",
           description:
@@ -1840,62 +1338,10 @@ const instancesUpdate: AppBlock = {
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-              },
             },
             additionalProperties: true,
             description:
               "Source machine image encryption key when creating an instance from a machine image.",
-          },
-          required: false,
-        },
-        startRestricted: {
-          name: "Start Restricted",
-          description:
-            "Output only. [Output Only] Whether a VM has been restricted for start because Compute Engine has detected suspicious activity.",
-          type: {
-            type: "boolean",
-            description:
-              "Output only. [Output Only] Whether a VM has been restricted for start because Compute Engine has detected suspicious activity.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of the instance. One of the following values: PROVISIONING, STAGING,RUNNING, STOPPING, SUSPENDING,SUSPENDED, REPAIRING, andTERMINATED. For more information about the status of the instance, see Instance life cycle. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "DEPROVISIONING",
-              "PENDING",
-              "PROVISIONING",
-              "REPAIRING",
-              "RUNNING",
-              "STAGING",
-              "STOPPED",
-              "STOPPING",
-              "SUSPENDED",
-              "SUSPENDING",
-              "TERMINATED",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-          },
-          required: false,
-        },
-        statusMessage: {
-          name: "Status Message",
-          description:
-            "Output only. [Output Only] An optional, human-readable explanation of the status.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] An optional, human-readable explanation of the status.",
           },
           required: false,
         },

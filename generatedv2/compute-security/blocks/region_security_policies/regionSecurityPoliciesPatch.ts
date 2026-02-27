@@ -10,14 +10,12 @@ const regionSecurityPoliciesPatch: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional security policy resides. This field is not applicable to global security policies.",
+          description: "Name of the region scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional security policy resides. This field is not applicable to global security policies.",
+            description: "Name of the region scoping this request.",
           },
-          required: false,
+          required: true,
         },
         securityPolicy: {
           name: "Security Policy",
@@ -201,11 +199,6 @@ const regionSecurityPoliciesPatch: AppBlock = {
                   description:
                     "The resource that the security policy is attached to.",
                 },
-                displayName: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] The display name of the security policy of the association.",
-                },
                 excludedFolders: {
                   type: "array",
                   items: {
@@ -226,31 +219,10 @@ const regionSecurityPoliciesPatch: AppBlock = {
                   type: "string",
                   description: "The name for an association.",
                 },
-                securityPolicyId: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] The security policy ID of the association.",
-                },
-                shortName: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] The short name of the security policy of the association.",
-                },
               },
               additionalProperties: true,
             },
             description: "A list of associations that belong to this policy.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -298,27 +270,6 @@ const regionSecurityPoliciesPatch: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output only] Type of the resource. Alwayscompute#securityPolicyfor security policies",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output only] Type of the resource. Alwayscompute#securityPolicyfor security policies",
-          },
-          required: false,
-        },
         labelFingerprint: {
           name: "Label Fingerprint",
           description:
@@ -352,17 +303,6 @@ const regionSecurityPoliciesPatch: AppBlock = {
             type: "string",
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-          },
-          required: false,
-        },
-        parent: {
-          name: "Parent",
-          description:
-            "Output only. [Output Only] The parent of the security policy.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The parent of the security policy.",
           },
           required: false,
         },
@@ -428,11 +368,6 @@ const regionSecurityPoliciesPatch: AppBlock = {
                   additionalProperties: true,
                   description:
                     "Optional, additional actions that are performed on headers. This field is only supported in Global Security Policies of type CLOUD_ARMOR.",
-                },
-                kind: {
-                  type: "string",
-                  description:
-                    "Output only. [Output only] Type of the resource. Alwayscompute#securityPolicyRule for security policy rules",
                 },
                 match: {
                   type: "object",
@@ -936,17 +871,6 @@ const regionSecurityPoliciesPatch: AppBlock = {
             },
             description:
               'A list of rules that belong to this policy. There must always be a default rule which is a rule with priority 2147483647 and match all condition (for the match condition this means match  "*" for srcIpRanges and for the networkMatch condition every field must be either match "*" or not set). If no rules are provided when creating a security policy, a default rule with action "allow" will be added.',
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

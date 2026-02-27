@@ -39,17 +39,6 @@ const networksPatch: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -72,38 +61,6 @@ const networksPatch: AppBlock = {
           },
           required: false,
         },
-        firewallPolicy: {
-          name: "Firewall Policy",
-          description:
-            "Output only. [Output Only] URL of the firewall policy the network is associated with.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the firewall policy the network is associated with.",
-          },
-          required: false,
-        },
-        gatewayIPv4: {
-          name: "Gateway I Pv4",
-          description:
-            "[Output Only] The gateway address for default routing out of the network, selected by Google Cloud.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The gateway address for default routing out of the network, selected by Google Cloud.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         internalIpv6Range: {
           name: "Internal Ipv6 Range",
           description:
@@ -112,17 +69,6 @@ const networksPatch: AppBlock = {
             type: "string",
             description:
               "When enabling ula internal ipv6, caller optionally can specify the /48 range they want from the google defined ULA prefix fd20::/20. The input must be a valid /48 ULA IPv6 address and must be within the fd20::/20. Operation will fail if the speficied /48 is already in used by another resource. If the field is not speficied, then a /48 range will be randomly allocated from fd20::/20 and returned via this field. .",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#network for networks.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#network for networks.",
           },
           required: false,
         },
@@ -196,187 +142,6 @@ const networksPatch: AppBlock = {
           },
           required: false,
         },
-        peerings: {
-          name: "Peerings",
-          description:
-            "Output only. [Output Only] A list of network peerings for the resource.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                autoCreateRoutes: {
-                  type: "boolean",
-                  description:
-                    "This field will be deprecated soon. Use theexchange_subnet_routes field instead. Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
-                },
-                connectionStatus: {
-                  type: "object",
-                  properties: {
-                    consensusState: {
-                      type: "object",
-                      properties: {
-                        deleteStatus: {
-                          type: "string",
-                          enum: [
-                            "UNDEFINED_DELETE_STATUS",
-                            "DELETE_ACKNOWLEDGED",
-                            "DELETE_STATUS_UNSPECIFIED",
-                            "LOCAL_DELETE_REQUESTED",
-                            "PEER_DELETE_REQUESTED",
-                          ],
-                          description:
-                            "The status of the delete request. Check the DeleteStatus enum for the list of possible values.",
-                        },
-                        updateStatus: {
-                          type: "string",
-                          enum: [
-                            "UNDEFINED_UPDATE_STATUS",
-                            "IN_SYNC",
-                            "PENDING_LOCAL_ACKNOWLEDMENT",
-                            "PENDING_PEER_ACKNOWLEDGEMENT",
-                            "UPDATE_STATUS_UNSPECIFIED",
-                          ],
-                          description:
-                            "The status of the update request. Check the UpdateStatus enum for the list of possible values.",
-                        },
-                      },
-                      description:
-                        "The status of update/delete for a consensus peering connection. Only set when connection_status.update_strategy isCONSENSUS or a network peering is proposing to update the strategy to CONSENSUS.",
-                      additionalProperties: true,
-                    },
-                    trafficConfiguration: {
-                      type: "object",
-                      properties: {
-                        exportCustomRoutesToPeer: {
-                          type: "boolean",
-                          description:
-                            "Whether custom routes are being exported to the peer network.",
-                        },
-                        exportSubnetRoutesWithPublicIpToPeer: {
-                          type: "boolean",
-                          description:
-                            "Whether subnet routes with public IP ranges are being exported to the peer network.",
-                        },
-                        importCustomRoutesFromPeer: {
-                          type: "boolean",
-                          description:
-                            "Whether custom routes are being imported from the peer network.",
-                        },
-                        importSubnetRoutesWithPublicIpFromPeer: {
-                          type: "boolean",
-                          description:
-                            "Whether subnet routes with public IP ranges are being imported from the peer network.",
-                        },
-                        stackType: {
-                          type: "string",
-                          enum: [
-                            "UNDEFINED_STACK_TYPE",
-                            "IPV4_IPV6",
-                            "IPV4_ONLY",
-                          ],
-                          description:
-                            "Which IP version(s) of traffic and routes are being imported or exported between peer networks. Check the StackType enum for the list of possible values.",
-                        },
-                      },
-                      additionalProperties: true,
-                      description:
-                        "The active connectivity settings for the peering connection based on the settings of the network peerings.",
-                    },
-                    updateStrategy: {
-                      type: "string",
-                      enum: [
-                        "UNDEFINED_UPDATE_STRATEGY",
-                        "CONSENSUS",
-                        "INDEPENDENT",
-                        "UNSPECIFIED",
-                      ],
-                      description:
-                        "The update strategy determines the update/delete semantics for this peering connection. Check the UpdateStrategy enum for the list of possible values.",
-                    },
-                  },
-                  description:
-                    "[Output Only] Describes the state of a peering connection, not just the local peering. This field provides information about the effective settings for the connection as a whole, including pending delete/update requests for CONSENSUS peerings.",
-                  additionalProperties: true,
-                },
-                exchangeSubnetRoutes: {
-                  type: "boolean",
-                  description:
-                    "Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
-                },
-                exportCustomRoutes: {
-                  type: "boolean",
-                  description:
-                    "Whether to export the custom routes to peer network. The default value is false.",
-                },
-                exportSubnetRoutesWithPublicIp: {
-                  type: "boolean",
-                  description:
-                    "Whether subnet routes with public IP range are exported. The default value is true, all subnet routes are exported.IPv4 special-use ranges are always exported to peers and are not controlled by this field.",
-                },
-                importCustomRoutes: {
-                  type: "boolean",
-                  description:
-                    "Whether to import the custom routes from peer network. The default value is false.",
-                },
-                importSubnetRoutesWithPublicIp: {
-                  type: "boolean",
-                  description:
-                    "Whether subnet routes with public IP range are imported. The default value is false.IPv4 special-use ranges are always imported from peers and are not controlled by this field.",
-                },
-                name: {
-                  type: "string",
-                  description:
-                    "Name of this peering. Provided by the client when the peering is created. The name must comply withRFC1035. Specifically, the name must be 1-63 characters long and match regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all the following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-                },
-                network: {
-                  type: "string",
-                  description:
-                    "The URL of the peer network. It can be either full URL or partial URL. The peer network may belong to a different project. If the partial URL does not contain project, it is assumed that the peer network is in the same project as the current network.",
-                },
-                peerMtu: {
-                  type: "integer",
-                  description:
-                    "Output only. [Output Only] Maximum Transmission Unit in bytes of the peer network.",
-                },
-                stackType: {
-                  type: "string",
-                  enum: ["UNDEFINED_STACK_TYPE", "IPV4_IPV6", "IPV4_ONLY"],
-                  description:
-                    "Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Check the StackType enum for the list of possible values.",
-                },
-                state: {
-                  type: "string",
-                  enum: ["UNDEFINED_STATE", "ACTIVE", "INACTIVE"],
-                  description:
-                    "Output only. [Output Only] State for the peering, either `ACTIVE` or `INACTIVE`. The peering is `ACTIVE` when there's a matching configuration in the peer network. Check the State enum for the list of possible values.",
-                },
-                stateDetails: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] Details about the current state of the peering.",
-                },
-                updateStrategy: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_UPDATE_STRATEGY",
-                    "CONSENSUS",
-                    "INDEPENDENT",
-                    "UNSPECIFIED",
-                  ],
-                  description:
-                    "The update strategy determines the semantics for updates and deletes to the peering connection configuration. Check the UpdateStrategy enum for the list of possible values.",
-                },
-              },
-              description:
-                "A network peering attached to a network resource. The message includes the peering name, peer network, peering state, and a flag indicating whether Google Compute Engine should automatically create routes for the peering.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] A list of network peerings for the resource.",
-          },
-          required: false,
-        },
         routingConfig: {
           name: "Routing Config",
           description:
@@ -409,17 +174,6 @@ const networksPatch: AppBlock = {
                 description:
                   "Allows to define a preferred approach for handling inter-region cost in the selection process when using the STANDARD BGP best path selection algorithm. Can be DEFAULT orADD_COST_TO_MED. Check the BgpInterRegionCost enum for the list of possible values.",
               },
-              effectiveBgpAlwaysCompareMed: {
-                type: "boolean",
-                description:
-                  "Output only. [Output Only] Effective value of the bgp_always_compare_med field.",
-              },
-              effectiveBgpInterRegionCost: {
-                type: "string",
-                enum: ["UNDEFINED_EFFECTIVE_BGP_INTER_REGION_COST"],
-                description:
-                  "Output only. [Output Only] Effective value of the bgp_inter_region_cost field. Check the EffectiveBgpInterRegionCost enum for the list of possible values.",
-              },
               routingMode: {
                 type: "string",
                 enum: ["UNDEFINED_ROUTING_MODE", "GLOBAL", "REGIONAL"],
@@ -430,40 +184,6 @@ const networksPatch: AppBlock = {
             description:
               "A routing configuration attached to a network resource. The message includes the list of routers associated with the network, and a flag indicating the type of routing behavior to enforce network-wide.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        selfLinkWithId: {
-          name: "Self Link With Id",
-          description:
-            "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
-          },
-          required: false,
-        },
-        subnetworks: {
-          name: "Subnetworks",
-          description:
-            "[Output Only] Server-defined fully-qualified URLs for all subnetworks in this VPC network.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "[Output Only] Server-defined fully-qualified URLs for all subnetworks in this VPC network.",
           },
           required: false,
         },

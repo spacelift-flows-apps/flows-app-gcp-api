@@ -48,17 +48,6 @@ const instancesUpdateAccessConfig: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#accessConfig for access configs.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#accessConfig for access configs.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:

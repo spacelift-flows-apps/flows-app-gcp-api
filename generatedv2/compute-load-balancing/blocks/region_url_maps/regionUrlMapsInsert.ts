@@ -10,25 +10,12 @@ const regionUrlMapsInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional URL map resides. This field is not applicable to global URL maps. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional URL map resides. This field is not applicable to global URL maps. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region scoping this request.",
           },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
+          required: true,
         },
         defaultCustomErrorResponsePolicy: {
           name: "Default Custom Error Response Policy",
@@ -622,27 +609,6 @@ const regionUrlMapsInsert: AppBlock = {
               additionalProperties: true,
             },
             description: "The list of host rules to use against the URL.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#urlMaps for url maps.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#urlMaps for url maps.",
           },
           required: false,
         },
@@ -2371,15 +2337,6 @@ const regionUrlMapsInsert: AppBlock = {
             },
             description:
               "The list of named PathMatchers to use against the URL.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

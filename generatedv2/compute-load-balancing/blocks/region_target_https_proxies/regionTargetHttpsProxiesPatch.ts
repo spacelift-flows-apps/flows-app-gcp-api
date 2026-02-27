@@ -10,14 +10,12 @@ const regionTargetHttpsProxiesPatch: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional TargetHttpsProxy resides. This field is not applicable to global TargetHttpsProxies.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional TargetHttpsProxy resides. This field is not applicable to global TargetHttpsProxies.",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         targetHttpsProxy: {
           name: "Target Https Proxy",
@@ -47,17 +45,6 @@ const regionTargetHttpsProxiesPatch: AppBlock = {
             type: "string",
             description:
               "URL of a certificate map that identifies a certificate map associated with the given target proxy. This field can only be set for Global external Application Load Balancer or Classic Application Load Balancer. For other products use Certificate Manager Certificates instead.  If set, sslCertificates will be ignored.   Accepted format is//certificatemanager.googleapis.com/projects/{project}/locations/{location}/certificateMaps/{resourceName}.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -94,27 +81,6 @@ const regionTargetHttpsProxiesPatch: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of resource. Alwayscompute#targetHttpsProxy for target HTTPS proxies.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of resource. Alwayscompute#targetHttpsProxy for target HTTPS proxies.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:
@@ -146,15 +112,6 @@ const regionTargetHttpsProxiesPatch: AppBlock = {
             enum: ["UNDEFINED_QUIC_OVERRIDE", "DISABLE", "ENABLE", "NONE"],
             description:
               "Specifies the QUIC override policy for this TargetHttpsProxy resource. This setting determines whether the load balancer attempts to negotiate QUIC with clients. You can specify NONE, ENABLE, orDISABLE.     - When quic-override is set to NONE,    Google manages whether QUIC is used.    - When quic-override is set to ENABLE, the    load balancer uses QUIC when possible.    - When quic-override is set to DISABLE, the    load balancer doesn't use QUIC.    - If the quic-override flag is not specified,NONE is implied. Check the QuicOverride enum for the list of possible values.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

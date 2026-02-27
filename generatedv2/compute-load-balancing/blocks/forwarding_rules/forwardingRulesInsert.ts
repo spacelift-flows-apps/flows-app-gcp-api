@@ -10,14 +10,12 @@ const forwardingRulesInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional forwarding rule resides. This field is not applicable to global forwarding rules. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional forwarding rule resides. This field is not applicable to global forwarding rules. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region scoping this request.",
           },
-          required: false,
+          required: true,
         },
         IPAddress: {
           name: "I P Address",
@@ -95,28 +93,6 @@ const forwardingRulesInsert: AppBlock = {
           },
           required: false,
         },
-        baseForwardingRule: {
-          name: "Base Forwarding Rule",
-          description:
-            "Output only. [Output Only] The URL for the corresponding base forwarding rule. By base forwarding rule, we mean the forwarding rule that has the same IP address, protocol, and port settings with the current forwarding rule, but without sourceIPRanges specified. Always empty if the current forwarding rule does not have sourceIPRanges specified.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL for the corresponding base forwarding rule. By base forwarding rule, we mean the forwarding rule that has the same IP address, protocol, and port settings with the current forwarding rule, but without sourceIPRanges specified. Always empty if the current forwarding rule does not have sourceIPRanges specified.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -167,16 +143,6 @@ const forwardingRulesInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         ipCollection: {
           name: "Ip Collection",
           description:
@@ -213,17 +179,6 @@ const forwardingRulesInsert: AppBlock = {
             type: "boolean",
             description:
               "Indicates whether or not this load balancer can be used as a collector for packet mirroring. To prevent mirroring loops, instances behind this load balancer will not have their traffic mirrored even if aPacketMirroring rule applies to them. This can only be set to true for load balancers that have theirloadBalancingScheme set to INTERNAL.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#forwardingRule for forwarding rule resources.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#forwardingRule for forwarding rule resources.",
           },
           required: false,
         },
@@ -401,16 +356,6 @@ const forwardingRulesInsert: AppBlock = {
           },
           required: false,
         },
-        pscConnectionId: {
-          name: "Psc Connection Id",
-          description:
-            "[Output Only] The PSC connection id of the PSC forwarding rule.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         pscConnectionStatus: {
           name: "Psc Connection Status",
           description:
@@ -428,26 +373,6 @@ const forwardingRulesInsert: AppBlock = {
             ],
             description:
               "Check the PscConnectionStatus enum for the list of possible values.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        selfLinkWithId: {
-          name: "Self Link With Id",
-          description:
-            "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for this resource with the resource id.",
           },
           required: false,
         },
@@ -493,17 +418,6 @@ const forwardingRulesInsert: AppBlock = {
             type: "string",
             description:
               "An optional prefix to the service name for this forwarding rule. If specified, the prefix is the first label of the fully qualified service name.  The label must be 1-63 characters long, and comply withRFC1035. Specifically, the label must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.  This field is only used for internal load balancing.",
-          },
-          required: false,
-        },
-        serviceName: {
-          name: "Service Name",
-          description:
-            "[Output Only] The internal fully qualified service name for this forwarding rule.  This field is only used for internal load balancing.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The internal fully qualified service name for this forwarding rule.  This field is only used for internal load balancing.",
           },
           required: false,
         },

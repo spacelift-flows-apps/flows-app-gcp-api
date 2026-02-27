@@ -50,95 +50,6 @@ const networksAddPeering: AppBlock = {
                 description:
                   "This field will be deprecated soon. Use theexchange_subnet_routes field instead. Indicates whether full mesh connectivity is created and managed automatically between peered networks. Currently this field should always be true since Google Compute Engine will automatically create and manage subnetwork routes between two networks when peering state isACTIVE.",
               },
-              connectionStatus: {
-                type: "object",
-                properties: {
-                  consensusState: {
-                    type: "object",
-                    properties: {
-                      deleteStatus: {
-                        type: "string",
-                        enum: [
-                          "UNDEFINED_DELETE_STATUS",
-                          "DELETE_ACKNOWLEDGED",
-                          "DELETE_STATUS_UNSPECIFIED",
-                          "LOCAL_DELETE_REQUESTED",
-                          "PEER_DELETE_REQUESTED",
-                        ],
-                        description:
-                          "The status of the delete request. Check the DeleteStatus enum for the list of possible values.",
-                      },
-                      updateStatus: {
-                        type: "string",
-                        enum: [
-                          "UNDEFINED_UPDATE_STATUS",
-                          "IN_SYNC",
-                          "PENDING_LOCAL_ACKNOWLEDMENT",
-                          "PENDING_PEER_ACKNOWLEDGEMENT",
-                          "UPDATE_STATUS_UNSPECIFIED",
-                        ],
-                        description:
-                          "The status of the update request. Check the UpdateStatus enum for the list of possible values.",
-                      },
-                    },
-                    description:
-                      "The status of update/delete for a consensus peering connection. Only set when connection_status.update_strategy isCONSENSUS or a network peering is proposing to update the strategy to CONSENSUS.",
-                    additionalProperties: true,
-                  },
-                  trafficConfiguration: {
-                    type: "object",
-                    properties: {
-                      exportCustomRoutesToPeer: {
-                        type: "boolean",
-                        description:
-                          "Whether custom routes are being exported to the peer network.",
-                      },
-                      exportSubnetRoutesWithPublicIpToPeer: {
-                        type: "boolean",
-                        description:
-                          "Whether subnet routes with public IP ranges are being exported to the peer network.",
-                      },
-                      importCustomRoutesFromPeer: {
-                        type: "boolean",
-                        description:
-                          "Whether custom routes are being imported from the peer network.",
-                      },
-                      importSubnetRoutesWithPublicIpFromPeer: {
-                        type: "boolean",
-                        description:
-                          "Whether subnet routes with public IP ranges are being imported from the peer network.",
-                      },
-                      stackType: {
-                        type: "string",
-                        enum: [
-                          "UNDEFINED_STACK_TYPE",
-                          "IPV4_IPV6",
-                          "IPV4_ONLY",
-                        ],
-                        description:
-                          "Which IP version(s) of traffic and routes are being imported or exported between peer networks. Check the StackType enum for the list of possible values.",
-                      },
-                    },
-                    additionalProperties: true,
-                    description:
-                      "The active connectivity settings for the peering connection based on the settings of the network peerings.",
-                  },
-                  updateStrategy: {
-                    type: "string",
-                    enum: [
-                      "UNDEFINED_UPDATE_STRATEGY",
-                      "CONSENSUS",
-                      "INDEPENDENT",
-                      "UNSPECIFIED",
-                    ],
-                    description:
-                      "The update strategy determines the update/delete semantics for this peering connection. Check the UpdateStrategy enum for the list of possible values.",
-                  },
-                },
-                description:
-                  "[Output Only] Describes the state of a peering connection, not just the local peering. This field provides information about the effective settings for the connection as a whole, including pending delete/update requests for CONSENSUS peerings.",
-                additionalProperties: true,
-              },
               exchangeSubnetRoutes: {
                 type: "boolean",
                 description:
@@ -174,27 +85,11 @@ const networksAddPeering: AppBlock = {
                 description:
                   "The URL of the peer network. It can be either full URL or partial URL. The peer network may belong to a different project. If the partial URL does not contain project, it is assumed that the peer network is in the same project as the current network.",
               },
-              peerMtu: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] Maximum Transmission Unit in bytes of the peer network.",
-              },
               stackType: {
                 type: "string",
                 enum: ["UNDEFINED_STACK_TYPE", "IPV4_IPV6", "IPV4_ONLY"],
                 description:
                   "Which IP version(s) of traffic and routes are allowed to be imported or exported between peer networks. The default value is IPV4_ONLY. Check the StackType enum for the list of possible values.",
-              },
-              state: {
-                type: "string",
-                enum: ["UNDEFINED_STATE", "ACTIVE", "INACTIVE"],
-                description:
-                  "Output only. [Output Only] State for the peering, either `ACTIVE` or `INACTIVE`. The peering is `ACTIVE` when there's a matching configuration in the peer network. Check the State enum for the list of possible values.",
-              },
-              stateDetails: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Details about the current state of the peering.",
               },
               updateStrategy: {
                 type: "string",

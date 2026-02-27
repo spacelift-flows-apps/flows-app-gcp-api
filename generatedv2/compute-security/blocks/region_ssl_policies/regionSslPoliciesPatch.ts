@@ -10,14 +10,12 @@ const regionSslPoliciesPatch: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional SSL policy resides. This field is not applicable to global SSL policies.",
+          description: "Name of the region scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional SSL policy resides. This field is not applicable to global SSL policies.",
+            description: "Name of the region scoping this request.",
           },
-          required: false,
+          required: true,
         },
         sslPolicy: {
           name: "Ssl Policy",
@@ -29,17 +27,6 @@ const regionSslPoliciesPatch: AppBlock = {
               "Name of the SSL policy to update. The name must be 1-63 characters long, and comply with RFC1035.",
           },
           required: true,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
         },
         customFeatures: {
           name: "Custom Features",
@@ -66,20 +53,6 @@ const regionSslPoliciesPatch: AppBlock = {
           },
           required: false,
         },
-        enabledFeatures: {
-          name: "Enabled Features",
-          description:
-            "Output only. [Output Only] The list of features enabled in the SSL policy.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] The list of features enabled in the SSL policy.",
-          },
-          required: false,
-        },
         fingerprint: {
           name: "Fingerprint",
           description:
@@ -88,27 +61,6 @@ const regionSslPoliciesPatch: AppBlock = {
             type: "string",
             description:
               "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a SslPolicy. An up-to-date fingerprint must be provided in order to update the SslPolicy, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve an SslPolicy.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output only] Type of the resource. Alwayscompute#sslPolicyfor SSL policies.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output only] Type of the resource. Alwayscompute#sslPolicyfor SSL policies.",
           },
           required: false,
         },
@@ -157,97 +109,6 @@ const regionSslPoliciesPatch: AppBlock = {
             ],
             description:
               "Profile specifies the set of SSL features that can be used by the load balancer when negotiating SSL with clients. This can be one ofCOMPATIBLE, MODERN, RESTRICTED, orCUSTOM. If using CUSTOM, the set of SSL features to enable must be specified in the customFeatures field. Check the Profile enum for the list of possible values.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        warnings: {
-          name: "Warnings",
-          description:
-            "Output only. [Output Only] If potential misconfigurations are detected for this SSL policy, this field will be populated with warning messages.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                code: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_CODE",
-                    "CLEANUP_FAILED",
-                    "DEPRECATED_RESOURCE_USED",
-                    "DEPRECATED_TYPE_USED",
-                    "DISK_SIZE_LARGER_THAN_IMAGE_SIZE",
-                    "EXPERIMENTAL_TYPE_USED",
-                    "EXTERNAL_API_WARNING",
-                    "FIELD_VALUE_OVERRIDEN",
-                    "INJECTED_KERNELS_DEPRECATED",
-                    "INVALID_HEALTH_CHECK_FOR_DYNAMIC_WIEGHTED_LB",
-                    "LARGE_DEPLOYMENT_WARNING",
-                    "LIST_OVERHEAD_QUOTA_EXCEED",
-                    "MISSING_TYPE_DEPENDENCY",
-                    "NEXT_HOP_ADDRESS_NOT_ASSIGNED",
-                    "NEXT_HOP_CANNOT_IP_FORWARD",
-                    "NEXT_HOP_INSTANCE_HAS_NO_IPV6_INTERFACE",
-                    "NEXT_HOP_INSTANCE_NOT_FOUND",
-                    "NEXT_HOP_INSTANCE_NOT_ON_NETWORK",
-                    "NEXT_HOP_NOT_RUNNING",
-                    "NOT_CRITICAL_ERROR",
-                    "NO_RESULTS_ON_PAGE",
-                    "PARTIAL_SUCCESS",
-                    "QUOTA_INFO_UNAVAILABLE",
-                    "REQUIRED_TOS_AGREEMENT",
-                    "RESOURCE_IN_USE_BY_OTHER_RESOURCE_WARNING",
-                    "RESOURCE_NOT_DELETED",
-                    "SCHEMA_VALIDATION_IGNORED",
-                    "SINGLE_INSTANCE_PROPERTY_TEMPLATE",
-                    "UNDECLARED_PROPERTIES",
-                    "UNREACHABLE",
-                  ],
-                  description:
-                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
-                },
-                data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      key: {
-                        type: "string",
-                        description:
-                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
-                      },
-                      value: {
-                        type: "string",
-                        description:
-                          "[Output Only] A warning data value corresponding to the key.",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  description:
-                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
-                },
-                message: {
-                  type: "string",
-                  description:
-                    "[Output Only] A human-readable description of the warning code.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] If potential misconfigurations are detected for this SSL policy, this field will be populated with warning messages.",
           },
           required: false,
         },

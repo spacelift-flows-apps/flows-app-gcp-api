@@ -10,25 +10,12 @@ const vpnGatewaysInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the VPN gateway resides.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the VPN gateway resides.",
+            description: "Name of the region for this request.",
           },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
+          required: true,
         },
         description: {
           name: "Description",
@@ -50,27 +37,6 @@ const vpnGatewaysInsert: AppBlock = {
             enum: ["UNDEFINED_GATEWAY_IP_VERSION", "IPV4", "IPV6"],
             description:
               "The IP family of the gateway IPs for the HA-VPN gateway interfaces. If not specified, IPV4 will be used. Check the GatewayIpVersion enum for the list of possible values.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of resource. Always compute#vpnGateway for VPN gateways.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of resource. Always compute#vpnGateway for VPN gateways.",
           },
           required: false,
         },
@@ -121,17 +87,6 @@ const vpnGatewaysInsert: AppBlock = {
           },
           required: false,
         },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
         stackType: {
           name: "Stack Type",
           description:
@@ -158,25 +113,10 @@ const vpnGatewaysInsert: AppBlock = {
             items: {
               type: "object",
               properties: {
-                id: {
-                  type: "integer",
-                  description:
-                    "Output only. [Output Only] Numeric identifier for this VPN interface associated with the VPN gateway.",
-                },
                 interconnectAttachment: {
                   type: "string",
                   description:
                     "URL of the VLAN attachment (interconnectAttachment) resource for this VPN gateway interface. When the value of this field is present, the VPN gateway is used for HA VPN over Cloud Interconnect; all egress or ingress traffic for this VPN gateway interface goes through the specified VLAN attachment resource.",
-                },
-                ipAddress: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] IP address for this VPN interface associated with the VPN gateway. The IP address could be either a regional external IP address or a regional internal IP address. The two IP addresses for a VPN gateway must be all regional external or regional internal IP addresses. There cannot be a mix of regional external IP addresses and regional internal IP addresses. For HA VPN over Cloud Interconnect, the IP addresses for both interfaces could either be regional internal IP addresses or regional external IP addresses. For regular (non HA VPN over Cloud Interconnect) HA VPN tunnels, the IP address must be a regional external IP address.",
-                },
-                ipv6Address: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] IPv6 address for this VPN interface associated with the VPN gateway. The IPv6 address must be a regional external IPv6 address. The format is RFC 5952 format (e.g. 2001:db8::2d9:51:0:0).",
                 },
               },
               description: "A VPN gateway interface.",

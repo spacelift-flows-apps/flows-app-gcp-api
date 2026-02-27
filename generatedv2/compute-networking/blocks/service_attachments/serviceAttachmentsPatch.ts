@@ -11,13 +11,13 @@ const serviceAttachmentsPatch: AppBlock = {
         region: {
           name: "Region",
           description:
-            "Output only. [Output Only] URL of the region where the service attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            "The region scoping this request and should conform to RFC1035.",
           type: {
             type: "string",
             description:
-              "Output only. [Output Only] URL of the region where the service attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+              "The region scoping this request and should conform to RFC1035.",
           },
-          required: false,
+          required: true,
         },
         serviceAttachment: {
           name: "Service Attachment",
@@ -29,64 +29,6 @@ const serviceAttachmentsPatch: AppBlock = {
               "The resource id of the ServiceAttachment to patch. It should conform to RFC1035 resource name or be a string form on an unsigned long number.",
           },
           required: true,
-        },
-        connectedEndpoints: {
-          name: "Connected Endpoints",
-          description:
-            "Output only. [Output Only] An array of connections for all the consumers connected to this service attachment.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                consumerNetwork: {
-                  type: "string",
-                  description: "The url of the consumer network.",
-                },
-                endpoint: {
-                  type: "string",
-                  description: "The url of a connected endpoint.",
-                },
-                natIps: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description:
-                    "NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.",
-                },
-                propagatedConnectionCount: {
-                  type: "integer",
-                  description:
-                    "The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.",
-                },
-                pscConnectionId: {
-                  type: "string",
-                  description: "64-bit integer as string",
-                },
-                status: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_STATUS",
-                    "ACCEPTED",
-                    "CLOSED",
-                    "NEEDS_ATTENTION",
-                    "PENDING",
-                    "REJECTED",
-                    "STATUS_UNSPECIFIED",
-                  ],
-                  description:
-                    "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-                },
-              },
-              description:
-                "[Output Only] A connection connected to this service attachment.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] An array of connections for all the consumers connected to this service attachment.",
-          },
-          required: false,
         },
         connectionPreference: {
           name: "Connection Preference",
@@ -151,17 +93,6 @@ const serviceAttachmentsPatch: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -206,27 +137,6 @@ const serviceAttachmentsPatch: AppBlock = {
             type: "string",
             description:
               "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a ServiceAttachment. An up-to-date fingerprint must be provided in order to patch/update the ServiceAttachment; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the ServiceAttachment.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource type. The server generates this identifier.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#serviceAttachment for service attachments.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#serviceAttachment for service attachments.",
           },
           required: false,
         },
@@ -289,28 +199,6 @@ const serviceAttachmentsPatch: AppBlock = {
           },
           required: false,
         },
-        pscServiceAttachmentId: {
-          name: "Psc Service Attachment Id",
-          description:
-            "Output only. [Output Only] An 128-bit global unique ID of the PSC service attachment.",
-          type: {
-            type: "object",
-            properties: {
-              high: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              low: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "Output only. [Output Only] An 128-bit global unique ID of the PSC service attachment.",
-          },
-          required: false,
-        },
         reconcileConnections: {
           name: "Reconcile Connections",
           description:
@@ -319,17 +207,6 @@ const serviceAttachmentsPatch: AppBlock = {
             type: "boolean",
             description:
               "This flag determines whether a consumer accept/reject list change can reconcile the statuses of existing ACCEPTED or REJECTED PSC endpoints.       -  If false, connection policy update will only affect existing PENDING     PSC endpoints. Existing ACCEPTED/REJECTED endpoints will remain untouched     regardless how the connection policy is modified .    -  If true,     update will affect both PENDING and ACCEPTED/REJECTED PSC endpoints. For     example, an ACCEPTED PSC endpoint will be moved to REJECTED if its project     is added to the reject list.   For newly created service attachment, this boolean defaults to false.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

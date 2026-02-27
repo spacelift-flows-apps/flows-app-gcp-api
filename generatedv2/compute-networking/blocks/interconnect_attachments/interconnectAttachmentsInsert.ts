@@ -10,14 +10,12 @@ const interconnectAttachmentsInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional interconnect attachment resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional interconnect attachment resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         adminEnabled: {
           name: "Admin Enabled",
@@ -27,17 +25,6 @@ const interconnectAttachmentsInsert: AppBlock = {
             type: "boolean",
             description:
               "Determines whether this Attachment will carry packets. Not present for PARTNER_PROVIDER.",
-          },
-          required: false,
-        },
-        attachmentGroup: {
-          name: "Attachment Group",
-          description:
-            "Output only. [Output Only] URL of the AttachmentGroup that includes this Attachment.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the AttachmentGroup that includes this Attachment.",
           },
           required: false,
         },
@@ -139,28 +126,6 @@ const interconnectAttachmentsInsert: AppBlock = {
           },
           required: false,
         },
-        cloudRouterIpAddress: {
-          name: "Cloud Router Ip Address",
-          description:
-            "Output only. [Output Only] IPv4 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] IPv4 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
-          },
-          required: false,
-        },
-        cloudRouterIpv6Address: {
-          name: "Cloud Router Ipv6 Address",
-          description:
-            "Output only. [Output Only] IPv6 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] IPv6 address + prefix length to be configured on Cloud Router Interface for this interconnect attachment.",
-          },
-          required: false,
-        },
         cloudRouterIpv6InterfaceId: {
           name: "Cloud Router Ipv6 Interface Id",
           description: "This field is not available.",
@@ -170,98 +135,12 @@ const interconnectAttachmentsInsert: AppBlock = {
           },
           required: false,
         },
-        configurationConstraints: {
-          name: "Configuration Constraints",
-          description:
-            "Output only. [Output Only] Constraints for this attachment, if any. The attachment does not work if these constraints are not met.",
-          type: {
-            type: "object",
-            properties: {
-              bgpMd5: {
-                type: "string",
-                enum: [
-                  "UNDEFINED_BGP_MD5",
-                  "MD5_OPTIONAL",
-                  "MD5_REQUIRED",
-                  "MD5_UNSUPPORTED",
-                ],
-                description:
-                  "Output only. [Output Only] Whether the attachment's BGP session requires/allows/disallows BGP MD5 authentication. This can take one of the following values: MD5_OPTIONAL, MD5_REQUIRED, MD5_UNSUPPORTED.  For example, a Cross-Cloud Interconnect connection to a remote cloud provider that requires BGP MD5 authentication has the interconnectRemoteLocation attachment_configuration_constraints.bgp_md5 field set to MD5_REQUIRED, and that property is propagated to the attachment. Similarly, if BGP MD5 is MD5_UNSUPPORTED, an error is returned if MD5 is requested. Check the BgpMd5 enum for the list of possible values.",
-              },
-              bgpPeerAsnRanges: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    max: {
-                      type: "integer",
-                    },
-                    min: {
-                      type: "integer",
-                    },
-                  },
-                  additionalProperties: true,
-                },
-                description:
-                  "Output only. [Output Only] List of ASN ranges that the remote location is known to support. Formatted as an array of inclusive ranges {min: min-value, max: max-value}. For example, [{min: 123, max: 123}, {min: 64512, max: 65534}] allows the peer ASN to be 123 or anything in the range 64512-65534.  This field is only advisory. Although the API accepts other ranges, these are the ranges that we recommend.",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "Output only. [Output Only] Constraints for this attachment, if any. The attachment does not work if these constraints are not met.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
-        customerRouterIpAddress: {
-          name: "Customer Router Ip Address",
-          description:
-            "Output only. [Output Only] IPv4 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] IPv4 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
-          },
-          required: false,
-        },
-        customerRouterIpv6Address: {
-          name: "Customer Router Ipv6 Address",
-          description:
-            "Output only. [Output Only] IPv6 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] IPv6 address + prefix length to be configured on the customer router subinterface for this interconnect attachment.",
-          },
-          required: false,
-        },
         customerRouterIpv6InterfaceId: {
           name: "Customer Router Ipv6 Interface Id",
           description: "This field is not available.",
           type: {
             type: "string",
             description: "This field is not available.",
-          },
-          required: false,
-        },
-        dataplaneVersion: {
-          name: "Dataplane Version",
-          description:
-            "Output only. [Output Only] Dataplane version for this InterconnectAttachment. This field is only present for Dataplane version 2 and higher. Absence of this field in the API output indicates that the Dataplane is version 1.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output Only] Dataplane version for this InterconnectAttachment. This field is only present for Dataplane version 2 and higher. Absence of this field in the API output indicates that the Dataplane is version 1.",
           },
           required: false,
         },
@@ -303,27 +182,6 @@ const interconnectAttachmentsInsert: AppBlock = {
           },
           required: false,
         },
-        googleReferenceId: {
-          name: "Google Reference Id",
-          description:
-            "Output only. [Output Only] Google reference ID, to be used when raising support tickets with Google or otherwise to debug backend connectivity issues. [Deprecated] This field is not used.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Google reference ID, to be used when raising support tickets with Google or otherwise to debug backend connectivity issues. [Deprecated] This field is not used.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         interconnect: {
           name: "Interconnect",
           description:
@@ -346,17 +204,6 @@ const interconnectAttachmentsInsert: AppBlock = {
             },
             description:
               "A list of URLs of addresses that have been reserved for the VLAN attachment. Used only for the VLAN attachment that has the encryption option as IPSEC. The addresses must be regional internal IP address ranges. When creating an HA VPN gateway over the VLAN attachment, if the attachment is configured to use a regional internal IP address, then the VPN gateway's IP address is allocated from the IP address range specified here. For example, if the HA VPN gateway's interface 0 is paired to this VLAN attachment, then a regional internal IP address for the VPN gateway interface 0 will be allocated from the IP address specified for this VLAN attachment. If this field is not specified when creating the VLAN attachment, then later on when creating an HA VPN gateway on this VLAN attachment, the HA VPN gateway's IP address is allocated from the regional external IP address pool.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#interconnectAttachment for interconnect attachments.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#interconnectAttachment for interconnect attachments.",
           },
           required: false,
         },
@@ -455,22 +302,6 @@ const interconnectAttachmentsInsert: AppBlock = {
           },
           required: false,
         },
-        operationalStatus: {
-          name: "Operational Status",
-          description:
-            "Output only. [Output Only] The current status of whether or not this interconnect attachment is functional, which can take one of the following values:     - OS_ACTIVE: The attachment has been turned up and is ready to    use.    - OS_UNPROVISIONED: The attachment is not ready to use yet,    because turnup is not complete. Check the OperationalStatus enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_OPERATIONAL_STATUS",
-              "OS_ACTIVE",
-              "OS_UNPROVISIONED",
-            ],
-            description:
-              "Output only. [Output Only] The current status of whether or not this interconnect attachment is functional, which can take one of the following values:     - OS_ACTIVE: The attachment has been turned up and is ready to    use.    - OS_UNPROVISIONED: The attachment is not ready to use yet,    because turnup is not complete. Check the OperationalStatus enum for the list of possible values.",
-          },
-          required: false,
-        },
         pairingKey: {
           name: "Pairing Key",
           description:
@@ -542,36 +373,6 @@ const interconnectAttachmentsInsert: AppBlock = {
           },
           required: false,
         },
-        privateInterconnectInfo: {
-          name: "Private Interconnect Info",
-          description:
-            "Output only. [Output Only] Information specific to an InterconnectAttachment. This property is populated if the interconnect that this is attached to is of type DEDICATED.",
-          type: {
-            type: "object",
-            properties: {
-              tag8021q: {
-                type: "integer",
-                description:
-                  "[Output Only] 802.1q encapsulation tag to be used for traffic between Google and the customer, going to and from this network and region.",
-              },
-            },
-            description:
-              "Information for an interconnect attachment when this belongs to an interconnect of type DEDICATED.",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        remoteService: {
-          name: "Remote Service",
-          description:
-            'Output only. [Output Only] If the attachment is on a Cross-Cloud Interconnect connection, this field contains the interconnect\'s remote location service provider. Example values: "Amazon Web Services" "Microsoft Azure".  The field is set only for attachments on Cross-Cloud Interconnect connections. Its value is copied from the InterconnectRemoteLocation remoteService field.',
-          type: {
-            type: "string",
-            description:
-              'Output only. [Output Only] If the attachment is on a Cross-Cloud Interconnect connection, this field contains the interconnect\'s remote location service provider. Example values: "Amazon Web Services" "Microsoft Azure".  The field is set only for attachments on Cross-Cloud Interconnect connections. Its value is copied from the InterconnectRemoteLocation remoteService field.',
-          },
-          required: false,
-        },
         router: {
           name: "Router",
           description:
@@ -580,26 +381,6 @@ const interconnectAttachmentsInsert: AppBlock = {
             type: "string",
             description:
               "URL of the Cloud Router to be used for dynamic routing. This router must be in the same region as this InterconnectAttachment. The InterconnectAttachment will automatically connect the Interconnect to the network & region within which the Cloud Router is configured.",
-          },
-          required: false,
-        },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },
@@ -612,27 +393,6 @@ const interconnectAttachmentsInsert: AppBlock = {
             enum: ["UNDEFINED_STACK_TYPE", "IPV4_IPV6", "IPV4_ONLY"],
             description:
               "The stack type for this interconnect attachment to identify whether the IPv6 feature is enabled or not. If not specified, IPV4_ONLY will be used.  This field can be both set at interconnect attachments creation and update interconnect attachment operations. Check the StackType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        state: {
-          name: "State",
-          description:
-            "Output only. [Output Only] The current state of this attachment's functionality. Enum values ACTIVE and UNPROVISIONED are shared by DEDICATED/PRIVATE, PARTNER, and PARTNER_PROVIDER interconnect attachments, while enum values PENDING_PARTNER, PARTNER_REQUEST_RECEIVED, and PENDING_CUSTOMER are used for only PARTNER and PARTNER_PROVIDER interconnect attachments. This state can take one of the following values:     - ACTIVE: The attachment has been turned up and is ready to use.    - UNPROVISIONED: The attachment is not ready to use yet, because turnup    is not complete.    - PENDING_PARTNER: A newly-created PARTNER attachment that has not yet    been configured on the Partner side.    - PARTNER_REQUEST_RECEIVED: A PARTNER attachment is in the process of    provisioning after a PARTNER_PROVIDER attachment was created that    references it.    - PENDING_CUSTOMER: A PARTNER or PARTNER_PROVIDER    attachment that is waiting for a customer to activate it.    - DEFUNCT:    The attachment was deleted externally and is no longer functional. This    could be because the associated Interconnect was removed, or because the    other side of a Partner attachment was deleted. Check the State enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATE",
-              "ACTIVE",
-              "DEFUNCT",
-              "PARTNER_REQUEST_RECEIVED",
-              "PENDING_CUSTOMER",
-              "PENDING_PARTNER",
-              "STATE_UNSPECIFIED",
-              "UNPROVISIONED",
-            ],
-            description:
-              "Output only. [Output Only] The current state of this attachment's functionality. Enum values ACTIVE and UNPROVISIONED are shared by DEDICATED/PRIVATE, PARTNER, and PARTNER_PROVIDER interconnect attachments, while enum values PENDING_PARTNER, PARTNER_REQUEST_RECEIVED, and PENDING_CUSTOMER are used for only PARTNER and PARTNER_PROVIDER interconnect attachments. This state can take one of the following values:     - ACTIVE: The attachment has been turned up and is ready to use.    - UNPROVISIONED: The attachment is not ready to use yet, because turnup    is not complete.    - PENDING_PARTNER: A newly-created PARTNER attachment that has not yet    been configured on the Partner side.    - PARTNER_REQUEST_RECEIVED: A PARTNER attachment is in the process of    provisioning after a PARTNER_PROVIDER attachment was created that    references it.    - PENDING_CUSTOMER: A PARTNER or PARTNER_PROVIDER    attachment that is waiting for a customer to activate it.    - DEFUNCT:    The attachment was deleted externally and is no longer functional. This    could be because the associated Interconnect was removed, or because the    other side of a Partner attachment was deleted. Check the State enum for the list of possible values.",
           },
           required: false,
         },

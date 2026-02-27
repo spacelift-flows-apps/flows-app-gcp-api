@@ -509,6 +509,18 @@ function convertField(
   const commentKey = `${shortParent}.${field.name}`;
   const comment = sourceComments.get(commentKey);
 
+  // Heuristic: Some protos (notably Compute Engine) use comment markers like
+  // "[Output Only]" or "[Input Only]" instead of google.api.field_behavior
+  // annotations. Detect these and add the corresponding behaviors.
+  if (comment) {
+    if (/\[Output Only\]/i.test(comment) && !behaviors.includes(FieldBehavior.OUTPUT_ONLY)) {
+      behaviors.push(FieldBehavior.OUTPUT_ONLY);
+    }
+    if (/\[Input Only\]/i.test(comment) && !behaviors.includes(FieldBehavior.INPUT_ONLY)) {
+      behaviors.push(FieldBehavior.INPUT_ONLY);
+    }
+  }
+
   // Determine oneof group
   let oneofGroup: string | undefined;
   if (field.partOf) {

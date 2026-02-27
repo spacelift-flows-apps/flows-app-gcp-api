@@ -8,17 +8,6 @@ const urlMapsInsert: AppBlock = {
   inputs: {
     default: {
       config: {
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         defaultCustomErrorResponsePolicy: {
           name: "Default Custom Error Response Policy",
           description:
@@ -611,27 +600,6 @@ const urlMapsInsert: AppBlock = {
               additionalProperties: true,
             },
             description: "The list of host rules to use against the URL.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#urlMaps for url maps.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#urlMaps for url maps.",
           },
           required: false,
         },
@@ -2360,26 +2328,6 @@ const urlMapsInsert: AppBlock = {
             },
             description:
               "The list of named PathMatchers to use against the URL.",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional URL map resides. This field is not applicable to global URL maps. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional URL map resides. This field is not applicable to global URL maps. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

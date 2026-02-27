@@ -290,14 +290,6 @@ const backendServicesInsert: AppBlock = {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              signedUrlKeyNames: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
-                description:
-                  "[Output Only] Names of the keys for signing request URLs.",
-              },
             },
             description:
               "Message containing Cloud CDN configuration for a backend service.",
@@ -475,17 +467,6 @@ const backendServicesInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         customMetrics: {
           name: "Custom Metrics",
           description:
@@ -551,17 +532,6 @@ const backendServicesInsert: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
-          },
-          required: false,
-        },
-        edgeSecurityPolicy: {
-          name: "Edge Security Policy",
-          description:
-            "[Output Only] The resource URL for the edge security policy associated with this backend service.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The resource URL for the edge security policy associated with this backend service.",
           },
           required: false,
         },
@@ -726,24 +696,9 @@ const backendServicesInsert: AppBlock = {
                 description:
                   "OAuth2 client secret to use for the authentication flow. For security reasons, this value cannot be retrieved via the API. Instead, the SHA-256 hash of the value is returned in the oauth2ClientSecretSha256 field.  @InputOnly",
               },
-              oauth2ClientSecretSha256: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] SHA256 hash value for the field oauth2_client_secret above.",
-              },
             },
             description: "Identity-Aware Proxy",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -762,17 +717,6 @@ const backendServicesInsert: AppBlock = {
             ],
             description:
               "Specifies a preference for traffic sent from the proxy to the backend (or from the client to the backend for proxyless gRPC). The possible values are:     - IPV4_ONLY: Only send IPv4 traffic to the backends of the    backend service (Instance Group, Managed Instance Group, Network Endpoint    Group), regardless of traffic from the client to the proxy. Only IPv4    health checks are used to check the health of the backends. This is the    default setting.    - PREFER_IPV6: Prioritize the connection to the endpoint's    IPv6 address over its IPv4 address (provided there is a healthy IPv6    address).    - IPV6_ONLY: Only send IPv6 traffic to the backends of the    backend service (Instance Group, Managed Instance Group, Network Endpoint    Group), regardless of traffic from the client to the proxy. Only IPv6    health checks are used to check the health of the backends.    This field is applicable to either:     -  Advanced global external Application Load Balancer (load balancing    scheme EXTERNAL_MANAGED),    -  Regional external Application Load    Balancer,    -  Internal proxy Network Load Balancer (load balancing    scheme INTERNAL_MANAGED),    -  Regional internal Application Load    Balancer (load balancing scheme INTERNAL_MANAGED),    -  Traffic    Director with Envoy proxies and proxyless gRPC (load balancing scheme    INTERNAL_SELF_MANAGED). Check the IpAddressSelectionPolicy enum for the list of possible values.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of resource. Always compute#backendService for backend services.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of resource. Always compute#backendService for backend services.",
           },
           required: false,
         },
@@ -1182,28 +1126,6 @@ const backendServicesInsert: AppBlock = {
           },
           required: false,
         },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional backend service resides. This field is not applicable to global backend services. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional backend service resides. This field is not applicable to global backend services. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          },
-          required: false,
-        },
-        securityPolicy: {
-          name: "Security Policy",
-          description:
-            "[Output Only] The resource URL for the security policy associated with this backend service.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The resource URL for the security policy associated with this backend service.",
-          },
-          required: false,
-        },
         securitySettings: {
           name: "Security Settings",
           description:
@@ -1256,15 +1178,6 @@ const backendServicesInsert: AppBlock = {
             description:
               "The authentication and authorization settings for a BackendService.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },
@@ -1430,28 +1343,6 @@ const backendServicesInsert: AppBlock = {
             additionalProperties: true,
             description:
               "Configuration for Backend Authenticated TLS and mTLS. May only be specified when the backend protocol is SSL, HTTPS or HTTP2.",
-          },
-          required: false,
-        },
-        usedBy: {
-          name: "Used By",
-          description:
-            "Output only. [Output Only] List of resources referencing given backend service.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                reference: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] Server-defined URL for resources referencing given BackendService like UrlMaps, TargetTcpProxies, TargetSslProxies and ForwardingRule.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] List of resources referencing given backend service.",
           },
           required: false,
         },

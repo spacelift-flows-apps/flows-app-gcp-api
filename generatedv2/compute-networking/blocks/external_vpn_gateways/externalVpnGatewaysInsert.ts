@@ -8,17 +8,6 @@ const externalVpnGatewaysInsert: AppBlock = {
   inputs: {
     default: {
       config: {
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -27,16 +16,6 @@ const externalVpnGatewaysInsert: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -70,17 +49,6 @@ const externalVpnGatewaysInsert: AppBlock = {
             },
             description:
               "A list of interfaces for this external VPN gateway.  If your peer-side gateway is an on-premises gateway and non-AWS cloud providers' gateway, at most two interfaces can be provided for an external VPN gateway. If your peer side is an AWS virtual private gateway, four interfaces should be provided for an external VPN gateway.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#externalVpnGateway for externalVpnGateways.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#externalVpnGateway for externalVpnGateways.",
           },
           required: false,
         },
@@ -134,17 +102,6 @@ const externalVpnGatewaysInsert: AppBlock = {
             ],
             description:
               "Indicates the user-supplied redundancy type of this external VPN gateway. Check the RedundancyType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

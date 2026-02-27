@@ -142,14 +142,6 @@ const backendBucketsUpdate: AppBlock = {
                 type: "string",
                 description: "64-bit integer as string",
               },
-              signedUrlKeyNames: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
-                description:
-                  "[Output Only] Names of the keys for signing request URLs.",
-              },
             },
             description:
               "Message containing Cloud CDN configuration for a backend bucket.",
@@ -166,17 +158,6 @@ const backendBucketsUpdate: AppBlock = {
             enum: ["UNDEFINED_COMPRESSION_MODE", "AUTOMATIC", "DISABLED"],
             description:
               "Compress text responses using Brotli or gzip compression, based on the client's Accept-Encoding header. Check the CompressionMode enum for the list of possible values.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "[Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -205,33 +186,12 @@ const backendBucketsUpdate: AppBlock = {
           },
           required: false,
         },
-        edgeSecurityPolicy: {
-          name: "Edge Security Policy",
-          description:
-            "[Output Only] The resource URL for the edge security policy associated with this backend bucket.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The resource URL for the edge security policy associated with this backend bucket.",
-          },
-          required: false,
-        },
         enableCdn: {
           name: "Enable Cdn",
           description: "If true, enable Cloud CDN for this BackendBucket.",
           type: {
             type: "boolean",
             description: "If true, enable Cloud CDN for this BackendBucket.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] Unique identifier for the resource; defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -285,37 +245,6 @@ const backendBucketsUpdate: AppBlock = {
             },
             description: "Additional Backend Bucket parameters.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        usedBy: {
-          name: "Used By",
-          description:
-            "Output only. [Output Only] List of resources referencing that backend bucket.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                reference: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] Server-defined URL for UrlMaps referencing that BackendBucket.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] List of resources referencing that backend bucket.",
           },
           required: false,
         },

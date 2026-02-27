@@ -81,17 +81,6 @@ const regionSecurityPoliciesPatchRule: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output only] Type of the resource. Alwayscompute#securityPolicyRule for security policy rules",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output only] Type of the resource. Alwayscompute#securityPolicyRule for security policy rules",
-          },
-          required: false,
-        },
         match: {
           name: "Match",
           description:

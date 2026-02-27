@@ -10,14 +10,12 @@ const autoscalersPatch: AppBlock = {
       config: {
         zone: {
           name: "Zone",
-          description:
-            "Output only. [Output Only] URL of thezone where the instance group resides (for autoscalers living in zonal scope).",
+          description: "Name of the zone for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of thezone where the instance group resides (for autoscalers living in zonal scope).",
+            description: "Name of the zone for this request.",
           },
-          required: false,
+          required: true,
         },
         autoscalingPolicy: {
           name: "Autoscaling Policy",
@@ -137,11 +135,6 @@ const autoscalersPatch: AppBlock = {
                   maxScaledInReplicas: {
                     type: "object",
                     properties: {
-                      calculated: {
-                        type: "integer",
-                        description:
-                          "Output only. [Output Only] Absolute value of VM instances calculated based on the specific mode.        - If the value is fixed, then the calculated      value is equal to the fixed value.     - If the value is a percent, then the     calculated      value is percent/100 * targetSize. For example,      the calculated value of a 80% of a managed instance group      with 150 instances would be (80/100 * 150) = 120 VM instances. If there      is a remainder, the number is rounded.",
-                      },
                       fixed: {
                         type: "integer",
                         description:
@@ -181,17 +174,6 @@ const autoscalersPatch: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -203,27 +185,6 @@ const autoscalersPatch: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#autoscaler for autoscalers.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#autoscaler for autoscalers.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:
@@ -232,118 +193,6 @@ const autoscalersPatch: AppBlock = {
             type: "string",
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-          },
-          required: false,
-        },
-        recommendedSize: {
-          name: "Recommended Size",
-          description:
-            "Output only. [Output Only] Target recommended MIG size (number of instances) computed by autoscaler. Autoscaler calculates the recommended MIG size even when the autoscaling policy mode is different from ON. This field is empty when autoscaler is not connected to an existing managed instance group or autoscaler did not generate its prediction.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output Only] Target recommended MIG size (number of instances) computed by autoscaler. Autoscaler calculates the recommended MIG size even when the autoscaling policy mode is different from ON. This field is empty when autoscaler is not connected to an existing managed instance group or autoscaler did not generate its prediction.",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of theregion where the instance group resides (for autoscalers living in regional scope).",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of theregion where the instance group resides (for autoscalers living in regional scope).",
-          },
-          required: false,
-        },
-        scalingScheduleStatus: {
-          name: "Scaling Schedule Status",
-          description:
-            "Output only. [Output Only] Status information of existing scaling schedules.",
-          type: {
-            type: "object",
-            additionalProperties: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] Status information of existing scaling schedules.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "[Output Only] The status of the autoscaler configuration. Current set of possible values:     - PENDING:      Autoscaler backend hasn't read new/updated configuration.    - DELETING:      Configuration is being deleted.    - ACTIVE:      Configuration is acknowledged to be effective. Some warnings might      be present in the statusDetails field.    - ERROR:      Configuration has errors. Actionable for users. Details are present in      the statusDetails field.   New values might be added in the future. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "ACTIVE",
-              "DELETING",
-              "ERROR",
-              "PENDING",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-          },
-          required: false,
-        },
-        statusDetails: {
-          name: "Status Details",
-          description:
-            "[Output Only] Human-readable details about the current state of the autoscaler. Read the documentation forCommonly returned status messages for examples of status messages you might encounter.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  description: "The status message.",
-                },
-                type: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_TYPE",
-                    "ALL_INSTANCES_UNHEALTHY",
-                    "BACKEND_SERVICE_DOES_NOT_EXIST",
-                    "CAPPED_AT_MAX_NUM_REPLICAS",
-                    "CUSTOM_METRIC_DATA_POINTS_TOO_SPARSE",
-                    "CUSTOM_METRIC_INVALID",
-                    "MIN_EQUALS_MAX",
-                    "MISSING_CUSTOM_METRIC_DATA_POINTS",
-                    "MISSING_LOAD_BALANCING_DATA_POINTS",
-                    "MODE_OFF",
-                    "MODE_ONLY_SCALE_OUT",
-                    "MODE_ONLY_UP",
-                    "MORE_THAN_ONE_BACKEND_SERVICE",
-                    "NOT_ENOUGH_QUOTA_AVAILABLE",
-                    "REGION_RESOURCE_STOCKOUT",
-                    "SCALING_TARGET_DOES_NOT_EXIST",
-                    "SCHEDULED_INSTANCES_GREATER_THAN_AUTOSCALER_MAX",
-                    "SCHEDULED_INSTANCES_LESS_THAN_AUTOSCALER_MIN",
-                    "UNKNOWN",
-                    "UNSUPPORTED_MAX_RATE_LOAD_BALANCING_CONFIGURATION",
-                    "ZONE_RESOURCE_STOCKOUT",
-                  ],
-                  description:
-                    "The type of error, warning, or notice returned. Current set of possible values:     - ALL_INSTANCES_UNHEALTHY (WARNING):      All instances in the instance group are unhealthy (not in RUNNING      state).    - BACKEND_SERVICE_DOES_NOT_EXIST (ERROR):      There is no backend service attached to the instance group.    - CAPPED_AT_MAX_NUM_REPLICAS (WARNING):      Autoscaler recommends a size greater than maxNumReplicas.    - CUSTOM_METRIC_DATA_POINTS_TOO_SPARSE (WARNING):      The custom metric samples are not exported often enough to be      a credible base for autoscaling.    - CUSTOM_METRIC_INVALID (ERROR):      The custom metric that was specified does not exist or does not have      the necessary labels.    - MIN_EQUALS_MAX (WARNING):      The minNumReplicas is equal to maxNumReplicas. This means the      autoscaler cannot add or remove instances from the instance group.    - MISSING_CUSTOM_METRIC_DATA_POINTS (WARNING):      The autoscaler did not receive any data from the custom metric      configured for autoscaling.    - MISSING_LOAD_BALANCING_DATA_POINTS (WARNING):      The autoscaler is configured to scale based on a load balancing signal      but the instance group has not received any requests from the load      balancer.    - MODE_OFF (WARNING):      Autoscaling is turned off. The number of instances in the group won't      change automatically. The autoscaling configuration is preserved.    - MODE_ONLY_UP (WARNING):      Autoscaling is in the \"Autoscale only out\" mode. The autoscaler can add      instances but not remove any.    - MORE_THAN_ONE_BACKEND_SERVICE (ERROR):      The instance group cannot be autoscaled because it has more than one      backend service attached to it.    - NOT_ENOUGH_QUOTA_AVAILABLE (ERROR):      There is insufficient quota for the necessary resources, such as CPU or      number of instances.    - REGION_RESOURCE_STOCKOUT (ERROR):      Shown only for regional autoscalers: there is a resource stockout in      the chosen region.    - SCALING_TARGET_DOES_NOT_EXIST (ERROR):      The target to be scaled does not exist.    - UNSUPPORTED_MAX_RATE_LOAD_BALANCING_CONFIGURATION      (ERROR): Autoscaling does not work with an HTTP/S load balancer that      has been configured for maxRate.    - ZONE_RESOURCE_STOCKOUT (ERROR):      For zonal autoscalers: there is a resource stockout in the chosen zone.      For regional autoscalers: in at least one of the zones you're using      there is a resource stockout.   New values might be added in the future. Some of the values might not be available in all API versions. Check the Type enum for the list of possible values.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description:
-              "[Output Only] Human-readable details about the current state of the autoscaler. Read the documentation forCommonly returned status messages for examples of status messages you might encounter.",
           },
           required: false,
         },

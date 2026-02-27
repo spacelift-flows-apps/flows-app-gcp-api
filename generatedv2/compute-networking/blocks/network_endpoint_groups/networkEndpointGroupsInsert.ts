@@ -11,13 +11,13 @@ const networkEndpointGroupsInsert: AppBlock = {
         zone: {
           name: "Zone",
           description:
-            "Output only. [Output Only] The URL of thezone where the network endpoint group is located.",
+            "The name of the zone where you want to create the network endpoint group. It should comply with RFC1035.",
           type: {
             type: "string",
             description:
-              "Output only. [Output Only] The URL of thezone where the network endpoint group is located.",
+              "The name of the zone where you want to create the network endpoint group. It should comply with RFC1035.",
           },
-          required: false,
+          required: true,
         },
         annotations: {
           name: "Annotations",
@@ -115,17 +115,6 @@ const networkEndpointGroupsInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         defaultPort: {
           name: "Default Port",
           description:
@@ -145,27 +134,6 @@ const networkEndpointGroupsInsert: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#networkEndpointGroup for network endpoint group.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#networkEndpointGroup for network endpoint group.",
           },
           required: false,
         },
@@ -220,33 +188,10 @@ const networkEndpointGroupsInsert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              consumerPscAddress: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Address allocated from given subnetwork for PSC. This IP address acts as a VIP for a PSC NEG, allowing it to act as an endpoint in L7 PSC-XLB.",
-              },
               producerPort: {
                 type: "integer",
                 description:
                   "The psc producer port is used to connect PSC NEG with specific port on the PSC Producer side; should only be used for the PRIVATE_SERVICE_CONNECT NEG type",
-              },
-              pscConnectionId: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              pscConnectionStatus: {
-                type: "string",
-                enum: [
-                  "UNDEFINED_PSC_CONNECTION_STATUS",
-                  "ACCEPTED",
-                  "CLOSED",
-                  "NEEDS_ATTENTION",
-                  "PENDING",
-                  "REJECTED",
-                  "STATUS_UNSPECIFIED",
-                ],
-                description:
-                  "Output only. [Output Only] The connection status of the PSC Forwarding Rule. Check the PscConnectionStatus enum for the list of possible values.",
               },
             },
             description:
@@ -263,39 +208,6 @@ const networkEndpointGroupsInsert: AppBlock = {
             type: "string",
             description:
               "The target service url used to set up private service connection to a Google API or a PSC Producer Service Attachment. An example value is: asia-northeast3-cloudkms.googleapis.com.  Optional. Only valid when networkEndpointType isPRIVATE_SERVICE_CONNECT.",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] The URL of theregion where the network endpoint group is located.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL of theregion where the network endpoint group is located.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        size: {
-          name: "Size",
-          description:
-            "Output only. [Output only] Number of network endpoints in the network endpoint group.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output only] Number of network endpoints in the network endpoint group.",
           },
           required: false,
         },

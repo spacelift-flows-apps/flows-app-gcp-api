@@ -10,14 +10,12 @@ const routersPreview: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "[Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "[Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         router: {
           name: "Router",
@@ -251,16 +249,6 @@ const routersPreview: AppBlock = {
                   description:
                     "IPv6 address of the interface inside Google Cloud Platform.",
                 },
-                managementType: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_MANAGEMENT_TYPE",
-                    "MANAGED_BY_ATTACHMENT",
-                    "MANAGED_BY_USER",
-                  ],
-                  description:
-                    "Output only. [Output Only] The resource that configures and manages this BGP peer.     -  MANAGED_BY_USER is the default value and can be managed by you    or other users    - MANAGED_BY_ATTACHMENT is a BGP peer that is configured and managed    by Cloud Interconnect, specifically by an InterconnectAttachment of type    PARTNER. Google automatically creates, updates, and deletes this type of    BGP peer when the PARTNER InterconnectAttachment is created, updated,    or deleted. Check the ManagementType enum for the list of possible values.",
-                },
                 md5AuthenticationKeyName: {
                   type: "string",
                   description:
@@ -304,17 +292,6 @@ const routersPreview: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -334,16 +311,6 @@ const routersPreview: AppBlock = {
             type: "boolean",
             description:
               "Indicates if a router is dedicated for use with encrypted VLAN attachments (interconnectAttachments).",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -377,16 +344,6 @@ const routersPreview: AppBlock = {
                   description:
                     "URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.",
                 },
-                managementType: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_MANAGEMENT_TYPE",
-                    "MANAGED_BY_ATTACHMENT",
-                    "MANAGED_BY_USER",
-                  ],
-                  description:
-                    "Output only. [Output Only] The resource that configures and manages this interface.     - MANAGED_BY_USER is the default value and can be managed directly    by users.    - MANAGED_BY_ATTACHMENT is an interface that is configured and    managed by Cloud Interconnect, specifically, by an InterconnectAttachment    of type PARTNER. Google automatically creates, updates, and deletes    this type of interface when the PARTNER InterconnectAttachment is    created, updated, or deleted. Check the ManagementType enum for the list of possible values.",
-                },
                 name: {
                   type: "string",
                   description:
@@ -412,17 +369,6 @@ const routersPreview: AppBlock = {
             },
             description:
               "Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified:     - linkedVpnTunnel    - linkedInterconnectAttachment    - subnetwork   You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of resource. Always compute#router for routers.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of resource. Always compute#router for routers.",
           },
           required: false,
         },
@@ -777,15 +723,6 @@ const routersPreview: AppBlock = {
             },
             description: "Additional router parameters.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },
@@ -1210,11 +1147,6 @@ const routersPreview: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    key: {
-                      type: "string",
-                      description:
-                        "[Input only] Value of the key.  For patch and update calls, it can be skipped to copy the value from the previous configuration. This is allowed if the key with the same name existed before the operation. Maximum length is 80 characters. Can only contain printable ASCII characters.",
-                    },
                     name: {
                       type: "string",
                       description:
@@ -1517,21 +1449,6 @@ const routersPreview: AppBlock = {
               network: {
                 type: "string",
                 description: "URI of the network to which this router belongs.",
-              },
-              params: {
-                type: "object",
-                properties: {
-                  resourceManagerTags: {
-                    type: "object",
-                    additionalProperties: {
-                      type: "string",
-                    },
-                    description:
-                      'Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {"tagKeys/333" : "tagValues/444", "tagKeys/123" : "tagValues/456"} * {"123/environment" : "production", "345/abc" : "xyz"} Note: * Invalid combinations of ID & namespaced format is not supported. For   instance: {"123/environment" : "tagValues/444"} is invalid. * Inconsistent format is not supported. For instance:   {"tagKeys/333" : "tagValues/444", "123/env" : "prod"} is invalid.',
-                  },
-                },
-                description: "Additional router parameters.",
-                additionalProperties: true,
               },
               region: {
                 type: "string",

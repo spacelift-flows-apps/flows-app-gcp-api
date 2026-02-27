@@ -32,11 +32,6 @@ const regionUrlMapsValidate: AppBlock = {
           type: {
             type: "object",
             properties: {
-              creationTimestamp: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-              },
               defaultCustomErrorResponsePolicy: {
                 type: "object",
                 properties: {
@@ -587,15 +582,6 @@ const regionUrlMapsValidate: AppBlock = {
                   additionalProperties: true,
                 },
                 description: "The list of host rules to use against the URL.",
-              },
-              id: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              kind: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Type of the resource. Always compute#urlMaps for url maps.",
               },
               name: {
                 type: "string",
@@ -2321,16 +2307,6 @@ const regionUrlMapsValidate: AppBlock = {
                 },
                 description:
                   "The list of named PathMatchers to use against the URL.",
-              },
-              region: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] URL of the region where the regional URL map resides. This field is not applicable to global URL maps. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-              },
-              selfLink: {
-                type: "string",
-                description:
-                  "[Output Only] Server-defined URL for the resource.",
               },
               tests: {
                 type: "array",

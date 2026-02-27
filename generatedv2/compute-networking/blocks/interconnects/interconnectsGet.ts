@@ -399,21 +399,6 @@ const interconnectsGet: AppBlock = {
             description:
               "Output only. [Output Only] The current status of this Interconnect's functionality, which can take one of the following values:     - OS_ACTIVE: A valid Interconnect, which is turned up and is ready to    use. Attachments may be provisioned on this Interconnect.  - OS_UNPROVISIONED: An Interconnect that has not completed turnup. No attachments may be provisioned on this Interconnect. - OS_UNDER_MAINTENANCE: An Interconnect that is undergoing internal maintenance. No attachments may be provisioned or updated on this Interconnect. Check the OperationalStatus enum for the list of possible values.",
           },
-          params: {
-            type: "object",
-            properties: {
-              resourceManagerTags: {
-                type: "object",
-                additionalProperties: {
-                  type: "string",
-                },
-                description:
-                  'Tag keys/values directly bound to this resource. Tag keys and values have the same definition as resource manager tags. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {"tagKeys/333" : "tagValues/444", "tagKeys/123" : "tagValues/456"} * {"123/environment" : "production", "345/abc" : "xyz"} Note: * Invalid combinations of ID & namespaced format is not supported. For   instance: {"123/environment" : "tagValues/444"} is invalid. * Inconsistent format is not supported. For instance:   {"tagKeys/333" : "tagValues/444", "123/env" : "prod"} is invalid.',
-              },
-            },
-            description: "Additional interconnect parameters.",
-            additionalProperties: true,
-          },
           peerIpAddress: {
             type: "string",
             description:

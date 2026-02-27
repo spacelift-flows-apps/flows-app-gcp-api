@@ -8,34 +8,6 @@ const snapshotsInsert: AppBlock = {
   inputs: {
     default: {
       config: {
-        architecture: {
-          name: "Architecture",
-          description:
-            "Output only. [Output Only] The architecture of the snapshot. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_ARCHITECTURE",
-              "ARCHITECTURE_UNSPECIFIED",
-              "ARM64",
-              "X86_64",
-            ],
-            description:
-              "Output only. [Output Only] The architecture of the snapshot. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
-          },
-          required: false,
-        },
-        autoCreated: {
-          name: "Auto Created",
-          description:
-            "Output only. [Output Only] Set to true if snapshots are automatically created by applying resource policy on the target disk.",
-          type: {
-            type: "boolean",
-            description:
-              "Output only. [Output Only] Set to true if snapshots are automatically created by applying resource policy on the target disk.",
-          },
-          required: false,
-        },
         chainName: {
           name: "Chain Name",
           description:
@@ -44,27 +16,6 @@ const snapshotsInsert: AppBlock = {
             type: "string",
             description:
               "Creates the new snapshot in the snapshot chain labeled with the specified name. The chain name must be 1-63 characters long and comply with RFC1035. This is an uncommon option only for advanced service owners who needs to create separate snapshot chains, for example, for chargeback tracking. When you describe your snapshot resource, this field is visible only if it has a non-empty value.",
-          },
-          required: false,
-        },
-        creationSizeBytes: {
-          name: "Creation Size Bytes",
-          description:
-            "Output only. [Output Only] Size in bytes of the snapshot at creation time.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -79,37 +30,6 @@ const snapshotsInsert: AppBlock = {
           },
           required: false,
         },
-        diskSizeGb: {
-          name: "Disk Size Gb",
-          description:
-            "Output only. [Output Only] Size of the source disk, specified in GB.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        downloadBytes: {
-          name: "Download Bytes",
-          description:
-            "Output only. [Output Only] Number of bytes downloaded to restore a snapshot to a disk.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        enableConfidentialCompute: {
-          name: "Enable Confidential Compute",
-          description:
-            "Output only. Whether this snapshot is created from a confidential compute mode disk. [Output Only]: This field is not set by user, but from source disk.",
-          type: {
-            type: "boolean",
-            description:
-              "Output only. Whether this snapshot is created from a confidential compute mode disk. [Output Only]: This field is not set by user, but from source disk.",
-          },
-          required: false,
-        },
         guestFlush: {
           name: "Guest Flush",
           description:
@@ -118,68 +38,6 @@ const snapshotsInsert: AppBlock = {
             type: "boolean",
             description:
               "[Input Only] Whether to attempt an application consistent snapshot by informing the OS to prepare for the snapshot process.",
-          },
-          required: false,
-        },
-        guestOsFeatures: {
-          name: "Guest Os Features",
-          description:
-            "Output only. [Output Only] A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                type: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_TYPE",
-                    "BARE_METAL_LINUX_COMPATIBLE",
-                    "FEATURE_TYPE_UNSPECIFIED",
-                    "GVNIC",
-                    "IDPF",
-                    "MULTI_IP_SUBNET",
-                    "SECURE_BOOT",
-                    "SEV_CAPABLE",
-                    "SEV_LIVE_MIGRATABLE",
-                    "SEV_LIVE_MIGRATABLE_V2",
-                    "SEV_SNP_CAPABLE",
-                    "SNP_SVSM_CAPABLE",
-                    "TDX_CAPABLE",
-                    "UEFI_COMPATIBLE",
-                    "VIRTIO_SCSI_MULTIQUEUE",
-                    "WINDOWS",
-                  ],
-                  description:
-                    "The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values:     - VIRTIO_SCSI_MULTIQUEUE    - WINDOWS    - MULTI_IP_SUBNET    - UEFI_COMPATIBLE    - GVNIC    - SEV_CAPABLE    - SUSPEND_RESUME_COMPATIBLE    - SEV_LIVE_MIGRATABLE_V2    - SEV_SNP_CAPABLE    - TDX_CAPABLE    - IDPF    - SNP_SVSM_CAPABLE   For more information, see Enabling guest operating system features. Check the Type enum for the list of possible values.",
-                },
-              },
-              description: "Guest OS features.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#snapshot for Snapshot resources.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#snapshot for Snapshot resources.",
           },
           required: false,
         },
@@ -205,35 +63,6 @@ const snapshotsInsert: AppBlock = {
             },
             description:
               "Labels to apply to this snapshot. These can be later modified by the setLabels method. Label values may be empty.",
-          },
-          required: false,
-        },
-        licenseCodes: {
-          name: "License Codes",
-          description:
-            "Output only. [Output Only] Integer license codes indicating which licenses are attached to this snapshot.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-              description: "64-bit integer as string",
-            },
-            description:
-              "Output only. [Output Only] Integer license codes indicating which licenses are attached to this snapshot.",
-          },
-          required: false,
-        },
-        licenses: {
-          name: "Licenses",
-          description:
-            "Output only. [Output Only] A list of public visible licenses that apply to this snapshot. This can be because the original image had licenses attached (such as a Windows image).",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] A list of public visible licenses that apply to this snapshot. This can be because the original image had licenses attached (such as a Windows image).",
           },
           required: false,
         },
@@ -289,26 +118,6 @@ const snapshotsInsert: AppBlock = {
           },
           required: false,
         },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
         snapshotEncryptionKey: {
           name: "Snapshot Encryption Key",
           description:
@@ -335,11 +144,6 @@ const snapshotsInsert: AppBlock = {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-              },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
               },
             },
             additionalProperties: true,
@@ -396,11 +200,6 @@ const snapshotsInsert: AppBlock = {
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-              },
             },
             additionalProperties: true,
             description:
@@ -416,17 +215,6 @@ const snapshotsInsert: AppBlock = {
             type: "string",
             description:
               "The source disk whose recovery checkpoint will be used to create this snapshot.",
-          },
-          required: false,
-        },
-        sourceDiskId: {
-          name: "Source Disk Id",
-          description:
-            "Output only. [Output Only] The ID value of the disk used to create this snapshot. This value may be used to determine whether the snapshot was taken from the current or a previous instance of a given disk name.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The ID value of the disk used to create this snapshot. This value may be used to determine whether the snapshot was taken from the current or a previous instance of a given disk name.",
           },
           required: false,
         },
@@ -468,89 +256,10 @@ const snapshotsInsert: AppBlock = {
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-              },
             },
             additionalProperties: true,
             description:
               "Customer provided encryption key when creating Snapshot from Instant Snapshot.",
-          },
-          required: false,
-        },
-        sourceInstantSnapshotId: {
-          name: "Source Instant Snapshot Id",
-          description:
-            "Output only. [Output Only] The unique ID of the instant snapshot used to create this snapshot. This value identifies the exact instant snapshot that was used to create this snapshot. For example, if you created the snapshot from an instant snapshot that was later deleted and recreated under the same name, the source instant snapshot ID would identify the exact instant snapshot that was used.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The unique ID of the instant snapshot used to create this snapshot. This value identifies the exact instant snapshot that was used to create this snapshot. For example, if you created the snapshot from an instant snapshot that was later deleted and recreated under the same name, the source instant snapshot ID would identify the exact instant snapshot that was used.",
-          },
-          required: false,
-        },
-        sourceSnapshotSchedulePolicy: {
-          name: "Source Snapshot Schedule Policy",
-          description:
-            "Output only. [Output Only] URL of the resource policy which created this scheduled snapshot.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the resource policy which created this scheduled snapshot.",
-          },
-          required: false,
-        },
-        sourceSnapshotSchedulePolicyId: {
-          name: "Source Snapshot Schedule Policy Id",
-          description:
-            "Output only. [Output Only] ID of the resource policy which created this scheduled snapshot.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] ID of the resource policy which created this scheduled snapshot.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of the snapshot. This can beCREATING, DELETING, FAILED,READY, or UPLOADING. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "CREATING",
-              "DELETING",
-              "FAILED",
-              "READY",
-              "UPLOADING",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-          },
-          required: false,
-        },
-        storageBytes: {
-          name: "Storage Bytes",
-          description:
-            "Output only. [Output Only] A size of the storage used by the snapshot. As snapshots share storage, this number is expected to change with snapshot creation/deletion.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        storageBytesStatus: {
-          name: "Storage Bytes Status",
-          description:
-            "Output only. [Output Only] An indicator whether storageBytes is in a stable state or it is being adjusted as a result of shared storage reallocation. This status can either be UPDATING, meaning the size of the snapshot is being updated, or UP_TO_DATE, meaning the size of the snapshot is up-to-date. Check the StorageBytesStatus enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_STORAGE_BYTES_STATUS", "UPDATING", "UP_TO_DATE"],
-            description:
-              "Output only. [Output Only] An indicator whether storageBytes is in a stable state or it is being adjusted as a result of shared storage reallocation. This status can either be UPDATING, meaning the size of the snapshot is being updated, or UP_TO_DATE, meaning the size of the snapshot is up-to-date. Check the StorageBytesStatus enum for the list of possible values.",
           },
           required: false,
         },

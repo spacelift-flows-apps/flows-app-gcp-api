@@ -10,42 +10,12 @@ const regionInstantSnapshotsInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the instant snapshot resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the instant snapshot resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region for this request.",
           },
-          required: false,
-        },
-        architecture: {
-          name: "Architecture",
-          description:
-            "Output only. [Output Only] The architecture of the instant snapshot. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_ARCHITECTURE",
-              "ARCHITECTURE_UNSPECIFIED",
-              "ARM64",
-              "X86_64",
-            ],
-            description:
-              "Output only. [Output Only] The architecture of the instant snapshot. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
+          required: true,
         },
         description: {
           name: "Description",
@@ -55,37 +25,6 @@ const regionInstantSnapshotsInsert: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
-          },
-          required: false,
-        },
-        diskSizeGb: {
-          name: "Disk Size Gb",
-          description:
-            "Output only. [Output Only] Size of the source disk, specified in GB.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#instantSnapshot for InstantSnapshot resources.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#instantSnapshot for InstantSnapshot resources.",
           },
           required: false,
         },
@@ -125,61 +64,12 @@ const regionInstantSnapshotsInsert: AppBlock = {
           },
           required: false,
         },
-        resourceStatus: {
-          name: "Resource Status",
-          description:
-            "Output only. [Output Only] Status information for the instant snapshot resource.",
-          type: {
-            type: "object",
-            properties: {
-              storageSizeBytes: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "Output only. [Output Only] Status information for the instant snapshot resource.",
-          },
-          required: false,
-        },
         satisfiesPzi: {
           name: "Satisfies Pzi",
           description: "Output only. Reserved for future use.",
           type: {
             type: "boolean",
             description: "Output only. Reserved for future use.",
-          },
-          required: false,
-        },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        selfLinkWithId: {
-          name: "Self Link With Id",
-          description:
-            "Output only. [Output Only] Server-defined URL for this resource's resource id.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for this resource's resource id.",
           },
           required: false,
         },
@@ -191,47 +81,6 @@ const regionInstantSnapshotsInsert: AppBlock = {
             type: "string",
             description:
               "URL of the source disk used to create this instant snapshot. Note that the source disk must be in the same zone/region as the instant snapshot to be created. This can be a full or valid partial URL. For example, the following are valid values:        -        https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk       -        https://www.googleapis.com/compute/v1/projects/project/regions/region/disks/disk       -        projects/project/zones/zone/disks/disk       -        projects/project/regions/region/disks/disk       -        zones/zone/disks/disk       -        regions/region/disks/disk",
-          },
-          required: false,
-        },
-        sourceDiskId: {
-          name: "Source Disk Id",
-          description:
-            "Output only. [Output Only] The ID value of the disk used to create this InstantSnapshot. This value may be used to determine whether the InstantSnapshot was taken from the current or a previous instance of a given disk name.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The ID value of the disk used to create this InstantSnapshot. This value may be used to determine whether the InstantSnapshot was taken from the current or a previous instance of a given disk name.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of the instantSnapshot. This can beCREATING, DELETING, FAILED, orREADY. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "CREATING",
-              "DELETING",
-              "FAILED",
-              "READY",
-              "UNAVAILABLE",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-          },
-          required: false,
-        },
-        zone: {
-          name: "Zone",
-          description:
-            "Output only. [Output Only] URL of the zone where the instant snapshot resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the zone where the instant snapshot resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
           },
           required: false,
         },

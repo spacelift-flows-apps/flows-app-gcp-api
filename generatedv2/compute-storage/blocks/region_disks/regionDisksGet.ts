@@ -256,21 +256,6 @@ const regionDisksGet: AppBlock = {
             type: "string",
             description: "Internal use only.",
           },
-          params: {
-            type: "object",
-            properties: {
-              resourceManagerTags: {
-                type: "object",
-                additionalProperties: {
-                  type: "string",
-                },
-                description:
-                  "Resource manager tags to be bound to the disk. Tag keys and values have the same definition as resource manager tags. Keys and values can be either in numeric format, such as `tagKeys/{tag_key_id}` and `tagValues/456` or in namespaced format such as `{org_id|project_id}/{tag_key_short_name}` and `{tag_value_short_name}`. The field is ignored (both PUT & PATCH) when empty.",
-              },
-            },
-            description: "Additional disk params.",
-            additionalProperties: true,
-          },
           physicalBlockSizeBytes: {
             type: "string",
             description: "64-bit integer as string",

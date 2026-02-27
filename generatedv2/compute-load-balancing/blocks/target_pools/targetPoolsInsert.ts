@@ -10,14 +10,12 @@ const targetPoolsInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the target pool resides.",
+          description: "Name of the region scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the target pool resides.",
+            description: "Name of the region scoping this request.",
           },
-          required: false,
+          required: true,
         },
         backupPool: {
           name: "Backup Pool",
@@ -27,17 +25,6 @@ const targetPoolsInsert: AppBlock = {
             type: "string",
             description:
               'The server-defined URL for the resource. This field is applicable only when the containing target pool is serving a forwarding rule as the primary pool, and its failoverRatio field is properly set to a value between [0, 1].backupPool and failoverRatio together define the fallback behavior of the primary target pool: if the ratio of the healthy instances in the primary pool is at or belowfailoverRatio, traffic arriving at the load-balanced IP will be directed to the backup pool.  In case where failoverRatio and backupPool are not set, or all the instances in the backup pool are unhealthy, the traffic will be directed back to the primary pool in the "force" mode, where traffic will be spread to the healthy instances with the best effort, or to all instances when no instance is healthy.',
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -77,16 +64,6 @@ const targetPoolsInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         instances: {
           name: "Instances",
           description:
@@ -101,17 +78,6 @@ const targetPoolsInsert: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#targetPool for target pools.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#targetPool for target pools.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:
@@ -120,26 +86,6 @@ const targetPoolsInsert: AppBlock = {
             type: "string",
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-          },
-          required: false,
-        },
-        securityPolicy: {
-          name: "Security Policy",
-          description:
-            "[Output Only] The resource URL for the security policy associated with this target pool.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The resource URL for the security policy associated with this target pool.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

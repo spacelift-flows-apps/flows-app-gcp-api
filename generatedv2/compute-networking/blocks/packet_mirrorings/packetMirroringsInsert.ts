@@ -10,14 +10,12 @@ const packetMirroringsInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "[Output Only] URI of the region where the packetMirroring resides.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "[Output Only] URI of the region where the packetMirroring resides.",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         collectorIlb: {
           name: "Collector Ilb",
@@ -26,11 +24,6 @@ const packetMirroringsInsert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              canonicalUrl: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Unique identifier for the forwarding rule; defined by the server.",
-              },
               url: {
                 type: "string",
                 description:
@@ -40,17 +33,6 @@ const packetMirroringsInsert: AppBlock = {
             additionalProperties: true,
             description:
               "The Forwarding Rule resource of typeloadBalancingScheme=INTERNAL that will be used as collector for mirrored traffic. The specified forwarding rule must have isMirroringCollector set to true.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -113,27 +95,6 @@ const packetMirroringsInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#packetMirroring for packet mirrorings.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#packetMirroring for packet mirrorings.",
-          },
-          required: false,
-        },
         mirroredResources: {
           name: "Mirrored Resources",
           description:
@@ -146,11 +107,6 @@ const packetMirroringsInsert: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    canonicalUrl: {
-                      type: "string",
-                      description:
-                        "Output only. [Output Only] Unique identifier for the instance; defined by the server.",
-                    },
                     url: {
                       type: "string",
                       description:
@@ -167,11 +123,6 @@ const packetMirroringsInsert: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    canonicalUrl: {
-                      type: "string",
-                      description:
-                        "Output only. [Output Only] Unique identifier for the subnetwork; defined by the server.",
-                    },
                     url: {
                       type: "string",
                       description:
@@ -216,11 +167,6 @@ const packetMirroringsInsert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              canonicalUrl: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Unique identifier for the network; defined by the server.",
-              },
               url: {
                 type: "string",
                 description: "URL of the network resource.",
@@ -240,17 +186,6 @@ const packetMirroringsInsert: AppBlock = {
             type: "integer",
             description:
               "The priority of applying this configuration. Priority is used to break ties in cases where there is more than one matching rule. In the case of two rules that apply for a given Instance, the one with the lowest-numbered priority value wins.  Default value is 1000. Valid range is 0 through 65535.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

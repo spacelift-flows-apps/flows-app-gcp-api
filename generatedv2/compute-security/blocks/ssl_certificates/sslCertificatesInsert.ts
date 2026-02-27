@@ -19,17 +19,6 @@ const sslCertificatesInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "[Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -41,52 +30,12 @@ const sslCertificatesInsert: AppBlock = {
           },
           required: false,
         },
-        expireTime: {
-          name: "Expire Time",
-          description:
-            "Output only. [Output Only] Expire time of the certificate. RFC3339",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Expire time of the certificate. RFC3339",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#sslCertificate for SSL certificates.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#sslCertificate for SSL certificates.",
-          },
-          required: false,
-        },
         managed: {
           name: "Managed",
           description: "Configuration and status of a managed SSL certificate.",
           type: {
             type: "object",
             properties: {
-              domainStatus: {
-                type: "object",
-                additionalProperties: {
-                  type: "string",
-                },
-                description:
-                  "Output only. [Output only] Detailed statuses of the domains specified for managed certificate resource.",
-              },
               domains: {
                 type: "array",
                 items: {
@@ -94,20 +43,6 @@ const sslCertificatesInsert: AppBlock = {
                 },
                 description:
                   "The domains for which a managed SSL certificate will be generated. Each Google-managed SSL certificate supports up to the [maximum number of domains per Google-managed SSL certificate](/load-balancing/docs/quotas#ssl_certificates).",
-              },
-              status: {
-                type: "string",
-                enum: [
-                  "UNDEFINED_STATUS",
-                  "ACTIVE",
-                  "MANAGED_CERTIFICATE_STATUS_UNSPECIFIED",
-                  "PROVISIONING",
-                  "PROVISIONING_FAILED",
-                  "PROVISIONING_FAILED_PERMANENTLY",
-                  "RENEWAL_FAILED",
-                ],
-                description:
-                  "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
               },
             },
             description:
@@ -138,26 +73,6 @@ const sslCertificatesInsert: AppBlock = {
           },
           required: false,
         },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional SSL Certificate resides. This field is not applicable to global SSL Certificate.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional SSL Certificate resides. This field is not applicable to global SSL Certificate.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
         selfManaged: {
           name: "Self Managed",
           description:
@@ -179,20 +94,6 @@ const sslCertificatesInsert: AppBlock = {
             description:
               "Configuration and status of a self-managed SSL certificate.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        subjectAlternativeNames: {
-          name: "Subject Alternative Names",
-          description:
-            "Output only. [Output Only] Domains associated with the certificate via Subject Alternative Name.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] Domains associated with the certificate via Subject Alternative Name.",
           },
           required: false,
         },

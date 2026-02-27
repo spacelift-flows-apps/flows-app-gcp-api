@@ -10,25 +10,12 @@ const targetInstancesInsert: AppBlock = {
       config: {
         zone: {
           name: "Zone",
-          description:
-            "Output only. [Output Only] URL of the zone where the target instance resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the zone scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the zone where the target instance resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the zone scoping this request.",
           },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
+          required: true,
         },
         description: {
           name: "Description",
@@ -41,16 +28,6 @@ const targetInstancesInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         instance: {
           name: "Instance",
           description:
@@ -59,17 +36,6 @@ const targetInstancesInsert: AppBlock = {
             type: "string",
             description:
               "A URL to the virtual machine instance that handles traffic for this target instance. When creating a target instance, you can provide the fully-qualified URL or a valid partial URL to the desired virtual machine. For example, the following are all valid URLs:     - https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/instance    - projects/project/zones/zone/instances/instance    - zones/zone/instances/instance",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] The type of the resource. Alwayscompute#targetInstance for target instances.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The type of the resource. Alwayscompute#targetInstance for target instances.",
           },
           required: false,
         },
@@ -104,26 +70,6 @@ const targetInstancesInsert: AppBlock = {
             type: "string",
             description:
               "The URL of the network this target instance uses to forward traffic. If not specified, the traffic will be forwarded to the network that the default network interface belongs to.",
-          },
-          required: false,
-        },
-        securityPolicy: {
-          name: "Security Policy",
-          description:
-            "[Output Only] The resource URL for the security policy associated with this target instance.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The resource URL for the security policy associated with this target instance.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

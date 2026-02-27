@@ -10,14 +10,12 @@ const vpnTunnelsInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "[Output Only] URL of the region where the VPN tunnel resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "[Output Only] URL of the region where the VPN tunnel resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         cipherSuite: {
           name: "Cipher Suite",
@@ -87,17 +85,6 @@ const vpnTunnelsInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -109,27 +96,6 @@ const vpnTunnelsInsert: AppBlock = {
           },
           required: false,
         },
-        detailedStatus: {
-          name: "Detailed Status",
-          description:
-            "[Output Only] Detailed status message for the VPN tunnel.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Detailed status message for the VPN tunnel.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         ikeVersion: {
           name: "Ike Version",
           description:
@@ -138,17 +104,6 @@ const vpnTunnelsInsert: AppBlock = {
             type: "integer",
             description:
               "IKE protocol version to use when establishing the VPN tunnel with the peer VPN gateway. Acceptable IKE versions are 1 or 2. The default version is 2.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of resource. Always compute#vpnTunnel for VPN tunnels.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of resource. Always compute#vpnTunnel for VPN tunnels.",
           },
           required: false,
         },
@@ -271,15 +226,6 @@ const vpnTunnelsInsert: AppBlock = {
           },
           required: false,
         },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
         sharedSecret: {
           name: "Shared Secret",
           description:
@@ -297,33 +243,6 @@ const vpnTunnelsInsert: AppBlock = {
           type: {
             type: "string",
             description: "Hash of the shared secret.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "[Output Only] The status of the VPN tunnel, which can be one of the following:     - PROVISIONING: Resource is being allocated for the VPN tunnel.    - WAITING_FOR_FULL_CONFIG: Waiting to receive all VPN-related configs    from      the user. Network, TargetVpnGateway, VpnTunnel, ForwardingRule, and Route      resources are needed to setup the VPN tunnel.    - FIRST_HANDSHAKE: Successful first handshake with the peer VPN.    - ESTABLISHED: Secure session is successfully established with the peer    VPN.    - NETWORK_ERROR: Deprecated, replaced by    NO_INCOMING_PACKETS    - AUTHORIZATION_ERROR: Auth error (for example,    bad shared secret).    - NEGOTIATION_FAILURE: Handshake failed.    - DEPROVISIONING: Resources are being deallocated for the VPN    tunnel.    - FAILED: Tunnel creation has failed and the tunnel is not    ready to be used.    - NO_INCOMING_PACKETS: No incoming packets from    peer.    - REJECTED: Tunnel configuration was rejected, can be result    of being denied access.    - ALLOCATING_RESOURCES: Cloud VPN is in the    process of allocating all required resources.    - STOPPED: Tunnel is stopped due to its Forwarding Rules being deleted    for Classic VPN tunnels or the project is in frozen state.    - PEER_IDENTITY_MISMATCH: Peer identity does not match peer IP,    probably behind NAT.    - TS_NARROWING_NOT_ALLOWED: Traffic selector    narrowing not allowed for an HA-VPN tunnel. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "ALLOCATING_RESOURCES",
-              "AUTHORIZATION_ERROR",
-              "DEPROVISIONING",
-              "ESTABLISHED",
-              "FAILED",
-              "FIRST_HANDSHAKE",
-              "NEGOTIATION_FAILURE",
-              "NETWORK_ERROR",
-              "NO_INCOMING_PACKETS",
-              "PROVISIONING",
-              "REJECTED",
-              "STOPPED",
-              "WAITING_FOR_FULL_CONFIG",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           required: false,
         },

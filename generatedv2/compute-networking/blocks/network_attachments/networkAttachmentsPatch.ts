@@ -10,14 +10,12 @@ const networkAttachmentsPatch: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the network attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the network attachment resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         networkAttachment: {
           name: "Network Attachment",
@@ -27,71 +25,6 @@ const networkAttachmentsPatch: AppBlock = {
             description: "Name of the NetworkAttachment resource to patch.",
           },
           required: true,
-        },
-        connectionEndpoints: {
-          name: "Connection Endpoints",
-          description:
-            "Output only. [Output Only] An array of connections for all the producers connected to this network attachment.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                ipAddress: {
-                  type: "string",
-                  description:
-                    "The IPv4 address assigned to the producer instance network interface. This value will be a range in case of Serverless.",
-                },
-                ipv6Address: {
-                  type: "string",
-                  description:
-                    "The IPv6 address assigned to the producer instance network interface. This is only assigned when the stack types of both the instance network interface and the consumer subnet are IPv4_IPv6.",
-                },
-                projectIdOrNum: {
-                  type: "string",
-                  description:
-                    "The project id or number of the interface to which the IP was assigned.",
-                },
-                secondaryIpCidrRanges: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description: "Alias IP ranges from the same subnetwork.",
-                },
-                status: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_STATUS",
-                    "ACCEPTED",
-                    "CLOSED",
-                    "NEEDS_ATTENTION",
-                    "PENDING",
-                    "REJECTED",
-                    "STATUS_UNSPECIFIED",
-                  ],
-                  description:
-                    "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-                },
-                subnetwork: {
-                  type: "string",
-                  description:
-                    "The subnetwork used to assign the IP to the producer instance network interface.",
-                },
-                subnetworkCidrRange: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] The CIDR range of the subnet from which the IPv4 internal IP was allocated from.",
-                },
-              },
-              description:
-                "[Output Only] A connection connected to this network attachment.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] An array of connections for all the producers connected to this network attachment.",
-          },
-          required: false,
         },
         connectionPreference: {
           name: "Connection Preference",
@@ -107,17 +40,6 @@ const networkAttachmentsPatch: AppBlock = {
             ],
             description:
               "Check the ConnectionPreference enum for the list of possible values.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -143,25 +65,6 @@ const networkAttachmentsPatch: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource type. The server generates this identifier.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description: "Output only. [Output Only] Type of the resource.",
-          type: {
-            type: "string",
-            description: "Output only. [Output Only] Type of the resource.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:
@@ -170,17 +73,6 @@ const networkAttachmentsPatch: AppBlock = {
             type: "string",
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-          },
-          required: false,
-        },
-        network: {
-          name: "Network",
-          description:
-            "Output only. [Output Only] The URL of the network which the Network Attachment belongs to. Practically it is inferred by fetching the network of the first subnetwork associated. Because it is required that all the subnetworks must be from the same network, it is assured that the Network Attachment belongs to the same network as all the subnetworks.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL of the network which the Network Attachment belongs to. Practically it is inferred by fetching the network of the first subnetwork associated. Because it is required that all the subnetworks must be from the same network, it is assured that the Network Attachment belongs to the same network as all the subnetworks.",
           },
           required: false,
         },
@@ -209,28 +101,6 @@ const networkAttachmentsPatch: AppBlock = {
             },
             description:
               "Projects that are not allowed to connect to this network attachment. The project can be specified using its id or number.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        selfLinkWithId: {
-          name: "Self Link With Id",
-          description:
-            "Output only. [Output Only] Server-defined URL for this resource's resource id.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for this resource's resource id.",
           },
           required: false,
         },

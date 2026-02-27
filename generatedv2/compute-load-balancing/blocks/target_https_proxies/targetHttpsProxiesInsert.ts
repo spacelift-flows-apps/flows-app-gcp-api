@@ -30,17 +30,6 @@ const targetHttpsProxiesInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -71,27 +60,6 @@ const targetHttpsProxiesInsert: AppBlock = {
             type: "integer",
             description:
               "Specifies how long to keep a connection open, after completing a response, while there is no matching traffic (in seconds). If an HTTP keep-alive is not specified, a default value (610 seconds) will be used.  For global external Application Load Balancers, the minimum allowed value is 5 seconds and the maximum allowed value is 1200 seconds.  For classic Application Load Balancers, this option is not supported.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of resource. Alwayscompute#targetHttpsProxy for target HTTPS proxies.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of resource. Alwayscompute#targetHttpsProxy for target HTTPS proxies.",
           },
           required: false,
         },
@@ -126,26 +94,6 @@ const targetHttpsProxiesInsert: AppBlock = {
             enum: ["UNDEFINED_QUIC_OVERRIDE", "DISABLE", "ENABLE", "NONE"],
             description:
               "Specifies the QUIC override policy for this TargetHttpsProxy resource. This setting determines whether the load balancer attempts to negotiate QUIC with clients. You can specify NONE, ENABLE, orDISABLE.     - When quic-override is set to NONE,    Google manages whether QUIC is used.    - When quic-override is set to ENABLE, the    load balancer uses QUIC when possible.    - When quic-override is set to DISABLE, the    load balancer doesn't use QUIC.    - If the quic-override flag is not specified,NONE is implied. Check the QuicOverride enum for the list of possible values.",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional TargetHttpsProxy resides. This field is not applicable to global TargetHttpsProxies.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional TargetHttpsProxy resides. This field is not applicable to global TargetHttpsProxies.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

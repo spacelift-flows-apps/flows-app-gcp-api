@@ -54,11 +54,6 @@ const machineImagesGet: AppBlock = {
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
           },
-          guestFlush: {
-            type: "boolean",
-            description:
-              "[Input Only] Whether to attempt an application consistent machine image by informing the OS to prepare for the snapshot process.",
-          },
           id: {
             type: "string",
             description: "64-bit integer as string",
@@ -213,11 +208,6 @@ const machineImagesGet: AppBlock = {
                       type: "string",
                       description: "64-bit integer as string",
                     },
-                    forceAttach: {
-                      type: "boolean",
-                      description:
-                        "[Input Only] Whether to force attach the regional disk even if it's currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.",
-                    },
                     guestOsFeatures: {
                       type: "array",
                       items: {
@@ -257,189 +247,6 @@ const machineImagesGet: AppBlock = {
                       type: "integer",
                       description:
                         "Output only. [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.",
-                    },
-                    initializeParams: {
-                      type: "object",
-                      properties: {
-                        architecture: {
-                          type: "string",
-                          enum: [
-                            "UNDEFINED_ARCHITECTURE",
-                            "ARCHITECTURE_UNSPECIFIED",
-                            "ARM64",
-                            "X86_64",
-                          ],
-                          description:
-                            "The architecture of the attached disk. Valid values are arm64 or x86_64. Check the Architecture enum for the list of possible values.",
-                        },
-                        description: {
-                          type: "string",
-                          description:
-                            "An optional description. Provide this property when creating the disk.",
-                        },
-                        diskName: {
-                          type: "string",
-                          description:
-                            "Specifies the disk name. If not specified, the default is to use the name of the instance. If a disk with the same name already exists in the given region, the existing disk is attached to the new instance and the new disk is not created.",
-                        },
-                        diskSizeGb: {
-                          type: "string",
-                          description: "64-bit integer as string",
-                        },
-                        diskType: {
-                          type: "string",
-                          description:
-                            "Specifies the disk type to use to create the instance. If not specified, the default is pd-standard, specified using the full URL. For example:  https://www.googleapis.com/compute/v1/projects/project/zones/zone/diskTypes/pd-standard   For a full list of acceptable values, seePersistent disk types. If you specify this field when creating a VM, you can provide either the full or partial URL. For example, the following values are valid:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/diskTypes/diskType    - projects/project/zones/zone/diskTypes/diskType    - zones/zone/diskTypes/diskType   If you specify this field when creating or updating an instance template or all-instances configuration, specify the type of the disk, not the URL. For example: pd-standard.",
-                        },
-                        enableConfidentialCompute: {
-                          type: "boolean",
-                          description:
-                            "Whether this disk is using confidential compute mode.",
-                        },
-                        labels: {
-                          type: "object",
-                          additionalProperties: {
-                            type: "string",
-                          },
-                          description:
-                            "Labels to apply to this disk. These can be later modified by thedisks.setLabels method. This field is only applicable for persistent disks.",
-                        },
-                        licenses: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "A list of publicly visible licenses. Reserved for Google's use.",
-                        },
-                        onUpdateAction: {
-                          type: "string",
-                          enum: [
-                            "UNDEFINED_ON_UPDATE_ACTION",
-                            "RECREATE_DISK",
-                            "RECREATE_DISK_IF_SOURCE_CHANGED",
-                            "USE_EXISTING_DISK",
-                          ],
-                          description:
-                            "Specifies which action to take on instance update with this disk. Default is to use the existing disk. Check the OnUpdateAction enum for the list of possible values.",
-                        },
-                        provisionedIops: {
-                          type: "string",
-                          description: "64-bit integer as string",
-                        },
-                        provisionedThroughput: {
-                          type: "string",
-                          description: "64-bit integer as string",
-                        },
-                        replicaZones: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "Required for each regional disk associated with the instance. Specify the URLs of the zones where the disk should be replicated to. You must provide exactly two replica zones, and one zone must be the same as the instance zone.",
-                        },
-                        resourceManagerTags: {
-                          type: "object",
-                          additionalProperties: {
-                            type: "string",
-                          },
-                          description:
-                            "Resource manager tags to be bound to the disk. Tag keys and values have the same definition as resource manager tags. Keys and values can be either in numeric format, such as `tagKeys/{tag_key_id}` and `tagValues/456` or in namespaced format such as `{org_id|project_id}/{tag_key_short_name}` and `{tag_value_short_name}`. The field is ignored (both PUT & PATCH) when empty.",
-                        },
-                        resourcePolicies: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                          description:
-                            "Resource policies applied to this disk for automatic snapshot creations. Specified using the full or partial URL. For instance template, specify only the resource policy name.",
-                        },
-                        sourceImage: {
-                          type: "string",
-                          description:
-                            "The source image to create this disk. When creating a new instance boot disk, one of initializeParams.sourceImage orinitializeParams.sourceSnapshot or disks.source is required.  To create a disk with one of the public operating system images, specify the image by its family name. For example, specifyfamily/debian-9 to use the latest Debian 9 image:  projects/debian-cloud/global/images/family/debian-9   Alternatively, use a specific version of a public operating system image:  projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD   To create a disk with a custom image that you created, specify the image name in the following format:  global/images/my-custom-image   You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name:  global/images/family/my-image-family   If the source image is deleted later, this field will not be set.",
-                        },
-                        sourceImageEncryptionKey: {
-                          type: "object",
-                          properties: {
-                            kmsKeyName: {
-                              type: "string",
-                              description:
-                                'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
-                            },
-                            kmsKeyServiceAccount: {
-                              type: "string",
-                              description:
-                                'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
-                            },
-                            rawKey: {
-                              type: "string",
-                              description:
-                                'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
-                            },
-                            rsaEncryptedKey: {
-                              type: "string",
-                              description:
-                                'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-                            },
-                            sha256: {
-                              type: "string",
-                              description:
-                                "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                            },
-                          },
-                          additionalProperties: true,
-                          description:
-                            "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.  InstanceTemplate and InstancePropertiesPatch do not storecustomer-supplied encryption keys, so you cannot create disks for instances in a managed instance group if the source images are encrypted with your own keys.",
-                        },
-                        sourceSnapshot: {
-                          type: "string",
-                          description:
-                            "The source snapshot to create this disk. When creating a new instance boot disk, one of initializeParams.sourceSnapshot orinitializeParams.sourceImage or disks.source is required.  To create a disk with a snapshot that you created, specify the snapshot name in the following format:  global/snapshots/my-backup   If the source snapshot is deleted later, this field will not be set.  Note: You cannot create VMs in bulk using a snapshot as the source. Use an image instead when you create VMs using the bulk insert method.",
-                        },
-                        sourceSnapshotEncryptionKey: {
-                          type: "object",
-                          properties: {
-                            kmsKeyName: {
-                              type: "string",
-                              description:
-                                'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
-                            },
-                            kmsKeyServiceAccount: {
-                              type: "string",
-                              description:
-                                'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
-                            },
-                            rawKey: {
-                              type: "string",
-                              description:
-                                'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
-                            },
-                            rsaEncryptedKey: {
-                              type: "string",
-                              description:
-                                'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-                            },
-                            sha256: {
-                              type: "string",
-                              description:
-                                "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                            },
-                          },
-                          additionalProperties: true,
-                          description:
-                            "Thecustomer-supplied encryption key of the source snapshot.",
-                        },
-                        storagePool: {
-                          type: "string",
-                          description:
-                            "The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/storagePools/storagePool      - projects/project/zones/zone/storagePools/storagePool    - zones/zone/storagePools/storagePool",
-                        },
-                      },
-                      description:
-                        "[Input Only] Specifies the parameters for a new disk that will be created alongside the new instance. Use initialization parameters to create boot disks or local SSDs attached to the new instance.  This field is persisted and returned for instanceTemplate and not returned in the context of instance.  This property is mutually exclusive with the source property; you can only define one or the other, but not both.",
-                      additionalProperties: true,
                     },
                     interface: {
                       type: "string",
@@ -1414,55 +1221,6 @@ const machineImagesGet: AppBlock = {
             type: "string",
             description:
               "Output only. [Output Only] The URL for this machine image. The server defines this URL.",
-          },
-          sourceDiskEncryptionKeys: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                diskEncryptionKey: {
-                  type: "object",
-                  properties: {
-                    kmsKeyName: {
-                      type: "string",
-                      description:
-                        'The name of the encryption key that is stored in Google Cloud KMS. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key  The fully-qualifed key name may be returned for resource GET requests. For example:  "kmsKeyName": "projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1',
-                    },
-                    kmsKeyServiceAccount: {
-                      type: "string",
-                      description:
-                        'The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example:  "kmsKeyServiceAccount": "name@project_id.iam.gserviceaccount.com/',
-                    },
-                    rawKey: {
-                      type: "string",
-                      description:
-                        'Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rawKey": "SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0="',
-                    },
-                    rsaEncryptedKey: {
-                      type: "string",
-                      description:
-                        'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-                    },
-                    sha256: {
-                      type: "string",
-                      description:
-                        "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                    },
-                  },
-                  additionalProperties: true,
-                  description:
-                    "Thecustomer-supplied encryption key of the source disk. Required if the source disk is protected by a customer-supplied encryption key.",
-                },
-                sourceDisk: {
-                  type: "string",
-                  description:
-                    "URL of the disk attached to the source instance. This can be a full or valid partial URL. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk    - projects/project/zones/zone/disks/disk    - zones/zone/disks/disk",
-                },
-              },
-              additionalProperties: true,
-            },
-            description:
-              "[Input Only] Thecustomer-supplied encryption key of the disks attached to the source instance. Required if the source disk is protected by a customer-supplied encryption key.",
           },
           sourceInstance: {
             type: "string",

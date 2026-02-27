@@ -80,17 +80,6 @@ const regionNetworkFirewallPoliciesPatchRule: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output only] Type of the resource. Returnscompute#firewallPolicyRule for firewall rules andcompute#packetMirroringRule for packet mirroring rules.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output only] Type of the resource. Returnscompute#firewallPolicyRule for firewall rules andcompute#packetMirroringRule for packet mirroring rules.",
-          },
-          required: false,
-        },
         match: {
           name: "Match",
           description:
@@ -236,12 +225,6 @@ const regionNetworkFirewallPoliciesPatchRule: AppBlock = {
                       description:
                         "Name of the secure tag, created with TagManager's TagValue API.",
                     },
-                    state: {
-                      type: "string",
-                      enum: ["UNDEFINED_STATE", "EFFECTIVE", "INEFFECTIVE"],
-                      description:
-                        "Output only. [Output Only] State of the secure tag, either `EFFECTIVE` or `INEFFECTIVE`. A secure tag is `INEFFECTIVE` when it is deleted or its network is deleted. Check the State enum for the list of possible values.",
-                    },
                   },
                   additionalProperties: true,
                 },
@@ -283,17 +266,6 @@ const regionNetworkFirewallPoliciesPatchRule: AppBlock = {
           },
           required: false,
         },
-        ruleTupleCount: {
-          name: "Rule Tuple Count",
-          description:
-            "Output only. [Output Only] Calculation of the complexity of a single firewall policy rule.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output Only] Calculation of the complexity of a single firewall policy rule.",
-          },
-          required: false,
-        },
         securityProfileGroup: {
           name: "Security Profile Group",
           description:
@@ -332,12 +304,6 @@ const regionNetworkFirewallPoliciesPatchRule: AppBlock = {
                   type: "string",
                   description:
                     "Name of the secure tag, created with TagManager's TagValue API.",
-                },
-                state: {
-                  type: "string",
-                  enum: ["UNDEFINED_STATE", "EFFECTIVE", "INEFFECTIVE"],
-                  description:
-                    "Output only. [Output Only] State of the secure tag, either `EFFECTIVE` or `INEFFECTIVE`. A secure tag is `INEFFECTIVE` when it is deleted or its network is deleted. Check the State enum for the list of possible values.",
                 },
               },
               additionalProperties: true,

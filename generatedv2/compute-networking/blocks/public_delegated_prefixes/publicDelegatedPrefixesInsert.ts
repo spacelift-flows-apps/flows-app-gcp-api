@@ -10,14 +10,12 @@ const publicDelegatedPrefixesInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the public delegated prefix resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "Name of the region of this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the public delegated prefix resides. This field applies only to the region resource. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "Name of the region of this request.",
           },
-          required: false,
+          required: true,
         },
         allocatablePrefixLength: {
           name: "Allocatable Prefix Length",
@@ -27,29 +25,6 @@ const publicDelegatedPrefixesInsert: AppBlock = {
             type: "integer",
             description:
               "The allocatable prefix length supported by this public delegated prefix. This field is optional and cannot be set for prefixes in DELEGATION mode. It cannot be set for IPv4 prefixes either, and it always defaults to 32.",
-          },
-          required: false,
-        },
-        byoipApiVersion: {
-          name: "Byoip Api Version",
-          description:
-            "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_BYOIP_API_VERSION", "V1", "V2"],
-            description:
-              "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -64,17 +39,6 @@ const publicDelegatedPrefixesInsert: AppBlock = {
           },
           required: false,
         },
-        enableEnhancedIpv4Allocation: {
-          name: "Enable Enhanced Ipv4 Allocation",
-          description:
-            "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
-          type: {
-            type: "boolean",
-            description:
-              "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
-          },
-          required: false,
-        },
         fingerprint: {
           name: "Fingerprint",
           description:
@@ -83,16 +47,6 @@ const publicDelegatedPrefixesInsert: AppBlock = {
             type: "string",
             description:
               "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a new PublicDelegatedPrefix. An up-to-date fingerprint must be provided in order to update thePublicDelegatedPrefix, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a PublicDelegatedPrefix.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource type. The server generates this identifier.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -107,35 +61,12 @@ const publicDelegatedPrefixesInsert: AppBlock = {
           },
           required: false,
         },
-        ipv6AccessType: {
-          name: "Ipv6 Access Type",
-          description:
-            "Output only. [Output Only] The internet access type for IPv6 Public Delegated Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_IPV6_ACCESS_TYPE", "EXTERNAL", "INTERNAL"],
-            description:
-              "Output only. [Output Only] The internet access type for IPv6 Public Delegated Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
-          },
-          required: false,
-        },
         isLiveMigration: {
           name: "Is Live Migration",
           description: "If true, the prefix will be live migrated.",
           type: {
             type: "boolean",
             description: "If true, the prefix will be live migrated.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefix for public delegated prefixes.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#publicDelegatedPrefix for public delegated prefixes.",
           },
           required: false,
         },
@@ -203,21 +134,10 @@ const publicDelegatedPrefixesInsert: AppBlock = {
                   description:
                     "An optional description of this resource. Provide this property when you create the resource.",
                 },
-                enableEnhancedIpv4Allocation: {
-                  type: "boolean",
-                  description:
-                    "Output only. [Output Only] Whether this PDP supports enhanced IPv4 allocations. Applicable for IPv4 PDPs only.",
-                },
                 ipCidrRange: {
                   type: "string",
                   description:
                     "The IP address range, in CIDR format, represented by this sub public delegated prefix.",
-                },
-                ipv6AccessType: {
-                  type: "string",
-                  enum: ["UNDEFINED_IPV6_ACCESS_TYPE", "EXTERNAL", "INTERNAL"],
-                  description:
-                    "Output only. [Output Only] The internet access type for IPv6 Public Delegated Sub Prefixes. Inherited from parent prefix. Check the Ipv6AccessType enum for the list of possible values.",
                 },
                 isAddress: {
                   type: "boolean",
@@ -240,55 +160,12 @@ const publicDelegatedPrefixesInsert: AppBlock = {
                   type: "string",
                   description: "The name of the sub public delegated prefix.",
                 },
-                region: {
-                  type: "string",
-                  description:
-                    "Output only. [Output Only] The region of the sub public delegated prefix if it is regional. If absent, the sub prefix is global.",
-                },
-                status: {
-                  type: "string",
-                  enum: ["UNDEFINED_STATUS", "ACTIVE", "INACTIVE"],
-                  description:
-                    "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-                },
               },
               description: "Represents a sub PublicDelegatedPrefix.",
               additionalProperties: true,
             },
             description:
               "The list of sub public delegated prefixes that exist for this public delegated prefix.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "[Output Only] The status of the public delegated prefix, which can be one of following values:        - `INITIALIZING` The public delegated prefix is being initialized and      addresses cannot be created yet.      - `READY_TO_ANNOUNCE` The public delegated prefix is a live migration      prefix and is active.      - `ANNOUNCED` The public delegated prefix is announced and ready to      use.      - `DELETING` The public delegated prefix is being deprovsioned.      - `ACTIVE` The public delegated prefix is ready to use. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "ACTIVE",
-              "ANNOUNCED",
-              "ANNOUNCED_TO_GOOGLE",
-              "ANNOUNCED_TO_INTERNET",
-              "DELETING",
-              "INITIALIZING",
-              "READY_TO_ANNOUNCE",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           required: false,
         },

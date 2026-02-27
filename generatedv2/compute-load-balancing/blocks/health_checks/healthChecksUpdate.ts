@@ -28,17 +28,6 @@ const healthChecksUpdate: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp in3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp in3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -285,16 +274,6 @@ const healthChecksUpdate: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         kind: {
           name: "Kind",
           description: "Output only. Type of the resource.",
@@ -330,26 +309,6 @@ const healthChecksUpdate: AppBlock = {
             type: "string",
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. For example, a name that is 1-63 characters long, matches the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`, and otherwise complies with RFC1035. This regular expression describes a name where the first character is a lowercase letter, and all following characters are a dash, lowercase letter, or digit, except the last character, which isn't a dash.",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] Region where the health check resides.  Not applicable to global health checks.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Region where the health check resides.  Not applicable to global health checks.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

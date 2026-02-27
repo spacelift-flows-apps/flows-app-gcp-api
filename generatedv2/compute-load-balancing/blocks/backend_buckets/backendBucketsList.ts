@@ -296,21 +296,6 @@ const backendBucketsList: AppBlock = {
                   description:
                     "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
                 },
-                params: {
-                  type: "object",
-                  properties: {
-                    resourceManagerTags: {
-                      type: "object",
-                      additionalProperties: {
-                        type: "string",
-                      },
-                      description:
-                        'Tag keys/values directly bound to this resource. Tag keys and values have the same definition as resource manager tags. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {"tagKeys/333" : "tagValues/444", "tagKeys/123" : "tagValues/456"} * {"123/environment" : "production", "345/abc" : "xyz"} Note: * Invalid combinations of ID & namespaced format is not supported. For   instance: {"123/environment" : "tagValues/444"} is invalid.',
-                    },
-                  },
-                  description: "Additional Backend Bucket parameters.",
-                  additionalProperties: true,
-                },
                 selfLink: {
                   type: "string",
                   description:

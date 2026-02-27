@@ -30,17 +30,6 @@ const subnetworksInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -82,27 +71,6 @@ const subnetworksInsert: AppBlock = {
             type: "string",
             description:
               "Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a Subnetwork. An up-to-date fingerprint must be provided in order to update the Subnetwork, otherwise the request will fail with error 412 conditionNotMet.  To see the latest fingerprint, make a get() request to retrieve a Subnetwork.",
-          },
-          required: false,
-        },
-        gatewayAddress: {
-          name: "Gateway Address",
-          description:
-            "Output only. [Output Only] The gateway address for default routes to reach destination addresses outside this subnetwork.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The gateway address for default routes to reach destination addresses outside this subnetwork.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -153,40 +121,6 @@ const subnetworksInsert: AppBlock = {
             ],
             description:
               "The access type of IPv6 address this subnet holds. It's immutable and can only be specified during creation or the first time the subnet is updated into IPV4_IPV6 dual stack. Check the Ipv6AccessType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        ipv6CidrRange: {
-          name: "Ipv6 Cidr Range",
-          description:
-            "Output only. [Output Only] This field is for internal use.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] This field is for internal use.",
-          },
-          required: false,
-        },
-        ipv6GceEndpoint: {
-          name: "Ipv6 Gce Endpoint",
-          description:
-            "Output only. [Output Only] Possible endpoints of this subnetwork. It can be one of the following:     - VM_ONLY: The subnetwork can be used for creating instances and    IPv6 addresses with VM endpoint type. Such a subnetwork gets external IPv6    ranges from a public delegated prefix and cannot be used to create NetLb.    - VM_AND_FR: The subnetwork can be used for creating both VM    instances and Forwarding Rules. It can also be used to reserve IPv6    addresses with both VM and FR endpoint types. Such a subnetwork gets its    IPv6 range from Google IP Pool directly. Check the Ipv6GceEndpoint enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_IPV6_GCE_ENDPOINT", "VM_AND_FR", "VM_ONLY"],
-            description:
-              "Output only. [Output Only] Possible endpoints of this subnetwork. It can be one of the following:     - VM_ONLY: The subnetwork can be used for creating instances and    IPv6 addresses with VM endpoint type. Such a subnetwork gets external IPv6    ranges from a public delegated prefix and cannot be used to create NetLb.    - VM_AND_FR: The subnetwork can be used for creating both VM    instances and Forwarding Rules. It can also be used to reserve IPv6    addresses with both VM and FR endpoint types. Such a subnetwork gets its    IPv6 range from Google IP Pool directly. Check the Ipv6GceEndpoint enum for the list of possible values.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#subnetwork for Subnetwork resources.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#subnetwork for Subnetwork resources.",
           },
           required: false,
         },
@@ -396,15 +330,6 @@ const subnetworksInsert: AppBlock = {
           },
           required: false,
         },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
         stackType: {
           name: "Stack Type",
           description:
@@ -420,190 +345,6 @@ const subnetworksInsert: AppBlock = {
             ],
             description:
               "The stack type for the subnet. If set to IPV4_ONLY, new VMs in the subnet are assigned IPv4 addresses only. If set toIPV4_IPV6, new VMs in the subnet can be assigned both IPv4 and IPv6 addresses. If not specified, IPV4_ONLY is used.  This field can be both set at resource creation time and updated usingpatch. Check the StackType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        state: {
-          name: "State",
-          description:
-            "Output only. [Output Only] The state of the subnetwork, which can be one of the following values:READY: Subnetwork is created and ready to useDRAINING: only applicable to subnetworks that have the purpose set to INTERNAL_HTTPS_LOAD_BALANCER and indicates that connections to the load balancer are being drained. A subnetwork that is draining cannot be used or modified until it reaches a status ofREADY Check the State enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_STATE", "DRAINING", "READY"],
-            description:
-              "Output only. [Output Only] The state of the subnetwork, which can be one of the following values:READY: Subnetwork is created and ready to useDRAINING: only applicable to subnetworks that have the purpose set to INTERNAL_HTTPS_LOAD_BALANCER and indicates that connections to the load balancer are being drained. A subnetwork that is draining cannot be used or modified until it reaches a status ofREADY Check the State enum for the list of possible values.",
-          },
-          required: false,
-        },
-        systemReservedExternalIpv6Ranges: {
-          name: "System Reserved External Ipv6 Ranges",
-          description:
-            "Output only. [Output Only] The array of external IPv6 network ranges reserved from the subnetwork's external IPv6 range for system use.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] The array of external IPv6 network ranges reserved from the subnetwork's external IPv6 range for system use.",
-          },
-          required: false,
-        },
-        systemReservedInternalIpv6Ranges: {
-          name: "System Reserved Internal Ipv6 Ranges",
-          description:
-            "Output only. [Output Only] The array of internal IPv6 network ranges reserved from the subnetwork's internal IPv6 range for system use.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] The array of internal IPv6 network ranges reserved from the subnetwork's internal IPv6 range for system use.",
-          },
-          required: false,
-        },
-        utilizationDetails: {
-          name: "Utilization Details",
-          description:
-            "Output only. [Output Only] The current IP utilization of all subnetwork ranges. Contains the total number of allocated and free IPs in each range.",
-          type: {
-            type: "object",
-            properties: {
-              externalIpv6InstanceUtilization: {
-                type: "object",
-                properties: {
-                  totalAllocatedIp: {
-                    type: "object",
-                    properties: {
-                      high: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                      low: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  totalFreeIp: {
-                    type: "object",
-                    properties: {
-                      high: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                      low: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                },
-                description: "The IPV6 utilization of a single IP range.",
-                additionalProperties: true,
-              },
-              externalIpv6LbUtilization: {
-                type: "object",
-                properties: {
-                  totalAllocatedIp: {
-                    type: "object",
-                    properties: {
-                      high: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                      low: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  totalFreeIp: {
-                    type: "object",
-                    properties: {
-                      high: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                      low: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                },
-                description: "The IPV6 utilization of a single IP range.",
-                additionalProperties: true,
-              },
-              internalIpv6Utilization: {
-                type: "object",
-                properties: {
-                  totalAllocatedIp: {
-                    type: "object",
-                    properties: {
-                      high: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                      low: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  totalFreeIp: {
-                    type: "object",
-                    properties: {
-                      high: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                      low: {
-                        type: "string",
-                        description: "64-bit integer as string",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                },
-                description: "The IPV6 utilization of a single IP range.",
-                additionalProperties: true,
-              },
-              ipv4Utilizations: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    rangeName: {
-                      type: "string",
-                      description:
-                        "Will be set for secondary range. Empty for primary IPv4 range.",
-                    },
-                    totalAllocatedIp: {
-                      type: "string",
-                      description: "64-bit integer as string",
-                    },
-                    totalFreeIp: {
-                      type: "string",
-                      description: "64-bit integer as string",
-                    },
-                  },
-                  description: "The IPV4 utilization of a single IP range.",
-                  additionalProperties: true,
-                },
-                description:
-                  "Utilizations of all IPV4 IP ranges. For primary ranges, the range name will be empty.",
-              },
-            },
-            description:
-              "The current IP utilization of all subnetwork ranges. Contains the total number of allocated and free IPs in each range.",
-            additionalProperties: true,
           },
           required: false,
         },

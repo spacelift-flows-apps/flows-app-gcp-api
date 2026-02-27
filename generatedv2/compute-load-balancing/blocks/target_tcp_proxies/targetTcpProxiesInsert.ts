@@ -8,17 +8,6 @@ const targetTcpProxiesInsert: AppBlock = {
   inputs: {
     default: {
       config: {
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -27,27 +16,6 @@ const targetTcpProxiesInsert: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#targetTcpProxy for target TCP proxies.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#targetTcpProxy for target TCP proxies.",
           },
           required: false,
         },
@@ -82,26 +50,6 @@ const targetTcpProxiesInsert: AppBlock = {
             enum: ["UNDEFINED_PROXY_HEADER", "NONE", "PROXY_V1"],
             description:
               "Specifies the type of proxy header to append before sending data to the backend, either NONE or PROXY_V1. The default is NONE. Check the ProxyHeader enum for the list of possible values.",
-          },
-          required: false,
-        },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the regional TCP proxy resides. This field is not applicable to global TCP proxy.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the regional TCP proxy resides. This field is not applicable to global TCP proxy.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
           },
           required: false,
         },

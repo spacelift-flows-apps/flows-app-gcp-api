@@ -27,17 +27,6 @@ const organizationSecurityPoliciesAddAssociation: AppBlock = {
           },
           required: false,
         },
-        displayName: {
-          name: "Display Name",
-          description:
-            "Output only. [Output Only] The display name of the security policy of the association.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The display name of the security policy of the association.",
-          },
-          required: false,
-        },
         excludedFolders: {
           name: "Excluded Folders",
           description: "A list of folders to exclude from the security policy.",
@@ -71,28 +60,6 @@ const organizationSecurityPoliciesAddAssociation: AppBlock = {
           type: {
             type: "string",
             description: "The name for an association.",
-          },
-          required: false,
-        },
-        securityPolicyId: {
-          name: "Security Policy Id",
-          description:
-            "Output only. [Output Only] The security policy ID of the association.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The security policy ID of the association.",
-          },
-          required: false,
-        },
-        shortName: {
-          name: "Short Name",
-          description:
-            "Output only. [Output Only] The short name of the security policy of the association.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The short name of the security policy of the association.",
           },
           required: false,
         },

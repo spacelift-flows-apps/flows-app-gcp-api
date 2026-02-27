@@ -10,14 +10,12 @@ const regionInstanceGroupManagersInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] The URL of theregion where the managed instance group resides (for regional resources).",
+          description: "Name of the region scoping this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] The URL of theregion where the managed instance group resides (for regional resources).",
+            description: "Name of the region scoping this request.",
           },
-          required: false,
+          required: true,
         },
         allInstancesConfig: {
           name: "All Instances Config",
@@ -95,96 +93,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] The creation timestamp for this managed instance group inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The creation timestamp for this managed instance group inRFC3339 text format.",
-          },
-          required: false,
-        },
-        currentActions: {
-          name: "Current Actions",
-          description:
-            "Output only. [Output Only] The list of instance actions and the number of instances in this managed instance group that are scheduled for each of those actions.",
-          type: {
-            type: "object",
-            properties: {
-              abandoning: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The total number of instances in the managed instance group that are scheduled to be abandoned. Abandoning an instance removes it from the managed instance group without deleting it.",
-              },
-              creating: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be created or are currently being created. If the group fails to create any of these instances, it tries again until it creates the instance successfully.  If you have disabled creation retries, this field will not be populated; instead, the creatingWithoutRetries field will be populated.",
-              },
-              creatingWithoutRetries: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances that the managed instance group will attempt to create. The group attempts to create each instance only once. If the group fails to create any of these instances, it decreases the group's targetSize value accordingly.",
-              },
-              deleting: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be deleted or are currently being deleted.",
-              },
-              none: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are running and have no scheduled actions.",
-              },
-              recreating: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be recreated or are currently being being recreated. Recreating an instance deletes the existing root persistent disk and creates a new disk from the image that is defined in the instance template.",
-              },
-              refreshing: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are being reconfigured with properties that do not require a restart or a recreate action. For example, setting or removing target pools for the instance.",
-              },
-              restarting: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be restarted or are currently being restarted.",
-              },
-              resuming: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be resumed or are currently being resumed.",
-              },
-              starting: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be started or are currently being started.",
-              },
-              stopping: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be stopped or are currently being stopped.",
-              },
-              suspending: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are scheduled to be suspended or are currently being suspended.",
-              },
-              verifying: {
-                type: "integer",
-                description:
-                  "Output only. [Output Only] The number of instances in the managed instance group that are being verified. See the managedInstances[].currentAction property in the listManagedInstances method documentation.",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "Output only. [Output Only] The list of instance actions and the number of instances in this managed instance group that are scheduled for each of those actions.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description: "An optional description of this resource.",
@@ -247,16 +155,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] A unique identifier for this resource type. The server generates this identifier.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         instanceFlexibilityPolicy: {
           name: "Instance Flexibility Policy",
           description:
@@ -276,17 +174,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
             additionalProperties: true,
             description:
               "Instance flexibility allowing MIG to create VMs from multiple types of machines. Instance flexibility configuration on MIG overrides instance template configuration.",
-          },
-          required: false,
-        },
-        instanceGroup: {
-          name: "Instance Group",
-          description:
-            "Output only. [Output Only] The URL of the Instance Group resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL of the Instance Group resource.",
           },
           required: false,
         },
@@ -329,17 +216,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] The resource type, which is alwayscompute#instanceGroupManager for managed instance groups.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The resource type, which is alwayscompute#instanceGroupManager for managed instance groups.",
-          },
-          required: false,
-        },
         listManagedInstancesResults: {
           name: "List Managed Instances Results",
           description:
@@ -367,34 +243,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
           },
           required: false,
         },
-        namedPorts: {
-          name: "Named Ports",
-          description:
-            "[Output Only] Named ports configured on the Instance Groups complementary to this Instance Group Manager.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                name: {
-                  type: "string",
-                  description:
-                    "The name for this named port. The name must be 1-63 characters long, and comply withRFC1035.",
-                },
-                port: {
-                  type: "integer",
-                  description:
-                    "The port number, which can be a value between 1 and 65535.",
-                },
-              },
-              description: 'The named port. For example: <"http", 80>.',
-              additionalProperties: true,
-            },
-            description:
-              "[Output Only] Named ports configured on the Instance Groups complementary to this Instance Group Manager.",
-          },
-          required: false,
-        },
         resourcePolicies: {
           name: "Resource Policies",
           description: "Resource policies for this managed instance group.",
@@ -409,35 +257,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
             },
             additionalProperties: true,
             description: "Resource policies for this managed instance group.",
-          },
-          required: false,
-        },
-        satisfiesPzi: {
-          name: "Satisfies Pzi",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] The URL for this managed instance group. The server defines this URL.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL for this managed instance group. The server defines this URL.",
           },
           required: false,
         },
@@ -509,87 +328,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
           },
           required: false,
         },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of this managed instance group.",
-          type: {
-            type: "object",
-            properties: {
-              allInstancesConfig: {
-                type: "object",
-                properties: {
-                  currentRevision: {
-                    type: "string",
-                    description:
-                      "Output only. [Output Only] Current all-instances configuration revision. This value is in RFC3339 text format.",
-                  },
-                  effective: {
-                    type: "boolean",
-                    description:
-                      "Output only. [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.",
-                  },
-                },
-                additionalProperties: true,
-                description:
-                  "Output only. [Output only] Status of all-instances configuration on the group.",
-              },
-              autoscaler: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] The URL of theAutoscaler that targets this instance group manager.",
-              },
-              isStable: {
-                type: "boolean",
-                description:
-                  "Output only. [Output Only] A bit indicating whether the managed instance group is in a stable state. A stable state means that: none of the instances in the managed instance group is currently undergoing any type of change (for example, creation, restart, or deletion); no future changes are scheduled for instances in the managed instance group; and the managed instance group itself is not being modified.",
-              },
-              stateful: {
-                type: "object",
-                properties: {
-                  hasStatefulConfig: {
-                    type: "boolean",
-                    description:
-                      "Output only. [Output Only] A bit indicating whether the managed instance group has stateful configuration, that is, if you have configured any items in a stateful policy or in per-instance configs. The group might report that it has no stateful configuration even when there is still some preserved state on a managed instance, for example, if you have deleted all PICs but not yet applied those deletions.",
-                  },
-                  perInstanceConfigs: {
-                    type: "object",
-                    properties: {
-                      allEffective: {
-                        type: "boolean",
-                        description:
-                          "Output only. A bit indicating if all of the group's per-instance configurations (listed in the output of a listPerInstanceConfigs API call) have status EFFECTIVE or there are no per-instance-configs.",
-                      },
-                    },
-                    additionalProperties: true,
-                    description:
-                      "Output only. [Output Only] Status of per-instance configurations on the instances.",
-                  },
-                },
-                additionalProperties: true,
-                description:
-                  "Output only. [Output Only] Stateful status of the given Instance Group Manager.",
-              },
-              versionTarget: {
-                type: "object",
-                properties: {
-                  isReached: {
-                    type: "boolean",
-                    description:
-                      "Output only. [Output Only] A bit indicating whether version target has been reached in this managed instance group, i.e. all instances are in their target version. Instances' target version are specified byversion field on Instance Group Manager.",
-                  },
-                },
-                additionalProperties: true,
-                description:
-                  "Output only. [Output Only] A status of consistency of Instances' versions with their target version specified by version field on Instance Group Manager.",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "Output only. [Output Only] The status of this managed instance group.",
-          },
-          required: false,
-        },
         targetPools: {
           name: "Target Pools",
           description:
@@ -652,11 +390,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
               maxSurge: {
                 type: "object",
                 properties: {
-                  calculated: {
-                    type: "integer",
-                    description:
-                      "Output only. [Output Only] Absolute value of VM instances calculated based on the specific mode.        - If the value is fixed, then the calculated      value is equal to the fixed value.     - If the value is a percent, then the     calculated      value is percent/100 * targetSize. For example,      the calculated value of a 80% of a managed instance group      with 150 instances would be (80/100 * 150) = 120 VM instances. If there      is a remainder, the number is rounded.",
-                  },
                   fixed: {
                     type: "integer",
                     description:
@@ -675,11 +408,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
               maxUnavailable: {
                 type: "object",
                 properties: {
-                  calculated: {
-                    type: "integer",
-                    description:
-                      "Output only. [Output Only] Absolute value of VM instances calculated based on the specific mode.        - If the value is fixed, then the calculated      value is equal to the fixed value.     - If the value is a percent, then the     calculated      value is percent/100 * targetSize. For example,      the calculated value of a 80% of a managed instance group      with 150 instances would be (80/100 * 150) = 120 VM instances. If there      is a remainder, the number is rounded.",
-                  },
                   fixed: {
                     type: "integer",
                     description:
@@ -751,11 +479,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
                 targetSize: {
                   type: "object",
                   properties: {
-                    calculated: {
-                      type: "integer",
-                      description:
-                        "Output only. [Output Only] Absolute value of VM instances calculated based on the specific mode.        - If the value is fixed, then the calculated      value is equal to the fixed value.     - If the value is a percent, then the     calculated      value is percent/100 * targetSize. For example,      the calculated value of a 80% of a managed instance group      with 150 instances would be (80/100 * 150) = 120 VM instances. If there      is a remainder, the number is rounded.",
-                    },
                     fixed: {
                       type: "integer",
                       description:
@@ -776,17 +499,6 @@ const regionInstanceGroupManagersInsert: AppBlock = {
             },
             description:
               "Specifies the instance templates used by this managed instance group to create instances.  Each version is defined by an instanceTemplate and aname. Every version can appear at most once per instance group. This field overrides the top-level instanceTemplate field. Read more about therelationships between these fields. Exactly one version must leave thetargetSize field unset. That version will be applied to all remaining instances. For more information, read aboutcanary updates.",
-          },
-          required: false,
-        },
-        zone: {
-          name: "Zone",
-          description:
-            "Output only. [Output Only] The URL of azone where the managed instance group is located (for zonal resources).",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL of azone where the managed instance group is located (for zonal resources).",
           },
           required: false,
         },

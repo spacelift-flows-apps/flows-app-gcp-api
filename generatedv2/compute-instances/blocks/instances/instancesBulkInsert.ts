@@ -139,17 +139,6 @@ const instancesBulkInsert: AppBlock = {
                 items: {
                   type: "object",
                   properties: {
-                    architecture: {
-                      type: "string",
-                      enum: [
-                        "UNDEFINED_ARCHITECTURE",
-                        "ARCHITECTURE_UNSPECIFIED",
-                        "ARM64",
-                        "X86_64",
-                      ],
-                      description:
-                        "Output only. [Output Only] The architecture of the attached disk. Valid values are ARM64 or X86_64. Check the Architecture enum for the list of possible values.",
-                    },
                     autoDelete: {
                       type: "boolean",
                       description:
@@ -187,11 +176,6 @@ const instancesBulkInsert: AppBlock = {
                           type: "string",
                           description:
                             'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-                        },
-                        sha256: {
-                          type: "string",
-                          description:
-                            "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
                         },
                       },
                       additionalProperties: true,
@@ -241,11 +225,6 @@ const instancesBulkInsert: AppBlock = {
                       },
                       description:
                         "A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.",
-                    },
-                    index: {
-                      type: "integer",
-                      description:
-                        "Output only. [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.",
                     },
                     initializeParams: {
                       type: "object",
@@ -372,11 +351,6 @@ const instancesBulkInsert: AppBlock = {
                               description:
                                 'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
                             },
-                            sha256: {
-                              type: "string",
-                              description:
-                                "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                            },
                           },
                           additionalProperties: true,
                           description:
@@ -410,11 +384,6 @@ const instancesBulkInsert: AppBlock = {
                               description:
                                 'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
                             },
-                            sha256: {
-                              type: "string",
-                              description:
-                                "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-                            },
                           },
                           additionalProperties: true,
                           description:
@@ -436,19 +405,6 @@ const instancesBulkInsert: AppBlock = {
                       description:
                         "Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. For most machine types, the default is SCSI. Local SSDs can use either NVME or SCSI. In certain configurations, persistent disks can use NVMe. For more information, seeAbout persistent disks. Check the Interface enum for the list of possible values.",
                     },
-                    kind: {
-                      type: "string",
-                      description:
-                        "Output only. [Output Only] Type of the resource. Alwayscompute#attachedDisk for attached disks.",
-                    },
-                    licenses: {
-                      type: "array",
-                      items: {
-                        type: "string",
-                      },
-                      description:
-                        "Output only. [Output Only] Any valid publicly visible licenses.",
-                    },
                     mode: {
                       type: "string",
                       enum: ["UNDEFINED_MODE", "READ_ONLY", "READ_WRITE"],
@@ -464,115 +420,6 @@ const instancesBulkInsert: AppBlock = {
                       ],
                       description:
                         "Output only. For LocalSSD disks on VM Instances in STOPPED or SUSPENDED state, this field is set to PRESERVED if the LocalSSD data has been saved to a persistent location by customer request.  (see the discard_local_ssd option on Stop/Suspend). Read-only in the api. Check the SavedState enum for the list of possible values.",
-                    },
-                    shieldedInstanceInitialState: {
-                      type: "object",
-                      properties: {
-                        dbs: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              content: {
-                                type: "string",
-                                description:
-                                  "The raw content in the secure keys file.",
-                              },
-                              fileType: {
-                                type: "string",
-                                enum: [
-                                  "UNDEFINED_FILE_TYPE",
-                                  "BIN",
-                                  "UNDEFINED",
-                                  "X509",
-                                ],
-                                description:
-                                  "The file type of source file. Check the FileType enum for the list of possible values.",
-                              },
-                            },
-                            additionalProperties: true,
-                          },
-                          description: "The Key Database (db).",
-                        },
-                        dbxs: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              content: {
-                                type: "string",
-                                description:
-                                  "The raw content in the secure keys file.",
-                              },
-                              fileType: {
-                                type: "string",
-                                enum: [
-                                  "UNDEFINED_FILE_TYPE",
-                                  "BIN",
-                                  "UNDEFINED",
-                                  "X509",
-                                ],
-                                description:
-                                  "The file type of source file. Check the FileType enum for the list of possible values.",
-                              },
-                            },
-                            additionalProperties: true,
-                          },
-                          description: "The forbidden key database (dbx).",
-                        },
-                        keks: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              content: {
-                                type: "string",
-                                description:
-                                  "The raw content in the secure keys file.",
-                              },
-                              fileType: {
-                                type: "string",
-                                enum: [
-                                  "UNDEFINED_FILE_TYPE",
-                                  "BIN",
-                                  "UNDEFINED",
-                                  "X509",
-                                ],
-                                description:
-                                  "The file type of source file. Check the FileType enum for the list of possible values.",
-                              },
-                            },
-                            additionalProperties: true,
-                          },
-                          description: "The Key Exchange Key (KEK).",
-                        },
-                        pk: {
-                          type: "object",
-                          properties: {
-                            content: {
-                              type: "string",
-                              description:
-                                "The raw content in the secure keys file.",
-                            },
-                            fileType: {
-                              type: "string",
-                              enum: [
-                                "UNDEFINED_FILE_TYPE",
-                                "BIN",
-                                "UNDEFINED",
-                                "X509",
-                              ],
-                              description:
-                                "The file type of source file. Check the FileType enum for the list of possible values.",
-                            },
-                          },
-                          additionalProperties: true,
-                          description: "The Platform Key (PK).",
-                        },
-                      },
-                      description:
-                        "Initial State for shielded instance, these are public keys which are safe to store in public",
-                      additionalProperties: true,
                     },
                     source: {
                       type: "string",
@@ -669,11 +516,6 @@ const instancesBulkInsert: AppBlock = {
                     description:
                       "Array of key/value pairs. The total size of all keys and values must be less than 512 KB.",
                   },
-                  kind: {
-                    type: "string",
-                    description:
-                      "Output only. [Output Only] Type of the resource. Always compute#metadata for metadata.",
-                  },
                 },
                 description: "A metadata key/value entry.",
                 additionalProperties: true,
@@ -702,11 +544,6 @@ const instancesBulkInsert: AppBlock = {
                             type: "integer",
                             description:
                               "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
-                          },
-                          kind: {
-                            type: "string",
-                            description:
-                              "Output only. [Output Only] Type of the resource. Alwayscompute#accessConfig for access configs.",
                           },
                           name: {
                             type: "string",
@@ -821,11 +658,6 @@ const instancesBulkInsert: AppBlock = {
                             description:
                               "Applies to ipv6AccessConfigs only. The prefix length of the external IPv6 range.",
                           },
-                          kind: {
-                            type: "string",
-                            description:
-                              "Output only. [Output Only] Type of the resource. Alwayscompute#accessConfig for access configs.",
-                          },
                           name: {
                             type: "string",
                             description:
@@ -881,31 +713,10 @@ const instancesBulkInsert: AppBlock = {
                       description:
                         "An array of IPv6 access configurations for this interface. Currently, only one IPv6 access config, DIRECT_IPV6, is supported. If there is no ipv6AccessConfig specified, then this instance will have no external IPv6 Internet access.",
                     },
-                    ipv6AccessType: {
-                      type: "string",
-                      enum: [
-                        "UNDEFINED_IPV6_ACCESS_TYPE",
-                        "EXTERNAL",
-                        "INTERNAL",
-                        "UNSPECIFIED_IPV6_ACCESS_TYPE",
-                      ],
-                      description:
-                        "Output only. [Output Only] One of EXTERNAL, INTERNAL to indicate whether the IP can be accessed from the Internet. This field is always inherited from its subnetwork.  Valid only if stackType is IPV4_IPV6. Check the Ipv6AccessType enum for the list of possible values.",
-                    },
                     ipv6Address: {
                       type: "string",
                       description:
                         "An IPv6 internal network address for this network interface. To use a static internal IP address, it must be unused and in the same region as the instance's zone. If not specified, Google Cloud will automatically assign an internal IPv6 address from the instance's subnetwork.",
-                    },
-                    kind: {
-                      type: "string",
-                      description:
-                        "Output only. [Output Only] Type of the resource. Alwayscompute#networkInterface for network interfaces.",
-                    },
-                    name: {
-                      type: "string",
-                      description:
-                        "[Output Only] The name of the network interface, which is generated by the server. For a VM, the network interface uses the nicN naming format. Where N is a value between 0 and7. The default interface value is nic0.",
                     },
                     network: {
                       type: "string",

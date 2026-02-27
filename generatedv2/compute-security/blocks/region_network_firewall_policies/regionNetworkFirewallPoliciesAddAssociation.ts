@@ -35,45 +35,12 @@ const regionNetworkFirewallPoliciesAddAssociation: AppBlock = {
           },
           required: false,
         },
-        displayName: {
-          name: "Display Name",
-          description:
-            "[Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.",
-          },
-          required: false,
-        },
-        firewallPolicyId: {
-          name: "Firewall Policy Id",
-          description:
-            "Output only. [Output Only] The firewall policy ID of the association.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The firewall policy ID of the association.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description: "The name for an association.",
           type: {
             type: "string",
             description: "The name for an association.",
-          },
-          required: false,
-        },
-        shortName: {
-          name: "Short Name",
-          description:
-            "Output only. [Output Only] The short name of the firewall policy of the association.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The short name of the firewall policy of the association.",
           },
           required: false,
         },

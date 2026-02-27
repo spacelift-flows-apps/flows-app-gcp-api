@@ -134,65 +134,6 @@ const interconnectsPatch: AppBlock = {
           },
           required: false,
         },
-        availableFeatures: {
-          name: "Available Features",
-          description:
-            "[Output only] List of features available for this Interconnect connection, which can take one of the following values:     - IF_MACSEC: If present, then the Interconnect connection is    provisioned on MACsec capable hardware ports. If not present, then the    Interconnect connection is provisioned on non-MACsec capable ports. Any    attempt to enable MACsec will fail.    - IF_CROSS_SITE_NETWORK: If present, then the Interconnect connection is    provisioned exclusively for Cross-Site Networking. Any attempt to configure    VLAN attachments will fail. If not present, then the Interconnect    connection is not provisioned for Cross-Site Networking. Any attempt to use    it for Cross-Site Networking will fail. Check the AvailableFeatures enum for the list of possible values.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-              enum: ["UNDEFINED_AVAILABLE_FEATURES"],
-            },
-            description:
-              "[Output only] List of features available for this Interconnect connection, which can take one of the following values:     - IF_MACSEC: If present, then the Interconnect connection is    provisioned on MACsec capable hardware ports. If not present, then the    Interconnect connection is provisioned on non-MACsec capable ports. Any    attempt to enable MACsec will fail.    - IF_CROSS_SITE_NETWORK: If present, then the Interconnect connection is    provisioned exclusively for Cross-Site Networking. Any attempt to configure    VLAN attachments will fail. If not present, then the Interconnect    connection is not provisioned for Cross-Site Networking. Any attempt to use    it for Cross-Site Networking will fail. Check the AvailableFeatures enum for the list of possible values.",
-          },
-          required: false,
-        },
-        circuitInfos: {
-          name: "Circuit Infos",
-          description:
-            "Output only. [Output Only] A list of CircuitInfo objects, that describe the individual circuits in this LAG.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                customerDemarcId: {
-                  type: "string",
-                  description: "Customer-side demarc ID for this circuit.",
-                },
-                googleCircuitId: {
-                  type: "string",
-                  description:
-                    "Google-assigned unique ID for this circuit. Assigned at circuit turn-up.",
-                },
-                googleDemarcId: {
-                  type: "string",
-                  description:
-                    "Google-side demarc ID for this circuit. Assigned at circuit turn-up and provided by Google to the customer in the LOA.",
-                },
-              },
-              description:
-                "Describes a single physical circuit between the Customer and Google. CircuitInfo objects are created by Google, so all fields are output only.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] A list of CircuitInfo objects, that describe the individual circuits in this LAG.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         customerName: {
           name: "Customer Name",
           description:
@@ -215,141 +156,6 @@ const interconnectsPatch: AppBlock = {
           },
           required: false,
         },
-        expectedOutages: {
-          name: "Expected Outages",
-          description:
-            "Output only. [Output Only] A list of outages expected for this Interconnect.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                affectedCircuits: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description:
-                    "If issue_type is IT_PARTIAL_OUTAGE, a list of the Google-side circuit IDs that will be affected.",
-                },
-                description: {
-                  type: "string",
-                  description: "A description about the purpose of the outage.",
-                },
-                endTime: {
-                  type: "string",
-                  description: "64-bit integer as string",
-                },
-                issueType: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_ISSUE_TYPE",
-                    "IT_OUTAGE",
-                    "IT_PARTIAL_OUTAGE",
-                    "OUTAGE",
-                    "PARTIAL_OUTAGE",
-                  ],
-                  description:
-                    'Form this outage is expected to take, which can take one of the following values:     - OUTAGE: The Interconnect may be completely out of service for    some or all of the specified window.    - PARTIAL_OUTAGE: Some circuits comprising the Interconnect as a whole    should remain up, but with reduced bandwidth.   Note that the versions of this enum prefixed with "IT_" have been deprecated in favor of the unprefixed values. Check the IssueType enum for the list of possible values.',
-                },
-                name: {
-                  type: "string",
-                  description:
-                    "Unique identifier for this outage notification.",
-                },
-                source: {
-                  type: "string",
-                  enum: ["UNDEFINED_SOURCE", "GOOGLE", "NSRC_GOOGLE"],
-                  description:
-                    "The party that generated this notification, which can take the following value:     - GOOGLE: this notification as generated by Google.   Note that the value of NSRC_GOOGLE has been deprecated in favor of GOOGLE. Check the Source enum for the list of possible values.",
-                },
-                startTime: {
-                  type: "string",
-                  description: "64-bit integer as string",
-                },
-                state: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_STATE",
-                    "ACTIVE",
-                    "CANCELLED",
-                    "COMPLETED",
-                    "NS_ACTIVE",
-                    "NS_CANCELED",
-                  ],
-                  description:
-                    'State of this notification, which can take one of the following values:     - ACTIVE: This outage notification is active. The event could be in    the past, present, or future. See start_time and end_time for    scheduling.    - CANCELLED: The outage associated with this notification was cancelled    before the outage was due to start.    - COMPLETED: The outage associated with this notification is complete.   Note that the versions of this enum prefixed with "NS_" have been deprecated in favor of the unprefixed values. Check the State enum for the list of possible values.',
-                },
-              },
-              description:
-                "Description of a planned outage on this Interconnect.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] A list of outages expected for this Interconnect.",
-          },
-          required: false,
-        },
-        googleIpAddress: {
-          name: "Google Ip Address",
-          description:
-            "Output only. [Output Only] IP address configured on the Google side of the Interconnect link. This can be used only for ping tests.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] IP address configured on the Google side of the Interconnect link. This can be used only for ping tests.",
-          },
-          required: false,
-        },
-        googleReferenceId: {
-          name: "Google Reference Id",
-          description:
-            "Output only. [Output Only] Google reference ID to be used when raising support tickets with Google or otherwise to debug backend connectivity issues.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Google reference ID to be used when raising support tickets with Google or otherwise to debug backend connectivity issues.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        interconnectAttachments: {
-          name: "Interconnect Attachments",
-          description:
-            "Output only. [Output Only] A list of the URLs of all InterconnectAttachments configured to use  this Interconnect.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] A list of the URLs of all InterconnectAttachments configured to use  this Interconnect.",
-          },
-          required: false,
-        },
-        interconnectGroups: {
-          name: "Interconnect Groups",
-          description:
-            "Output only. [Output Only] URLs of InterconnectGroups that include this Interconnect. Order is arbitrary and items are unique.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] URLs of InterconnectGroups that include this Interconnect. Order is arbitrary and items are unique.",
-          },
-          required: false,
-        },
         interconnectType: {
           name: "Interconnect Type",
           description:
@@ -364,17 +170,6 @@ const interconnectsPatch: AppBlock = {
             ],
             description:
               "Type of interconnect, which can take one of the following values:     - PARTNER: A partner-managed interconnection shared between customers    though a partner.    - DEDICATED: A dedicated physical interconnection with the    customer.   Note that a value IT_PRIVATE has been deprecated in favor of DEDICATED. Check the InterconnectType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#interconnect for interconnects.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#interconnect for interconnects.",
           },
           required: false,
         },
@@ -506,22 +301,6 @@ const interconnectsPatch: AppBlock = {
           },
           required: false,
         },
-        operationalStatus: {
-          name: "Operational Status",
-          description:
-            "Output only. [Output Only] The current status of this Interconnect's functionality, which can take one of the following values:     - OS_ACTIVE: A valid Interconnect, which is turned up and is ready to    use. Attachments may be provisioned on this Interconnect.  - OS_UNPROVISIONED: An Interconnect that has not completed turnup. No attachments may be provisioned on this Interconnect. - OS_UNDER_MAINTENANCE: An Interconnect that is undergoing internal maintenance. No attachments may be provisioned or updated on this Interconnect. Check the OperationalStatus enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_OPERATIONAL_STATUS",
-              "OS_ACTIVE",
-              "OS_UNPROVISIONED",
-            ],
-            description:
-              "Output only. [Output Only] The current status of this Interconnect's functionality, which can take one of the following values:     - OS_ACTIVE: A valid Interconnect, which is turned up and is ready to    use. Attachments may be provisioned on this Interconnect.  - OS_UNPROVISIONED: An Interconnect that has not completed turnup. No attachments may be provisioned on this Interconnect. - OS_UNDER_MAINTENANCE: An Interconnect that is undergoing internal maintenance. No attachments may be provisioned or updated on this Interconnect. Check the OperationalStatus enum for the list of possible values.",
-          },
-          required: false,
-        },
         params: {
           name: "Params",
           description:
@@ -540,28 +319,6 @@ const interconnectsPatch: AppBlock = {
             },
             description: "Additional interconnect parameters.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        peerIpAddress: {
-          name: "Peer Ip Address",
-          description:
-            "Output only. [Output Only] IP address configured on the customer side of the Interconnect link. The customer should configure this IP address during turnup when prompted by Google NOC. This can be used only for ping tests.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] IP address configured on the customer side of the Interconnect link. The customer should configure this IP address during turnup when prompted by Google NOC. This can be used only for ping tests.",
-          },
-          required: false,
-        },
-        provisionedLinkCount: {
-          name: "Provisioned Link Count",
-          description:
-            "Output only. [Output Only] Number of links actually provisioned in this interconnect.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output Only] Number of links actually provisioned in this interconnect.",
           },
           required: false,
         },
@@ -602,38 +359,6 @@ const interconnectsPatch: AppBlock = {
           },
           required: false,
         },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        state: {
-          name: "State",
-          description:
-            "Output only. [Output Only] The current state of Interconnect functionality, which can take one of the following values:     - ACTIVE: The Interconnect is valid, turned up and ready to use.    Attachments may be provisioned on this Interconnect.    - UNPROVISIONED: The Interconnect has not completed turnup. No    attachments may be provisioned on this Interconnect.    - UNDER_MAINTENANCE: The Interconnect is undergoing internal maintenance.    No attachments may be provisioned or updated on this    Interconnect. Check the State enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_STATE", "ACTIVE", "UNPROVISIONED"],
-            description:
-              "Output only. [Output Only] The current state of Interconnect functionality, which can take one of the following values:     - ACTIVE: The Interconnect is valid, turned up and ready to use.    Attachments may be provisioned on this Interconnect.    - UNPROVISIONED: The Interconnect has not completed turnup. No    attachments may be provisioned on this Interconnect.    - UNDER_MAINTENANCE: The Interconnect is undergoing internal maintenance.    No attachments may be provisioned or updated on this    Interconnect. Check the State enum for the list of possible values.",
-          },
-          required: false,
-        },
         subzone: {
           name: "Subzone",
           description:
@@ -643,20 +368,6 @@ const interconnectsPatch: AppBlock = {
             enum: ["UNDEFINED_SUBZONE", "SUBZONE_A", "SUBZONE_B"],
             description:
               "Specific subzone in the InterconnectLocation that represents where this connection is to be provisioned. Check the Subzone enum for the list of possible values.",
-          },
-          required: false,
-        },
-        wireGroups: {
-          name: "Wire Groups",
-          description:
-            "Output only. [Output Only] A list of the URLs of all CrossSiteNetwork WireGroups configured to use this Interconnect. The Interconnect cannot be deleted if this list is non-empty.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] A list of the URLs of all CrossSiteNetwork WireGroups configured to use this Interconnect. The Interconnect cannot be deleted if this list is non-empty.",
           },
           required: false,
         },

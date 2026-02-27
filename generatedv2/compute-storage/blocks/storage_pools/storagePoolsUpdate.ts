@@ -10,14 +10,12 @@ const storagePoolsUpdate: AppBlock = {
       config: {
         zone: {
           name: "Zone",
-          description:
-            "Output only. [Output Only] URL of the zone where the storage pool resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "The name of the zone for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the zone where the storage pool resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "The name of the zone for this request.",
           },
-          required: false,
+          required: true,
         },
         storagePool: {
           name: "Storage Pool",
@@ -40,17 +38,6 @@ const storagePoolsUpdate: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -59,52 +46,6 @@ const storagePoolsUpdate: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this property when you create the resource.",
-          },
-          required: false,
-        },
-        exapoolProvisionedCapacityGb: {
-          name: "Exapool Provisioned Capacity Gb",
-          description:
-            "Output only. [Output Only] Provisioned capacities for each SKU for this Exapool in GiB",
-          type: {
-            type: "object",
-            properties: {
-              capacityOptimized: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              readOptimized: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              writeOptimized: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-            },
-            description: "Exapool provisioned capacities for each SKU type",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#storagePool for storage pools.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#storagePool for storage pools.",
           },
           required: false,
         },
@@ -204,186 +145,6 @@ const storagePoolsUpdate: AppBlock = {
           type: {
             type: "string",
             description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        resourceStatus: {
-          name: "Resource Status",
-          description:
-            "Output only. [Output Only] Status information for the storage pool resource.",
-          type: {
-            type: "object",
-            properties: {
-              diskCount: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxReadIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxReadThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxWriteIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxWriteThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              lastResizeTimestamp: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Timestamp of the last successful resize inRFC3339 text format.",
-              },
-              maxTotalProvisionedDiskCapacityGb: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUsedCapacityBytes: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUsedIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUsedThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUserWrittenBytes: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              totalProvisionedDiskCapacityGb: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              totalProvisionedDiskIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              totalProvisionedDiskThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-            },
-            description: "[Output Only] Contains output only fields.",
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
-          },
-          required: false,
-        },
-        selfLinkWithId: {
-          name: "Self Link With Id",
-          description:
-            "Output only. [Output Only] Server-defined URL for this resource's resource id.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for this resource's resource id.",
-          },
-          required: false,
-        },
-        state: {
-          name: "State",
-          description:
-            "Output only. [Output Only] The status of storage pool creation.        - CREATING: Storage pool is provisioning.      storagePool.      - FAILED: Storage pool creation failed.      - READY: Storage pool is ready for use.      - DELETING: Storage pool is deleting. Check the State enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATE",
-              "CREATING",
-              "DELETING",
-              "FAILED",
-              "READY",
-            ],
-            description:
-              "Output only. [Output Only] The status of storage pool creation.        - CREATING: Storage pool is provisioning.      storagePool.      - FAILED: Storage pool creation failed.      - READY: Storage pool is ready for use.      - DELETING: Storage pool is deleting. Check the State enum for the list of possible values.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] Status information for the storage pool resource.",
-          type: {
-            type: "object",
-            properties: {
-              diskCount: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxReadIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxReadThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxWriteIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              exapoolMaxWriteThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              lastResizeTimestamp: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] Timestamp of the last successful resize inRFC3339 text format.",
-              },
-              maxTotalProvisionedDiskCapacityGb: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUsedCapacityBytes: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUsedIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUsedThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              poolUserWrittenBytes: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              totalProvisionedDiskCapacityGb: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              totalProvisionedDiskIops: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-              totalProvisionedDiskThroughput: {
-                type: "string",
-                description: "64-bit integer as string",
-              },
-            },
-            description: "[Output Only] Contains output only fields.",
-            additionalProperties: true,
           },
           required: false,
         },

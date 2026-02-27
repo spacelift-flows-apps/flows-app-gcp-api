@@ -25,17 +25,6 @@ const resourcePoliciesPatch: AppBlock = {
           },
           required: true,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description: "Description field",
@@ -94,16 +83,6 @@ const resourcePoliciesPatch: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         instanceSchedulePolicy: {
           name: "Instance Schedule Policy",
           description: "Resource policy for scheduling instance operations.",
@@ -156,17 +135,6 @@ const resourcePoliciesPatch: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#resource_policies for resource policies.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#resource_policies for resource policies.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:
@@ -175,49 +143,6 @@ const resourcePoliciesPatch: AppBlock = {
             type: "string",
             description:
               "The name of the resource, provided by the client when initially creating the resource. The resource name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-          },
-          required: false,
-        },
-        resourceStatus: {
-          name: "Resource Status",
-          description:
-            "Output only. [Output Only] The system status of the resource policy.",
-          type: {
-            type: "object",
-            properties: {
-              instanceSchedulePolicy: {
-                type: "object",
-                properties: {
-                  lastRunStartTime: {
-                    type: "string",
-                    description:
-                      "Output only. [Output Only] The last time the schedule successfully ran. The timestamp is an RFC3339 string.",
-                  },
-                  nextRunStartTime: {
-                    type: "string",
-                    description:
-                      "Output only. [Output Only] The next time the schedule is planned to run. The actual time might be slightly different. The timestamp is an RFC3339 string.",
-                  },
-                },
-                additionalProperties: true,
-                description:
-                  "Output only. [Output Only] Specifies a set of output values reffering to the instance_schedule_policy system status. This field should have the same name as corresponding policy field.",
-              },
-            },
-            description:
-              'Contains output only fields. Use this sub-message for all output fields set on ResourcePolicy. The internal structure of this "status" field should mimic the structure of ResourcePolicy proto specification.',
-            additionalProperties: true,
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
           },
           required: false,
         },
@@ -262,11 +187,6 @@ const resourcePoliciesPatch: AppBlock = {
                         description:
                           "Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle.",
                       },
-                      duration: {
-                        type: "string",
-                        description:
-                          "Output only. [Output only] A predetermined duration for the window, automatically chosen to be the smallest possible in the given scenario.",
-                      },
                       startTime: {
                         type: "string",
                         description:
@@ -279,11 +199,6 @@ const resourcePoliciesPatch: AppBlock = {
                   hourlySchedule: {
                     type: "object",
                     properties: {
-                      duration: {
-                        type: "string",
-                        description:
-                          "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
-                      },
                       hoursInCycle: {
                         type: "integer",
                         description:
@@ -321,11 +236,6 @@ const resourcePoliciesPatch: AppBlock = {
                               ],
                               description:
                                 "Defines a schedule that runs on specific days of the week. Specify one or more days. The following options are available: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY. Check the Day enum for the list of possible values.",
-                            },
-                            duration: {
-                              type: "string",
-                              description:
-                                "Output only. [Output only] Duration of the time window, automatically chosen to be smallest possible in the given scenario.",
                             },
                             startTime: {
                               type: "string",
@@ -384,25 +294,6 @@ const resourcePoliciesPatch: AppBlock = {
             description:
               "A snapshot schedule policy specifies when and how frequently snapshots are to be created for the target disk. Also specifies how many and how long these scheduled snapshots should be retained.",
             additionalProperties: true,
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of resource policy creation. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "CREATING",
-              "DELETING",
-              "EXPIRED",
-              "INVALID",
-              "READY",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           required: false,
         },

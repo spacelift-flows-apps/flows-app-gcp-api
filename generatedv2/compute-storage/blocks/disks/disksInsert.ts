@@ -10,14 +10,12 @@ const disksInsert: AppBlock = {
       config: {
         zone: {
           name: "Zone",
-          description:
-            "Output only. [Output Only] URL of the zone where the disk resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+          description: "The name of the zone for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] URL of the zone where the disk resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+            description: "The name of the zone for this request.",
           },
-          required: false,
+          required: true,
         },
         accessMode: {
           name: "Access Mode",
@@ -59,54 +57,14 @@ const disksInsert: AppBlock = {
           type: {
             type: "object",
             properties: {
-              consistencyGroupPolicy: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] URL of the DiskConsistencyGroupPolicy if replication was started on the disk as a member of a group.",
-              },
-              consistencyGroupPolicyId: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] ID of the DiskConsistencyGroupPolicy if replication was started on the disk as a member of a group.",
-              },
               disk: {
                 type: "string",
                 description:
                   "The other disk asynchronously replicated to or from the current disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk    - projects/project/zones/zone/disks/disk    - zones/zone/disks/disk",
               },
-              diskId: {
-                type: "string",
-                description:
-                  "Output only. [Output Only] The unique ID of the other disk asynchronously replicated to or from the current disk. This value identifies the exact disk that was used to create this replication. For example, if you started replicating the persistent disk from a disk that was later deleted and recreated under the same name, the disk ID would identify the exact version of the disk that was used.",
-              },
             },
             additionalProperties: true,
             description: "Disk asynchronously replicated into this disk.",
-          },
-          required: false,
-        },
-        asyncSecondaryDisks: {
-          name: "Async Secondary Disks",
-          description:
-            "Output only. [Output Only] A list of disks this disk is asynchronously replicated to.",
-          type: {
-            type: "object",
-            additionalProperties: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] A list of disks this disk is asynchronously replicated to.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -147,11 +105,6 @@ const disksInsert: AppBlock = {
                 type: "string",
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
-              },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
               },
             },
             additionalProperties: true,
@@ -211,27 +164,6 @@ const disksInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#disk for disks.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#disk for disks.",
-          },
-          required: false,
-        },
         labelFingerprint: {
           name: "Label Fingerprint",
           description:
@@ -254,28 +186,6 @@ const disksInsert: AppBlock = {
             },
             description:
               "Labels to apply to this disk. These can be later modified by the setLabels method.",
-          },
-          required: false,
-        },
-        lastAttachTimestamp: {
-          name: "Last Attach Timestamp",
-          description:
-            "Output only. [Output Only] Last attach timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Last attach timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
-        lastDetachTimestamp: {
-          name: "Last Detach Timestamp",
-          description:
-            "Output only. [Output Only] Last detach timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Last detach timestamp inRFC3339 text format.",
           },
           required: false,
         },
@@ -390,17 +300,6 @@ const disksInsert: AppBlock = {
           },
           required: false,
         },
-        region: {
-          name: "Region",
-          description:
-            "Output only. [Output Only] URL of the region where the disk resides. Only applicable for regional resources. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the region where the disk resides. Only applicable for regional resources. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
-          },
-          required: false,
-        },
         replicaZones: {
           name: "Replica Zones",
           description:
@@ -429,73 +328,12 @@ const disksInsert: AppBlock = {
           },
           required: false,
         },
-        resourceStatus: {
-          name: "Resource Status",
-          description:
-            "Output only. [Output Only] Status information for the disk resource.",
-          type: {
-            type: "object",
-            properties: {
-              asyncPrimaryDisk: {
-                type: "object",
-                properties: {
-                  state: {
-                    type: "string",
-                    enum: [
-                      "UNDEFINED_STATE",
-                      "ACTIVE",
-                      "CREATED",
-                      "STARTING",
-                      "STATE_UNSPECIFIED",
-                      "STOPPED",
-                      "STOPPING",
-                    ],
-                    description:
-                      "Check the State enum for the list of possible values.",
-                  },
-                },
-                additionalProperties: true,
-              },
-              asyncSecondaryDisks: {
-                type: "object",
-                additionalProperties: {
-                  type: "string",
-                },
-                description: "Key: disk, value: AsyncReplicationStatus message",
-              },
-            },
-            additionalProperties: true,
-            description:
-              "Output only. [Output Only] Status information for the disk resource.",
-          },
-          required: false,
-        },
         satisfiesPzi: {
           name: "Satisfies Pzi",
           description: "Output only. Reserved for future use.",
           type: {
             type: "boolean",
             description: "Output only. Reserved for future use.",
-          },
-          required: false,
-        },
-        satisfiesPzs: {
-          name: "Satisfies Pzs",
-          description: "Output only. [Output Only] Reserved for future use.",
-          type: {
-            type: "boolean",
-            description: "Output only. [Output Only] Reserved for future use.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined fully-qualified URL for this resource.",
           },
           required: false,
         },
@@ -509,28 +347,6 @@ const disksInsert: AppBlock = {
           },
           required: false,
         },
-        sourceConsistencyGroupPolicy: {
-          name: "Source Consistency Group Policy",
-          description:
-            "Output only. [Output Only] URL of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] URL of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
-          },
-          required: false,
-        },
-        sourceConsistencyGroupPolicyId: {
-          name: "Source Consistency Group Policy Id",
-          description:
-            "Output only. [Output Only] ID of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] ID of the DiskConsistencyGroupPolicy for a secondary disk that was created using a consistency group.",
-          },
-          required: false,
-        },
         sourceDisk: {
           name: "Source Disk",
           description:
@@ -539,17 +355,6 @@ const disksInsert: AppBlock = {
             type: "string",
             description:
               "The source disk used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        -        https://www.googleapis.com/compute/v1/projects/project/zones/zone/disks/disk       -        https://www.googleapis.com/compute/v1/projects/project/regions/region/disks/disk       -        projects/project/zones/zone/disks/disk       -        projects/project/regions/region/disks/disk       -        zones/zone/disks/disk       -        regions/region/disks/disk",
-          },
-          required: false,
-        },
-        sourceDiskId: {
-          name: "Source Disk Id",
-          description:
-            "Output only. [Output Only] The unique ID of the disk used to create this disk. This value identifies the exact disk that was used to create this persistent disk. For example, if you created the persistent disk from a disk that was later deleted and recreated under the same name, the source disk ID would identify the exact version of the disk that was used.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The unique ID of the disk used to create this disk. This value identifies the exact disk that was used to create this persistent disk. For example, if you created the persistent disk from a disk that was later deleted and recreated under the same name, the source disk ID would identify the exact version of the disk that was used.",
           },
           required: false,
         },
@@ -591,26 +396,10 @@ const disksInsert: AppBlock = {
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-              },
             },
             additionalProperties: true,
             description:
               "Thecustomer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key.",
-          },
-          required: false,
-        },
-        sourceImageId: {
-          name: "Source Image Id",
-          description:
-            "Output only. [Output Only] The ID value of the image used to create this disk. This value identifies the exact image that was used to create this persistent disk. For example, if you created the persistent disk from an image that was later deleted and recreated under the same name, the source image ID would identify the exact version of the image that was used.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The ID value of the image used to create this disk. This value identifies the exact image that was used to create this persistent disk. For example, if you created the persistent disk from an image that was later deleted and recreated under the same name, the source image ID would identify the exact version of the image that was used.",
           },
           required: false,
         },
@@ -622,17 +411,6 @@ const disksInsert: AppBlock = {
             type: "string",
             description:
               "The source instant snapshot used to create this disk. You can provide this as a partial or full URL to the resource. For example, the following are valid values:        - https://www.googleapis.com/compute/v1/projects/project/zones/zone/instantSnapshots/instantSnapshot      - projects/project/zones/zone/instantSnapshots/instantSnapshot    - zones/zone/instantSnapshots/instantSnapshot",
-          },
-          required: false,
-        },
-        sourceInstantSnapshotId: {
-          name: "Source Instant Snapshot Id",
-          description:
-            "Output only. [Output Only] The unique ID of the instant snapshot used to create this disk. This value identifies the exact instant snapshot that was used to create this persistent disk. For example, if you created the persistent disk from an instant snapshot that was later deleted and recreated under the same name, the source instant snapshot ID would identify the exact version of the instant snapshot that was used.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The unique ID of the instant snapshot used to create this disk. This value identifies the exact instant snapshot that was used to create this persistent disk. For example, if you created the persistent disk from an instant snapshot that was later deleted and recreated under the same name, the source instant snapshot ID would identify the exact version of the instant snapshot that was used.",
           },
           required: false,
         },
@@ -674,26 +452,10 @@ const disksInsert: AppBlock = {
                 description:
                   'Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or thersaEncryptedKey. For example:  "rsaEncryptedKey": "ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe=="  The key must meet the following requirements before you can provide it to Compute Engine:     1. The key is wrapped using a RSA public key certificate provided by    Google.    2. After being wrapped, the key must be encoded in RFC 4648 base64    encoding.  Gets the RSA public key certificate provided by Google at:   https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem',
               },
-              sha256: {
-                type: "string",
-                description:
-                  "[Output only] TheRFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.",
-              },
             },
             additionalProperties: true,
             description:
               "Thecustomer-supplied encryption key of the source snapshot. Required if the source snapshot is protected by a customer-supplied encryption key.",
-          },
-          required: false,
-        },
-        sourceSnapshotId: {
-          name: "Source Snapshot Id",
-          description:
-            "Output only. [Output Only] The unique ID of the snapshot used to create this disk. This value identifies the exact snapshot that was used to create this persistent disk. For example, if you created the persistent disk from a snapshot that was later deleted and recreated under the same name, the source snapshot ID would identify the exact version of the snapshot that was used.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The unique ID of the snapshot used to create this disk. This value identifies the exact snapshot that was used to create this persistent disk. For example, if you created the persistent disk from a snapshot that was later deleted and recreated under the same name, the source snapshot ID would identify the exact version of the snapshot that was used.",
           },
           required: false,
         },
@@ -705,26 +467,6 @@ const disksInsert: AppBlock = {
             type: "string",
             description:
               "The full Google Cloud Storage URI where the disk image is stored. This file must be a gzip-compressed tarball whose name ends in .tar.gz or virtual machine disk whose name ends in vmdk. Valid URIs may start with gs:// or https://storage.googleapis.com/. This flag is not optimized for creating multiple disks from a source storage object. To create many disks from a source storage object, use gcloud compute images import instead.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of disk creation.        - CREATING: Disk is provisioning.      - RESTORING: Source data is being copied into the      disk.      - FAILED: Disk creation failed.      - READY: Disk is ready for use.      - DELETING: Disk is deleting. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_STATUS",
-              "CREATING",
-              "DELETING",
-              "FAILED",
-              "READY",
-              "RESTORING",
-              "UNAVAILABLE",
-            ],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
           },
           required: false,
         },
@@ -747,20 +489,6 @@ const disksInsert: AppBlock = {
             type: "string",
             description:
               "URL of the disk type resource describing which disk type to use to create the disk. Provide this when creating the disk. For example:projects/project/zones/zone/diskTypes/pd-ssd. See Persistent disk types.",
-          },
-          required: false,
-        },
-        users: {
-          name: "Users",
-          description:
-            "Output only. [Output Only] Links to the users of the disk (attached instances) in form:projects/project/zones/zone/instances/instance",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "Output only. [Output Only] Links to the users of the disk (attached instances) in form:projects/project/zones/zone/instances/instance",
           },
           required: false,
         },

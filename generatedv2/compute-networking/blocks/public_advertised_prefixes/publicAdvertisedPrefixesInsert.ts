@@ -8,29 +8,6 @@ const publicAdvertisedPrefixesInsert: AppBlock = {
   inputs: {
     default: {
       config: {
-        byoipApiVersion: {
-          name: "Byoip Api Version",
-          description:
-            "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_BYOIP_API_VERSION", "V1", "V2"],
-            description:
-              "Output only. [Output Only] The version of BYOIP API. Check the ByoipApiVersion enum for the list of possible values.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -62,16 +39,6 @@ const publicAdvertisedPrefixesInsert: AppBlock = {
           },
           required: false,
         },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource type. The server generates this identifier.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
         ipCidrRange: {
           name: "Ip Cidr Range",
           description:
@@ -95,17 +62,6 @@ const publicAdvertisedPrefixesInsert: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Alwayscompute#publicAdvertisedPrefix for public advertised prefixes.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Alwayscompute#publicAdvertisedPrefix for public advertised prefixes.",
-          },
-          required: false,
-        },
         name: {
           name: "Name",
           description:
@@ -114,88 +70,6 @@ const publicAdvertisedPrefixesInsert: AppBlock = {
             type: "string",
             description:
               "Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply withRFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
-          },
-          required: false,
-        },
-        pdpScope: {
-          name: "Pdp Scope",
-          description:
-            "Specifies how child public delegated prefix will be scoped. It could be one of following values:        - `REGIONAL`: The public delegated prefix is regional only. The      provisioning will take a few minutes.      - `GLOBAL`: The public delegated prefix is global only. The      provisioning will take ~4 weeks.      - `GLOBAL_AND_REGIONAL` [output only]: The public delegated prefixes is       BYOIP V1 legacy prefix. This is output only value and no longer       supported in BYOIP V2. Check the PdpScope enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_PDP_SCOPE",
-              "GLOBAL",
-              "GLOBAL_AND_REGIONAL",
-              "REGIONAL",
-            ],
-            description:
-              "Specifies how child public delegated prefix will be scoped. It could be one of following values:        - `REGIONAL`: The public delegated prefix is regional only. The      provisioning will take a few minutes.      - `GLOBAL`: The public delegated prefix is global only. The      provisioning will take ~4 weeks.      - `GLOBAL_AND_REGIONAL` [output only]: The public delegated prefixes is       BYOIP V1 legacy prefix. This is output only value and no longer       supported in BYOIP V2. Check the PdpScope enum for the list of possible values.",
-          },
-          required: false,
-        },
-        publicDelegatedPrefixs: {
-          name: "Public Delegated Prefixs",
-          description:
-            "Output only. [Output Only] The list of public delegated prefixes that exist for this public advertised prefix.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                ipRange: {
-                  type: "string",
-                  description:
-                    "The IP address range of the public delegated prefix",
-                },
-                name: {
-                  type: "string",
-                  description: "The name of the public delegated prefix",
-                },
-                project: {
-                  type: "string",
-                  description:
-                    "The project number of the public delegated prefix",
-                },
-                region: {
-                  type: "string",
-                  description:
-                    "The region of the public delegated prefix if it is regional. If absent, the prefix is global.",
-                },
-                status: {
-                  type: "string",
-                  description:
-                    "The status of the public delegated prefix. Possible values are:   INITIALIZING: The public delegated prefix is being initialized and     addresses cannot be created yet.   ANNOUNCED: The public delegated prefix is active.",
-                },
-              },
-              description:
-                "Represents a CIDR range which can be used to assign addresses.",
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] The list of public delegated prefixes that exist for this public advertised prefix.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "Output only. [Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        sharedSecret: {
-          name: "Shared Secret",
-          description:
-            "[Output Only] The shared secret to be used for reverse DNS verification.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] The shared secret to be used for reverse DNS verification.",
           },
           required: false,
         },

@@ -8,51 +8,6 @@ const routesInsert: AppBlock = {
   inputs: {
     default: {
       config: {
-        asPaths: {
-          name: "As Paths",
-          description: "Output only. [Output Only] AS path.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                asLists: {
-                  type: "array",
-                  items: {
-                    type: "integer",
-                  },
-                  description: "[Output Only] The AS numbers of the AS Path.",
-                },
-                pathSegmentType: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_PATH_SEGMENT_TYPE",
-                    "AS_CONFED_SEQUENCE",
-                    "AS_CONFED_SET",
-                    "AS_SEQUENCE",
-                    "AS_SET",
-                  ],
-                  description:
-                    "[Output Only] The type of the AS Path, which can be one of the following values: - 'AS_SET': unordered set of autonomous systems that the route in has traversed - 'AS_SEQUENCE': ordered set of autonomous systems that the route has traversed - 'AS_CONFED_SEQUENCE': ordered set of Member Autonomous Systems in the local confederation that the route has traversed - 'AS_CONFED_SET': unordered set of Member Autonomous Systems in the local confederation that the route has traversed Check the PathSegmentType enum for the list of possible values.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description: "Output only. [Output Only] AS path.",
-          },
-          required: false,
-        },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -72,27 +27,6 @@ const routesInsert: AppBlock = {
             type: "string",
             description:
               "The destination range of outgoing packets that this route applies to. Both IPv4 and IPv6 are supported. Must specify an IPv4 range (e.g. 192.0.2.0/24) or an IPv6 range in RFC 4291 format (e.g. 2001:db8::/32). IPv6 range will be displayed using RFC 5952 compressed format.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of this resource. Always compute#routes for Route resources.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of this resource. Always compute#routes for Route resources.",
           },
           required: false,
         },
@@ -129,17 +63,6 @@ const routesInsert: AppBlock = {
           },
           required: false,
         },
-        nextHopHub: {
-          name: "Next Hop Hub",
-          description:
-            "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The full resource name of the Network Connectivity Center hub that will handle matching packets.",
-          },
-          required: false,
-        },
         nextHopIlb: {
           name: "Next Hop Ilb",
           description:
@@ -162,28 +85,6 @@ const routesInsert: AppBlock = {
           },
           required: false,
         },
-        nextHopInterRegionCost: {
-          name: "Next Hop Inter Region Cost",
-          description:
-            "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.",
-          },
-          required: false,
-        },
-        nextHopInterconnectAttachment: {
-          name: "Next Hop Interconnect Attachment",
-          description:
-            "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.",
-          },
-          required: false,
-        },
         nextHopIp: {
           name: "Next Hop Ip",
           description:
@@ -195,17 +96,6 @@ const routesInsert: AppBlock = {
           },
           required: false,
         },
-        nextHopMed: {
-          name: "Next Hop Med",
-          description:
-            "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
-          type: {
-            type: "integer",
-            description:
-              "Output only. [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.",
-          },
-          required: false,
-        },
         nextHopNetwork: {
           name: "Next Hop Network",
           description:
@@ -214,29 +104,6 @@ const routesInsert: AppBlock = {
             type: "string",
             description:
               "The URL of the local network if it should handle matching packets.",
-          },
-          required: false,
-        },
-        nextHopOrigin: {
-          name: "Next Hop Origin",
-          description:
-            "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_NEXT_HOP_ORIGIN", "EGP", "IGP", "INCOMPLETE"],
-            description:
-              "Output only. [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE. Check the NextHopOrigin enum for the list of possible values.",
-          },
-          required: false,
-        },
-        nextHopPeering: {
-          name: "Next Hop Peering",
-          description:
-            "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.",
           },
           required: false,
         },
@@ -283,53 +150,6 @@ const routesInsert: AppBlock = {
           },
           required: false,
         },
-        routeStatus: {
-          name: "Route Status",
-          description:
-            "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_ROUTE_STATUS",
-              "ACTIVE",
-              "DROPPED",
-              "INACTIVE",
-              "PENDING",
-            ],
-            description:
-              "[Output only] The status of the route. This status applies to dynamic routes learned by Cloud Routers. It is also applicable to routes undergoing migration. Check the RouteStatus enum for the list of possible values.",
-          },
-          required: false,
-        },
-        routeType: {
-          name: "Route Type",
-          description:
-            "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: [
-              "UNDEFINED_ROUTE_TYPE",
-              "BGP",
-              "STATIC",
-              "SUBNET",
-              "TRANSIT",
-            ],
-            description:
-              "Output only. [Output Only] The type of this route, which can be one of the following values: - 'TRANSIT' for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - 'SUBNET' for a route from a subnet of the VPC - 'BGP' for a route learned from a BGP peer of this router - 'STATIC' for a static route Check the RouteType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        selfLink: {
-          name: "Self Link",
-          description:
-            "[Output Only] Server-defined fully-qualified URL for this resource.",
-          type: {
-            type: "string",
-            description:
-              "[Output Only] Server-defined fully-qualified URL for this resource.",
-          },
-          required: false,
-        },
         tags: {
           name: "Tags",
           description: "A list of instance tags to which this route applies.",
@@ -339,86 +159,6 @@ const routesInsert: AppBlock = {
               type: "string",
             },
             description: "A list of instance tags to which this route applies.",
-          },
-          required: false,
-        },
-        warnings: {
-          name: "Warnings",
-          description:
-            "Output only. [Output Only] If potential misconfigurations are detected for this route, this field will be populated with warning messages.",
-          type: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                code: {
-                  type: "string",
-                  enum: [
-                    "UNDEFINED_CODE",
-                    "CLEANUP_FAILED",
-                    "DEPRECATED_RESOURCE_USED",
-                    "DEPRECATED_TYPE_USED",
-                    "DISK_SIZE_LARGER_THAN_IMAGE_SIZE",
-                    "EXPERIMENTAL_TYPE_USED",
-                    "EXTERNAL_API_WARNING",
-                    "FIELD_VALUE_OVERRIDEN",
-                    "INJECTED_KERNELS_DEPRECATED",
-                    "INVALID_HEALTH_CHECK_FOR_DYNAMIC_WIEGHTED_LB",
-                    "LARGE_DEPLOYMENT_WARNING",
-                    "LIST_OVERHEAD_QUOTA_EXCEED",
-                    "MISSING_TYPE_DEPENDENCY",
-                    "NEXT_HOP_ADDRESS_NOT_ASSIGNED",
-                    "NEXT_HOP_CANNOT_IP_FORWARD",
-                    "NEXT_HOP_INSTANCE_HAS_NO_IPV6_INTERFACE",
-                    "NEXT_HOP_INSTANCE_NOT_FOUND",
-                    "NEXT_HOP_INSTANCE_NOT_ON_NETWORK",
-                    "NEXT_HOP_NOT_RUNNING",
-                    "NOT_CRITICAL_ERROR",
-                    "NO_RESULTS_ON_PAGE",
-                    "PARTIAL_SUCCESS",
-                    "QUOTA_INFO_UNAVAILABLE",
-                    "REQUIRED_TOS_AGREEMENT",
-                    "RESOURCE_IN_USE_BY_OTHER_RESOURCE_WARNING",
-                    "RESOURCE_NOT_DELETED",
-                    "SCHEMA_VALIDATION_IGNORED",
-                    "SINGLE_INSTANCE_PROPERTY_TEMPLATE",
-                    "UNDECLARED_PROPERTIES",
-                    "UNREACHABLE",
-                  ],
-                  description:
-                    "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response. Check the Code enum for the list of possible values.",
-                },
-                data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      key: {
-                        type: "string",
-                        description:
-                          "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
-                      },
-                      value: {
-                        type: "string",
-                        description:
-                          "[Output Only] A warning data value corresponding to the key.",
-                      },
-                    },
-                    additionalProperties: true,
-                  },
-                  description:
-                    '[Output Only] Metadata about this warning in key: value format. For example:  "data": [   {    "key": "scope",    "value": "zones/us-east1-d"   }',
-                },
-                message: {
-                  type: "string",
-                  description:
-                    "[Output Only] A human-readable description of the warning code.",
-                },
-              },
-              additionalProperties: true,
-            },
-            description:
-              "Output only. [Output Only] If potential misconfigurations are detected for this route, this field will be populated with warning messages.",
           },
           required: false,
         },

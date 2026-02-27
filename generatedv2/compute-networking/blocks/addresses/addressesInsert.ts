@@ -10,14 +10,12 @@ const addressesInsert: AppBlock = {
       config: {
         region: {
           name: "Region",
-          description:
-            "Output only. [Output Only] The URL of the region where a regional address resides. For regional addresses, you must specify the region as a path parameter in the HTTP request URL. *This field is not applicable to global addresses.*",
+          description: "Name of the region for this request.",
           type: {
             type: "string",
-            description:
-              "Output only. [Output Only] The URL of the region where a regional address resides. For regional addresses, you must specify the region as a path parameter in the HTTP request URL. *This field is not applicable to global addresses.*",
+            description: "Name of the region for this request.",
           },
-          required: false,
+          required: true,
         },
         address: {
           name: "Address",
@@ -45,17 +43,6 @@ const addressesInsert: AppBlock = {
           },
           required: false,
         },
-        creationTimestamp: {
-          name: "Creation Timestamp",
-          description:
-            "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Creation timestamp inRFC3339 text format.",
-          },
-          required: false,
-        },
         description: {
           name: "Description",
           description:
@@ -64,16 +51,6 @@ const addressesInsert: AppBlock = {
             type: "string",
             description:
               "An optional description of this resource. Provide this field when you create the resource.",
-          },
-          required: false,
-        },
-        id: {
-          name: "Id",
-          description:
-            "Output only. [Output Only] The unique identifier for the resource. This identifier is defined by the server.",
-          type: {
-            type: "string",
-            description: "64-bit integer as string",
           },
           required: false,
         },
@@ -114,17 +91,6 @@ const addressesInsert: AppBlock = {
             enum: ["UNDEFINED_IPV6_ENDPOINT_TYPE", "NETLB", "VM"],
             description:
               "The endpoint type of this address, which should be VM or NETLB. This is used for deciding which type of endpoint this address can be used after the external IPv6 address reservation. Check the Ipv6EndpointType enum for the list of possible values.",
-          },
-          required: false,
-        },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#address for addresses.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#address for addresses.",
           },
           required: false,
         },
@@ -226,27 +192,6 @@ const addressesInsert: AppBlock = {
           },
           required: false,
         },
-        selfLink: {
-          name: "Self Link",
-          description: "[Output Only] Server-defined URL for the resource.",
-          type: {
-            type: "string",
-            description: "[Output Only] Server-defined URL for the resource.",
-          },
-          required: false,
-        },
-        status: {
-          name: "Status",
-          description:
-            "Output only. [Output Only] The status of the address, which can be one ofRESERVING, RESERVED, or IN_USE. An address that is RESERVING is currently in the process of being reserved. A RESERVED address is currently reserved and available to use. An IN_USE address is currently being used by another resource and is not available. Check the Status enum for the list of possible values.",
-          type: {
-            type: "string",
-            enum: ["UNDEFINED_STATUS", "IN_USE", "RESERVED", "RESERVING"],
-            description:
-              "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details.  You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-          },
-          required: false,
-        },
         subnetwork: {
           name: "Subnetwork",
           description:
@@ -255,20 +200,6 @@ const addressesInsert: AppBlock = {
             type: "string",
             description:
               "The URL of the subnetwork in which to reserve the address. If an IP address is specified, it must be within the subnetwork's IP range. This field can only be used with INTERNAL type with aGCE_ENDPOINT or DNS_RESOLVER purpose.",
-          },
-          required: false,
-        },
-        users: {
-          name: "Users",
-          description:
-            "[Output Only] The URLs of the resources that are using this address.",
-          type: {
-            type: "array",
-            items: {
-              type: "string",
-            },
-            description:
-              "[Output Only] The URLs of the resources that are using this address.",
           },
           required: false,
         },

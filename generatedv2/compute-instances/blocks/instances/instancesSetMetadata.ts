@@ -65,17 +65,6 @@ const instancesSetMetadata: AppBlock = {
           },
           required: false,
         },
-        kind: {
-          name: "Kind",
-          description:
-            "Output only. [Output Only] Type of the resource. Always compute#metadata for metadata.",
-          type: {
-            type: "string",
-            description:
-              "Output only. [Output Only] Type of the resource. Always compute#metadata for metadata.",
-          },
-          required: false,
-        },
         requestId: {
           name: "Request Id",
           description:
