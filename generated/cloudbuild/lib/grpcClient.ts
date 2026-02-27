@@ -104,7 +104,7 @@ export async function getCloudBuildClient(
   config: Record<string, any>,
 ): Promise<any> {
   const credentials = await createCredentials(config);
-  const Service = getService("google.devtools.cloudbuild.v2", "CloudBuild");
+  const Service = getService("google.devtools.cloudbuild.v1", "CloudBuild");
   return new Service("cloudbuild.googleapis.com:443", credentials);
 }
 

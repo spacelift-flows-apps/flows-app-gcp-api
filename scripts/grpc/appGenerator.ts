@@ -87,12 +87,12 @@ Provide a pre-generated GCP access token for keyless authentication.
  * Generate the lib/grpcClient.ts shared utility.
  */
 export function generateGrpcClient(
-  serviceNames: string[],
+  servicePackages: Map<string, string>,
   host: string,
-  protoPackage: string,
 ): string {
-  const clientFactories = serviceNames
-    .map((name) => {
+  const clientFactories = [...servicePackages.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, protoPackage]) => {
       const funcName = `get${name}Client`;
       return `export async function ${funcName}(config: Record<string, any>): Promise<any> {
   const credentials = await createCredentials(config);
@@ -308,13 +308,15 @@ export async function writeAppFiles(
     fs.mkdirSync(path.join(outputDir, "blocks", cat), { recursive: true });
   }
 
-  // Collect service names for grpcClient generation (sorted for determinism)
-  const serviceNames = [...new Set(blocks.map((b) => b.serviceName))].sort();
-
-  // Determine the proto package path (e.g. "google.pubsub.v1")
-  const protoPackage = protoResult.services[0]?.fullName
-    .replace(/^\./, "")
-    .replace(/\.[^.]+$/, "") || "google.pubsub.v1";
+  // Build service name → proto package map for grpcClient generation
+  // Only include services that have blocks (filtered services are excluded)
+  const usedServiceNames = new Set(blocks.map((b) => b.serviceName));
+  const servicePackages = new Map<string, string>();
+  for (const svc of protoResult.services) {
+    if (!usedServiceNames.has(svc.name)) continue;
+    const pkg = svc.fullName.replace(/^\./, "").replace(/\.[^.]+$/, "");
+    servicePackages.set(svc.name, pkg);
+  }
 
   // Write main.ts
   fs.writeFileSync(path.join(outputDir, "main.ts"), generateMainTs(config));
@@ -323,7 +325,7 @@ export async function writeAppFiles(
   // Write lib/grpcClient.ts
   fs.writeFileSync(
     path.join(outputDir, "lib", "grpcClient.ts"),
-    generateGrpcClient(serviceNames, config.host, protoPackage),
+    generateGrpcClient(servicePackages, config.host),
   );
   console.log("  ✓ lib/grpcClient.ts");
 
