@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Proto-based GCP Flows App Generator (v2)
+ * Proto-based GCP Flows App Generator
  *
  * Generates Flows apps from GCP protobuf definitions.
  * Uses gRPC for runtime API calls.
  *
  * Usage:
- *   npx tsx scriptsv2/protoGenerator.ts pubsub
- *   npx tsx scriptsv2/protoGenerator.ts          # generates all configured services
+ *   npx tsx scripts/grpc/protoGenerator.ts pubsub
+ *   npx tsx scripts/grpc/protoGenerator.ts          # generates all configured services
  */
 
 import fs from "fs";

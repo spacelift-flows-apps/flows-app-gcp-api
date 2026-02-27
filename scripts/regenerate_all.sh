@@ -10,15 +10,15 @@ if [ ! -d "local/googleapis" ]; then
 fi
 
 echo "=== Generating gRPC apps ==="
-npx tsx scriptsv2/grpc/protoGenerator.ts
+npx tsx scripts/grpc/protoGenerator.ts
 
 echo ""
 echo "=== Generating Compute apps ==="
-npx tsx scriptsv2/compute/computeGenerator.ts
+npx tsx scripts/compute/computeGenerator.ts
 
 echo ""
 echo "=== Generating DNS app ==="
-npx tsx scriptsv2/dns/dnsGenerator.ts
+npx tsx scripts/dns/dnsGenerator.ts
 
 echo ""
 echo "=== Formatting ==="

@@ -318,24 +318,24 @@ More details can be found here:
 - https://docs.useflows.com/developers/deploying-apps/custom-apps/
 - https://docs.useflows.com/developers/deploying-apps/app-registries/
 
-## Proto-Based GCP App Generator (`scriptsv2/grpc/`)
+## Proto-Based GCP App Generator (`scripts/grpc/`)
 
-The `scriptsv2/grpc/` directory contains a code generator that produces complete Flows apps from GCP protobuf definitions. Generated apps live in `generatedv2/`.
+The `scripts/grpc/` directory contains a code generator that produces complete Flows apps from GCP protobuf definitions. Generated apps live in `generated/`.
 
 ### Quick Reference
 
 ```bash
 # Generate a single service
-npx tsx scriptsv2/grpc/protoGenerator.ts storage
+npx tsx scripts/grpc/protoGenerator.ts storage
 
 # Generate all configured services
-npx tsx scriptsv2/grpc/protoGenerator.ts
+npx tsx scripts/grpc/protoGenerator.ts
 
 # Typecheck a generated app
-cd generatedv2/storage && npm run typecheck
+cd generated/storage && npm run typecheck
 ```
 
-Available services: `pubsub`, `storage`, `iam`, `cloudbuild`, `cloudfunctions`, `cloudkms`, `cloudresourcemanager`, `container`, `monitoring`, `run`, `secretmanager`, `sqladmin` (configured in `scriptsv2/grpc/protoGenerator.ts` `SERVICES` object).
+Available services: `pubsub`, `storage`, `iam`, `cloudbuild`, `cloudfunctions`, `cloudkms`, `cloudresourcemanager`, `container`, `monitoring`, `run`, `secretmanager`, `sqladmin`, `generativelanguage` (configured in `scripts/grpc/protoGenerator.ts` `SERVICES` object).
 
 ### Pipeline Overview
 
@@ -351,18 +351,18 @@ The generator runs in 5 steps:
 
 | File | Purpose |
 |------|---------|
-| `grpc/protoGenerator.ts` | CLI entry point, service configs (`SERVICES` object) |
-| `grpc/protoParser.ts` | Proto loading, extraction of services/messages/enums/behaviors/routing |
-| `grpc/schemaMapper.ts` | Proto message/field -> JSON Schema conversion |
-| `grpc/blockGenerator.ts` | Individual block `.ts` file generation |
-| `grpc/appGenerator.ts` | App scaffolding (main.ts, grpcClient.ts, package.json, etc.) |
-| `grpc/naming.ts` | Block/category naming, humanization, reserved word handling |
-| `grpc/types.ts` | All internal type definitions |
+| `scripts/grpc/protoGenerator.ts` | CLI entry point, service configs (`SERVICES` object) |
+| `scripts/grpc/protoParser.ts` | Proto loading, extraction of services/messages/enums/behaviors/routing |
+| `scripts/grpc/schemaMapper.ts` | Proto message/field -> JSON Schema conversion |
+| `scripts/grpc/blockGenerator.ts` | Individual block `.ts` file generation |
+| `scripts/grpc/appGenerator.ts` | App scaffolding (main.ts, grpcClient.ts, package.json, etc.) |
+| `scripts/grpc/naming.ts` | Block/category naming, humanization, reserved word handling |
+| `scripts/grpc/types.ts` | All internal type definitions |
 
 ### Generated App Structure
 
 ```
-generatedv2/{service}/
+generated/{service}/
 ├── main.ts                    # App definition with auth config
 ├── lib/grpcClient.ts          # gRPC client factories, credential handling, routing metadata
 ├── blocks/
@@ -377,19 +377,19 @@ generatedv2/{service}/
 
 ### Adding a New GCP Service
 
-1. Add an entry to the `SERVICES` object in `scriptsv2/grpc/protoGenerator.ts`:
+1. Add an entry to the `SERVICES` object in `scripts/grpc/protoGenerator.ts`:
    ```typescript
    newservice: {
      protoFiles: ["local/googleapis/google/newservice/v1/service.proto"],
      host: "newservice.googleapis.com",
      title: "New Service",
-     outputDir: "generatedv2/newservice",
+     outputDir: "generated/newservice",
    },
    ```
 2. Make sure the proto files exist under `local/googleapis/` (clone or copy from [googleapis/googleapis](https://github.com/googleapis/googleapis))
-3. If the service has resource types that need category grouping, add patterns to `RESOURCE_PATTERNS` and/or `SERVICE_DEFAULTS` in `scriptsv2/grpc/naming.ts`
-4. Run `npx tsx scriptsv2/grpc/protoGenerator.ts newservice`
-5. Typecheck: `cd generatedv2/newservice && npm run typecheck`
+3. If the service has resource types that need category grouping, add patterns to `RESOURCE_PATTERNS` and/or `SERVICE_DEFAULTS` in `scripts/grpc/naming.ts`
+4. Run `npx tsx scripts/grpc/protoGenerator.ts newservice`
+5. Typecheck: `cd generated/newservice && npm run typecheck`
 
 ### Key Design Decisions
 
@@ -403,9 +403,9 @@ generatedv2/{service}/
 
 **Routing metadata.** Some GCP gRPC APIs (notably Cloud Storage) require `x-goog-request-params` headers. The generator parses `google.api.routing` annotations from proto source and generates metadata extraction code per-block.
 
-**Well-known proto types.** `google.protobuf.Timestamp`, `Duration`, `FieldMask`, `Struct`, `Value`, `Empty`, and all `*Value` wrappers are mapped to appropriate JSON Schema types (see `WELL_KNOWN_TYPES` in `schemaMapper.ts`).
+**Well-known proto types.** `google.protobuf.Timestamp`, `Duration`, `FieldMask`, `Struct`, `Value`, `Empty`, and all `*Value` wrappers are mapped to appropriate JSON Schema types (see `WELL_KNOWN_TYPES` in `scripts/grpc/schemaMapper.ts`).
 
-**Reserved words.** Block names that collide with JS/TS reserved words (e.g., `delete`) get an `Operation` suffix (e.g., `deleteOperation`). See `naming.ts`.
+**Reserved words.** Block names that collide with JS/TS reserved words (e.g., `delete`) get an `Operation` suffix (e.g., `deleteOperation`). See `scripts/grpc/naming.ts`.
 
 ### Proto Source Requirements
 
@@ -421,35 +421,35 @@ Field behaviors and routing annotations are regex-parsed from the raw `.proto` s
 When changing the generator, re-run it for all services and typecheck:
 
 ```bash
-npx tsx scriptsv2/grpc/protoGenerator.ts
-for dir in generatedv2/*/; do (cd "$dir" && npm run typecheck); done
+npx tsx scripts/grpc/protoGenerator.ts
+for dir in generated/*/; do (cd "$dir" && npm run typecheck); done
 ```
 
 Common modification points:
-- **Schema mapping**: `grpc/schemaMapper.ts` — change how proto types map to JSON Schema
-- **Block template**: `grpc/blockGenerator.ts` — change the generated block structure, imports, or gRPC call pattern
-- **App scaffolding**: `grpc/appGenerator.ts` — change `main.ts` template, `grpcClient.ts` template, dependencies
-- **Categorization**: `grpc/naming.ts` — add `RESOURCE_PATTERNS` entries for new resource types
-- **Service configs**: `grpc/protoGenerator.ts` — add/modify services in `SERVICES`
+- **Schema mapping**: `scripts/grpc/schemaMapper.ts` — change how proto types map to JSON Schema
+- **Block template**: `scripts/grpc/blockGenerator.ts` — change the generated block structure, imports, or gRPC call pattern
+- **App scaffolding**: `scripts/grpc/appGenerator.ts` — change `main.ts` template, `grpcClient.ts` template, dependencies
+- **Categorization**: `scripts/grpc/naming.ts` — add `RESOURCE_PATTERNS` entries for new resource types
+- **Service configs**: `scripts/grpc/protoGenerator.ts` — add/modify services in `SERVICES`
 
-## REST-Based Compute Engine Generator (`scriptsv2/compute/`)
+## REST-Based Compute Engine Generator (`scripts/compute/`)
 
-The `scriptsv2/compute/` directory contains a separate code generator for GCP Compute Engine, which only exposes REST APIs (no gRPC). It generates 5 Flows apps in `generatedv2/compute-*` from a single 85K-line proto file (`local/googleapis/google/cloud/compute/v1/compute.proto`) with 109 services and ~2000 RPCs.
+The `scripts/compute/` directory contains a separate code generator for GCP Compute Engine, which only exposes REST APIs (no gRPC). It generates 5 Flows apps in `generated/compute-*` from a single 85K-line proto file (`local/googleapis/google/cloud/compute/v1/compute.proto`) with 109 services and ~2000 RPCs.
 
 ### Quick Reference
 
 ```bash
 # Generate a single compute app
-npx tsx scriptsv2/compute/computeGenerator.ts compute-instances
+npx tsx scripts/compute/computeGenerator.ts compute-instances
 
 # Generate all 5 compute apps
-npx tsx scriptsv2/compute/computeGenerator.ts
+npx tsx scripts/compute/computeGenerator.ts
 
 # Typecheck a generated compute app
-cd generatedv2/compute-instances && npm run typecheck
+cd generated/compute-instances && npm run typecheck
 ```
 
-Available apps: `compute-instances`, `compute-load-balancing`, `compute-networking`, `compute-security`, `compute-storage` (configured in `scriptsv2/compute/computeGenerator.ts` `COMPUTE_APPS` object).
+Available apps: `compute-instances`, `compute-load-balancing`, `compute-networking`, `compute-security`, `compute-storage` (configured in `scripts/compute/computeGenerator.ts` `COMPUTE_APPS` object).
 
 ### Pipeline Overview
 
@@ -463,15 +463,15 @@ Available apps: `compute-instances`, `compute-load-balancing`, `compute-networki
 
 | File | Purpose |
 |------|---------|
-| `compute/computeGenerator.ts` | CLI entry point, 5 app configs (`COMPUTE_APPS` object) |
-| `compute/httpAnnotationParser.ts` | Parse `google.api.http` annotations from proto source |
-| `compute/blockGenerator.ts` | REST block `.ts` file generation using `computeFetch` |
-| `compute/appGenerator.ts` | App scaffolding (main.ts, restClient.ts, package.json, etc.) |
-| `compute/types.ts` | Compute-specific types + re-exports from `grpc/types.ts` |
+| `scripts/compute/computeGenerator.ts` | CLI entry point, 5 app configs (`COMPUTE_APPS` object) |
+| `scripts/compute/httpAnnotationParser.ts` | Parse `google.api.http` annotations from proto source |
+| `scripts/compute/blockGenerator.ts` | REST block `.ts` file generation using `computeFetch` |
+| `scripts/compute/appGenerator.ts` | App scaffolding (main.ts, restClient.ts, package.json, etc.) |
+| `scripts/compute/types.ts` | Compute-specific types + re-exports from `grpc/types.ts` |
 
 ### Reused from gRPC Generator
 
-The compute generator imports directly from `../grpc/`:
+The compute generator imports directly from `scripts/grpc/`:
 - **`types.ts`**: `ParsedMessage`, `ParsedField`, `ParsedRPC`, `ParsedService`, `ParsedProtoResult`, `GeneratedBlock`
 - **`naming.ts`**: `rpcToBlockName`, `humanizePascalCase`, `categoryToDirName`, `cleanComment`
 - **`schemaMapper.ts`**: `messageToInputConfig`, `messageToOutputSchema`
@@ -481,7 +481,7 @@ The compute generator imports directly from `../grpc/`:
 ### Generated App Structure
 
 ```
-generatedv2/compute-{category}/
+generated/compute-{category}/
 ├── main.ts                    # App definition with projectId + auth config
 ├── lib/restClient.ts          # Shared REST client (computeFetch), auth handling
 ├── blocks/
@@ -512,12 +512,59 @@ generatedv2/compute-{category}/
 When changing the compute generator, re-run and typecheck:
 
 ```bash
-npx tsx scriptsv2/compute/computeGenerator.ts
-for dir in generatedv2/compute-*/; do (cd "$dir" && npm run typecheck); done
+npx tsx scripts/compute/computeGenerator.ts
+for dir in generated/compute-*/; do (cd "$dir" && npm run typecheck); done
 ```
 
 Common modification points:
-- **REST client template**: `compute/appGenerator.ts` — change `computeFetch`, auth logic, URL building
-- **Block template**: `compute/blockGenerator.ts` — change block structure, field classification, fetch call pattern
-- **HTTP parsing**: `compute/httpAnnotationParser.ts` — change how `google.api.http` annotations are extracted
-- **App configs**: `compute/computeGenerator.ts` — add/modify apps in `COMPUTE_APPS`, change service-to-app assignments
+- **REST client template**: `scripts/compute/appGenerator.ts` — change `computeFetch`, auth logic, URL building
+- **Block template**: `scripts/compute/blockGenerator.ts` — change block structure, field classification, fetch call pattern
+- **HTTP parsing**: `scripts/compute/httpAnnotationParser.ts` — change how `google.api.http` annotations are extracted
+- **App configs**: `scripts/compute/computeGenerator.ts` — add/modify apps in `COMPUTE_APPS`, change service-to-app assignments
+
+## Discovery-Based Cloud DNS Generator (`scripts/dns/`)
+
+The `scripts/dns/` directory contains a code generator for GCP Cloud DNS, which uses a Discovery Document (REST API description) instead of proto files. It generates a single Flows app in `generated/dns/`.
+
+### Quick Reference
+
+```bash
+# Generate the DNS app
+npx tsx scripts/dns/dnsGenerator.ts
+
+# Typecheck
+cd generated/dns && npm run typecheck
+```
+
+### Pipeline Overview
+
+1. **Parse** the Discovery Document (`scripts/dns/discoveryParser.ts`): Load `gcp-api-discovery/dns-v1.json`, extract resources, methods, parameters, and request/response schemas
+2. **Generate block source** (`scripts/dns/blockGenerator.ts`): Create TypeScript block files using `fetch()` via a shared REST client
+3. **Write app** (`scripts/dns/appGenerator.ts`): Write `main.ts`, REST client, `blocks/index.ts`, `package.json`, `tsconfig.json`, `VERSION`
+
+### Generator Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/dns/dnsGenerator.ts` | CLI entry point, DNS app config |
+| `scripts/dns/discoveryParser.ts` | Discovery Document parsing, method/schema extraction |
+| `scripts/dns/blockGenerator.ts` | REST block `.ts` file generation |
+| `scripts/dns/appGenerator.ts` | App scaffolding |
+| `scripts/dns/schemaMapper.ts` | Discovery schema -> JSON Schema conversion |
+| `scripts/dns/types.ts` | DNS-specific types |
+
+### Key Design Decisions
+
+**Discovery Document-based.** Cloud DNS has no gRPC/proto API. Instead, it uses a GCP Discovery Document (`dns-v1.json`) which describes the REST API including resources, methods, parameters, and schemas. This is a different input format than proto files but produces the same style of Flows app.
+
+**Reuses gRPC naming utilities.** The DNS generator imports `rpcToBlockName`, `humanizePascalCase`, and `categoryToDirName` from `scripts/grpc/naming.ts`.
+
+## Regenerating All Apps
+
+The `scripts/regenerate_all.sh` script runs all three generators (gRPC, Compute, DNS) and then formats and type-checks every generated app:
+
+```bash
+./scripts/regenerate_all.sh
+```
+
+This will clone `googleapis` protos if not present, generate all apps into `generated/`, format them, and type-check them.

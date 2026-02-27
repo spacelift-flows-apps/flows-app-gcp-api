@@ -7,8 +7,8 @@
  * Uses REST (fetch) for runtime API calls since Compute Engine has no gRPC endpoint.
  *
  * Usage:
- *   npx tsx scriptsv2/compute/computeGenerator.ts compute-instances
- *   npx tsx scriptsv2/compute/computeGenerator.ts          # generates all 5 apps
+ *   npx tsx scripts/compute/computeGenerator.ts compute-instances
+ *   npx tsx scripts/compute/computeGenerator.ts          # generates all 5 apps
  */
 
 import fs from "fs";

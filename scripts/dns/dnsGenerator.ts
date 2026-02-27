@@ -7,7 +7,7 @@
  * Uses REST (fetch) for runtime API calls.
  *
  * Usage:
- *   npx tsx scriptsv2/dns/dnsGenerator.ts
+ *   npx tsx scripts/dns/dnsGenerator.ts
  */
 
 import {
