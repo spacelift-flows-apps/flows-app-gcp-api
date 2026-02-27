@@ -612,7 +612,8 @@ const ${blockName}: AppBlock = {
         const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
-          throw new Error(\`GCP API error: \${response.status} \${response.statusText}\`);
+          const errorBody = await response.text();
+          throw new Error(\`GCP API error: \${response.status} \${response.statusText}: \${errorBody}\`);
         }
 
         const result = await response.json();

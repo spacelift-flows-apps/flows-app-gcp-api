@@ -679,8 +679,9 @@ const regionSecurityPoliciesAddRule: AppBlock = {
         const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
+          const errorBody = await response.text();
           throw new Error(
-            `GCP API error: ${response.status} ${response.statusText}`,
+            `GCP API error: ${response.status} ${response.statusText}: ${errorBody}`,
           );
         }
 
