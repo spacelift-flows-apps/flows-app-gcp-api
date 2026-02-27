@@ -133,7 +133,7 @@ export interface ServiceConfig {
   host: string;
   /** App title (e.g. "Cloud Pub/Sub") */
   title: string;
-  /** Output directory (e.g. "generatedv2/pubsub") */
+  /** Output directory (e.g. "generated/pubsub") */
   outputDir: string;
 }
 

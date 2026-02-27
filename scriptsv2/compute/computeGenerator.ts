@@ -30,7 +30,7 @@ const COMPUTE_PROTO = "local/googleapis/google/cloud/compute/v1/compute.proto";
 const COMPUTE_APPS: Record<string, ComputeAppConfig> = {
   "compute-instances": {
     title: "Compute Engine API - Instances",
-    outputDir: "generatedv2/compute-instances",
+    outputDir: "generated/compute-instances",
     services: [
       "Instances",
       "InstanceGroups",
@@ -52,7 +52,7 @@ const COMPUTE_APPS: Record<string, ComputeAppConfig> = {
   },
   "compute-load-balancing": {
     title: "Compute Engine API - Load Balancing",
-    outputDir: "generatedv2/compute-load-balancing",
+    outputDir: "generated/compute-load-balancing",
     services: [
       "BackendBuckets",
       "BackendServices",
@@ -77,7 +77,7 @@ const COMPUTE_APPS: Record<string, ComputeAppConfig> = {
   },
   "compute-networking": {
     title: "Compute Engine API - Networking",
-    outputDir: "generatedv2/compute-networking",
+    outputDir: "generated/compute-networking",
     services: [
       "Addresses",
       "GlobalAddresses",
@@ -105,7 +105,7 @@ const COMPUTE_APPS: Record<string, ComputeAppConfig> = {
   },
   "compute-security": {
     title: "Compute Engine API - Security",
-    outputDir: "generatedv2/compute-security",
+    outputDir: "generated/compute-security",
     services: [
       "Firewalls",
       "FirewallPolicies",
@@ -122,7 +122,7 @@ const COMPUTE_APPS: Record<string, ComputeAppConfig> = {
   },
   "compute-storage": {
     title: "Compute Engine API - Storage",
-    outputDir: "generatedv2/compute-storage",
+    outputDir: "generated/compute-storage",
     services: [
       "Disks",
       "DiskTypes",

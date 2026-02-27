@@ -3,6 +3,12 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+if [ ! -d "local/googleapis" ]; then
+  echo "=== Cloning googleapis ==="
+  mkdir -p local
+  git clone --depth 1 https://github.com/googleapis/googleapis.git local/googleapis
+fi
+
 echo "=== Generating gRPC apps ==="
 npx tsx scriptsv2/grpc/protoGenerator.ts
 
@@ -16,7 +22,7 @@ npx tsx scriptsv2/dns/dnsGenerator.ts
 
 echo ""
 echo "=== Formatting ==="
-for dir in generatedv2/*/; do
+for dir in generated/*/; do
   echo "  Formatting $dir..."
   (cd "$dir" && npm run format --silent 2>/dev/null) || echo "  ⚠ Format failed for $dir"
 done
@@ -24,7 +30,7 @@ done
 echo ""
 echo "=== Type-checking ==="
 failed=0
-for dir in generatedv2/*/; do
+for dir in generated/*/; do
   echo -n "  $dir "
   if (cd "$dir" && npm run typecheck --silent 2>&1); then
     echo "✓"

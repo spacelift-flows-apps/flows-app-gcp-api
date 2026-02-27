@@ -77,13 +77,13 @@ const SERVICES: Record<string, ServiceConfig> = {
     ],
     host: "pubsub.googleapis.com",
     title: "Cloud Pub/Sub API",
-    outputDir: "generatedv2/pubsub",
+    outputDir: "generated/pubsub",
   },
   iam: {
     protoFiles: ["local/googleapis/google/iam/admin/v1/iam.proto"],
     host: "iam.googleapis.com",
     title: "IAM Admin API",
-    outputDir: "generatedv2/iam",
+    outputDir: "generated/iam",
   },
   storage: {
     protoFiles: [
@@ -91,7 +91,7 @@ const SERVICES: Record<string, ServiceConfig> = {
     ],
     host: "storage.googleapis.com",
     title: "Cloud Storage API",
-    outputDir: "generatedv2/storage",
+    outputDir: "generated/storage",
   },
   cloudbuild: {
     protoFiles: [],
@@ -101,35 +101,35 @@ const SERVICES: Record<string, ServiceConfig> = {
     ],
     host: "cloudbuild.googleapis.com",
     title: "Cloud Build API",
-    outputDir: "generatedv2/cloudbuild",
+    outputDir: "generated/cloudbuild",
   },
   cloudfunctions: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/cloud/functions/v2"],
     host: "cloudfunctions.googleapis.com",
     title: "Cloud Functions API",
-    outputDir: "generatedv2/cloudfunctions",
+    outputDir: "generated/cloudfunctions",
   },
   cloudkms: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/cloud/kms/v1"],
     host: "cloudkms.googleapis.com",
     title: "Cloud KMS API",
-    outputDir: "generatedv2/cloudkms",
+    outputDir: "generated/cloudkms",
   },
   cloudresourcemanager: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/cloud/resourcemanager/v3"],
     host: "cloudresourcemanager.googleapis.com",
     title: "Cloud Resource Manager API",
-    outputDir: "generatedv2/cloudresourcemanager",
+    outputDir: "generated/cloudresourcemanager",
   },
   container: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/container/v1"],
     host: "container.googleapis.com",
     title: "Google Kubernetes Engine API",
-    outputDir: "generatedv2/container",
+    outputDir: "generated/container",
   },
   monitoring: {
     protoFiles: [],
@@ -138,28 +138,28 @@ const SERVICES: Record<string, ServiceConfig> = {
     ],
     host: "monitoring.googleapis.com",
     title: "Cloud Monitoring API",
-    outputDir: "generatedv2/monitoring",
+    outputDir: "generated/monitoring",
   },
   run: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/cloud/run/v2"],
     host: "run.googleapis.com",
     title: "Cloud Run API",
-    outputDir: "generatedv2/run",
+    outputDir: "generated/run",
   },
   secretmanager: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/cloud/secretmanager/v1"],
     host: "secretmanager.googleapis.com",
     title: "Secret Manager API",
-    outputDir: "generatedv2/secretmanager",
+    outputDir: "generated/secretmanager",
   },
   sqladmin: {
     protoFiles: [],
     protoDirs: ["local/googleapis/google/cloud/sql/v1"],
     host: "sqladmin.googleapis.com",
     title: "Cloud SQL Admin API",
-    outputDir: "generatedv2/sqladmin",
+    outputDir: "generated/sqladmin",
   },
   generativelanguage: {
     protoFiles: [
@@ -172,7 +172,7 @@ const SERVICES: Record<string, ServiceConfig> = {
     ],
     host: "generativelanguage.googleapis.com",
     title: "Generative Language API",
-    outputDir: "generatedv2/generativelanguage",
+    outputDir: "generated/generativelanguage",
   },
 };
 

@@ -28,7 +28,7 @@ export interface HttpAnnotation {
 export interface ComputeAppConfig {
   /** Human-readable title (e.g. "Compute Engine - Instances") */
   title: string;
-  /** Output directory (e.g. "generatedv2/compute-instances") */
+  /** Output directory (e.g. "generated/compute-instances") */
   outputDir: string;
   /** Proto service names to include in this app (e.g. ["Instances", "InstanceGroups"]) */
   services: string[];

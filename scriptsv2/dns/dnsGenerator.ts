@@ -22,7 +22,7 @@ import { DnsAppConfig, DnsGeneratedBlock } from "./types.ts";
 
 const DNS_CONFIG: DnsAppConfig = {
   title: "Cloud DNS",
-  outputDir: "generatedv2/dns",
+  outputDir: "generated/dns",
   discoveryDocPath: "gcp-api-discovery/dns-v1.json",
 };
 
